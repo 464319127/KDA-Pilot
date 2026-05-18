@@ -292,9 +292,11 @@ To override, add to `.humanize/config.json`:
 }
 ```
 
-On Codex installs, Humanize also seeds `${XDG_CONFIG_HOME:-~/.config}/humanize/config.json`
-with a Codex/OpenAI `bitlesson_model` and `provider_mode: "codex-only"` when those keys
-are unset, so BitLesson selection stays on the Codex/OpenAI path without probing Claude.
+When installing the Humanize runtime into Codex CLI, Humanize also seeds
+`${XDG_CONFIG_HOME:-~/.config}/humanize/config.json` with a Codex/OpenAI
+`bitlesson_model` and `provider_mode: "codex-only"` when those keys are unset.
+That flag is only a routing hint for that Codex runtime; the repository also
+supports Claude Code and Kimi installs.
 
 Codex model is resolved with this precedence:
 1. CLI `--codex-model` flag (highest priority)

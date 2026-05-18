@@ -1,0 +1,15 @@
+{
+  "name": "KernelPilot",
+  "owner": {
+    "name": "BBuf"
+  },
+  "description": "KernelPilot's Claude Code marketplace for the Humanize kernel optimization loop.",
+  "plugins": [
+    {
+      "name": "humanize",
+      "source": "./humanize",
+      "description": "Humanize plus KernelPilot's autonomous GPU kernel optimization loop, ncu-report profiling, and review-gated iteration.",
+      "version": "1.17.0"
+    }
+  ]
+}

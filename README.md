@@ -242,7 +242,48 @@ NCU exposes it, and when relevant PTX/SASS dumps from `cuobjdump` or
 
 ## Install
 
-Fresh install for Codex:
+KernelPilot is not Codex-only. It can be used from Claude Code, Codex, or Kimi.
+
+### Claude Code
+
+Install the Humanize plugin from this repository, then expose the KernelPilot
+knowledge skill to Claude Code:
+
+```bash
+git clone https://github.com/BBuf/kernel-pilot.git
+cd kernel-pilot
+
+# Add the KernelPilot marketplace and install its Humanize plugin.
+claude plugin marketplace add .
+claude plugin install humanize@KernelPilot
+
+# Make the PR-diff knowledge base available as a Claude Code skill.
+mkdir -p ~/.claude/skills
+ln -s "$PWD/knowledge" ~/.claude/skills/kernel-knowledge
+
+# Install the knowledge query dependency.
+python3 -m pip install -r knowledge/requirements.txt
+```
+
+Restart Claude Code after installing, then confirm the plugin and skills are
+visible:
+
+```bash
+claude plugin list
+claude plugin details humanize@KernelPilot
+```
+
+Inside Claude Code, you should see commands such as
+`/humanize:start-rlcr-loop` and skills such as `humanize-kernel-agent-loop`,
+`kernel-knowledge`, and `ncu-report`. For a one-session local checkout without
+installing the marketplace, start Claude Code with:
+
+```bash
+claude --plugin-dir /path/to/kernel-pilot/humanize \
+  --add-dir /path/to/kernel-pilot
+```
+
+### Codex
 
 ```bash
 git clone https://github.com/BBuf/kernel-pilot.git
@@ -261,6 +302,8 @@ The installer hydrates `{{KERNELPILOT_ROOT}}` into installed skills and
 validates that the root contains `knowledge/SKILL.md` and
 `knowledge/evidence/pull-bundles/`. If the knowledge base is missing, install
 fails instead of producing a broken skill.
+
+### Kimi
 
 For Kimi-oriented setups, use:
 

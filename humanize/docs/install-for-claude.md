@@ -1,4 +1,4 @@
-# Install Humanize for Claude Code
+# Install KernelPilot Humanize for Claude Code
 
 ## Prerequisites
 
@@ -6,53 +6,83 @@
 - `jq` -- JSON processor. Verify with `jq --version`.
 - `git` -- Git version control. Verify with `git --version`.
 
-## Option 1: Git Marketplace (Recommended)
+## Option 1: KernelPilot Marketplace (Recommended)
 
-Start Claude Code and run:
+Clone KernelPilot, add the repository root as a Claude Code marketplace, install
+the Humanize plugin, and expose the KernelPilot knowledge base as a Claude Code
+skill:
 
 ```bash
-# Add the marketplace
-/plugin marketplace add git@github.com:PolyArch/humanize.git
+git clone https://github.com/BBuf/kernel-pilot.git
+cd kernel-pilot
 
-# Install the plugin
-/plugin install humanize@PolyArch
+claude plugin marketplace add .
+claude plugin install humanize@KernelPilot
+
+mkdir -p ~/.claude/skills
+ln -s "$PWD/knowledge" ~/.claude/skills/kernel-knowledge
+python3 -m pip install -r knowledge/requirements.txt
 ```
 
-## Option 2: Local Development
+Restart Claude Code after installing. If you prefer to run the marketplace
+commands inside an existing Claude Code session, the equivalent slash commands
+are:
+
+```text
+/plugin marketplace add /path/to/kernel-pilot
+/plugin install humanize@KernelPilot
+```
+
+## Option 2: One-session Local Development
 
 If you have the plugin cloned locally:
 
 ```bash
-claude --plugin-dir /path/to/humanize
+claude --plugin-dir /path/to/kernel-pilot/humanize \
+  --add-dir /path/to/kernel-pilot
 ```
 
-## Option 3: Try Experimental Features (dev branch)
-
-The `dev` branch contains experimental features that are not yet released to `main`. To try them locally:
+This loads the plugin only for that Claude Code session. Add the knowledge skill
+separately if you want `kernel-knowledge` discovery:
 
 ```bash
-git clone https://github.com/PolyArch/humanize.git
-cd humanize
-git checkout dev
+mkdir -p ~/.claude/skills
+ln -s /path/to/kernel-pilot/knowledge ~/.claude/skills/kernel-knowledge
 ```
 
-Then start Claude Code with the local plugin directory:
+## Option 3: Upstream Humanize Only
 
-```bash
-claude --plugin-dir /path/to/humanize
+If you only need generic Humanize RLCR and do not need KernelPilot's kernel
+loop or knowledge pack, install the upstream Humanize marketplace instead:
+
+```text
+/plugin marketplace add PolyArch/humanize
+/plugin install humanize@PolyArch
 ```
 
-Note: The `dev` branch may contain unstable or incomplete features. For production use, stick with Option 1 (Git Marketplace) which tracks the stable `main` branch.
+That upstream plugin is useful for general implementation loops, but it does
+not provide `kernel-knowledge` from this repository.
 
 ## Verify Installation
 
-After installing, you should see Humanize commands available:
+After installing the KernelPilot marketplace, you should see Humanize commands
+and the kernel-loop skill:
 
-```
+```text
 /humanize:start-rlcr-loop
 /humanize:gen-plan
 /humanize:refine-plan
 /humanize:ask-codex
+humanize-kernel-agent-loop
+kernel-knowledge
+ncu-report
+```
+
+You can also inspect the installed plugin from a shell:
+
+```bash
+claude plugin list
+claude plugin details humanize@KernelPilot
 ```
 
 ## Monitor Setup (Optional)
@@ -61,7 +91,7 @@ Add the monitoring helper to your shell for real-time progress tracking:
 
 ```bash
 # Add to your .bashrc or .zshrc
-source ~/.claude/plugins/cache/PolyArch/humanize/<LATEST.VERSION>/scripts/humanize.sh
+source ~/.claude/plugins/cache/KernelPilot/humanize/<LATEST.VERSION>/scripts/humanize.sh
 ```
 
 Then use:
