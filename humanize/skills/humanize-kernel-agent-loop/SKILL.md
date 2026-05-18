@@ -22,7 +22,10 @@ Ensure: kernel implementation K_hat that passes correctness checks on W and
         multiple regimes.
 ```
 
-The loop has three stages:
+The loop has three stages that run in order: Stage 1 closes with a research
+digest before Stage 2's first lineage, and Stage 2 closes when the reviewer
+accepts the correctness/benchmark evidence before Stage 3 starts the autotune
+pass.
 
 - Research: inspect the target kernel contract, baseline/reference behavior,
   workload distribution, repository context, and `kernel-knowledge` evidence.
@@ -43,7 +46,7 @@ for each (t_i, ac_i) in P:
     done = false
     while not done:
         writer executes t_i in the standalone repo
-        # inspect/edit code, compile, test, benchmark, profile, query KernelWiki
+        # inspect/edit code, compile, test, benchmark, profile, query evidence
         verdict, feedback = reviewer checks evidence against ac_i
         if verdict == pass:
             done = true
@@ -57,6 +60,11 @@ In diagrams or papers that say "Claude executes, Codex reviews", read "Claude"
 as "the current writer agent". In a Claude Code session that may be Claude; in
 a Codex session that may be Codex. The review model is controlled by Humanize
 configuration or CLI flags, not by this skill.
+
+The reviewer in the diagram is the Humanize Stop hook. After each round the
+hook runs the configured review against the round's evidence and either accepts
+the round (pass) or emits a next-round prompt (blocked feedback) that the
+writer follows verbatim before the next round.
 
 The installer hydrates these paths:
 
@@ -168,73 +176,116 @@ tracking local loop state.
 
 ## Knowledge Evidence
 
-KernelPilot provides a PR-driven evidence corpus. Use it whenever it helps the
-current plan, implementation choice, benchmark result, profile digest,
-plateau/regression explanation, reviewer question, or next kernel edit.
-PR diffs and materialized source snapshots are the primary evidence, while
-wiki syntheses, docs, blogs, contest notes, and query indices are supporting
-knowledge that Humanize may use whenever they clarify hardware behavior,
-techniques, profile interpretation, or implementation choices.
+The installed sibling skill `kernel-knowledge` carries the full protocol; this
+section is the loop-specific summary. Stage 1 findings land in
+`ledgers/research-digest.md`, and any code-level borrowing shows up in the
+matching attempt row, lineage entry, or profile digest.
 
-Useful entry points from `{{KERNELPILOT_ROOT}}/knowledge`:
+Three peer routes are available. They cover non-overlapping evidence:
+
+- **Route A — Local PR diffs.** Materialized merged-PR pages and bundles for
+  ~3.6k curated upstream PRs from the major kernel frameworks (SGLang, vLLM,
+  TensorRT-LLM, PyTorch, FlashAttention, FlashInfer, CUTLASS/CuTe, CCCL,
+  Triton, DeepGEMM, ThunderKittens, TileLang, QuACK, DeepSeek TileKernels).
+- **Route B — External source map.** `index.json` lists complementary
+  repositories not covered by the PR corpus: NVIDIA developer code samples,
+  Colfax research kernels, simveit micro-tutorials. The loop clones them
+  locally to grep live source.
+- **Route C — Live web / official / upstream.** Web search, official docs,
+  GitHub PR pages, and upstream source consulted online.
+
+### Stage 1 Three-Route Sweep (Required)
+
+Before plan refinement closes, run all three routes to build the research
+digest. Combining all three is how the plan picks an implementation route,
+expected bottlenecks, and benchmark/profile priorities. Each route gets at
+least one citation in `ledgers/research-digest.md`, or an explicit "no relevant
+material" note when the route returned nothing.
+
+### Later Stages (Agent-Driven)
+
+After Stage 1, the loop owns the call on when to query, which routes to use,
+and how deep to go. Use the routes whenever evidence helps the current
+implementation choice, benchmark result, profile digest, plateau/regression
+explanation, reviewer question, or next kernel edit.
+
+Run knowledge scripts from `{{KERNELPILOT_ROOT}}/knowledge` so that
+`clone-index-repos.py` deposits external repos into the source checkout under
+`external-repos/`.
+
+### Route A: Local PR Diffs
 
 ```bash
 cd {{KERNELPILOT_ROOT}}/knowledge
 python3 scripts/query.py "tcgen05" --architecture B200 --limit 10
-python3 scripts/query.py --repo pytorch/pytorch --compact
-python3 scripts/get_page.py pr-pytorch-157241 --follow-sources
+python3 scripts/query.py --repo pytorch/pytorch --tag tma --compact
+python3 scripts/search-pr-diffs.py tcgen05 tmem --any --limit 200
+python3 scripts/get_page.py pr-pytorch-157241
+less evidence/pull-bundles/<repo-id>/gh-<number>/review.diff
+find evidence/pull-bundles/<repo-id>/gh-<number>/source-snapshot -type f
 ```
 
-Useful wiki/doc/blog entry points:
+`query.py` filters by `--type`, `--tag`, `--repo`, `--language`,
+`--architecture`, `--kernel-type`, `--symptom`, and `--confidence`. Combine
+filters with the current kernel context. Open the bundle named by
+`artifact_dir` (`review.diff`, `source-snapshot/`, `upstream.json`,
+`ORIGIN.yaml`) before borrowing an idea.
+
+### Route B: External Source Map
+
+`index.json` lists complementary code repositories (NVIDIA developer code
+samples, Colfax research kernels, simveit micro-tutorials) that have no
+curated PR diffs in Route A. Two-step workflow: clone first, then grep across
+the cloned tree. `search-index-repos.py` errors out if any referenced repo is
+missing, so the clone step is the only gate.
 
 ```bash
 cd {{KERNELPILOT_ROOT}}/knowledge
-
-# Synthesized wiki pages: hardware, techniques, patterns, languages, kernels.
-python3 scripts/query.py "Blackwell memory hierarchy" --type hardware --limit 10
-python3 scripts/query.py --type technique --tag pipeline-stages --compact
-python3 scripts/query.py "tail effect persistent scheduling" --type pattern --compact
-python3 scripts/query.py "PTX cache policy" --type language --compact
-
-# Source docs and blogs. Source pages use source_category values as --type.
-python3 scripts/query.py "tcgen05 tmem tuning guide" --type official-doc --limit 10
-python3 scripts/query.py "Blackwell microbenchmark tensor memory" --type benchmark-blog --limit 10
-python3 scripts/query.py "CuTe DSL TMA swizzle" --type community-note --limit 10
-python3 scripts/get_page.py doc-nvidia-tuning-guide --body-only
-python3 scripts/get_page.py blog-blackwell-microbenchmarking --body-only
-
-# Regex search: wiki-only for synthesized pages, sources-only for docs/blogs.
-python3 scripts/grep_wiki.py "tcgen05\\.fence" --only wiki
-python3 scripts/grep_wiki.py "long scoreboard" "prefetch" --only sources --any
+python3 scripts/clone-index-repos.py
+python3 scripts/search-index-repos.py tma swizzle transpose
 ```
 
-Prefer materialized bundles under:
+Keep the current operator, dtype, architecture, and framework in the search
+terms so the matches stay relevant.
 
-```text
-knowledge/evidence/pull-bundles/<repo-id>/gh-<number>/
-```
+### Route C: Live Web / Official / Upstream
 
-Each bundle should contain `review.diff`, `ORIGIN.yaml`, `upstream.json`,
-and key changed source/test/benchmark files under `source-snapshot/`.
+Use live web search, official docs, GitHub PR pages, and current upstream
+source as a peer route. When implementation details matter, prefer official
+docs and upstream source over blogs or snippets. Record URLs, commit SHAs,
+source paths, and license/notice text whenever an external-route finding
+directly shapes the kernel.
 
-Typical query flow:
+### Shared Example
 
-1. Use `scripts/query.py` for broad routing by architecture, repo, tag,
-   operator, bottleneck, or exact instruction/feature term.
-2. Use `scripts/get_page.py --follow-sources` to expand a promising wiki or PR
-   page into its cited evidence.
-3. Open the materialized `review.diff`, `ORIGIN.yaml`, `upstream.json`, and
-   `source-snapshot/` files for the PR before borrowing any idea.
-4. Use `scripts/grep_wiki.py` for exact terms such as instruction mnemonics,
-   CuTe atoms, profiler counters, dtype names, and memory/cache policy names.
-5. Use wiki syntheses to choose techniques and interpret profiler symptoms; use
-   docs/blogs to understand hardware contracts, DSL semantics, and public
-   performance claims; then ground implementation choices back in PR/source
-   evidence when code is borrowed or adapted.
+For `FlashAttention SM100 SplitKV`:
 
-A separate reading ledger is unnecessary just to prove that pages were opened.
-When a source directly affects code, record the actionable provenance in the
-relevant attempt row, lineage entry, or profile digest.
+- Route A surfaces `pr-flash-attention-1940` via `query.py`; its `review.diff`
+  and `source-snapshot/` carry the implementation.
+- Route B, after the clone step, greps the Colfax/simveit/NVIDIA samples for
+  the supporting techniques (`tma`, `swizzle`, `pipeline`, `stream-k`,
+  `block-scaled`) that the PR diff alone does not explain.
+- Route C reads the upstream FlashAttention PR/page, current upstream source,
+  and architecture-level docs.
+
+### Citation Checklist
+
+Apply the same shape to every finding before letting it shape code or reviews:
+
+- Name the route(s) used.
+- **Route A:** PR page ID, page path under `sources/prs/`, `artifact_dir`, and
+  the specific `source-snapshot/` files cited.
+- **Route B:** confirmation that `clone-index-repos.py` completed, cloned repo
+  paths searched, and the matched source files.
+- **Route C:** URLs, commit SHAs or version tags, source paths, and any
+  license/notice text required when the code is reused.
+- If a route returns a thin or empty match for a detail that matters, widen
+  the search inside that route or cross-check against another route before
+  treating it as a finding.
+
+The local corpus deliberately excludes wiki, doc, blog, contest, pseudocode,
+and topic-index summaries; evidence comes from PR pages, cloned upstream
+source, or live upstream/official material.
 
 ## Plan Requirements
 
@@ -256,9 +307,16 @@ use the Humanize gen-plan schema and include these acceptance criteria:
   boundaries, and baseline/reference parity.
 - Benchmark harness records per-shape timing, geomean, best/worst cases,
   workload coverage, and environment metadata.
-- Stage 1 research digest records baseline/source findings, KernelWiki evidence
-  that materially affects the plan, candidate implementation routes, suspected
-  bottlenecks, and first benchmark/profile priorities.
+- Stage 1 research digest records baseline and reference inspection: how the
+  reference implementation lays out memory, launches kernels, handles
+  dispatch/dtype/layout branches, and where its hot path lives.
+- Stage 1 runs all three knowledge routes (A: local PR diffs, B: cloned
+  source-map repos, C: live web/official/upstream). Each route gets at least
+  one citation in `ledgers/research-digest.md`, or an explicit "no relevant
+  material" note when the route returned nothing.
+- Stage 1 research digest records baseline/source findings, evidence from the
+  three routes that materially affects the plan, candidate implementation
+  routes, suspected bottlenecks, and first benchmark/profile priorities.
 - A baseline profile decision is recorded after baseline benchmark succeeds:
   either capture a representative `ncu-report` digest or explain why the loop is
   using cheaper evidence first.
@@ -278,8 +336,9 @@ use the Humanize gen-plan schema and include these acceptance criteria:
 - The final answer and ledgers identify final kernels, fallback paths if any,
   dispatcher policy, tuning decisions, correctness matrix, benchmark matrix, and
   remaining unsupported regimes.
-- When progress stalls, expand PR research with unread PR bundles, changed
-  kernel files, linked tests, benchmarks, and profiler notes, guided by the
+- When progress stalls, expand evidence research across the selected peer
+  routes: unread PR bundles, cloned upstream source files, official docs,
+  GitHub PR pages, linked tests, benchmarks, and profiler notes, guided by the
   current task context and existing attempt/lineage notes.
 - When profiling shows a candidate is far below the target or in a different
   bottleneck class than the baseline, use the profile evidence to reassess the

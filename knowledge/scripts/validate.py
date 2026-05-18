@@ -7,7 +7,8 @@ from pathlib import Path
 import yaml
 
 from _kb import iter_pages, parse_markdown
-from _wiki_root import wiki_root
+from _knowledge_root import knowledge_root
+from clone_index_repos_support import extract_repos
 
 
 PULL_BUNDLE_ROOT = Path("evidence") / "pull-bundles"
@@ -23,13 +24,32 @@ def source_pr_bundle(root: Path, repo: str, number: object, fallback_repo_id: st
 
 
 def main() -> int:
-    root = wiki_root()
+    root = knowledge_root()
     errors: list[str] = []
-    pages = iter_pages(include_queries=True)
+    index_repos = 0
+    index_path = root / "index.json"
+    if index_path.exists():
+        try:
+            index_data = json.loads(index_path.read_text(encoding="utf-8"))
+        except Exception as exc:  # noqa: BLE001
+            errors.append(f"{index_path.relative_to(root)}: invalid json: {exc}")
+            index_data = {}
+        stack = [index_data]
+        while stack:
+            value = stack.pop()
+            if isinstance(value, dict):
+                if "ncu_signals" in value:
+                    errors.append(f"{index_path.relative_to(root)}: ncu_signals is not allowed")
+                for stale_key in ("page", "deep_reference", "pr_reference"):
+                    if stale_key in value:
+                        errors.append(f"{index_path.relative_to(root)}: {stale_key} is not allowed")
+                stack.extend(value.values())
+            elif isinstance(value, list):
+                stack.extend(value)
+        index_repos = len(extract_repos(index_data))
+    pages = iter_pages()
     ids: dict[str, str] = {}
     for page in pages:
-        if page.relpath.startswith("queries/") and not page.meta:
-            continue
         if not page.meta:
             errors.append(f"{page.relpath}: missing YAML frontmatter")
             continue
@@ -38,28 +58,12 @@ def main() -> int:
             if page_id in ids:
                 errors.append(f"{page.relpath}: duplicate id {page_id} also in {ids[page_id]}")
             ids[str(page_id)] = page.relpath
-        elif not page.relpath.startswith("queries/"):
+        else:
             errors.append(f"{page.relpath}: missing id")
-        if page.relpath.startswith("wiki/") and page.meta.get("sources"):
-            for source in page.meta.get("sources") or []:
-                if str(source) not in ids:
-                    # A later page may define it; checked again below.
-                    pass
 
     for page in pages:
-        for source in page.meta.get("sources") or []:
-            if str(source) not in ids:
-                errors.append(f"{page.relpath}: missing source id {source}")
-        for related in page.meta.get("related") or []:
-            if str(related) not in ids:
-                errors.append(f"{page.relpath}: missing related id {related}")
-
-    artifact_errors = 0
-    for bundle in (root / "evidence").rglob("*"):
-        if bundle.is_dir() and any(bundle.iterdir()):
-            if bundle.name.startswith("gh-") and not (bundle / ORIGIN_NAME).exists():
-                artifact_errors += 1
-                errors.append(f"{bundle.relative_to(root)}: missing {ORIGIN_NAME}")
+        if not page.relpath.startswith("sources/prs/"):
+            errors.append(f"{page.relpath}: non-PR page indexed")
 
     source_prs = 0
     complete_source_pr_bundles = 0
@@ -117,6 +121,7 @@ def main() -> int:
         "complete_source_pr_bundles": complete_source_pr_bundles,
         "candidate_prs": candidate_prs,
         "candidate_ledgers": len(ledgers),
+        "index_repos": index_repos,
         "errors": len(errors),
     }
     print(json.dumps(summary, indent=2, ensure_ascii=False))

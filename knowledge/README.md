@@ -1,205 +1,167 @@
-# KernelPilot Knowledge — Blackwell & Hopper Kernel Optimization Evidence Base
+# KernelPilot Knowledge — Kernel Evidence Acquisition
 
-> **Knowledge cutoff: 2026-05-16.** Merged PR evidence is collected from **2024-01-01** through this date (recorded in [`data/refresh-cutoff.yaml`](data/refresh-cutoff.yaml)). Triton claims pin to release **3.6.0** (released 2026-01-21); CUTLASS claims pin to **4.5.0** (released 2026-03-27); see [`data/tool-versions.yaml`](data/tool-versions.yaml) for all tracked tools. To advance the cutoff, run `scripts/expand-pr-corpus.py`, regenerate PR pages, materialize evidence bundles, and rerun validation.
+> **Knowledge cutoff: 2026-05-16.** Merged PR evidence is collected from
+> **2024-01-01** through this date, recorded in
+> [`data/refresh-cutoff.yaml`](data/refresh-cutoff.yaml).
 
-A structured knowledge base of NVIDIA Blackwell (SM100, B200) and Hopper (SM90, H100) GPU kernel optimization, packaged as a KernelPilot-local Claude Code skill. This `knowledge/` directory is the skill root.
-
-## Install as a Claude Code Skill
-
-```bash
-cd /path/to/kernel-pilot/knowledge
-pip install -r requirements.txt
-```
-
-The query scripts auto-resolve the wiki root to this directory, so no environment variable is required.
-
-Smoke test:
-
-```bash
-python3 scripts/query.py --tag nvfp4 --type kernel --compact
-python3 scripts/get_page.py kernel-flash-attention-4 --frontmatter-only
-```
-
-Optional override for relocating the scripts:
-
-```bash
-export KERNEL_KNOWLEDGE_ROOT=/path/to/kernel-pilot/knowledge
-```
+This knowledge base intentionally avoids synthesized wiki pages, doc summaries,
+blog summaries, contest notes, pseudocode, and technique guides. It provides
+three peer evidence-acquisition routes with non-overlapping scopes: local PR
+diffs for the major kernel frameworks, an external source map for
+complementary code samples, and live web/official/upstream source research.
 
 ## What's Here
 
-- **3,660 PR references** from NVIDIA/cutlass (64), sgl-project/sglang (777), vllm-project/vllm (1,069), flashinfer-ai/flashinfer (779), pytorch/pytorch (75), deepseek-ai/DeepGEMM (27), NVIDIA/TensorRT-LLM (180), Dao-AILab/flash-attention (146), NVIDIA/cccl (228), tile-ai/tilelang (195), triton-lang/triton (57), Dao-AILab/quack (49), HazyResearch/ThunderKittens (13), deepseek-ai/TileKernels (1) — Jan 2024 – May 16 2026
-- **52 synthesized wiki pages** — hardware features, techniques, kernel case studies, problem patterns, DSL guides, migration guides
-- **26 blog/community summaries**, **17 doc/reference summaries**, **7 competition pages** (GPU Mode NVFP4 hackathon, FlashInfer MLSys 2026)
-- **3,660 PR evidence bundles** under `evidence/pull-bundles/`, plus supporting blog, contest, and kernel-case capsules under `evidence/` — pinned to upstream SHAs via `ORIGIN.yaml`
-- **6 auto-generated cross-reference indices** — by problem / technique / hardware feature / repo / kernel type / language
-- **14 candidate ledgers** tracking 3,656 active merged PR candidates with include/defer decisions only; dropped PRs are not retained as rows
-- **Actual-diff relevance audit** — [`data/pr-diff-relevance-audit.yaml`](data/pr-diff-relevance-audit.yaml) keeps only aggregate counts for the 2026-05-16 diff audit; per-PR dropped details are intentionally not recorded.
-- **PR-driven legacy import records** — [`data/repo-catalog.yaml`](data/repo-catalog.yaml), [`data/legacy-pr-seeds.yaml`](data/legacy-pr-seeds.yaml), [`data/open-pr-watchlist.yaml`](data/open-pr-watchlist.yaml), and [`references/legacy-import-notes.md`](references/legacy-import-notes.md)
-- **Hybrid version-claim registry** ([`data/version-claims.yaml`](data/version-claims.yaml)) — per-page `version_sensitive: <id>` pointers + central registry, validated for bidirectional consistency
+- **3,660 PR pages** under `sources/prs/` for the major kernel frameworks
+  (SGLang, vLLM, TensorRT-LLM, PyTorch, FlashAttention, FlashInfer,
+  CUTLASS/CuTe, CCCL, Triton, DeepGEMM, ThunderKittens, TileLang, QuACK,
+  DeepSeek TileKernels).
+- **3,660 PR evidence bundles** under `evidence/pull-bundles/`
+- **14 candidate ledgers** under `candidates/`
+- **External source map** in `index.json`; this is a repo/topic map for live
+  research over the **complementary** code repositories that are not in the
+  PR corpus (NVIDIA developer samples, Colfax research kernels, simveit
+  micro-tutorials). It is not a local evidence index.
+- PR ingestion, materialization, metadata sync, search, source-map clone/search,
+  fetch, and validation scripts under `scripts/`
+- PR corpus metadata under `data/`
 
-## Query Tools
+Each PR page points at its evidence bundle via `artifact_dir`. Each bundle
+contains `review.diff`, `upstream.json`, `ORIGIN.yaml`, and `source-snapshot/`.
 
-All tools run from the skill root, no env var needed.
+## Three Peer Routes
 
-| Tool | Purpose |
-|---|---|
-| `scripts/query.py` | Unified search across 3,762 indexed IDs (keywords + filters + alias-aware) |
-| `scripts/get_page.py` | Fetch any page by `id` or path; `--follow-sources` expands cited sources |
-| `scripts/grep_wiki.py` | Regex text search across wiki bodies and PR pages |
-| `scripts/fetch-pr-evidence.py` | Materialize PR `review.diff`, metadata, provenance, and key changed files from candidate ledgers |
-| `scripts/materialize-source-prs.py` | Ensure every `sources/prs/**/PR-*.md` page has a matching PR evidence bundle |
+The agent picks any route, or combines them. The three routes cover
+non-overlapping evidence; none is a fallback for the others.
 
-Examples:
+### Route A: Local PR Diffs
+
+The PR route uses local PR pages and materialized PR diffs for the major
+kernel frameworks.
 
 ```bash
-python3 scripts/query.py "ping-pong attention" --limit 5
-python3 scripts/query.py --tag UMMA --type hardware --compact          # alias → tcgen05
-python3 scripts/query.py --architecture B200 --type kernel             # alias → sm100
-python3 scripts/get_page.py kernel-flash-attention-4 --follow-sources
-python3 scripts/grep_wiki.py "tcgen05\\.fence" --only wiki
+python3 scripts/query.py "<keywords>" [--repo owner/name] [--tag tag] [--architecture sm100] [--language cute-dsl] [--kernel-type attention] --compact
+python3 scripts/search-pr-diffs.py <term1> <term2> [--any]
 ```
 
-## Companion Docs
+Then fetch a result:
 
-- [`SKILL.md`](SKILL.md) — Skill entry point: when to engage, 5 navigation paths, output contract.
-- [`references/primer.md`](references/primer.md) — Topic map: hardware features, techniques, kernels, symptoms → canonical page IDs.
-- [`references/schema.md`](references/schema.md) — Frontmatter schema, confidence rules, reproducibility ladder, controlled vocabulary, canonical aliases.
-- [`references/examples.md`](references/examples.md) — 10 worked query patterns (user question → command sequence → synthesis).
-- [`references/legacy-import-notes.md`](references/legacy-import-notes.md) — What was imported from the old references and what remains outside the PR-diff corpus.
-- [`CLAUDE.md`](CLAUDE.md) — Extended schema + navigation reference for Claude Code.
-- [`index.md`](index.md) — Human-facing curated top-level index.
+```bash
+python3 scripts/get_page.py pr-flash-attention-1940
+```
 
-## Architecture
+Open the bundle named by `artifact_dir` when implementation details matter:
 
-Three layers:
+```bash
+less evidence/pull-bundles/flash-attention/gh-1940/review.diff
+find evidence/pull-bundles/flash-attention/gh-1940/source-snapshot -type f
+```
 
-1. **`sources/`** — Raw data. Immutable summaries of PRs, blogs, docs, contests.
-2. **`wiki/`** — Synthesized knowledge pages. Cross-referenced by `id`. All have YAML frontmatter.
-3. **`queries/`** — Auto-generated cross-reference indices. Do not edit manually; regenerate via `scripts/generate-indices.py`.
+### Route B: External Source Map
 
-Supporting files:
-- `data/schemas.yaml` — Required/optional fields per page type
-- `data/tags.yaml` — Controlled vocabulary (80+ tags)
-- `data/aliases.yaml` — Canonical → synonym mappings
-- `data/version-claims.yaml` — Central registry for version-sensitive claims (DEC-1 hybrid)
-- `data/tool-versions.yaml` — Snapshot of tracked tool releases (Triton, CUTLASS, CUDA, PTX, …)
-- `data/refresh-cutoff.yaml` — Single source of truth for the knowledge cutoff date
-- `data/repo-catalog.yaml` — PR-driven repo catalog imported from the old index, with kernel paths and scan modes
-- `data/legacy-pr-seeds.yaml` — Curated merged PR seeds imported from old PR notes
-- `data/open-pr-watchlist.yaml` — Open PRs kept as watchlist only, not materialized evidence
-- `candidates/` — Reviewed PR candidate ledgers (per repo)
-- `evidence/` — Verbatim / extracted / derived evidence bundles, each with `ORIGIN.yaml`
+`index.json` lists the complementary code repositories that Route A's PR
+corpus does not cover — NVIDIA developer code samples, Colfax research
+kernels, and simveit micro-tutorials. It is a repo/topic map for live
+research, not a local evidence index, and is not searched by
+`scripts/query.py`.
 
-## Maintenance Tooling
+Use Route B when the question is about a supporting technique
+(TMA/swizzle/pipelining/stream-K/persistent kernels/transposes/block-scaled
+NVFP4 plumbing) that the PR diffs alone do not fully explain.
 
-| Script | Purpose |
-|---|---|
-| `scripts/validate.py` | Validate YAML frontmatter, enforce schema, check link and evidence-bundle integrity |
-| `scripts/generate-indices.py` | Regenerate `queries/*.md` from frontmatter |
-| `scripts/generate-pr-pages.py` | Batch-generate source PR pages from candidate ledgers |
-| `scripts/expand-pr-corpus.py` | Import old PR seeds and run GitHub merged-PR search over the repo catalog |
-| `scripts/sync-pr-evidence-metadata.py` | Backfill source-page metadata from `upstream.json` and prune out-of-window PRs |
+Two-step workflow: clone the referenced repos, then grep across the cloned
+tree. `search-index-repos.py` errors out if any referenced repo is still
+missing, so the clone step is the only gate.
+
+```bash
+python3 scripts/clone-index-repos.py
+python3 scripts/search-index-repos.py <term1> <term2> <term3>
+```
+
+Keep the current kernel context (operator, dtype, architecture, framework) in
+the search terms so the matches stay meaningful.
+
+### Route C: Live Web / Official / Upstream
+
+Use live web search, official docs, GitHub PR pages, and upstream repository
+search as a peer evidence route. Prefer official docs and upstream source code
+over blogs or snippets when implementation details matter.
+
+## Shared Example
+
+For `FlashAttention SM100 SplitKV`, the three routes contribute different
+evidence:
+
+```bash
+python3 scripts/query.py "flash attention sm100 splitkv" --compact --limit 50
+python3 scripts/search-pr-diffs.py SplitKV Sm100 --any --limit 200
+python3 scripts/get_page.py pr-flash-attention-1940
+```
+
+```bash
+python3 scripts/clone-index-repos.py
+python3 scripts/search-index-repos.py tma swizzle transpose
+python3 scripts/search-index-repos.py stream-k persistent block-scaled
+```
+
+Useful live searches:
+
+```text
+FlashAttention Sm100 SplitKV PR
+Dao-AILab flash-attention flash_fwd_sm100 SplitKV
+CUTLASS Blackwell FMHA SplitKV Sm100
+```
+
+## Maintenance
 
 ```bash
 pip install -r requirements.txt
-python3 scripts/validate.py            # reports 3762 ids / 3660 PR bundles / 14 ledgers, 0 errors
-python3 scripts/generate-indices.py    # regenerate query indices
+python3 scripts/validate.py
 ```
 
-## Quality Gates (knowledge cutoff: 2026-05-16)
+Useful PR-corpus tooling:
 
-- 3,768 markdown/index pages, 3,762 IDs, 0 validation errors
-- 3,660 PR evidence bundles validated, with 3,660 complete source-page-matched bundles
-- 14 candidate ledgers normalized
-- 0 broken links across all internal references
-- All `verified` wiki pages have official-doc + upstream-code evidence (enforced by `evidence_basis` field)
-- All technique/kernel/language pages have compilable code snippets (`reproducibility >= snippet`)
-- All Hopper-inclusive pages explain their `blackwell_relevance`
-- Version-sensitive claims (Triton 3.6, CUTLASS 4.5, etc.) carry `version_sensitive: <id>` pointers resolving to the central registry
+- `scripts/expand-pr-corpus.py`
+- `scripts/generate-pr-pages.py`
+- `scripts/fetch-pr-evidence.py`
+- `scripts/materialize-source-prs.py`
+- `scripts/sync-pr-evidence-metadata.py`
+
+## Layout
+
+```text
+knowledge/
+|-- SKILL.md
+|-- README.md
+|-- CLAUDE.md
+|-- requirements.txt
+|-- scripts/
+|   |-- query.py
+|   |-- search-pr-diffs.py
+|   |-- get_page.py
+|   |-- validate.py
+|   |-- fetch-pr-evidence.py
+|   |-- generate-pr-pages.py
+|   |-- materialize-source-prs.py
+|   |-- expand-pr-corpus.py
+|   |-- sync-pr-evidence-metadata.py
+|   |-- clone-index-repos.py
+|   `-- search-index-repos.py
+|-- sources/
+|   `-- prs/
+|-- evidence/
+|   `-- pull-bundles/
+|-- candidates/
+|-- index.json
+`-- data/
+```
 
 ## Scope Rules
 
-- **Blackwell-first** — SM100 content is primary. SM90 requires explicit `blackwell_relevance` field.
-- **PR-diff first** — Merged upstream PR diff + source snapshot is the primary evidence shape. Old source guides and vendored docs can seed repo selection, but they are not primary knowledge.
-- **Kernel-only** — No distributed-system topics unless a merged PR directly changes CUDA/Triton/CuTe/CUTLASS kernel code or kernel benchmarks.
-- **English canonical** — All content in English.
-- **First-class DSLs** — CuTe DSL, CUDA C++, PTX, Triton. TileLang / cuTile / JAX-Pallas mentioned but no dedicated guides.
-
-## Repository Layout
-
-```
-kernel-pilot/knowledge/
-├── SKILL.md                           # Skill entry point
-├── README.md                          # This file
-├── CLAUDE.md                          # Extended navigation + schema reference
-├── index.md                           # Curated top-level index
-├── requirements.txt                   # PyYAML
-│
-├── scripts/                           # Query tools + maintenance tooling
-│   ├── query.py                       # Unified search
-│   ├── get_page.py                    # Page fetcher
-│   ├── grep_wiki.py                   # Regex search
-│   ├── _wiki_root.py                  # Shared root resolver
-│   ├── validate.py                    # Schema validator
-│   ├── generate-indices.py            # Query-index generator
-│   ├── generate-pr-pages.py           # Batch PR page generator
-│   ├── expand-pr-corpus.py            # Repo catalog + PR search expansion
-│   └── sync-pr-evidence-metadata.py   # Source-page metadata backfill
-│
-├── references/                        # Skill knowledge layer
-│   ├── primer.md                      # Topic map
-│   ├── schema.md                      # Condensed schema reference
-│   ├── examples.md                    # 10 worked query patterns
-│   └── legacy-import-notes.md         # Old-reference import policy
-│
-├── data/                              # Schema + vocabulary
-│   ├── schemas.yaml
-│   ├── tags.yaml
-│   ├── aliases.yaml
-│   ├── repo-catalog.yaml
-│   ├── legacy-pr-seeds.yaml
-│   └── open-pr-watchlist.yaml
-│
-├── candidates/                        # Reviewed PR ledgers (ingestion source of truth)
-│   ├── cutlass.yaml
-│   ├── sglang.yaml
-│   ├── vllm.yaml
-│   ├── flashinfer.yaml
-│   ├── pytorch.yaml
-│   ├── deepgemm.yaml
-│   ├── tensorrt-llm.yaml
-│   ├── flash-attention.yaml
-│   ├── cccl-cub.yaml
-│   ├── tilelang.yaml
-│   ├── triton.yaml
-│   ├── quack.yaml
-│   ├── thunderkittens.yaml
-│   └── tilekernels.yaml
-│
-├── sources/                           # Layer 1: raw data
-│   ├── prs/{repo}/PR-{N}.md
-│   ├── contests/{contest}/
-│   ├── docs/
-│   └── blogs/
-│
-├── wiki/                              # Layer 2: synthesized knowledge
-│   ├── hardware/
-│   ├── techniques/
-│   ├── kernels/
-│   ├── patterns/
-│   ├── languages/
-│   └── migration/
-│
-└── queries/                           # Layer 3: auto-generated indices
-    ├── by-problem.md
-    ├── by-technique.md
-    ├── by-hardware-feature.md
-    ├── by-repo.md
-    ├── by-kernel-type.md
-    └── by-language.md
-```
-
-## License
-
-Summaries and wiki syntheses in this repository are derivative works citing upstream PRs, blogs, and docs. The tooling (`scripts/`, `references/`, `data/`) is MIT-style; see individual files for any exceptions.
+- Local synthesized explanations (wiki, doc, blog, contest, pseudocode,
+  topic-index) are deliberately excluded; evidence comes from PR pages, cloned
+  upstream source, or live upstream/official material.
+- Route B searches run after `clone-index-repos.py` finishes the full set; the
+  script enforces this.
+- Live official docs, upstream source, and web searches stay first-class
+  alongside the cached PR corpus rather than being demoted to a fallback.

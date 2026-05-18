@@ -1,0 +1,235 @@
+{
+  "schema_version": 1,
+  "description": "Complementary kernel knowledge map for Humanize-driven GPU kernel optimization. Lists code repositories that have no curated PR diffs in the local Route A corpus (NVIDIA developer samples, Colfax research kernels, simveit micro-tutorials); each framework entry points to upstream repos, kernel directories, and source guides. Topic entries map kernel topics to per-framework references for live clone/grep workflows. Frameworks already covered by Route A PR bundles (SGLang, vLLM, TensorRT-LLM, PyTorch, FlashAttention, FlashInfer, CUTLASS/CuTe, CCCL, Triton, DeepGEMM, ThunderKittens, TileLang, QuACK, DeepSeek TileKernels) are intentionally excluded.",
+  "frameworks": [
+    {
+      "id": "nvidia-code-samples",
+      "name": "NVIDIA Developer Code Samples",
+      "repo": "NVIDIA-developer-blog/code-samples",
+      "url": "https://github.com/NVIDIA-developer-blog/code-samples",
+      "kernel_paths": [
+        "posts",
+        "Samples",
+        "src",
+        "README.md"
+      ],
+      "tags": [
+        "cuda-samples",
+        "gemm",
+        "transpose",
+        "coalescing",
+        "shared-memory",
+        "bank-conflicts",
+        "reduction",
+        "occupancy"
+      ]
+    },
+    {
+      "id": "simveit-effective-transpose",
+      "name": "simveit effective_transpose",
+      "repo": "simveit/effective_transpose",
+      "url": "https://github.com/simveit/effective_transpose",
+      "kernel_paths": [
+        ".",
+        "src",
+        "examples",
+        "README.md"
+      ],
+      "tags": [
+        "cute-dsl",
+        "quack",
+        "gemm",
+        "tma",
+        "wgmma",
+        "swizzle",
+        "transpose",
+        "rmsnorm",
+        "block-scaled",
+        "nvfp4",
+        "gdn",
+        "hopper",
+        "blackwell"
+      ]
+    },
+    {
+      "id": "simveit-load-and-store",
+      "name": "simveit load_and_store",
+      "repo": "simveit/load_and_store",
+      "url": "https://github.com/simveit/load_and_store",
+      "kernel_paths": [
+        ".",
+        "src",
+        "examples",
+        "README.md"
+      ],
+      "tags": [
+        "cute-dsl",
+        "load-store",
+        "gemm",
+        "tma",
+        "wgmma",
+        "shared-memory",
+        "hopper",
+        "blackwell"
+      ]
+    },
+    {
+      "id": "colfax-article-src",
+      "name": "Colfax article source kernels",
+      "repo": "ColfaxResearch/cfx-article-src",
+      "url": "https://github.com/ColfaxResearch/cfx-article-src",
+      "kernel_paths": [
+        "tma",
+        "pipeline-gemm",
+        "streamk",
+        "transpose-cute",
+        "cutlass_gemm"
+      ],
+      "tags": [
+        "cutlass",
+        "cute",
+        "cute-dsl",
+        "gemm",
+        "attention",
+        "tma",
+        "wgmma",
+        "stream-k",
+        "persistent",
+        "transpose",
+        "block-scaled",
+        "blackwell",
+        "hopper"
+      ]
+    },
+    {
+      "id": "colfax-cutlass-kernels",
+      "name": "Colfax CUTLASS kernels",
+      "repo": "ColfaxResearch/cutlass-kernels",
+      "url": "https://github.com/ColfaxResearch/cutlass-kernels",
+      "kernel_paths": [
+        "src",
+        "lib/gemm",
+        "include",
+        "examples",
+        "README.md"
+      ],
+      "tags": [
+        "cutlass",
+        "cute",
+        "gemm",
+        "tma",
+        "wgmma",
+        "stream-k",
+        "persistent",
+        "blackwell",
+        "hopper"
+      ]
+    }
+  ],
+  "topics": [
+    {
+      "id": "attention",
+      "name": "Attention / FMHA / Paged",
+      "applies_to": [
+        "simveit-effective-transpose",
+        "simveit-load-and-store",
+        "colfax-article-src",
+        "colfax-cutlass-kernels"
+      ],
+      "tags": [
+        "attention",
+        "fmha",
+        "paged",
+        "kv-cache",
+        "softmax",
+        "online"
+      ]
+    },
+    {
+      "id": "matmul-gemm",
+      "name": "GEMM / Tensor-Core matmul",
+      "applies_to": [
+        "nvidia-code-samples",
+        "simveit-effective-transpose",
+        "simveit-load-and-store",
+        "colfax-article-src",
+        "colfax-cutlass-kernels"
+      ],
+      "tags": [
+        "gemm",
+        "matmul",
+        "tensor-core",
+        "wgmma",
+        "tma",
+        "epilogue"
+      ]
+    },
+    {
+      "id": "moe",
+      "name": "Mixture of Experts",
+      "applies_to": [
+        "simveit-effective-transpose",
+        "simveit-load-and-store",
+        "colfax-article-src",
+        "colfax-cutlass-kernels"
+      ],
+      "tags": [
+        "moe",
+        "fused-moe",
+        "grouped-gemm",
+        "align-block-size",
+        "top-k",
+        "permute"
+      ]
+    },
+    {
+      "id": "normalization",
+      "name": "RMSNorm / LayerNorm fused norms",
+      "applies_to": [
+        "nvidia-code-samples",
+        "simveit-effective-transpose"
+      ],
+      "tags": [
+        "rmsnorm",
+        "layernorm",
+        "fused-add-norm",
+        "qk-norm",
+        "qknorm"
+      ]
+    },
+    {
+      "id": "activation-fusion",
+      "name": "Activation / element-wise fusion",
+      "applies_to": [
+        "simveit-effective-transpose"
+      ],
+      "tags": [
+        "silu",
+        "gelu",
+        "swiglu",
+        "fused-add",
+        "fused-residual"
+      ]
+    },
+    {
+      "id": "quantization-fp8",
+      "name": "FP8 / FP4 / INT8 quantization",
+      "applies_to": [
+        "simveit-effective-transpose",
+        "simveit-load-and-store",
+        "colfax-article-src",
+        "colfax-cutlass-kernels"
+      ],
+      "tags": [
+        "fp8",
+        "fp4",
+        "int8",
+        "awq",
+        "gptq",
+        "block-scaled",
+        "per-tensor",
+        "per-channel"
+      ]
+    }
+  ]
+}
