@@ -171,8 +171,27 @@ benchmarks/performance-map.json
 profile-artifacts/README.md
 ```
 
-The plan file may stay gitignored under `.humanize/` so RLCR can start without
-tracking local loop state.
+Before the first scaffold commit, `.gitignore` must protect local Humanize loop
+state:
+
+```gitignore
+.humanize*
+```
+
+The refined plan file must remain present on disk but untracked unless the loop
+is intentionally started with `--track-plan-file`. For the default startup
+command below, verify this before RLCR setup:
+
+```bash
+git check-ignore .humanize/kernel-agent/refined-plan.md
+if git ls-files --error-unmatch .humanize/kernel-agent/refined-plan.md >/dev/null 2>&1; then
+  git rm --cached .humanize/kernel-agent/refined-plan.md
+fi
+```
+
+Commit `.gitignore` and the standalone scaffold, not `.humanize/` loop state.
+This matches the `setup-rlcr-loop.sh` gate: without `--track-plan-file`, a
+tracked `.humanize/kernel-agent/refined-plan.md` is rejected.
 
 ## Knowledge Evidence
 
