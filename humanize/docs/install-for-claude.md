@@ -16,12 +16,26 @@ skill:
 git clone https://github.com/BBuf/kernel-pilot.git
 cd kernel-pilot
 
-claude plugin marketplace add .
+humanize/scripts/install-skills-claude.sh
+```
+
+The installer performs the marketplace install, links `kernel-knowledge`,
+installs the query dependency, hydrates Claude Code's installed skill cache with
+absolute `HUMANIZE_RUNTIME_ROOT` and `KERNELPILOT_ROOT` paths, and fails if
+either placeholder remains. Use the wrapper after manual plugin updates too,
+because Claude Code does not hydrate `SKILL.md` placeholders during
+`plugin install`.
+
+Manual equivalent:
+
+```bash
+claude plugin marketplace add ./
 claude plugin install humanize@KernelPilot
 
 mkdir -p ~/.claude/skills
 ln -s "$PWD/knowledge" ~/.claude/skills/kernel-knowledge
 python3 -m pip install -r knowledge/requirements.txt
+humanize/scripts/install-skills-claude.sh --skip-pip
 ```
 
 Restart Claude Code after installing. If you prefer to run the marketplace

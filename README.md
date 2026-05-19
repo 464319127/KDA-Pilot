@@ -227,19 +227,15 @@ git clone https://github.com/BBuf/kernel-pilot.git
 cd kernel-pilot
 
 # Add the KernelPilot marketplace and install its Humanize plugin.
-claude plugin marketplace add .
-claude plugin install humanize@KernelPilot
-
-# Make the PR-diff knowledge base available as a Claude Code skill.
-mkdir -p ~/.claude/skills
-ln -s "$PWD/knowledge" ~/.claude/skills/kernel-knowledge
-
-# Install the knowledge query dependency.
-python3 -m pip install -r knowledge/requirements.txt
+humanize/scripts/install-skills-claude.sh
 ```
 
-Restart Claude Code after installing, then confirm the plugin and skills are
-visible:
+The installer adds the KernelPilot marketplace, installs
+`humanize@KernelPilot`, exposes `knowledge/` as the `kernel-knowledge` skill,
+installs the knowledge query dependency, hydrates Claude Code's installed skill
+cache with absolute `HUMANIZE_RUNTIME_ROOT` and `KERNELPILOT_ROOT` paths, and
+fails if those placeholders remain. Restart Claude Code after installing, then
+confirm the plugin and skills are visible:
 
 ```bash
 claude plugin list

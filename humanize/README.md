@@ -33,12 +33,7 @@ From the KernelPilot repository root:
 ```bash
 git clone https://github.com/BBuf/kernel-pilot.git
 cd kernel-pilot
-claude plugin marketplace add .
-claude plugin install humanize@KernelPilot
-
-mkdir -p ~/.claude/skills
-ln -s "$PWD/knowledge" ~/.claude/skills/kernel-knowledge
-python3 -m pip install -r knowledge/requirements.txt
+humanize/scripts/install-skills-claude.sh
 ```
 
 Requires [codex CLI](https://github.com/openai/codex) for review. See the full [Installation Guide](docs/install-for-claude.md) for prerequisites, one-session `--plugin-dir` usage, upstream Humanize-only installation, and alternative setup options.
