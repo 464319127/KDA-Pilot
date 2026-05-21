@@ -1,0 +1,1 @@
+- 2026-04-13 `HaiShaw` commented: Please check dtype at inbound as well. @kkHuang-amd pls have a review. (https://github.com/sgl-project/sglang/pull/22626#pullrequestreview-4101532760)

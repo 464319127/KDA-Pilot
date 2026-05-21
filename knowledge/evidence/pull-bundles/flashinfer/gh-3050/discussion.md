@@ -1,0 +1,1 @@
+- 2026-04-14 `bobboli` on `tests/attention/test_fmha_v2_prefill.py`:785: Can we add pytest.skip in the function body instead of commenting out test cases, which is easy to get ignored when re-enabling tests in the future? (https://github.com/flashinfer-ai/flashinfer/pull/3050#discussion_r3081275022)

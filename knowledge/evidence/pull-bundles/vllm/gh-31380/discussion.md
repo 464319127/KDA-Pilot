@@ -1,0 +1,2 @@
+- 2025-12-29 `tjtanaa`: @vllmellm Please check, the changes are affecting the AMD CI. (https://github.com/vllm-project/vllm/pull/31380#issuecomment-3695893599)
+- 2026-01-06 `tjtanaa` on `vllm/attention/ops/prefix_prefill.py`:839: @vllmellm will this affect the performance? BLOCK M has been changed from 128 to 32 and BLOCK N has been changed from 64 to 32 (https://github.com/vllm-project/vllm/pull/31380#discussion_r2663644879)

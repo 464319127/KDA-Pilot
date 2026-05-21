@@ -1,0 +1,2 @@
+- 2025-12-12 `mgoin` approved: Exciting performance gains! Thank you very much for the clear root cause analysis, profiles, and accuracy tests validating the change. LGTM One specific comparison I'd like to see is marlin vs triton-kernels at bs=1 (or a range of small batch sizes, like ... (https://github.com/vllm-project/vllm/pull/30528#pullrequestreview-3570157059)
+- 2025-12-12 `xyang16`: @mgoin Thanks for review! Below is the benchmark of marlin vs triton-kernels at bs=1: Marlin: Triton: (https://github.com/vllm-project/vllm/pull/30528#issuecomment-3647247572)

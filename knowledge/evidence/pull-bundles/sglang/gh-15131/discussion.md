@@ -1,0 +1,2 @@
+- 2025-12-15 `b8zhong` commented: You can just do an inline check, instead of a seperate function (https://github.com/sgl-project/sglang/pull/15131#pullrequestreview-3576011486)
+- 2025-12-15 `baonudesifeizhai`: also work after change back to inline (https://github.com/sgl-project/sglang/pull/15131#issuecomment-3652668036)

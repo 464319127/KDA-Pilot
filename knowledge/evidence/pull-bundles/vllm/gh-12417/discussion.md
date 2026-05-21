@@ -1,0 +1,2 @@
+- 2025-01-24 `mgoin` on `vllm/model_executor/layers/quantization/compressed_tensors/compressed_tensors.py`:402: I think this function is called per layer, so we might want warning once (https://github.com/vllm-project/vllm/pull/12417#discussion_r1929225856)
+- 2025-01-24 `dsikka`: I think the ct tests for 2:4 were skipped at some point in which case we at least should run them locally if we havent already (https://github.com/vllm-project/vllm/pull/12417#issuecomment-2613488340)

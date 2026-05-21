@@ -1,0 +1,4 @@
+- 2025-10-09 `bradleyhd`: can confirm this unblocks our internal AMD pipeline, thanks @Lucaskabela ! (https://github.com/vllm-project/vllm/pull/26535#issuecomment-3387511608)
+- 2025-10-09 `zou3519` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:363: Is it possible to add a test somehow? I don't know how vLLM CI runs amd tests (https://github.com/vllm-project/vllm/pull/26535#discussion_r2418014488)
+- 2025-10-09 `zou3519`: If someone has an idea for how to write a test for this please shout (I'm not very good with how AMD works in vLLM CI), otherwise this is pretty self contained and we verified that it fixes a compile regression (https://github.com/vllm-project/vllm/pull/26535#issuecomment-3387592781)
+- 2025-10-09 `ProExpertProg` approved: Sorry we missed this initially, thanks for fixing! AMD testing is in pretty poor state cc @Alexei-V-Ivanov-AMD @gshtras (https://github.com/vllm-project/vllm/pull/26535#pullrequestreview-3320796015)

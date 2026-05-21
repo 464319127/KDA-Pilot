@@ -1,0 +1,2 @@
+- 2026-02-15 `b8zhong` approved: @mmangkad Thanks! Could you help show the perf is the same? As I believe the permute logics was for better kernel efficiency (https://github.com/sgl-project/sglang/pull/18858#pullrequestreview-3805284132)
+- 2026-02-15 `mmangkad`: @b8zhong as expected, this only optimizes weight loading and doesn't affect inference kernels - the final weight layout is identical. Before: After: (https://github.com/sgl-project/sglang/pull/18858#issuecomment-3905002126)

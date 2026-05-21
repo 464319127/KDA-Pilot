@@ -1,0 +1,2 @@
+- 2025-10-07 `bkryu` changes_requested: Thanks @Edenzzzz for fixing the broken benchmark. The groupwise gemm seems to have been broken since The TFLOPs/s addition to tgv gemms lgtm. Looks good except for the pre-commit failure. Can you install & run pre-commit, and update the PR? (https://github.com/flashinfer-ai/flashinfer/pull/1883#pullrequestreview-3312258901)
+- 2025-10-08 `bkryu`: @Edenzzzz, to address the CI failures, you I suggest you try rebasing your branch or merging from main. (https://github.com/flashinfer-ai/flashinfer/pull/1883#issuecomment-3379572503)

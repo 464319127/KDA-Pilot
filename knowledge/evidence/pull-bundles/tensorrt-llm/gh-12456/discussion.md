@@ -1,0 +1,1 @@
+- 2026-03-23 `tensorrt-cicd`: [PR Github 39932]( [ run ] completed with state SUCCESS. Commit: 4dd96d8 [/LLM/main/L0 MergeRequest PR pipeline 31098]( completed with status: 'SUCCESS' Pipeline passed with automatic retried tests. Check the [rerun report]( for details. [CI Report]( [Link to invocation]( (https://github.com/NVIDIA/TensorRT-LLM/pull/12456#issuecomment-4112726161)

@@ -1,0 +1,1 @@
+- 2025-02-25 `mgoin`: Manual peak measurement shows 15% reduction in memory for fused moe for 64k prefill main: This PR: (https://github.com/vllm-project/vllm/pull/13625#issuecomment-2682704980)

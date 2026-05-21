@@ -1,0 +1,1 @@
+- 2025-07-22 `yzh119` commented: Great work, I encourage renaming it to threadblock id or cta id instead as there are cases that there are more than one cta in the same sm. Ignore my comments, you were using ptx instruction to fetch sm id, which looks ... (https://github.com/flashinfer-ai/flashinfer/pull/1305#pullrequestreview-3045135057)

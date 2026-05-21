@@ -1,0 +1,1 @@
+- 2025-12-12 `yewentao256` on `csrc/moe/grouped_topk_kernels.cu`:683: Let's see CI's batch invariant tests (https://github.com/vllm-project/vllm/pull/30562#discussion_r2615134413)

@@ -1,0 +1,1 @@
+- 2024-05-16 `benjaminfspector` approved: We'll probably want to add in base ops support for fp16 sooner rather than later, but I don't think it's a blocker for this, and I appreciate the contribution! LGTM. (https://github.com/HazyResearch/ThunderKittens/pull/28#pullrequestreview-2061741796)

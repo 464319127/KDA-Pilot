@@ -1,0 +1,1 @@
+- 2025-12-29 `johnnynunez`: Thor has the same structure as Blackwell, so it has 512 cols (https://github.com/Dao-AILab/flash-attention/pull/2108#issuecomment-3697620164)

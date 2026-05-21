@@ -1,0 +1,1 @@
+- 2025-10-07 `yzh119` approved: Looks good, and thanks for the update! I changes to title to Tune kernel compilation parameters instead of autotuner because we haven't "auto" tuned any parameters yet :) (https://github.com/flashinfer-ai/flashinfer/pull/1878#pullrequestreview-3307952797)

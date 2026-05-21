@@ -1,0 +1,1 @@
+- 2025-07-08 `yzh119` approved: Hi @chenyang78 thanks for the contribution, and yes this is something we should support in flashinfer. Do you have plan to support vector cast from uint8 to fp16/bf16 like in (not necessarily in this PR): (https://github.com/flashinfer-ai/flashinfer/pull/1234#pullrequestreview-2998485575)

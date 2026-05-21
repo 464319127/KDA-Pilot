@@ -1,0 +1,5 @@
+- 2025-08-21 `yzh119` on `flashinfer/gemm.py`:74: Consider calling instead, which cached this value and should be more efficient. We observe significant CPU side overhead of the cuda runtime api to query device properties, see 1425 and 1456 (https://github.com/flashinfer-ai/flashinfer/pull/1535#discussion_r2291859085)
+- 2025-08-21 `yzh119` on `flashinfer/gemm.py`:74: I would encourage adding another device argument to this function. (https://github.com/flashinfer-ai/flashinfer/pull/1535#discussion_r2292142729)
+- 2025-08-21 `yzh119` on `flashinfer/gemm.py`:75: Get compute capability of the given device. (https://github.com/flashinfer-ai/flashinfer/pull/1535#discussion_r2292143579)
+- 2025-08-21 `yzh119` on `flashinfer/gemm.py`:444: Pass a's device to this functions (https://github.com/flashinfer-ai/flashinfer/pull/1535#discussion_r2292144127)
+- 2025-08-21 `ttyio` on `flashinfer/gemm.py`:444: Ah, make sense, thanks for the catch! (https://github.com/flashinfer-ai/flashinfer/pull/1535#discussion_r2292202757)

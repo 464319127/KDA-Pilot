@@ -1,0 +1,1 @@
+- 2025-06-18 `tjtanaa`: @houseroad The PR has been merged. Could we try to proceed with this PR to make fixes so that AITER fused moe kernel could run with this new AITER commit? (https://github.com/vllm-project/vllm/pull/18990#issuecomment-2984910701)

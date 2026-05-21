@@ -1,0 +1,3 @@
+- 2026-02-10 `ispobock` on `sgl-kernel/csrc/ngram_embedding/ngram_embedding.cu`:1: Could you move these kernel update to ? (https://github.com/sgl-project/sglang/pull/17838#discussion_r2787617931)
+- 2026-02-10 `ispobock` on `sgl-kernel/csrc/ngram_embedding/ngram_embedding.cu`:101: Could you use English comments? (https://github.com/sgl-project/sglang/pull/17838#discussion_r2787620793)
+- 2026-02-28 `vincentzed`: Hi, I rebase on main here, and also plan to test sm100 support. (https://github.com/sgl-project/sglang/pull/17838#issuecomment-3975986827)

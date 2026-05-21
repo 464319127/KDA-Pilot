@@ -1,0 +1,3 @@
+- 2025-12-08 `yewentao256` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:275: For the packed version, it is required to be e8m0 (https://github.com/vllm-project/vllm/pull/30267#discussion_r2599218946)
+- 2025-12-08 `yewentao256` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:272: I am curious of this, E8M0 should be default on Hopper as well, do you set this off or something else broken? (https://github.com/vllm-project/vllm/pull/30267#discussion_r2599333950)
+- 2025-12-08 `zhewenl` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:272: Yes, let me update the change (https://github.com/vllm-project/vllm/pull/30267#discussion_r2599389725)

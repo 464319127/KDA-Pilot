@@ -1,0 +1,3 @@
+- 2026-02-03 `bkryu` on `benchmarks/routines/moe.py`:291: Gemini's suggestion here indeed looks cleaner. Do you mind reflecting this? (https://github.com/flashinfer-ai/flashinfer/pull/2476#discussion_r2759966374)
+- 2026-02-03 `bkryu` commented: Thanks @hypdeb for the quick fix. Left one comment Gemini's comment. Otherwise, this should be good to go (https://github.com/flashinfer-ai/flashinfer/pull/2476#pullrequestreview-3746308648)
+- 2026-02-03 `jdebache` on `benchmarks/routines/moe.py`:291: I applied it to the three branches. (https://github.com/flashinfer-ai/flashinfer/pull/2476#discussion_r2760117557)

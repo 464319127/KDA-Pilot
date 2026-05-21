@@ -1,0 +1,6 @@
+- 2026-04-15 `fbusato` commented: I guess this doesn't include cuda::std::is same ::value 😒 (https://github.com/NVIDIA/cccl/pull/8456#pullrequestreview-4115445435)
+- 2026-04-15 `Jacobfaib`: I guess this doesn't include cuda::std::is same ::value 😒 8466 (https://github.com/NVIDIA/cccl/pull/8456#issuecomment-4254076155)
+- 2026-04-16 `miscco` on `libcudacxx/include/cuda/std/__tuple_dir/tuple.h`:211: Can we just make the whole block one NOLINTBEGIN? (https://github.com/NVIDIA/cccl/pull/8456#discussion_r3091283866)
+- 2026-04-16 `miscco` on `thrust/testing/is_contiguous_iterator.cu`:88: Nitpick: All those should be cuda::std inside thrust (https://github.com/NVIDIA/cccl/pull/8456#discussion_r3091287406)
+- 2026-04-16 `Jacobfaib` on `thrust/testing/is_contiguous_iterator.cu`:88: I opened 8466 to track this. Once all the standard clang-tidy checks are in I'll start adding custom ones (https://github.com/NVIDIA/cccl/pull/8456#discussion_r3093006783)
+- 2026-04-16 `Jacobfaib` on `libcudacxx/include/cuda/std/__tuple_dir/tuple.h`:211: NOLINT should be as targeted as possible, to avoid silencing legitimate warnings. The only time I have done file-wide or block-wide NOLINTs is for the C headers where any C++ warnings are irrelevant. (https://github.com/NVIDIA/cccl/pull/8456#discussion_r3093013370)

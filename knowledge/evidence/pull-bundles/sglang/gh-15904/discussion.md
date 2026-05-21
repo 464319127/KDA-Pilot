@@ -1,0 +1,2 @@
+- 2026-01-27 `ping1jing2` on `test/srt/ascend/test_ascend_memory_consumption.py‎`:1: As you can see from maybe you should move your test file into test/manual or test/registered (https://github.com/sgl-project/sglang/pull/15904#discussion_r2731448061)
+- 2026-01-27 `OrangeRedeng` on `test/srt/ascend/test_ascend_memory_consumption.py‎`:1: Moved to test/registered (nightly) (https://github.com/sgl-project/sglang/pull/15904#discussion_r2731915528)

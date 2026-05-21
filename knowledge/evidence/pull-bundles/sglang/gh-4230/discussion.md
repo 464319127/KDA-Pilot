@@ -1,0 +1,3 @@
+- 2025-03-09 `zhyncs` on `test/srt/models/test_qwen_models.py`:72: Why lower the threshold? (https://github.com/sgl-project/sglang/pull/4230#discussion_r1986280557)
+- 2025-03-09 `zhyncs` on `test/srt/models/test_qwen_models.py`:72: 0.79 can pass on my dev env (https://github.com/sgl-project/sglang/pull/4230#discussion_r1986280621)
+- 2025-03-09 `merrymercy` on `test/srt/models/test_qwen_models.py`:72: I found it is often flaky (https://github.com/sgl-project/sglang/pull/4230#discussion_r1986280689)

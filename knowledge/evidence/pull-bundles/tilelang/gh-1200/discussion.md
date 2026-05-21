@@ -1,0 +1,1 @@
+- 2025-11-11 `yyttt6`: Benchmarked on an H100 server — observed significant speedups of gemm v2 over gemm v1 in example mha fwd bshd, example mha fwd bshd wgmma pipelined, and example mha fwd bhsd wgmma pipelined, with example mha fwd bshd achieving up to 1.36× ... (https://github.com/tile-ai/tilelang/pull/1200#issuecomment-3516243440)

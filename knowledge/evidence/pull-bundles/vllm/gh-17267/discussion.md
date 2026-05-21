@@ -1,0 +1,1 @@
+- 2025-04-27 `houseroad`: @zhewenl, we will need to update the build script again. Probably it's me, since I will be the oncall. (https://github.com/vllm-project/vllm/pull/17267#issuecomment-2833554954)

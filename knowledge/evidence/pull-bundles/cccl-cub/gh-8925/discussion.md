@@ -1,0 +1,4 @@
+- 2026-05-13 `NaderAlAwar` on `cub/test/catch2_test_device_partition_env.cu`:384: suggestion: use the launch wrapper if possible instead device partition if (https://github.com/NVIDIA/cccl/pull/8925#discussion_r3234738535)
+- 2026-05-13 `bernhardmgruber` on `cub/benchmarks/bench/partition/three_way.cu`:67: Nice. @gevtushenko introduced that originally :D Will fix as a drive-by. (https://github.com/NVIDIA/cccl/pull/8925#discussion_r3236155620)
+- 2026-05-13 `bernhardmgruber` on `cub/cub/device/device_partition.cuh`:302: This seems to be an issue introduced already in 7459. I defer this work to another PR. Here is the tracking issue: 8968 (https://github.com/NVIDIA/cccl/pull/8925#discussion_r3236219423)
+- 2026-05-13 `bernhardmgruber` on `cub/cub/device/device_partition.cuh`:302: I applied the fix now regardless, to get rid of the SASS diffs. (https://github.com/NVIDIA/cccl/pull/8925#discussion_r3236580897)

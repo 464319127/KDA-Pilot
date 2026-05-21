@@ -1,0 +1,2 @@
+- 2025-08-21 `jayhshah`: We don't tune the split heuristic yet, which could be improved. We should also use a persistent tile scheduler for the combine kernel in the case where some batches have much larger seqlen q than the rest so it avoids launching a ... (https://github.com/Dao-AILab/flash-attention/pull/1823#issuecomment-3211468919)
+- 2025-08-22 `jayhshah`: Numbers looking good for causal perf boost: [speeds mqa8.txt]( [speeds gqa8.txt]( [speeds mha.txt]( (https://github.com/Dao-AILab/flash-attention/pull/1823#issuecomment-3212835530)

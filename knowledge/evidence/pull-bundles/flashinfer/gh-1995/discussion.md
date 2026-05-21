@@ -1,0 +1,1 @@
+- 2025-10-28 `bkryu`: I can repro the previously failing unit tests now passing with this PR on B200. Waiting for results from CI bot's pipeline (https://github.com/flashinfer-ai/flashinfer/pull/1995#issuecomment-3457394089)

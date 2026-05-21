@@ -1,0 +1,3 @@
+- 2025-12-23 `lucifer1004` on `tilelang/jit/adapter/cutedsl/wrapper.py`:299: Please review the latest commit. (https://github.com/tile-ai/tilelang/pull/1513#discussion_r2643040643)
+- 2025-12-23 `lucifer1004` on `tilelang/jit/adapter/cutedsl/wrapper.py`:343: @coderabbitai please review again (https://github.com/tile-ai/tilelang/pull/1513#discussion_r2643164671)
+- 2025-12-23 `lucifer1004` on `tilelang/jit/adapter/cutedsl/adapter.py`:360: @coderabbitai please review again (https://github.com/tile-ai/tilelang/pull/1513#discussion_r2643165291)

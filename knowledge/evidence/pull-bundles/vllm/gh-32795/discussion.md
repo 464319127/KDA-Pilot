@@ -1,0 +1,2 @@
+- 2026-01-22 `ProExpertProg` on `vllm/model_executor/layers/quantization/kv_cache.py`:59: Should we use the is quantized kv cache util here? (https://github.com/vllm-project/vllm/pull/32795#discussion_r2717685218)
+- 2026-01-22 `MatthewBonanni` on `vllm/model_executor/layers/quantization/kv_cache.py`:59: Good point, done in [dc7fce1]( (https://github.com/vllm-project/vllm/pull/32795#discussion_r2717728682)

@@ -1,0 +1,2 @@
+- 2026-05-08 `ThomasRaoux` on `python/triton/experimental/gluon/language/amd/gfx1250/tdm.py`:170: what does that do? (https://github.com/triton-lang/triton/pull/10225#discussion_r3206470136)
+- 2026-05-08 `zhanglx13` on `python/triton/experimental/gluon/language/amd/gfx1250/tdm.py`:170: It's a valid-descriptors counter where 0 makes the TDM a no-op (https://github.com/triton-lang/triton/pull/10225#discussion_r3206756543)

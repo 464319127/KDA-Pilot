@@ -1,0 +1,4 @@
+- 2025-11-06 `samuellees`: @b8zhong Thanks a lot. Please let me know if there is something need to do before this PR merged^ ^ (https://github.com/sgl-project/sglang/pull/12543#issuecomment-3494641197)
+- 2025-11-07 `yizhang2077` on `python/sglang/srt/models/qwen2_moe.py`:170: could you add a ut? Ref test qwen3 next models.py, you need split a separate file and add it into run suite.py b200 part. (https://github.com/sgl-project/sglang/pull/12543#discussion_r2501942030)
+- 2025-11-08 `Fridge003`: @samuellees Please move the test to nightly-4-gpu-b200 suite (https://github.com/sgl-project/sglang/pull/12543#issuecomment-3506810771)
+- 2025-11-09 `samuellees`: @samuellees Please move the test to nightly-4-gpu-b200 suite Done (https://github.com/sgl-project/sglang/pull/12543#issuecomment-3507884627)

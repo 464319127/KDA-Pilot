@@ -1,0 +1,5 @@
+- 2025-11-13 `aleozlx` on `benchmarks/README.md`:169: code rabbit, seems false alarm as that last " " was extra in the first place? (https://github.com/flashinfer-ai/flashinfer/pull/2086#discussion_r2524742353)
+- 2025-11-13 `aleozlx` on `flashinfer/fused_moe/core.py`:1955: on pubic api, do we mean to delete it after a major version change or something? or are FW teams ok with it? (https://github.com/flashinfer-ai/flashinfer/pull/2086#discussion_r2524747372)
+- 2025-11-13 `aleozlx` on `flashinfer/fused_moe/core.py`:1955: it's staged for a major version change, no more questions here (https://github.com/flashinfer-ai/flashinfer/pull/2086#discussion_r2524790775)
+- 2025-11-13 `aleozlx` on `benchmarks/README.md`:169: @jiahanc i misread the suggestion as the code diff earlier, this seems a real syntax error (https://github.com/flashinfer-ai/flashinfer/pull/2086#discussion_r2524802078)
+- 2025-11-14 `yzh119` approved: For next release, it should be v0.6.0, if we tag v0.5.3, the release branch should skip this commit. (https://github.com/flashinfer-ai/flashinfer/pull/2086#pullrequestreview-3462396284)

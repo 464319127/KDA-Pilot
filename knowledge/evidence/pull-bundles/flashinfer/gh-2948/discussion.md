@@ -1,0 +1,1 @@
+- 2026-04-02 `yanqinz2` on `flashinfer/gemm/gemm_base.py`:3044: Currently only k-major layout is supported. No need to include (https://github.com/flashinfer-ai/flashinfer/pull/2948#discussion_r3029333943)

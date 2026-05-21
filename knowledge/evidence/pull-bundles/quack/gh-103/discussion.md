@@ -1,0 +1,1 @@
+- 2026-04-10 `thakkarV`: @tridao is main broken? the failing test is an RMS norm test. (https://github.com/Dao-AILab/quack/pull/103#issuecomment-4220725646)

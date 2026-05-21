@@ -1,0 +1,5 @@
+- 2025-05-19 `ProExpertProg` on `vllm/v1/attention/backends/mla/rocm_aiter_mla.py`:96: What is q indptr? (https://github.com/vllm-project/vllm/pull/18338#discussion_r2096243024)
+- 2025-05-19 `ProExpertProg` on `vllm/v1/attention/backends/mla/rocm_aiter_mla.py`:212: Is this always set? (https://github.com/vllm-project/vllm/pull/18338#discussion_r2096245074)
+- 2025-05-19 `LucasWilkinson` on `vllm/v1/attention/backends/mla/rocm_aiter_mla.py`:208: should we assert here? seems dangerous to just change this since it may cause a mismatch with qo indptr? (https://github.com/vllm-project/vllm/pull/18338#discussion_r2096541972)
+- 2025-05-21 `LucasWilkinson` on `vllm/v1/attention/backends/mla/rocm_aiter_mla.py`:208: my preference would be to store a separate max seqlen qo for decode (we do this for most attention backends that split prefill decode) but thats just personal opinion (https://github.com/vllm-project/vllm/pull/18338#discussion_r2100537484)
+- 2025-05-21 `DarkLight1337`: Merging despite the PR freeze, since this only changes ROCm code path (https://github.com/vllm-project/vllm/pull/18338#issuecomment-2898730902)

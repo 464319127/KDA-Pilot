@@ -1,0 +1,8 @@
+- 2026-04-13 `yzh119` on `tests/attention/test_trtllm_gen_attention.py`:1714: Can we add more q len and kv len configurations? (https://github.com/flashinfer-ai/flashinfer/pull/2959#discussion_r3075842369)
+- 2026-04-17 `nvpohanh`: @djmmoss are we blocked by anything or just blocked by review? (https://github.com/flashinfer-ai/flashinfer/pull/2959#issuecomment-4266435987)
+- 2026-04-17 `djmmoss`: @nvpohanh AFAIK blocked by review, the errors on the CI pipelines are either preexisting or unrelated to these changes (https://github.com/flashinfer-ai/flashinfer/pull/2959#issuecomment-4269304343)
+- 2026-04-21 `yzh119` on `tests/attention/test_trtllm_gen_attention.py`:1355: I'm confused how could wrapper and direct output be different, are they using the same implementation? (https://github.com/flashinfer-ai/flashinfer/pull/2959#discussion_r3119359675)
+- 2026-04-21 `saltyminty` on `tests/attention/test_trtllm_gen_attention.py`:1710: +1, the PR description says nvfp4 support was added. Not sure which one is the source of truth. (https://github.com/flashinfer-ai/flashinfer/pull/2959#discussion_r3120743937)
+- 2026-04-21 `saltyminty` changes_requested: Approved but please address comments before merging (https://github.com/flashinfer-ai/flashinfer/pull/2959#pullrequestreview-4151225806)
+- 2026-04-22 `djmmoss` on `tests/attention/test_trtllm_gen_attention.py`:1355: fixed it, the wrapper was missing a param (https://github.com/flashinfer-ai/flashinfer/pull/2959#discussion_r3126167805)
+- 2026-04-22 `djmmoss`: +1, the PR description says nvfp4 support was added. Not sure which one is the source of truth. Updated the PR description, NVFP4 support will be added in a follow up PR. (https://github.com/flashinfer-ai/flashinfer/pull/2959#issuecomment-4299047872)

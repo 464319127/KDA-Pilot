@@ -1,0 +1,1 @@
+- 2026-01-09 `dbari`: The PR is ready to be reviewed, the functionality is implemented and all tests pass locally. Since the goal is to use this in vLLM and SGLang to allow Flashinfer MoE FP8 for Mistral Large 3, which release could this be integrated ... (https://github.com/flashinfer-ai/flashinfer/pull/2238#issuecomment-3728299627)

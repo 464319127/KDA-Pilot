@@ -1,0 +1,1 @@
+- 2025-12-10 `b8zhong`: Note: when TP = 4, the K dimension here is 128 (which FI needs to be = 256), which is why there is a CI failure. (https://github.com/sgl-project/sglang/pull/14844#issuecomment-3638836820)

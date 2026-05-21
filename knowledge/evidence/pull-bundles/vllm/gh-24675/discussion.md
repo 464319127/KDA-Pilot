@@ -1,0 +1,2 @@
+- 2026-04-03 `robertgshaw2-redhat` on `.buildkite/test_areas/kernels.yaml`:187: this should have optional: true (https://github.com/vllm-project/vllm/pull/24675#discussion_r3032502075)
+- 2026-04-03 `bnellnm`: can we delete all the old tests? The modular kernel combinations tests? (https://github.com/vllm-project/vllm/pull/24675#issuecomment-4183417912)

@@ -1,0 +1,1 @@
+- 2025-06-20 `yzh119` approved: We should further split the file into several python files under comm/ module. Let's do that in the next PR. (https://github.com/flashinfer-ai/flashinfer/pull/1162#pullrequestreview-2944489586)

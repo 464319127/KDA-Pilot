@@ -1,0 +1,5 @@
+- 2025-08-07 `Anerudhan`: The change looks good from cuDNN pov (https://github.com/flashinfer-ai/flashinfer/pull/1405#issuecomment-3161973444)
+- 2025-08-07 `yzh119` on `flashinfer/gemm.py`:975: Can we add a function such as cudnn version greater equal and return True when it's greater than 9.11.1? (https://github.com/flashinfer-ai/flashinfer/pull/1405#discussion_r2258572732)
+- 2025-08-07 `ttyio` on `flashinfer/gemm.py`:975: Do you mean 2 functions, cudnn great equal(9.13) and cudnn equal(9.11.1) ? Thanks! (https://github.com/flashinfer-ai/flashinfer/pull/1405#discussion_r2258574610)
+- 2025-08-07 `yzh119` on `flashinfer/gemm.py`:975: I may miss some context here, but why doesn't cudnn version greater equal(91101) works? (https://github.com/flashinfer-ai/flashinfer/pull/1405#discussion_r2258592331)
+- 2025-08-07 `yzh119` on `flashinfer/gemm.py`:975: Per offline discussion, I think I understand the changes here: 9.11.1 is a patch release that include the feature we need while 9.12 doesn't. (https://github.com/flashinfer-ai/flashinfer/pull/1405#discussion_r2258597264)

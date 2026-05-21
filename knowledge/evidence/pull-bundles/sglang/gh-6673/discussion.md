@@ -1,0 +1,1 @@
+- 2025-05-27 `zhyncs`: test/srt/test dp attention.py failed @fzyzcjy @yizhang2077 (https://github.com/sgl-project/sglang/pull/6673#issuecomment-2913324459)

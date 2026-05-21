@@ -1,0 +1,2 @@
+- 2025-12-16 `Fridge003`: @trevor-m Have you verified this PR can work with flashinfer cutlass moe backend + MTP? (https://github.com/sgl-project/sglang/pull/15280#issuecomment-3662493389)
+- 2025-12-16 `trevor-m`: @trevor-m Have you verified this PR can work with flashinfer cutlass moe backend + MTP? Yes, let me add the eval results (https://github.com/sgl-project/sglang/pull/15280#issuecomment-3662498555)

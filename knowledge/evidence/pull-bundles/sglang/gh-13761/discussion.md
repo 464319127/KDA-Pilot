@@ -1,0 +1,1 @@
+- 2025-11-23 `kaixih` on `python/sglang/srt/server_args.py`:1116: nit: maybe self.quantization in ("fp8", "modelopt fp4")? (https://github.com/sgl-project/sglang/pull/13761#discussion_r2553799279)

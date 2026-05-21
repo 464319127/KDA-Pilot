@@ -1,0 +1,2 @@
+- 2025-06-20 `abcdabcd987` on `csrc/nvshmem_binding.cu`:62: We should add a comment here and on the python side to remind caller that malloc tensor is a collective operation that needs to be called by all participants. Also, caller should explicitly del tensor to guarantee the ordering of nvshmem free ... (https://github.com/flashinfer-ai/flashinfer/pull/1160#discussion_r2159425552)
+- 2025-06-20 `yzh119` on `flashinfer/comm.py`:615: unfortunately the package only encapsulate libnvshmem host.so.3 (https://github.com/flashinfer-ai/flashinfer/pull/1160#discussion_r2159428544)

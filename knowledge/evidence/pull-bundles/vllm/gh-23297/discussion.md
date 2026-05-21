@@ -1,0 +1,1 @@
+- 2025-08-21 `heheda12345` on `vllm/v1/attention/backends/flash_attn.py`:489: and use the formatter to keep the line shorter than the limit (https://github.com/vllm-project/vllm/pull/23297#discussion_r2289632553)

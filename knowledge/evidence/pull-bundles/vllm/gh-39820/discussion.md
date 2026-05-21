@@ -1,0 +1,1 @@
+- 2026-04-14 `yewentao256` on `vllm/model_executor/kernels/linear/__init__.py`:608: It will info once by default (https://github.com/vllm-project/vllm/pull/39820#discussion_r3081753056)

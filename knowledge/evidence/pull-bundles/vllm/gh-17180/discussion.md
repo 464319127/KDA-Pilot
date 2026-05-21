@@ -1,0 +1,1 @@
+- 2025-04-25 `kylehh`: Confirmed this fix works for both v0 and v1 engine for following test VLLM ATTENTION BACKEND=FLASHINFER VLLM ALLOW LONG MAX MODEL LEN=1 python3 examples/offline inference/vision language.py --model gemma3 (https://github.com/vllm-project/vllm/pull/17180#issuecomment-2830798198)

@@ -1,0 +1,6 @@
+- 2026-03-05 `HaiShaw`: @1am9trash please provide commands for the speedup section. (https://github.com/sgl-project/sglang/pull/19945#issuecomment-4005793524)
+- 2026-03-06 `1am9trash`: @1am9trash please provide commands for the speedup section. server cmd: client cmd: Also update in PR introduction. (https://github.com/sgl-project/sglang/pull/19945#issuecomment-4008848803)
+- 2026-03-06 `1am9trash` on `python/sglang/srt/layers/attention/nsa/tilelang_kernel.py`:891: In practice we didn’t see crashes because in python, index -1 is the last element, so KV[b i, -1, ...] is still in-bounds. Those positions are then masked out in the softmax, so the output stayed correct. To avoid relying on that, ... (https://github.com/sgl-project/sglang/pull/19945#discussion_r2893712819)
+- 2026-03-06 `1am9trash` on `python/sglang/srt/layers/attention/nsa/tilelang_kernel.py`:896: Same the previous one comment. (https://github.com/sgl-project/sglang/pull/19945#discussion_r2893714157)
+- 2026-03-06 `1am9trash` on `python/sglang/srt/layers/attention/nsa/tilelang_kernel.py`:753: Remove redundancy max loop. (https://github.com/sgl-project/sglang/pull/19945#discussion_r2893714740)
+- 2026-03-24 `HaiShaw` commented: Let revert the removal of sparse attention fwd kernel v1, kept for other/document purpose (https://github.com/sgl-project/sglang/pull/19945#pullrequestreview-3997334337)

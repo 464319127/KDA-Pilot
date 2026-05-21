@@ -1,0 +1,1 @@
+- 2025-06-19 `robertgshaw2-redhat` on `vllm/model_executor/layers/quantization/compressed_tensors/compressed_tensors.py`:378: all enviornment variables should be in envs.py and imported with from vllm.envs import xxx they should also be of the form VLLM XXX (https://github.com/vllm-project/vllm/pull/19879#discussion_r2157564825)

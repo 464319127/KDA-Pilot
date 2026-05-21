@@ -1,0 +1,1 @@
+- 2025-08-25 `yewentao256` commented: Thanks for the work! Could you also report vllm bench metric results so that we can see if we have some improvement for E2E throughput? (https://github.com/vllm-project/vllm/pull/23537#pullrequestreview-3152042125)

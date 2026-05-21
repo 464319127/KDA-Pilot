@@ -1,0 +1,1 @@
+- 2026-03-13 `MatthewBonanni` on `csrc/sampler.cu`:578: Cudagraph padding requests with seq len == 0. We could alternatively clamp seq lens to a minimum of next n on the python side but the kernel will do dummy work (https://github.com/vllm-project/vllm/pull/36982#discussion_r2933315942)

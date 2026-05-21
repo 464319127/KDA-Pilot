@@ -1,0 +1,1 @@
+- 2025-07-25 `mgoin` on `vllm/platforms/cuda.py`:162: This should be is device capability so it only affects SM100. "Has" means = (https://github.com/vllm-project/vllm/pull/21626#discussion_r2232032662)

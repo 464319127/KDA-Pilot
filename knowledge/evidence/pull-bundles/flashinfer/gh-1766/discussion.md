@@ -1,0 +1,1 @@
+- 2025-09-24 `nvmbreughe` on `tests/test_mm_fp4.py`:103: Omitting the cudnn library check is intentional to avoid loading another library at test invocation time. The goal is to remove the check entirely once we upgraded to cuDNN v9.14. (https://github.com/flashinfer-ai/flashinfer/pull/1766#discussion_r2377235653)

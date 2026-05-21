@@ -1,0 +1,2 @@
+- 2025-04-16 `LucasWilkinson` on `tests/kernels/test_attention_selector.py`:29: nit: lets just call this DEVICE REGULAR ATTN BACKENDS instead of MLA (https://github.com/vllm-project/vllm/pull/15893#discussion_r2047067759)
+- 2025-04-16 `LucasWilkinson` on `vllm/attention/backends/mla/common.py`:893: nit: why relocate these lines? Also can you please explain to me why we now need self. class .BLOCK TABLE EXTENDER (https://github.com/vllm-project/vllm/pull/15893#discussion_r2047073684)

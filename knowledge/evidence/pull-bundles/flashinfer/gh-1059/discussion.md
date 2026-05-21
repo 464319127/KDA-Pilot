@@ -1,0 +1,1 @@
+- 2025-05-14 `yzh119` on `benchmarks/bench_mixed_attention.py`:110: You can use [torch.testing.assert close]( which is simpler. (https://github.com/flashinfer-ai/flashinfer/pull/1059#discussion_r2089698439)

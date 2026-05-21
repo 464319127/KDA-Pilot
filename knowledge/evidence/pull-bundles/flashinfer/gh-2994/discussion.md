@@ -1,0 +1,3 @@
+- 2026-04-07 `aleozlx`: Actually, @samuellees could you review this and see if this further completes the answer on top of your fix which successfully made the CI green? (https://github.com/flashinfer-ai/flashinfer/pull/2994#issuecomment-4202017883)
+- 2026-04-08 `samuellees` on `csrc/nv_internal/tensorrt_llm/kernels/cutlass_kernels/cutlass_heuristic.cpp`:613: @askliar please fix this, thanks (https://github.com/flashinfer-ai/flashinfer/pull/2994#discussion_r3052036962)
+- 2026-04-13 `askliar`: @aleozlx I have looked more into the pre-commit changes - those are also on main. I will do a separate PR. (https://github.com/flashinfer-ai/flashinfer/pull/2994#issuecomment-4235420993)

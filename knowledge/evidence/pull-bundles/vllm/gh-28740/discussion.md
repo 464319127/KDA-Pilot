@@ -1,0 +1,1 @@
+- 2025-11-14 `mgoin` on `vllm/model_executor/layers/fused_moe/layer.py`:1752: It would be best to leave a comment why we don't want to overwrite hidden states for future logic (https://github.com/vllm-project/vllm/pull/28740#discussion_r2528364738)

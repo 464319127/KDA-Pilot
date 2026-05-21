@@ -1,0 +1,2 @@
+- 2026-04-07 `ch-wan` on `python/sglang/srt/layers/quantization/modelopt_quant.py`:1934: Should we provide a default runner when it is auto (or not defined in server args)? (https://github.com/sgl-project/sglang/pull/21339#discussion_r3043584602)
+- 2026-04-07 `leejnau` on `python/sglang/srt/layers/quantization/modelopt_quant.py`:1934: Added FLASHINFER TRTLLM as the default runner for auto: [edf3e16]( (https://github.com/sgl-project/sglang/pull/21339#discussion_r3047878235)

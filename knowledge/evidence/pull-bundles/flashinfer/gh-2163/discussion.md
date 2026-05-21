@@ -1,0 +1,1 @@
+- 2025-12-03 `bkryu` on `flashinfer/decode.py`:32: Aliasing is necessary for pre-commit checks. (https://github.com/flashinfer-ai/flashinfer/pull/2163#discussion_r2583345420)

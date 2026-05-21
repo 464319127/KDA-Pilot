@@ -1,0 +1,1 @@
+- 2026-04-26 `leonardHONG` on `flashinfer/gemm/kernels/dense_blockscaled_gemm_sm120_b12x.py`:1591: Out of scope. Line 1875 is the only caller and works for both arches; threading actual sm version belongs in a follow-up. (https://github.com/flashinfer-ai/flashinfer/pull/3180#discussion_r3142968918)

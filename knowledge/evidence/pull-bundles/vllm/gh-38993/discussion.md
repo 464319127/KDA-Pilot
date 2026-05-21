@@ -1,0 +1,4 @@
+- 2026-04-04 `robertgshaw2-redhat` on `vllm/model_executor/warmup/deep_gemm_warmup.py`:171: just wondering why this is touched? (https://github.com/vllm-project/vllm/pull/38993#discussion_r3035954075)
+- 2026-04-04 `robertgshaw2-redhat`: nice find. why does the deepgemm warmup get touched? (https://github.com/vllm-project/vllm/pull/38993#issuecomment-4187622798)
+- 2026-04-04 `wzhao18` on `vllm/model_executor/warmup/deep_gemm_warmup.py`:171: fused moe grouped gemm may use deep gemm returns True despite trtllm MoE is used. In this warmup call, it has an assertion on the MoE weight shape, which fails as the weight layout is changed in this PR. (https://github.com/vllm-project/vllm/pull/38993#discussion_r3035957589)
+- 2026-04-04 `robertgshaw2-redhat` on `vllm/model_executor/warmup/deep_gemm_warmup.py`:171: nice, I wonder if we have been doing additonal warmup accidentally 🫣 (https://github.com/vllm-project/vllm/pull/38993#discussion_r3036013840)

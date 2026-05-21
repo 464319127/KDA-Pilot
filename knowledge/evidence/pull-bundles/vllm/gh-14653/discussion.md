@@ -1,0 +1,3 @@
+- 2025-03-13 `kylesayrs` on `benchmarks/kernels/benchmark_moe.py`:509: May want to remove trust remote code from args if no longer used (https://github.com/vllm-project/vllm/pull/14653#discussion_r1992737507)
+- 2025-03-13 `mgoin` on `benchmarks/kernels/benchmark_moe.py`:509: I don't see why we need this change, I think just reverting is fine (https://github.com/vllm-project/vllm/pull/14653#discussion_r1992787138)
+- 2025-03-13 `jeejeelee` on `benchmarks/kernels/benchmark_moe.py`:509: Let me revert it (https://github.com/vllm-project/vllm/pull/14653#discussion_r1992818936)

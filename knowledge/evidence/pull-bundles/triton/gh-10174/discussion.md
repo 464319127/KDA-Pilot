@@ -1,0 +1,1 @@
+- 2026-04-29 `warrendeng` on `setup.py`:460: fixed formatting with yapf -i -p setup.py (https://github.com/triton-lang/triton/pull/10174#discussion_r3164686251)

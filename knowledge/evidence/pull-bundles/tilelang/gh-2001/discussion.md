@@ -1,0 +1,1 @@
+- 2026-03-30 `SiriusNEO` on `src/tl_templates/cuda/atomic.h`:72: Just follows the original code (https://github.com/tile-ai/tilelang/pull/2001#discussion_r3009456528)

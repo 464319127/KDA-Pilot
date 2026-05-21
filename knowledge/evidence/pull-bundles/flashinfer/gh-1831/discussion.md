@@ -1,0 +1,6 @@
+- 2025-10-04 `yzh119` on `csrc/trtllm_fused_moe_kernel_launcher.cu`:336: @ChristinaZ @jiahanc is this PR ready? If so, let's remove these comments. (https://github.com/flashinfer-ai/flashinfer/pull/1831#discussion_r2403729869)
+- 2025-10-04 `yzh119` on `csrc/trtllm_fused_moe_routing_deepseek.cu`:26: cc @GordonGustafson this function is updated. (https://github.com/flashinfer-ai/flashinfer/pull/1831#discussion_r2403732982)
+- 2025-10-08 `jiahanc` on `csrc/trtllm_fused_moe_kernel_launcher.cu`:336: Hi @yzh119 , we are still working on the PR. Will udpate the PR and mark ready asap (https://github.com/flashinfer-ai/flashinfer/pull/1831#discussion_r2412741235)
+- 2025-10-20 `ChristinaZ` on `csrc/trtllm_fused_moe_routing_deepseek.cu`:523: MaxNumTopExperts is the upper bound of topK, not the upper bound of num experts. So I don't need to remove this code. (https://github.com/flashinfer-ai/flashinfer/pull/1831#discussion_r2443724578)
+- 2025-10-20 `ChristinaZ` on `include/flashinfer/trtllm/fused_moe/RoutingKernelTopK.cuh`:233: Done. Add related assert. (https://github.com/flashinfer-ai/flashinfer/pull/1831#discussion_r2444829385)
+- 2025-10-20 `ChristinaZ` on `include/flashinfer/trtllm/fused_moe/RoutingKernel.cuh`:584: For now, mLocalExpertsStrideLog2 is 0. (https://github.com/flashinfer-ai/flashinfer/pull/1831#discussion_r2444898647)

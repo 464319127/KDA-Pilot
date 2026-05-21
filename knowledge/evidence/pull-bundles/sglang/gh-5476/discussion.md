@@ -1,0 +1,4 @@
+- 2025-04-16 `Fridge003` on `docs/backend/server_arguments.md`:197: There is a little mistake here: ragged prefill saves kv cache before doing attention. I think ragged prefill increases throughput by using multi-head attention instead of multi-head latent attention when there is no prefix. (https://github.com/sgl-project/sglang/pull/5476#discussion_r2047562814)
+- 2025-04-16 `Edenzzzz` on `docs/backend/server_arguments.md`:197: In the case of vanilla attention this is correct? (https://github.com/sgl-project/sglang/pull/5476#discussion_r2047637068)
+- 2025-04-17 `Fridge003` on `docs/backend/server_arguments.md`:197: For vanilla attention, the kv cache is saved before doing attention. (https://github.com/sgl-project/sglang/pull/5476#discussion_r2047994551)
+- 2025-04-17 `Fridge003` on `docs/backend/server_arguments.md`:197: I mean before the computation part of attention (https://github.com/sgl-project/sglang/pull/5476#discussion_r2048077420)

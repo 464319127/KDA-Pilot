@@ -1,0 +1,2 @@
+- 2026-03-23 `nvpohanh`: @aleozlx could you assign this to someone from FlashInfer team who owns this part of the code for review? thanks! (https://github.com/flashinfer-ai/flashinfer/pull/2803#issuecomment-4107550836)
+- 2026-03-24 `ChristinaZ`: @ChristinaZ could you rebase and fix conflicts? thanks! Sorry for the late reply — I was out of the office today. I’m working on it now. (https://github.com/flashinfer-ai/flashinfer/pull/2803#issuecomment-4118546142)

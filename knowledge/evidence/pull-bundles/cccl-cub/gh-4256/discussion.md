@@ -1,0 +1,2 @@
+- 2025-03-25 `miscco` on `libcudacxx/include/cuda/std/__floating_point/constants.h`:38: How often will we need those fp storage t flavor functions? Could we just inline them? (https://github.com/NVIDIA/cccl/pull/4256#discussion_r2012547096)
+- 2025-03-25 `davebayer` on `libcudacxx/include/cuda/std/__floating_point/constants.h`:38: The truth is, I am not sure yet. We will see when implementing the fp operations, maybe I will remove them completely in the future (https://github.com/NVIDIA/cccl/pull/4256#discussion_r2012563661)

@@ -1,0 +1,1 @@
+- 2026-03-02 `yzh119` on `flashinfer/aot.py`:521: probably better to rename them to sm 12x (https://github.com/flashinfer-ai/flashinfer/pull/2654#discussion_r2870152176)

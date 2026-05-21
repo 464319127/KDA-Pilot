@@ -1,0 +1,6 @@
+- 2025-05-13 `ktaebum` on `examples/77_blackwell_fmha/collective/fmha_fusion.hpp`:161: Sorry for mistake 🫠 (https://github.com/NVIDIA/cutlass/pull/2292#discussion_r2086723551)
+- 2025-05-13 `thakkarV` on `examples/77_blackwell_fmha/collective/fmha_fusion.hpp`:161: do not assume tile shapes are depth 0 (https://github.com/NVIDIA/cutlass/pull/2292#discussion_r2086793754)
+- 2025-05-13 `ktaebum` on `examples/77_blackwell_fmha/collective/fmha_fusion.hpp`:161: But all Mask-related classes (NoMask, ResidualMask, CausalMask) in this file assume depth-0. Do you want me to change all uses? (https://github.com/NVIDIA/cutlass/pull/2292#discussion_r2086802205)
+- 2025-05-13 `thakkarV` on `examples/77_blackwell_fmha/collective/fmha_fusion.hpp`:161: let's start small and at least make this change here locally. (https://github.com/NVIDIA/cutlass/pull/2292#discussion_r2086864888)
+- 2025-05-20 `v0i0`: looks good, thank you @ktaebum ! This is a bug fix. Please merge @hwu36 or @thakkarV (I don't have permission on this repo) (https://github.com/NVIDIA/cutlass/pull/2292#issuecomment-2895855260)
+- 2025-05-21 `ktaebum`: @v0i0 Thank you as well for the good example code on Blackwell FMHA! (https://github.com/NVIDIA/cutlass/pull/2292#issuecomment-2896187887)

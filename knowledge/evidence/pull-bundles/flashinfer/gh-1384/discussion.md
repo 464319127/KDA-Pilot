@@ -1,0 +1,2 @@
+- 2025-08-10 `yzh119` on `flashinfer/prefill.py`:1394: Just wonder how hard it is for cudnn to support HND layout. IMO it's just a matter of customized stride on N dimension and H dimension? (https://github.com/flashinfer-ai/flashinfer/pull/1384#discussion_r2265202558)
+- 2025-08-11 `Anerudhan` on `flashinfer/prefill.py`:1394: Yes. Those strides are supported as well. I havent written an unit test for it yet/tested it. I will address this in upcoming PRs. (https://github.com/flashinfer-ai/flashinfer/pull/1384#discussion_r2267400354)

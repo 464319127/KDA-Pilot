@@ -1,0 +1,2 @@
+- 2026-01-24 `BBuf` approved: The benchmark script can support multi nodes? (https://github.com/sgl-project/sglang/pull/13797#pullrequestreview-3701120310)
+- 2026-01-26 `yuan-luo`: The benchmark script can support multi nodes? Not tested multi-nodes. Multi-ranks is supported. (https://github.com/sgl-project/sglang/pull/13797#issuecomment-3798048986)

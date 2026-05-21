@@ -1,0 +1,2 @@
+- 2025-06-04 `yuan-luo` changes_requested: Please rename test ep moe reorder kernel.py to test ep moe pre reorder kernel.py (https://github.com/sgl-project/sglang/pull/6858#pullrequestreview-2895441811)
+- 2025-06-04 `BBuf`: Please rename test ep moe reorder kernel.py to test ep moe pre reorder kernel.py done (https://github.com/sgl-project/sglang/pull/6858#issuecomment-2938865045)

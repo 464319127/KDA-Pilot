@@ -1,0 +1,3 @@
+- 2025-03-10 `LucasWilkinson` on `vllm/v1/attention/backends/mla/common.py`:1060: nit: do we need clone here? my understanding is .continuous() will implicitly do a clone if its not contiguous and no-op if it already is: (https://github.com/vllm-project/vllm/pull/14540#discussion_r1987389924)
+- 2025-03-10 `LucasWilkinson` on `vllm/v1/attention/backends/mla/common.py`:1060: i.e. I think we can drop this line and just do: (https://github.com/vllm-project/vllm/pull/14540#discussion_r1987395992)
+- 2025-03-10 `simon-mo` on `vllm/v1/attention/backends/mla/common.py`:1060: Yup great point and i verified the perf. clone was a left over from previous debugging but your solution is great! (https://github.com/vllm-project/vllm/pull/14540#discussion_r1987554506)

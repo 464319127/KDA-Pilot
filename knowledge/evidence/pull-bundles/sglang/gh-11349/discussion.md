@@ -1,0 +1,2 @@
+- 2026-01-07 `HaiShaw` on `python/sglang/srt/layers/moe/moe_runner/triton.py`:50: @hubertlu-tw let's look for a fix to address this from gemini-code-assist. (https://github.com/sgl-project/sglang/pull/11349#discussion_r2667800836)
+- 2026-01-07 `HaiShaw` changes_requested: One fix seems necessary from gemini review. (https://github.com/sgl-project/sglang/pull/11349#pullrequestreview-3634150579)

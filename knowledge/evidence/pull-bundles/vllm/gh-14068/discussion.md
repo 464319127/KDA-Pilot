@@ -1,0 +1,2 @@
+- 2025-03-02 `mgoin` commented: The changes look reasonable to me, thanks for the PR! Have you tried making a config and testing it? (https://github.com/vllm-project/vllm/pull/14068#pullrequestreview-2652625484)
+- 2025-03-03 `divakar-amd`: @mgoin Added DSv3 config obtained using this PR. Here are the corresponding numbers (deafult configs vs This PR): (https://github.com/vllm-project/vllm/pull/14068#issuecomment-2695821079)

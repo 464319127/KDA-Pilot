@@ -1,0 +1,3 @@
+- 2026-03-05 `miscco`: There is currently no NVHPC running in CI, please use the override matrix to make a test run against CUB (https://github.com/NVIDIA/cccl/pull/7892#issuecomment-4005140463)
+- 2026-03-05 `bernhardmgruber`: There is currently no NVHPC running in CI, please use the override matrix to make a test run against CUB Or I'll wait until 7684 is merged. (https://github.com/NVIDIA/cccl/pull/7892#issuecomment-4006219586)
+- 2026-03-05 `trxcllnt`: The previously-failing NVHPC CUB tests are passing after merging this change into 7684: (https://github.com/NVIDIA/cccl/pull/7892#issuecomment-4007199979)

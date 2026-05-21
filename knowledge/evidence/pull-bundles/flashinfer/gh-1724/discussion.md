@@ -1,0 +1,1 @@
+- 2025-09-19 `yzh119`: cc @GordonGustafson for viz The compile-time NumThreads was only used in launch bounds which is optional and can we removed. (https://github.com/flashinfer-ai/flashinfer/pull/1724#issuecomment-3310379806)

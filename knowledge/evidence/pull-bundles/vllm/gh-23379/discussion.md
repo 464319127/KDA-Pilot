@@ -1,0 +1,1 @@
+- 2025-08-21 `ywang96` on `vllm/v1/attention/backends/flashinfer.py`:786: I don't think this is intended? (https://github.com/vllm-project/vllm/pull/23379#discussion_r2292196636)

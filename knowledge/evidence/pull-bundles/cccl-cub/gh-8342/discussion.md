@@ -1,0 +1,2 @@
+- 2026-04-09 `bernhardmgruber` on `benchmarks/scripts/cccl/bench/bench.py`:62: Those don't change functionality, but should rather improve diagnostics (https://github.com/NVIDIA/cccl/pull/8342#discussion_r3059801432)
+- 2026-04-09 `miscco` on `cub/benchmarks/bench/scan/policy_selector.h`:7: Is that still meant to be here? (https://github.com/NVIDIA/cccl/pull/8342#discussion_r3060080245)

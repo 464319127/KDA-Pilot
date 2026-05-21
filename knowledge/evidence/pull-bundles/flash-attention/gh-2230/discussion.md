@@ -1,0 +1,2 @@
+- 2026-03-03 `rocking5566` on `setup.py`:610: do you consider to set aiter in submodule, just like CK and cutlass? (https://github.com/Dao-AILab/flash-attention/pull/2230#discussion_r2880061659)
+- 2026-03-06 `micmelesse` on `setup.py`:610: Updated to submodules. See for CI (https://github.com/Dao-AILab/flash-attention/pull/2230#discussion_r2897555296)

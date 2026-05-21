@@ -1,0 +1,1 @@
+- 2026-03-10 `bernhardmgruber` on `cub/benchmarks/bench/transform_reduce/sum.cu`:40: @gevtushenko I would love your opinion here! (https://github.com/NVIDIA/cccl/pull/7944#discussion_r2910026702)

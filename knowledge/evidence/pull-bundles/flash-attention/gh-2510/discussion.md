@@ -1,0 +1,3 @@
+- 2026-04-28 `drisspg` on `flash_attn/cute/flash_bwd_sm90.py`:406: I havent looked at sm100 code, but 2 semaphores as opposed to mdkv is for overlap? (https://github.com/Dao-AILab/flash-attention/pull/2510#discussion_r3150950943)
+- 2026-04-28 `v0i0` on `flash_attn/cute/flash_bwd_sm90.py`:406: good question, not sure (i just ported over the sm100 code). we should benchmark and see. (https://github.com/Dao-AILab/flash-attention/pull/2510#discussion_r3150967852)
+- 2026-04-30 `v0i0` on `flash_attn/cute/flash_bwd_sm90.py`:406: benchmarked, two semaphores is faster, presumable smaller critical section (https://github.com/Dao-AILab/flash-attention/pull/2510#discussion_r3170122839)

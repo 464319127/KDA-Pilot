@@ -1,0 +1,2 @@
+- 2025-07-24 `mgoin` commented: Aren't there other updates needed for the latest release? I remember the flashinfer fp4 moe utils also have some changes cc @wenscarl (https://github.com/vllm-project/vllm/pull/21485#pullrequestreview-3051900045)
+- 2025-07-24 `wenscarl`: is already merged. No more changes needed. (https://github.com/vllm-project/vllm/pull/21485#issuecomment-3114606984)

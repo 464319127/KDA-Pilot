@@ -1,0 +1,1 @@
+- 2026-02-24 `Rachmanino`: Also plan to add assertation for cuda sm90+ and backend execution, but not sure where is the best position to insert this. (https://github.com/tile-ai/tilelang/pull/1874#issuecomment-3950848817)

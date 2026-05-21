@@ -1,0 +1,1 @@
+- 2025-10-13 `zhyncs` on `python/sglang/srt/layers/quantization/modelopt_quant.py`:855: ah I originally introduced the code. Thanks for cleaning it up! (https://github.com/sgl-project/sglang/pull/11537#discussion_r2425376349)

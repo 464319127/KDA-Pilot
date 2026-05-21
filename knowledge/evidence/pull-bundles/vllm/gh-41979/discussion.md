@@ -1,0 +1,1 @@
+- 2026-05-07 `yewentao256` commented: Thanks for the work! Could we combine your several PRs into single one? 41981 41977 , 41976 (https://github.com/vllm-project/vllm/pull/41979#pullrequestreview-4246695469)

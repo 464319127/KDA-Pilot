@@ -1,0 +1,1 @@
+- 2026-04-24 `jiahanc`: @jiahanc any idea why we didn't catch it with unit tests? could be because the unit test doesnt have as high pressure as framework side, so bug is not exposed (https://github.com/flashinfer-ai/flashinfer/pull/3155#issuecomment-4309409156)

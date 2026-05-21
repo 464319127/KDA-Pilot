@@ -1,0 +1,6 @@
+- 2025-10-30 `Fridge003` on `python/sglang/srt/layers/quantization/modelopt_quant.py`:87: Can we expose them as server arguments? (https://github.com/sgl-project/sglang/pull/12406#discussion_r2479300803)
+- 2025-11-01 `Fridge003` on `python/sglang/srt/layers/quantization/modelopt_quant.py`:87: A string environment variable stored at environ.py should also work (https://github.com/sgl-project/sglang/pull/12406#discussion_r2483171996)
+- 2025-11-03 `Fridge003` on `python/sglang/srt/layers/quantization/modelopt_quant.py`:96: These two environments variable can be removed? (https://github.com/sgl-project/sglang/pull/12406#discussion_r2487783601)
+- 2025-11-03 `Fridge003` on `python/sglang/srt/layers/quantization/modelopt_quant.py`:1069: This line can be removed (https://github.com/sgl-project/sglang/pull/12406#discussion_r2487784330)
+- 2025-11-03 `Fridge003` on `python/sglang/srt/utils/common.py`:268: We don't need this util function. String environs can be obtained by (https://github.com/sgl-project/sglang/pull/12406#discussion_r2487787496)
+- 2025-11-04 `Fridge003` on `python/sglang/srt/layers/quantization/modelopt_quant.py`:11: Should be from sglang.srt.environ import envs (https://github.com/sgl-project/sglang/pull/12406#discussion_r2488394591)

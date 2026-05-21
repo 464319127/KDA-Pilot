@@ -1,0 +1,2 @@
+- 2025-08-19 `Alcanderian` on `sgl-kernel/python/sgl_kernel/gemm.py`:76: I am not appreciate that introducing extra zeros kernel in model forward phase. Can we double check whether these zeros is necessary？ (https://github.com/sgl-project/sglang/pull/9346#discussion_r2285719859)
+- 2025-08-20 `Azure-Tang` on `sgl-kernel/python/sgl_kernel/gemm.py`:76: I see, I have updated the pr and minimized modifications. (https://github.com/sgl-project/sglang/pull/9346#discussion_r2286925450)

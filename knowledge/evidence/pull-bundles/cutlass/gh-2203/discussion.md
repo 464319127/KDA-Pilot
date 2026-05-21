@@ -1,0 +1,1 @@
+- 2025-03-27 `thakkarV` on `include/cutlass/epilogue/collective/builders/sm100_builder.inl`:1213: Please add a line in readme that mentions we now support void as the D element in epilogues? (https://github.com/NVIDIA/cutlass/pull/2203#discussion_r2017083435)

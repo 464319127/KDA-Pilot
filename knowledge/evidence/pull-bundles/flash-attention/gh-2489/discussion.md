@@ -1,0 +1,1 @@
+- 2026-04-30 `Johnsonms`: Perf: halve page-table reads in TMA paged KV producer fe44ca87a11f4dab905add9fe6aa2cc26b56a3cf K and V share the same physical page, so the V-side mPageTable read was redundant. This commit: - Carries k page idx forward as v page idx prev (eliminating all V page ... (https://github.com/Dao-AILab/flash-attention/pull/2489#issuecomment-4356120315)

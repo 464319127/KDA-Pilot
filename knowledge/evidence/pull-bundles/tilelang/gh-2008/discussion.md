@@ -1,0 +1,2 @@
+- 2026-04-03 `LeiWang1999` on `src/op/gemm_py.cc`:333: would be better to enable it for all instructions instead of just mma. (https://github.com/tile-ai/tilelang/pull/2008#discussion_r3031628571)
+- 2026-04-07 `kurisu6912` on `src/op/gemm_py.cc`:333: Maybe not. It seems that only mma support arbitrary shared buffer layout, and other atoms doesn't. If this is true, here is ok to bypass mma only, but other atoms require layout check, and fall back to their own compilation path. (https://github.com/tile-ai/tilelang/pull/2008#discussion_r3043374607)

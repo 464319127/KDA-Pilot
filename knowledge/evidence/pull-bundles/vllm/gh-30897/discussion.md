@@ -1,0 +1,3 @@
+- 2025-12-17 `mgoin` on `csrc/quantization/fp4/nvfp4_quant_kernels.cu`:127: This is intended, it makes sense if you read what the kernel does (https://github.com/vllm-project/vllm/pull/30897#discussion_r2628336057)
+- 2025-12-18 `pavanimajety` on `csrc/quantization/fp4/nvfp4_experts_quant.cu`:144: Could we add a comment for why 64 here? CVT FP4 SF VEC SIZE 4 I suppose? 4 is because int packs 4x8-bit SFs (https://github.com/vllm-project/vllm/pull/30897#discussion_r2632997601)
+- 2025-12-21 `mgoin` on `csrc/quantization/fp4/nvfp4_experts_quant.cu`:144: Yes, I'll update this in a followup since I need this to land for a user. Thanks! (https://github.com/vllm-project/vllm/pull/30897#discussion_r2637986981)

@@ -1,0 +1,4 @@
+- 2025-10-13 `bernhardmgruber`: 6099, the source of this backport, omitted a performance analysis of the change. Let's wait with merging this until we know that it does not regress. (https://github.com/NVIDIA/cccl/pull/6202#issuecomment-3397677840)
+- 2025-10-13 `fbusato` on `cub/cub/warp/specializations/warp_scan_shfl.cuh`:53: these two headers are never used if I'm not wrong (https://github.com/NVIDIA/cccl/pull/6202#discussion_r2426862011)
+- 2025-10-13 `miscco` on `cub/cub/block/block_radix_rank.cuh`:55: We use cuda::std:: If AFAIK (https://github.com/NVIDIA/cccl/pull/6202#discussion_r2426904449)
+- 2025-10-13 `wmaxey`: We shouldn't be addressing review comments in the backport unless there are material conflicts with the old branch. We should fix these issues in main first and either cherry-pick the changes to the backport or do another backport. That way we aren't ... (https://github.com/NVIDIA/cccl/pull/6202#issuecomment-3399057196)

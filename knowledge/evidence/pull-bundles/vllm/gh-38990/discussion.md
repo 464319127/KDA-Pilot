@@ -1,0 +1,1 @@
+- 2026-04-05 `milesial`: Confirming I saw the same issue, impact is 15 to 20% E2E regression on nemotron nano 3, B200 FP8. Top trace is from yesterday's nightly, bottom is from mid-March, we see the shared expert in the first half of the top trace. (https://github.com/vllm-project/vllm/pull/38990#issuecomment-4188357067)

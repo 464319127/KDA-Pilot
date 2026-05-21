@@ -1,0 +1,3 @@
+- 2025-12-09 `miscco` on `cub/cub/device/dispatch/tuning/tuning_transform.cuh`:438: What about nv bfloat16 ? Should this be ::cuda::std:: is extended floating point v Also why is this and not && (https://github.com/NVIDIA/cccl/pull/6921#discussion_r2603095606)
+- 2025-12-09 `bernhardmgruber` on `cub/cub/device/dispatch/tuning/tuning_transform.cuh`:438: Yes, it should be &&. And this is based on data by @NaderAlAwar. I actually do wonder whether it would be better to just do that for all size 2 data types. (https://github.com/NVIDIA/cccl/pull/6921#discussion_r2603150002)
+- 2025-12-10 `bernhardmgruber`: Using the vectorized kernel for all workloads results in: (https://github.com/NVIDIA/cccl/pull/6921#issuecomment-3635980462)

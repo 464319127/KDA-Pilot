@@ -1,0 +1,1 @@
+- 2025-03-14 `abcdabcd987`: Yes. This is a good fix. Running the same test code as in 941, FA3 now doesn't have NaNs. (https://github.com/flashinfer-ai/flashinfer/pull/945#issuecomment-2725396562)

@@ -1,0 +1,2 @@
+- 2025-09-17 `janeyx99` on `hopper/flash_api.cpp`:1364: Can you add a similar check in the stable version of this file now that 1791 has landed? (https://github.com/Dao-AILab/flash-attention/pull/1893#discussion_r2354482585)
+- 2025-09-17 `janeyx99` on `hopper/flash_api.cpp`:1364: Should just be STD TORCH CHECK (https://github.com/Dao-AILab/flash-attention/pull/1893#discussion_r2354483950)

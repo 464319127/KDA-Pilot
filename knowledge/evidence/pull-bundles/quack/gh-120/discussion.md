@@ -1,0 +1,2 @@
+- 2026-04-26 `tridao` on `quack/epi_ops.py`:548: we shouldn't pass arch around. We should just pass warps in n in the constructor of this EpiOps (https://github.com/Dao-AILab/quack/pull/120#discussion_r3142912397)
+- 2026-04-26 `tridao` on `quack/epi_ops.py`:548: conceptually, nothing prevents hopper gemm to use 2 warps in n either (though in practice we don't do that). (https://github.com/Dao-AILab/quack/pull/120#discussion_r3142912919)

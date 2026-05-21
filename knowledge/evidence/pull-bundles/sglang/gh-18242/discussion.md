@@ -1,0 +1,2 @@
+- 2026-02-14 `hubertlu-tw` on `python/sglang/srt/models/deepseek_v2.py`:183: This is also a kernel from aiter. (https://github.com/sgl-project/sglang/pull/18242#discussion_r2807800784)
+- 2026-02-14 `zhentaocc`: The failure of CI seems to be related to 17780 . Anyone can confirm and fix this? @hubertlu-tw (https://github.com/sgl-project/sglang/pull/18242#issuecomment-3902379621)

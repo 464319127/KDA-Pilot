@@ -1,0 +1,2 @@
+- 2026-04-18 `tensorrt-cicd`: ]( completed with status: 'FAILURE' [CI Report]( ⚠️ Action Required: - Please check the failed tests and fix your PR - If you cannot view the failures, ask the CI triggerer to share details - Once fixed, request an NVIDIA team member ... (https://github.com/NVIDIA/TensorRT-LLM/pull/13176#issuecomment-4274077704)
+- 2026-04-21 `tensorrt-cicd`: [PR Github 44670]( [ skip ] completed with state SUCCESS. Commit: ad6a92c Skipping testing for commit ad6a92c [Link to invocation]( (https://github.com/NVIDIA/TensorRT-LLM/pull/13176#issuecomment-4286881801)

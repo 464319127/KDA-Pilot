@@ -1,0 +1,4 @@
+- 2026-02-02 `LucasWilkinson` on `vllm/model_executor/layers/attention/__init__.py`:20: does this mess with mypy / LSPs? if so id prefer to just to the lazy flash attn import (https://github.com/vllm-project/vllm/pull/33511#discussion_r2752214348)
+- 2026-02-02 `rabi` on `vllm/model_executor/layers/attention/__init__.py`:20: Thaks @LucasWilkinson. I think it would. Let me remove this change. (https://github.com/vllm-project/vllm/pull/33511#discussion_r2752286189)
+- 2026-02-02 `tjtanaa` on `vllm/model_executor/layers/attention/mla_attention.py`:945: @rabi On ROCm, flash attn is only needed for TRITON MLA, can you mention that? Because in AITER MLA backends, we are only using aiter kernels. (https://github.com/vllm-project/vllm/pull/33511#discussion_r2754623196)
+- 2026-02-05 `rabi`: @tjtanaa Hey! Are we ok with the change? (https://github.com/vllm-project/vllm/pull/33511#issuecomment-3850908723)

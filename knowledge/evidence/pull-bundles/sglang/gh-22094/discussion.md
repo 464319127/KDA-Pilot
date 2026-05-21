@@ -1,0 +1,4 @@
+- 2026-04-19 `ch-wan`: Could you resolve the conflicts and add some benchmark results? (https://github.com/sgl-project/sglang/pull/22094#issuecomment-4276881955)
+- 2026-04-20 `DarkSharpness`: Could you resolve the conflicts and add some benchmark results? Hi. I've just rebased to main. Performance results are the same as the old PR 21766 (https://github.com/sgl-project/sglang/pull/22094#issuecomment-4278808651)
+- 2026-04-21 `ch-wan` on `python/sglang/jit_kernel/activation.py`:26: In the original implementation, --use fast math is disabled for SM100+ or ROCM. Could you confirm if adding this flag ubiquitously is expected? (https://github.com/sgl-project/sglang/pull/22094#discussion_r3120560742)
+- 2026-04-24 `ch-wan`: @DarkSharpness I fixed some numerical issues. Could you check my changes? (https://github.com/sgl-project/sglang/pull/22094#issuecomment-4309564294)

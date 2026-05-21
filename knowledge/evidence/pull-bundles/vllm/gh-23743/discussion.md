@@ -1,0 +1,2 @@
+- 2025-08-27 `Zerohertz` on `vllm/v1/attention/backends/flash_attn.py`:442: @hmellor Which one is better? (https://github.com/vllm-project/vllm/pull/23743#discussion_r2303791702)
+- 2025-08-27 `hmellor` on `vllm/v1/attention/backends/flash_attn.py`:442: Probably kv cache: shape = [2, num blocks, block size, num kv heads, head size] to match the others. We already know it's KV cache because the variable is named well and we already know it's a tensor because of tye type ... (https://github.com/vllm-project/vllm/pull/23743#discussion_r2303804258)

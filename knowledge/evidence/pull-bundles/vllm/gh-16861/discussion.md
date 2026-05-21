@@ -1,0 +1,1 @@
+- 2025-04-18 `bnellnm` on `vllm/model_executor/layers/fused_moe/cutlass_moe.py`:137: nit: Can you add a comment for posterity about why (a map + c2) need to be initialized to zeros instead of empty? (https://github.com/vllm-project/vllm/pull/16861#discussion_r2050934234)

@@ -1,0 +1,2 @@
+- 2025-11-22 `yzh119` on `tests/attention/test_xqa.py`:18: In recent pytorch versions,torch.manual seed(seed) should cover the semantics of torch.cuda.random.manual seed all and there is no need to set gpu seed explicitly: (https://github.com/flashinfer-ai/flashinfer/pull/2126#discussion_r2551516445)
+- 2025-11-25 `yzh119` on `csrc/xqa/mha.cu`:1330: I don't think these changes matter but wouldn't hurt as well. (https://github.com/flashinfer-ai/flashinfer/pull/2126#discussion_r2558168668)

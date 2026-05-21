@@ -1,0 +1,1 @@
+- 2025-09-19 `ir1ka` on `include/flashinfer/sampling.cuh`:1412: I think the code is simple enough and maintainable without any abstraction. (https://github.com/flashinfer-ai/flashinfer/pull/1727#discussion_r2362085783)

@@ -1,0 +1,1 @@
+- 2026-05-13 `peterbell10` on `python/test/unit/runtime/test_autotuner.py`:132: Can you also test reset to zero (https://github.com/triton-lang/triton/pull/10295#discussion_r3236093744)

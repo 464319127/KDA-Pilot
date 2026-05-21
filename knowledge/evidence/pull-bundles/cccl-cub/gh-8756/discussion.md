@@ -1,0 +1,2 @@
+- 2026-05-05 `bernhardmgruber`: [x] No SASS changes for cub.bench.reduce.by key.base on SM75;80;86;90;100 I am still fighting with SASS changes locally. (https://github.com/NVIDIA/cccl/pull/8756#issuecomment-4377807676)
+- 2026-05-18 `bernhardmgruber`: ok great, the by key benchmark used a int32 as offset type, but the public API only uses unsigned offsets. We have to fix the benchmark again as a preceding PR :S (https://github.com/NVIDIA/cccl/pull/8756#issuecomment-4476433312)

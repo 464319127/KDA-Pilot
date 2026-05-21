@@ -1,0 +1,1 @@
+- 2025-06-16 `LyricZhao`: Thanks for your PR! Actually we want to add an assertion here, but assertion is costly so currently no group index checks. Instead of reading the first expert's weight, I guess a better solution is to skip the whole block in scheduler, ... (https://github.com/deepseek-ai/DeepGEMM/pull/113#issuecomment-2974944854)

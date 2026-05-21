@@ -1,0 +1,1 @@
+- 2026-03-12 `tridao`: I feel the right approach is to subtile the O inside the kernel so we can keep the same size of smem. But that's more annoying to impl so for now we can just decrease tile n. (https://github.com/Dao-AILab/flash-attention/pull/2338#issuecomment-4048805686)

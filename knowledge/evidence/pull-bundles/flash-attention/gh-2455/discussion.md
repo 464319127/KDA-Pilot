@@ -1,0 +1,2 @@
+- 2026-04-13 `drisspg`: Let me add the actual data for provenance on how I found this heuristic and testing I did (https://github.com/Dao-AILab/flash-attention/pull/2455#issuecomment-4240302305)
+- 2026-04-16 `drisspg`: Added script python benchmarks/clc bench.py --config benchmarks/configs/clc.yaml to run (https://github.com/Dao-AILab/flash-attention/pull/2455#issuecomment-4256489168)

@@ -1,0 +1,2 @@
+- 2026-05-15 `miscco` on `libcudacxx/include/cuda/std/__cccl/prologue.h`:319: This is not suppressing C++20 warnings, I beleive we should do that in C++17 (https://github.com/NVIDIA/cccl/pull/9019#discussion_r3249590967)
+- 2026-05-15 `fbusato` on `libcudacxx/codegen/generate_prologue_epilogue.py`:171: do we ever test CCCL code with this flag? (https://github.com/NVIDIA/cccl/pull/9019#discussion_r3249627378)

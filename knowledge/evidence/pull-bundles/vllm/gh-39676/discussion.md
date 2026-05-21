@@ -1,0 +1,1 @@
+- 2026-04-15 `yma11`: @jikunshang please take a look. (https://github.com/vllm-project/vllm/pull/39676#issuecomment-4248738821)

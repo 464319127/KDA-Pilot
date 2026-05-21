@@ -1,0 +1,1 @@
+- 2025-12-22 `tjtanaa`: This PR needs force merge. AMD CI will be fixed in and the blackwell tests is known to be failing in main. (https://github.com/vllm-project/vllm/pull/31156#issuecomment-3682816117)

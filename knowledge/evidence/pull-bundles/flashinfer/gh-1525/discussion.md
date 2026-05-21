@@ -1,0 +1,6 @@
+- 2025-08-21 `yzh119` on `csrc/trtllm_batched_gemm_runner.cu`:106: Did we enable split-k for other activations? (https://github.com/flashinfer-ai/flashinfer/pull/1525#discussion_r2291579684)
+- 2025-08-21 `yzh119` on `tests/test_trtllm_gen_fused_moe.py`:1664: will be more intuitive (https://github.com/flashinfer-ai/flashinfer/pull/1525#discussion_r2291586535)
+- 2025-08-21 `stslxg-nv` on `csrc/trtllm_batched_gemm_runner.cu`:106: Yes, for GeGLU we have cubins supporting splitK. (https://github.com/flashinfer-ai/flashinfer/pull/1525#discussion_r2291599297)
+- 2025-08-21 `yzh119` on `benchmarks/bench_trtllm_gen_fused_moe_autotuner.py`:162: another place that we can improve (https://github.com/flashinfer-ai/flashinfer/pull/1525#discussion_r2291748337)
+- 2025-08-21 `stslxg-nv` on `benchmarks/bench_trtllm_gen_fused_moe_autotuner.py`:162: Updated. Also updated the routing method type above this (the 1 above). (https://github.com/flashinfer-ai/flashinfer/pull/1525#discussion_r2291830621)
+- 2025-08-21 `stslxg-nv` on `benchmarks/bench_trtllm_gen_fused_moe_autotuner.py`:162: oops, routing method type is a tuple. Fixed. (https://github.com/flashinfer-ai/flashinfer/pull/1525#discussion_r2291860163)

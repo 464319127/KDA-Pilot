@@ -1,0 +1,1 @@
+- 2025-04-28 `timzsu`: @LucasWilkinson, the failed check is test abort, which I think is not related to my changes. Can you take a look and see if force merging is needed? (https://github.com/vllm-project/vllm/pull/17091#issuecomment-2834043892)

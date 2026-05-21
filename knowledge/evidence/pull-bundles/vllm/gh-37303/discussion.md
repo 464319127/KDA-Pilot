@@ -1,0 +1,2 @@
+- 2026-03-17 `LucasWilkinson`: How does this handle "short prefill does this pass the test added in the first 2 pass the second 2 OOM (I assume because im on H100s); will run it in the CI (https://github.com/vllm-project/vllm/pull/37303#issuecomment-4076856824)
+- 2026-03-17 `benchislett` on `vllm/v1/worker/gpu_model_runner.py`:1962: nit: non-mamba-specific logic is more general and consistent with other comments (https://github.com/vllm-project/vllm/pull/37303#discussion_r2949836922)

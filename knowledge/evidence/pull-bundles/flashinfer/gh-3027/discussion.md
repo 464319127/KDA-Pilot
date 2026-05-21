@@ -1,0 +1,1 @@
+- 2026-04-27 `zianglih`: Further added TE style reference implementation and TE EXACT NVFP4. Now ["random", "boundary", "zeros", "maxes"] cases in test nvfp4 per token quantize te reference are bitwise exact with TE reference implementation. (https://github.com/flashinfer-ai/flashinfer/pull/3027#issuecomment-4330914490)

@@ -1,0 +1,1 @@
+- 2026-04-16 `trevor-m`: also has some changes to the weight loading/processing, can you check if those interfere with the deepep path also? (https://github.com/sgl-project/sglang/pull/22925#issuecomment-4262915884)

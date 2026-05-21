@@ -1,0 +1,2 @@
+- 2025-05-13 `houseroad` on `csrc/quantization/cutlass_w8a8/scaled_mm_entry.cu`:26: should we keep this unchanged, and add the flag to line 27? (https://github.com/vllm-project/vllm/pull/18049#discussion_r2085880101)
+- 2025-05-13 `drisspg` on `csrc/quantization/cutlass_w8a8/scaled_mm_entry.cu`:26: You are right, I was being dumb - fixed Thanks for keeping me honest :) (https://github.com/vllm-project/vllm/pull/18049#discussion_r2085883105)

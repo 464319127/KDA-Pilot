@@ -1,0 +1,1 @@
+- 2025-07-01 `pavanimajety` approved: Redhat vLLM team was able to test this and hang issue seems to be resolved. Thanks for the fix (https://github.com/flashinfer-ai/flashinfer/pull/1198#pullrequestreview-2976031421)

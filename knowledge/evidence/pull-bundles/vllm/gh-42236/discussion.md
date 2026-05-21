@@ -1,0 +1,1 @@
+- 2026-05-10 `gau-nernst` on `vllm/v1/attention/ops/deepseek_v4_ops/cache_utils.py`:356: This won't run on pre-hopper (https://github.com/vllm-project/vllm/pull/42236#discussion_r3215077794)

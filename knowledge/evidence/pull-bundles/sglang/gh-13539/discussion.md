@@ -1,0 +1,4 @@
+- 2026-01-18 `b8zhong`: @Fridge003 Thanks, yes, it's from SM120 device not supporting FA4 yet. should be fixed in (https://github.com/sgl-project/sglang/pull/13539#issuecomment-3765544024)
+- 2026-01-19 `vincentzed`: FA4 Triton They are similar at low bs. (https://github.com/sgl-project/sglang/pull/13539#issuecomment-3769632193)
+- 2026-01-21 `Fridge003` on `python/sglang/srt/layers/attention/vision.py`:727: should be if backend == "fa3" and is blackwell supported()? (https://github.com/sgl-project/sglang/pull/13539#discussion_r2713588140)
+- 2026-01-21 `b8zhong` on `python/sglang/srt/layers/attention/vision.py`:727: Yes I fully agree... typo (https://github.com/sgl-project/sglang/pull/13539#discussion_r2713794223)

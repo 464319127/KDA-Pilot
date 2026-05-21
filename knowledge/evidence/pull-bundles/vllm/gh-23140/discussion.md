@@ -1,0 +1,1 @@
+- 2025-08-19 `mgoin` on `vllm/model_executor/layers/quantization/compressed_tensors/schemes/compressed_tensors_w4a4_nvfp4.py`:107: Yes, could we just reuse the same function from vllm/model executor/layers/quantization/utils/quant utils.py? (https://github.com/vllm-project/vllm/pull/23140#discussion_r2283920365)

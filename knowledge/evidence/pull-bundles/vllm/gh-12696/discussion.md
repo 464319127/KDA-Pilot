@@ -1,0 +1,1 @@
+- 2025-02-03 `tlrmchlsmth` on `csrc/quantization/cutlass_w8a8/scaled_mm_c3x.cu`:22: This is the main change (https://github.com/vllm-project/vllm/pull/12696#discussion_r1939638290)

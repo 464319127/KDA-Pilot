@@ -1,0 +1,1 @@
+- 2025-01-31 `jrhemstad`: @Artem-B it seems like there’s some issue with the clang cuda builds related to the PTX ISA that we aren’t sure what the issue is. Could you help us take a look? (https://github.com/NVIDIA/cccl/pull/3544#issuecomment-2627807657)

@@ -1,0 +1,2 @@
+- 2026-02-04 `mgoin` commented: Should we add a smoke test to CI? (https://github.com/vllm-project/vllm/pull/33810#pullrequestreview-3752443975)
+- 2026-02-04 `LucasWilkinson`: Should we add a smoke test to CI? done will unblock it when the CI becomes un-hung (https://github.com/vllm-project/vllm/pull/33810#issuecomment-3849131981)

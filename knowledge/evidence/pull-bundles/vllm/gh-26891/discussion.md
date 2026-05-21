@@ -1,0 +1,3 @@
+- 2025-10-15 `mgoin` approved: It looks like these asserts aren't present in the compressed-tensors backend and I was able to run vllm serve RedHatAI/Qwen3-30B-A3B-NVFP4 -tp 2 fine, so I think this was just an oversight for modelopt (https://github.com/vllm-project/vllm/pull/26891#pullrequestreview-3340821781)
+- 2025-10-15 `pavanimajety` commented: Agree, it's the weight that should be divisble by 16, not the weight scale. Why are we removing the dtype assertion? (https://github.com/vllm-project/vllm/pull/26891#pullrequestreview-3341471300)
+- 2025-10-15 `pavanimajety` approved: It seems like the dtype check is happening in swizzle blockscale. (https://github.com/vllm-project/vllm/pull/26891#pullrequestreview-3341476777)

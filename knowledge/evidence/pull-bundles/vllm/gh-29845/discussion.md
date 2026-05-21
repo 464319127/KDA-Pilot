@@ -1,0 +1,2 @@
+- 2025-12-04 `benchislett` on `vllm/v1/spec_decode/eagle.py`:419: I do not believe this is an acceptable patch. I don't have any data to back it up here but forcing a sync here is likely to be slower than being able to use async scheduling and giving up a small amount ... (https://github.com/vllm-project/vllm/pull/29845#discussion_r2589723844)
+- 2025-12-04 `benchislett` changes_requested: Blocking until 29624 or a strong motivating benchmark result. (https://github.com/vllm-project/vllm/pull/29845#pullrequestreview-3540842126)

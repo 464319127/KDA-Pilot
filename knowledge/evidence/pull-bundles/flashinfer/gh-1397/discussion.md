@@ -1,0 +1,1 @@
+- 2025-08-07 `yzh119` on `include/flashinfer/gemm/fp8_gemm_cutlass_template.h`:199: Why do we keep this? (https://github.com/flashinfer-ai/flashinfer/pull/1397#discussion_r2259604321)

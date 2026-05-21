@@ -1,0 +1,1 @@
+- 2025-08-14 `kaixih` approved: Chatted offline a bit. It looks good to me. The only thing is I think we no longer need the is packed, since the kernel behavior is always assuming packed inputs for nvfp4. (https://github.com/flashinfer-ai/flashinfer/pull/1488#pullrequestreview-3122190135)

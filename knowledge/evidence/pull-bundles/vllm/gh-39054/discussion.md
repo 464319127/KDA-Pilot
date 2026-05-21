@@ -1,0 +1,1 @@
+- 2026-04-06 `wzhao18`: quantized-moe-test-b200 passes with this PR, confirming it fixes the issue. (https://github.com/vllm-project/vllm/pull/39054#issuecomment-4194952504)

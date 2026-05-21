@@ -1,0 +1,1 @@
+- 2026-01-27 `MatthewBonanni`: @cyk2018 Thanks for catching this! I hadn't updated this PR in a while so it got stale. I've updated it now and cleaned it up quite a bit 👍 (https://github.com/vllm-project/vllm/pull/26835#issuecomment-3807787568)

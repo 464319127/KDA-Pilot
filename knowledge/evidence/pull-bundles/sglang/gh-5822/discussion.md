@@ -1,0 +1,3 @@
+- 2025-04-28 `lambert0312`: I pulled the latest commit and did some experiments, and it seems to be consistent with the optimizations mentioned above. (https://github.com/sgl-project/sglang/pull/5822#issuecomment-2834508087)
+- 2025-04-28 `ispobock` on `python/sglang/srt/layers/attention/flashinfer_mla_backend.py`:396: o is returned, why do we need to pass it in? (https://github.com/sgl-project/sglang/pull/5822#discussion_r2063572425)
+- 2025-04-28 `xu-yfei` on `python/sglang/srt/layers/attention/flashinfer_mla_backend.py`:396: in flashinfer run: out will has the same strides and shape with q nope even if q nope is not contiguous, it will report error in (https://github.com/sgl-project/sglang/pull/5822#discussion_r2063679841)

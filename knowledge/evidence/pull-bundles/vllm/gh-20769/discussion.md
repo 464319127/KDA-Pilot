@@ -1,0 +1,1 @@
+- 2025-07-14 `mgoin` approved: This seems reasonable to me now, thanks for combining the backends. I still hope we can remove the old kernel ASAP to prevent this duplication, as that is my only issue with the PR. (https://github.com/vllm-project/vllm/pull/20769#pullrequestreview-3017451262)

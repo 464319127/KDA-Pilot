@@ -1,0 +1,1 @@
+- 2025-01-27 `yzh119` on `csrc/flashinfer_rope_ops.cu`:40: Please also update the correspondingly entry in csrc/flashinfer ops.cu which in the pybind file for AOT mode. (https://github.com/flashinfer-ai/flashinfer/pull/754#discussion_r1929944392)

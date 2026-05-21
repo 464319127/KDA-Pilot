@@ -1,0 +1,3 @@
+- 2025-03-12 `zhyncs` on `sgl-kernel/setup.py`:125: Just curious, why remove this? (https://github.com/sgl-project/sglang/pull/4278#discussion_r1990383342)
+- 2025-03-12 `elfiegg` on `sgl-kernel/setup.py`:125: It's on purpose - We did not find it speeds up FlashInfer perf but it sacrifices CUTLASS accuracy in a way that forces approximate division and flushes subnormals to zeros (https://github.com/sgl-project/sglang/pull/4278#discussion_r1990457262)
+- 2025-03-12 `zhyncs`: Hi @elfiegg I will merge this first. Once I have access to the B200, I can help with testing. Thank you for your contribution! (https://github.com/sgl-project/sglang/pull/4278#issuecomment-2719152371)

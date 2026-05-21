@@ -1,0 +1,2 @@
+- 2025-09-30 `zyongye`: Is this any different with this PR? (sorry, looks like that is a backlog) 23358 Sorry this is for different fp4 (https://github.com/vllm-project/vllm/pull/25968#issuecomment-3353165787)
+- 2025-10-02 `pavanimajety` on `vllm/model_executor/layers/quantization/kv_cache.py`:103: should just say fp8 "checkpoint" I guess. (https://github.com/vllm-project/vllm/pull/25968#discussion_r2400398920)

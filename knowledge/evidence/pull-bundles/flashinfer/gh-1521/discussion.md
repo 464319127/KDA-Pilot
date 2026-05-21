@@ -1,0 +1,2 @@
+- 2025-08-20 `yzh119` on `flashinfer/cute_dsl/blockscaled_gemm.py`:2589: We don't really need to create the mock ptr, will remove that in later commits. (https://github.com/flashinfer-ai/flashinfer/pull/1521#discussion_r2287119645)
+- 2025-08-20 `fzyzcjy` on `flashinfer/cute_dsl/blockscaled_gemm.py`:2589: oh I see, looks great (https://github.com/flashinfer-ai/flashinfer/pull/1521#discussion_r2287210240)

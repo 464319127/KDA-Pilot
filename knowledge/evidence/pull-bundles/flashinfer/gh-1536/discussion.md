@@ -1,0 +1,2 @@
+- 2025-08-22 `yzh119` on `flashinfer/autotuner.py`:65: Can we try changes like instead? Changing it from randn to rand will affect benchmarking results because of different input data distributions. (https://github.com/flashinfer-ai/flashinfer/pull/1536#discussion_r2293033713)
+- 2025-08-22 `nv-yunzheq` on `flashinfer/autotuner.py`:65: Rebased with the latest version. There is no more change on this file (https://github.com/flashinfer-ai/flashinfer/pull/1536#discussion_r2294273889)

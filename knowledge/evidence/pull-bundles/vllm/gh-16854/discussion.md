@@ -1,0 +1,1 @@
+- 2025-04-28 `charlifu`: add a small fix for not calling fp8 skinny gemm incorrectly. (https://github.com/vllm-project/vllm/pull/16854#issuecomment-2835554259)

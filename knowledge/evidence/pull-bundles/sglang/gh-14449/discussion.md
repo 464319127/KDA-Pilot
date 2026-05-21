@@ -1,0 +1,1 @@
+- 2025-12-04 `b8zhong`: Hi @wenscarl I saw I'm wondering when should trtllm backend be used? I saw your cmd tested Deepseek, it seems based on the above benchmarks, that it is rarely faster even when the BS is low. I ran this on B200 (https://github.com/sgl-project/sglang/pull/14449#issuecomment-3614383069)

@@ -1,0 +1,2 @@
+- 2025-04-30 `ElizaWszola` on `vllm/model_executor/layers/quantization/compressed_tensors/compressed_tensors_moe.py`:605: Why is this ones? Are the scales not always present? (https://github.com/vllm-project/vllm/pull/16745#discussion_r2067889171)
+- 2025-04-30 `mgoin` on `vllm/model_executor/layers/quantization/compressed_tensors/compressed_tensors_moe.py`:605: Good catch, this is just copied from FP8. I don't think it matters as scales should always be present (https://github.com/vllm-project/vllm/pull/16745#discussion_r2069377538)

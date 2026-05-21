@@ -1,0 +1,4 @@
+- 2025-07-09 `tridao` on `quack/layernorm.py`:214: you don't need this 2nd cluster wait we just need 1 cluster wait (happening at the sum x) (https://github.com/Dao-AILab/quack/pull/7#discussion_r2195827141)
+- 2025-07-09 `simveit` on `quack/layernorm.py`:214: Removed it, this improves performance a tiny bit to 2995.21 GB/s (https://github.com/Dao-AILab/quack/pull/7#discussion_r2195835758)
+- 2025-07-09 `tridao` on `benchmarks/benchmark_layernorm.py`:93: this is using cudnn.rmsnorm? You can just remove the cudnn part for the bnehcmark (https://github.com/Dao-AILab/quack/pull/7#discussion_r2196170613)
+- 2025-07-09 `tridao` on `quack/layernorm.py`:335: this should just call F.layer norm (https://github.com/Dao-AILab/quack/pull/7#discussion_r2196171833)

@@ -1,0 +1,3 @@
+- 2025-09-11 `yzh119` on `.gitignore`:79: better to also add some junit installation scripts (e.g. in . (https://github.com/flashinfer-ai/flashinfer/pull/1667#discussion_r2338435343)
+- 2025-09-11 `yzh119` commented: they will run to completion regardless of failures and output JUnit xml for rendering pass/fail status. Could we make it (continue on failure/or fail fast) an option? In some cases we want to continue on failure to get full picture of failed ... (https://github.com/flashinfer-ai/flashinfer/pull/1667#pullrequestreview-3208588226)
+- 2025-09-15 `dierksen` on `.gitignore`:79: We don't actually need junit itself; this is just pytest outputting files that we don't want added to git. (https://github.com/flashinfer-ai/flashinfer/pull/1667#discussion_r2350131944)

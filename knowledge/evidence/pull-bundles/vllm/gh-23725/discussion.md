@@ -1,0 +1,1 @@
+- 2025-08-27 `ProExpertProg` on `tests/compile/test_silu_mul_quant_fusion.py`:53: I think Gemini is right here (https://github.com/vllm-project/vllm/pull/23725#discussion_r2303911081)

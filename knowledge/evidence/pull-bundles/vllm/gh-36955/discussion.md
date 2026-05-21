@@ -1,0 +1,1 @@
+- 2026-03-17 `Co-Messi`: Fixed the DCO and added a threading lock to destroy fi ar workspace to guard against the race condition between atexit cleanup and explicit destroy() calls — good catch on that one. Should be good to go now! (https://github.com/vllm-project/vllm/pull/36955#issuecomment-4074302601)

@@ -1,0 +1,2 @@
+- 2026-03-24 `danisereb` on `csrc/trtllm_fused_moe_kernel_launcher.cu`:2273: This seems like a pre-existing bug from v0.6.4 In order to reduce the risk of changes, I will not fix this issue in this PR. No issues relating to this bug were reported with flashinfer v0.6.4. (https://github.com/flashinfer-ai/flashinfer/pull/2882#discussion_r2983724769)
+- 2026-04-13 `aleozlx`: CI was blocked on a known irrelevant nvshm compilation error. restarted CI and waiting for auto-merge (https://github.com/flashinfer-ai/flashinfer/pull/2882#issuecomment-4233799827)

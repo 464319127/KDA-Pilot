@@ -1,0 +1,1 @@
+- 2026-05-09 `mgoin`: Yeah something is wrong with the checkpoint loading in CI, I'm not sure how to reproduce after retry failed again (https://github.com/vllm-project/vllm/pull/42111#issuecomment-4411410577)

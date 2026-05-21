@@ -1,0 +1,1 @@
+- 2026-04-28 `EduardDurech`: i would just bump quack dependency to = 0.4.0 and remove the arch done, sm100 still has the stale arch = 100 so kept the same in sm90 for consistency and just removed the self.arch forwarding (https://github.com/Dao-AILab/flash-attention/pull/2513#issuecomment-4333418816)

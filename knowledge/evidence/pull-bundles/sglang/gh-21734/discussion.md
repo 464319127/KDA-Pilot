@@ -1,0 +1,1 @@
+- 2026-04-06 `ch-wan` on `python/sglang/srt/server_args.py`:3344: I'm not sure if this change is safe. Can we only modify the code that is affected? We can use get global server args() to get if pcg compilor is inductor. (https://github.com/sgl-project/sglang/pull/21734#discussion_r3038691210)

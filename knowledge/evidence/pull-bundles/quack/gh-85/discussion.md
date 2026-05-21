@@ -1,0 +1,1 @@
+- 2026-03-18 `tridao`: sounds good, can you rebase (we've just merged the PR that expanded the SM100 configs)? (https://github.com/Dao-AILab/quack/pull/85#issuecomment-4079935510)

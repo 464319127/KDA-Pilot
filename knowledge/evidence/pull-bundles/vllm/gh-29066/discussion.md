@@ -1,0 +1,4 @@
+- 2025-11-21 `bnellnm`: draft Yeah, sorry this should have been a draft to start with. It needs the other PR to land first. (https://github.com/vllm-project/vllm/pull/29066#issuecomment-3564685721)
+- 2025-12-05 `tlrmchlsmth` on `vllm/model_executor/layers/quantization/rtn.py`:382: Could we remove this comment before landing? (https://github.com/vllm-project/vllm/pull/29066#discussion_r2593856370)
+- 2025-12-05 `tlrmchlsmth` on `vllm/model_executor/layers/quantization/rtn.py`:382: I'll push a commit to remove (https://github.com/vllm-project/vllm/pull/29066#discussion_r2593857607)
+- 2025-12-09 `mgoin` approved: Great work Bill! Thinking now on the state, the main downside I see of this move is that since we aren't passing arguments into the function, it is less explicit for each apply method to assert against unsupported modes as we add ... (https://github.com/vllm-project/vllm/pull/29066#pullrequestreview-3559879703)

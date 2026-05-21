@@ -1,0 +1,2 @@
+- 2026-02-06 `b8zhong`: QQ: will this select the right backend under SM100 (https://github.com/sgl-project/sglang/pull/18364#issuecomment-3860282851)
+- 2026-02-06 `DarkSharpness`: QQ: will this select the right backend under SM100 Yes (at least for now). Currently, the default "auto" backend will only fallback to "fa3" or "fa2", and "fa3" will not be chosen by "auto" under SM100. The behavior after this PR should ... (https://github.com/sgl-project/sglang/pull/18364#issuecomment-3860410182)

@@ -1,0 +1,2 @@
+- 2025-09-24 `yzh119` on `flashinfer/comm/mnnvl.py`:32: I guess this should be cuda-python < 12.9? (https://github.com/flashinfer-ai/flashinfer/pull/1764#discussion_r2375232535)
+- 2025-09-24 `LuYanFCP` on `flashinfer/comm/mnnvl.py`:32: Yes, I will fix this content (https://github.com/flashinfer-ai/flashinfer/pull/1764#discussion_r2375974591)

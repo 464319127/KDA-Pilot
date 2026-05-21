@@ -1,0 +1,1 @@
+- 2026-04-22 `samuellees`: Hi @StudyingShao , Could you please: 1. Fix the conflicts 2. Take a look if this ci fail is relative with this PR? Thx! (https://github.com/flashinfer-ai/flashinfer/pull/3115#issuecomment-4293192680)

@@ -1,0 +1,2 @@
+- 2026-03-29 `kylesayrs`: Looks like the failure is some sort of issue with the newly related tests, looking at it now. EDIT: It seems like this is expected given how much memory is reserved for MLA activations, even with a 1b mla model. I was ... (https://github.com/vllm-project/vllm/pull/38442#issuecomment-4150340476)
+- 2026-03-29 `kylesayrs`: Eagle test has failed twice now, but passes locally. EDIT: looks like this test is noisy on main as well. (https://github.com/vllm-project/vllm/pull/38442#issuecomment-4150521986)

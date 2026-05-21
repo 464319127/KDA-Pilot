@@ -1,0 +1,2 @@
+- 2026-03-07 `JustinTong0323` on `python/sglang/srt/layers/flashinfer_comm_fusion.py`:23: we have similar help function in environ.py or somewhere handle the envs (https://github.com/sgl-project/sglang/pull/20039#discussion_r2898694472)
+- 2026-03-16 `seindum`: Hi @mmangkad @Fridge003 @JustinTong0323, may I ask when can this PR be merged? We also meet this problem on the same GB300 device, and this PR can fix it. But only use the mnnvl backend in 12787 cannot fix this problem. Thank ... (https://github.com/sgl-project/sglang/pull/20039#issuecomment-4065975811)

@@ -1,0 +1,1 @@
+- 2025-08-07 `yzh119` approved: Note (from @wenscarl ): EP moe in sglang assumes local num experts on the leading dimension. (https://github.com/flashinfer-ai/flashinfer/pull/1398#pullrequestreview-3095563303)

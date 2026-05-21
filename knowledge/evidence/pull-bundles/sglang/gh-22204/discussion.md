@@ -1,0 +1,4 @@
+- 2026-04-06 `zianglih` on `python/sglang/srt/layers/moe/moe_runner/flashinfer_trtllm.py`:286: this only happens during weight load once (https://github.com/sgl-project/sglang/pull/22204#discussion_r3041425513)
+- 2026-04-07 `zianglih` on `test/registered/backends/test_flashinfer_trtllm_gen_moe_backend.py`:200: Set to 0.89 according to 22136 (https://github.com/sgl-project/sglang/pull/22204#discussion_r3044047352)
+- 2026-04-12 `Fridge003`: @zianglih Please take a look at this failing test (https://github.com/sgl-project/sglang/pull/22204#issuecomment-4230434148)
+- 2026-04-12 `zianglih`: @Fridge003 the standalone stage-c-test-4-gpu-b200 passed. (https://github.com/sgl-project/sglang/pull/22204#issuecomment-4232319292)

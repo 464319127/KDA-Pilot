@@ -1,0 +1,1 @@
+- 2025-10-21 `yongwww` on `csrc/fused_moe/cutlass_backend/flashinfer_cutlass_fused_moe_sm100_binding.cu`:806: pls take a look at this comment from gemini (https://github.com/flashinfer-ai/flashinfer/pull/1961#discussion_r2448900256)

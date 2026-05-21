@@ -1,0 +1,7 @@
+- 2025-06-23 `BBuf` on `sgl-kernel/tests/test_moe_align.py`:244: Add rtol and atol args in torch.allclose ? (https://github.com/sgl-project/sglang/pull/7437#discussion_r2161036529)
+- 2025-06-23 `BBuf` on `sgl-kernel/csrc/moe/moe_align_kernel.cu`:104: We can consider use vectorized write here. (https://github.com/sgl-project/sglang/pull/7437#discussion_r2161050191)
+- 2025-06-23 `ispobock` on `sgl-kernel/csrc/moe/moe_align_kernel.cu`:104: Yes, here can use vec write. updated (https://github.com/sgl-project/sglang/pull/7437#discussion_r2161288968)
+- 2025-06-23 `ispobock`: Benchmark after vec write (https://github.com/sgl-project/sglang/pull/7437#issuecomment-2996112348)
+- 2025-06-24 `BBuf` on `sgl-kernel/csrc/moe/moe_align_kernel.cu`:110: When the token count and topk values become large, this modification might lead to performance degradation due to increased data reads. Currently, with only 1 block, each thread has to handle more data, whereas the original fill kernel utilized multiple blocks to ... (https://github.com/sgl-project/sglang/pull/7437#discussion_r2162798383)
+- 2025-06-24 `BBuf` on `sgl-kernel/csrc/moe/moe_align_kernel.cu`:181: For this small batch mode, performance can be improved with no risk. (https://github.com/sgl-project/sglang/pull/7437#discussion_r2162799092)
+- 2025-06-24 `ispobock` on `sgl-kernel/csrc/moe/moe_align_kernel.cu`:110: @BBuf Here is the test results with above commands: No Fusion: Fusion (w/ this PR): TOPT is slightly better. (https://github.com/sgl-project/sglang/pull/7437#discussion_r2163248788)

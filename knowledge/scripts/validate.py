@@ -15,6 +15,7 @@ PULL_BUNDLE_ROOT = Path("evidence") / "pull-bundles"
 DIFF_NAME = "review.diff"
 UPSTREAM_NAME = "upstream.json"
 ORIGIN_NAME = "ORIGIN.yaml"
+DISCUSSION_NAME = "discussion.md"
 SNAPSHOT_DIR = "source-snapshot"
 
 
@@ -100,6 +101,8 @@ def main() -> int:
         if entries is None:
             entries = data.get("prs", [])
         for entry in entries or []:
+            if str(entry.get("decision", "")).lower() == "exclude":
+                continue
             candidate_prs += 1
             number = entry.get("pr", entry.get("number"))
             label = f"{entry.get('repo', ledger.stem)}#{number}"
@@ -113,12 +116,26 @@ def main() -> int:
             if not (bundle / SNAPSHOT_DIR).is_dir():
                 errors.append(f"{artifact_dir}: {label} missing {SNAPSHOT_DIR}/")
 
+    discussion_files = 0
+    for discussion in (root / PULL_BUNDLE_ROOT).glob(f"*/*/{DISCUSSION_NAME}"):
+        discussion_files += 1
+        text = discussion.read_text(encoding="utf-8")
+        lines = [line for line in text.splitlines() if line.strip()]
+        if not lines:
+            errors.append(f"{discussion.relative_to(root)}: empty discussion.md")
+            continue
+        for line in lines:
+            if not line.startswith("- "):
+                errors.append(f"{discussion.relative_to(root)}: discussion.md must be a plain bullet list")
+                break
+
     summary = {
         "pages": len(pages),
         "ids": len(ids),
         "pull_bundles": len(list((root / PULL_BUNDLE_ROOT).glob("*/*"))),
         "source_prs": source_prs,
         "complete_source_pr_bundles": complete_source_pr_bundles,
+        "discussion_files": discussion_files,
         "candidate_prs": candidate_prs,
         "candidate_ledgers": len(ledgers),
         "index_repos": index_repos,

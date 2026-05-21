@@ -1,0 +1,3 @@
+- 2025-01-21 `zhyncs` on `sgl-kernel/tests/test_int8_gemm.py`:28: Why change to randn here? (https://github.com/sgl-project/sglang/pull/3035#discussion_r1923673433)
+- 2025-01-21 `ispobock` on `sgl-kernel/tests/test_int8_gemm.py`:28: The out dtype is fp16 or bf16. It's better to use random input for sufficient test. (https://github.com/sgl-project/sglang/pull/3035#discussion_r1923676358)
+- 2025-01-21 `ispobock`: The ut failed for flashinfer dependency. Could you help check? @zhyncs (https://github.com/sgl-project/sglang/pull/3035#issuecomment-2604657798)

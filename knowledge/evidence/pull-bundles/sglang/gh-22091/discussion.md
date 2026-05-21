@@ -1,0 +1,2 @@
+- 2026-04-04 `mickqian` commented: may consider adding more nvfp4 test to CI later (https://github.com/sgl-project/sglang/pull/22091#pullrequestreview-4058022434)
+- 2026-04-04 `BBuf`: Summary Table backend winning entries FLOP-weighted ratio vs best --- ---: ---: cutlass 263 / 265 1.000x flashinfer auto 0 / 265 1.325x flashinfer cudnn 2 / 265 1.599x Notes - 22064 is expected to merge first. This branch is already aligned ... (https://github.com/sgl-project/sglang/pull/22091#issuecomment-4186251018)

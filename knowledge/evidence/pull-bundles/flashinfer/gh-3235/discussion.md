@@ -1,0 +1,2 @@
+- 2026-05-07 `qsang-nv` on `tests/attention/test_cute_dsl_mla_decode.py`:411: Do we also need to test num heads=64 here? mla decode fp8.py::initialize workspace got the same max(H, 128) workspace padding as the fp16 path, but it's not exercised by any fp8 test in this PR. (https://github.com/flashinfer-ai/flashinfer/pull/3235#discussion_r3198577303)
+- 2026-05-07 `saltyminty` on `flashinfer/cute_dsl/attention/mla_config.py`:177: Not an issue: this codepath works fine with other H values like H96. (https://github.com/flashinfer-ai/flashinfer/pull/3235#discussion_r3204785986)

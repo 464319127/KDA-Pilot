@@ -1,0 +1,3 @@
+- 2025-10-11 `BBuf` on `sgl-kernel/csrc/expert_specialization/es_fp8_blockwise_launcher.cuh`:54: Maybe we can simplify replicate code here - (https://github.com/sgl-project/sglang/pull/11432#discussion_r2422975598)
+- 2025-10-11 `BBuf` on `sgl-kernel/csrc/expert_specialization/es_fp8_blockwise_launcher.cuh`:224: Better create a tool func in sglang/sgl-kernel/include/utils.h . (https://github.com/sgl-project/sglang/pull/11432#discussion_r2422981873)
+- 2025-10-11 `BBuf` on `sgl-kernel/python/sgl_kernel/expert_specilization.py`:1: File name should be expert specialization.py? (https://github.com/sgl-project/sglang/pull/11432#discussion_r2422982599)

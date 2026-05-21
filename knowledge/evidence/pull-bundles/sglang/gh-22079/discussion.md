@@ -1,0 +1,1 @@
+- 2026-04-08 `alexnails` on `python/sglang/srt/layers/attention/triton_ops/extend_attention.py`:77: can you also include Lq <= 128 case? (e.g I believe 128x64, but it could be 128x128 if I am missing something from Blackwell tuning guide) (https://github.com/sgl-project/sglang/pull/22079#discussion_r3049008083)

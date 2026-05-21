@@ -1,0 +1,1 @@
+- 2026-02-10 `YAMY1234` on `python/sglang/srt/layers/moe/fused_moe_triton/layer.py`:1330: keeping .view() as a defensive dtype cast for clarity. Will consider removing it in a follow-up cleanup. (https://github.com/sgl-project/sglang/pull/18500#discussion_r2785703034)

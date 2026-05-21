@@ -1,0 +1,2 @@
+- 2025-10-18 `yzh119` approved: One random question, do you have interest in moving the plan function for persistent kernel to GPU (not necessarily in this PR)? As what we did in (https://github.com/flashinfer-ai/flashinfer/pull/1942#pullrequestreview-3352422240)
+- 2025-10-18 `Edenzzzz`: I should have time after OSDI😂but honestly I think CPU plan() is short when amortized, and can overlap with GPU kernels, especially in the overlap schedule of SGLang where GPU is mostly occupied (https://github.com/flashinfer-ai/flashinfer/pull/1942#issuecomment-3417675382)

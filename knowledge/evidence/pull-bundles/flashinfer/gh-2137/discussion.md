@@ -1,0 +1,1 @@
+- 2025-11-25 `PerkzZheng`: [FAILED] Pipeline [ 39062449]( 5/18 passed @yzh119 it seems that the cubins/headers are not accessible in last run. Can you help re-run the CI or I might have pasted the wrong hash. Thanks! (https://github.com/flashinfer-ai/flashinfer/pull/2137#issuecomment-3573486097)

@@ -1,0 +1,1 @@
+- 2025-02-07 `yzh119` approved: Thanks for the update, yes we should update the sparse attention plan functions. (https://github.com/flashinfer-ai/flashinfer/pull/795#pullrequestreview-2602262159)

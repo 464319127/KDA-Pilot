@@ -1,0 +1,8 @@
+- 2026-03-03 `zianglih`: Fixing a torch compile related failure (https://github.com/sgl-project/sglang/pull/19537#issuecomment-3988656267)
+- 2026-03-03 `zianglih`: Previous failure is fixed by This PR is now piecewise CUDA graph compatible. (https://github.com/sgl-project/sglang/pull/19537#issuecomment-3988909154)
+- 2026-03-04 `zianglih`: The accuracy discrepancy between routed and non-routed backend has been eliminated by fused baseline routed BEFORE routed AFTER (https://github.com/sgl-project/sglang/pull/19537#issuecomment-3994521286)
+- 2026-03-09 `Fridge003` on `docs/advanced_features/server_arguments.md`:315: Please also update this documentation (https://github.com/sgl-project/sglang/pull/19537#discussion_r2908075756)
+- 2026-03-09 `Fridge003` on `python/sglang/srt/layers/quantization/fp8.py`:112: We can lazily import this function in process mxfp8 linear weight scale (https://github.com/sgl-project/sglang/pull/19537#discussion_r2908513841)
+- 2026-03-09 `Fridge003` on `python/sglang/srt/layers/quantization/fp8.py`:1508: can we keep this comment (https://github.com/sgl-project/sglang/pull/19537#discussion_r2908521745)
+- 2026-03-10 `Fridge003` on `python/sglang/srt/layers/quantization/fp8_utils.py`:294: Is this API stable? Since it has prefix, not sure whether it will be deprecated in the future (https://github.com/sgl-project/sglang/pull/19537#discussion_r2908905344)
+- 2026-03-10 `zianglih` on `python/sglang/srt/layers/quantization/fp8_utils.py`:294: This API is stable. The is to stay aligned with the surrounding gemm fp8 nt groupwise raw gemm fp8 nt groupwise: (https://github.com/sgl-project/sglang/pull/19537#discussion_r2909006828)

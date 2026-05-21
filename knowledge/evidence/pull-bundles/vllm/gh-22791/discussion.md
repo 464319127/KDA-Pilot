@@ -1,0 +1,3 @@
+- 2025-08-13 `youkaichao` on `vllm/model_executor/layers/fused_moe/fused_moe.py`:710: define all env vars in with comments (https://github.com/vllm-project/vllm/pull/22791#discussion_r2272254161)
+- 2025-08-13 `vermouth1992` on `vllm/model_executor/layers/fused_moe/fused_moe.py`:710: Shall we modify the name to VLLM TUNED CONFIG FOLDER so that it is not just restricted to MoE? (https://github.com/vllm-project/vllm/pull/22791#discussion_r2272258125)
+- 2025-08-13 `jeejeelee` on `vllm/model_executor/layers/fused_moe/fused_moe.py`:710: Shall we modify the name to VLLM TUNED CONFIG FOLDER so that it is not just restricted to MoE? IMHO, I think VLLM TUNED CONFIG FOLDER is indeed more reasonable. (https://github.com/vllm-project/vllm/pull/22791#discussion_r2272284186)

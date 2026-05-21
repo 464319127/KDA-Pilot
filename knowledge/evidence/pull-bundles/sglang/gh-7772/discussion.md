@@ -1,0 +1,2 @@
+- 2025-07-04 `AniZpZ` on `sgl-kernel/python/sgl_kernel/cutlass_moe.py`:59: consider non-zero default value or add checks here (https://github.com/sgl-project/sglang/pull/7772#discussion_r2184867678)
+- 2025-07-04 `AniZpZ` on `sgl-kernel/tests/test_cutlass_w4a8_moe_mm.py`:128: consider add multi expert unittest @pytest.mark.parametrize("batch size,k,n,num experts", [ (4, 384, 768, 4), (8, 512, 1024, 8), ]) def test int4 fp8 grouped gemm multi experts(batch size, k, n, num experts): (https://github.com/sgl-project/sglang/pull/7772#discussion_r2184905001)

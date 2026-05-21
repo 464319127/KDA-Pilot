@@ -1,0 +1,3 @@
+- 2025-08-03 `yzh119` on `csrc/cudnn_sdpa_kernel_launcher.cu`:87: Could the sha256 value also be read from python? (https://github.com/flashinfer-ai/flashinfer/pull/1369#discussion_r2249550556)
+- 2025-08-03 `yzh119` on `flashinfer/artifacts.py`:70: Please add file lock for multi-process safety (https://github.com/flashinfer-ai/flashinfer/pull/1369#discussion_r2249657352)
+- 2025-08-03 `yzh119` approved: With this PR we can pre-download all the cubins with In the future we should extend it with: 1. more reliable download that supports resumable download 2. sha256 check for each cubin 3. more user friendly (with progress bar, etc) (https://github.com/flashinfer-ai/flashinfer/pull/1369#pullrequestreview-3082141622)

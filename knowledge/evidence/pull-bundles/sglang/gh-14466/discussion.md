@@ -1,0 +1,3 @@
+- 2025-12-05 `ispobock` on `python/sglang/srt/utils/mistral_utils.py`:25: The context length of the eagle draft model should be loaded: (https://github.com/sgl-project/sglang/pull/14466#discussion_r2591879101)
+- 2025-12-05 `ispobock` on `python/sglang/srt/utils/mistral_utils.py`:25: There are two context length related fieds in the config: Actually we should use max seq len for resource consumption and max position embeddings for rope. (https://github.com/sgl-project/sglang/pull/14466#discussion_r2592142826)
+- 2025-12-05 `alisonshao`: @alisonshao We also need to add this eagle model to CI test. I will take a look at this (https://github.com/sgl-project/sglang/pull/14466#issuecomment-3616564578)

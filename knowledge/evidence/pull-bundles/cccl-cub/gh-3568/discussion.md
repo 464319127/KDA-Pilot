@@ -1,0 +1,3 @@
+- 2025-01-29 `bernhardmgruber`: Is there any chance we can temporarily suppress these docs build warnings: The documentation for these instructions will be brought up in subsequent PRs. (https://github.com/NVIDIA/cccl/pull/3568#issuecomment-2621147664)
+- 2025-01-29 `bernhardmgruber` on `docs/repo.toml`:57: I am suppressing warnings on non-included rst files for now. (https://github.com/NVIDIA/cccl/pull/3568#discussion_r1933600671)
+- 2025-01-29 `bernhardmgruber` on `libcudacxx/test/libcudacxx/cuda/ptx/nvrtc_workaround.h`:34: Since NVRTC does not use our target macros header, I have to ship some of them in the tests as a workaround. (https://github.com/NVIDIA/cccl/pull/3568#discussion_r1934342909)

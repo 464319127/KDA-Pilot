@@ -1,0 +1,4 @@
+- 2025-04-28 `tlrmchlsmth` on `vllm/v1/attention/backends/flash_attn.py`:375: Could you explain what was going on here a bit more? (https://github.com/vllm-project/vllm/pull/17283#discussion_r2063752506)
+- 2025-04-28 `LucasWilkinson` on `vllm/v1/attention/backends/flash_attn.py`:375: The prefix part of cascade attention is run as a single request (since its shared), this was a copy paste bug with the scheduling code (https://github.com/vllm-project/vllm/pull/17283#discussion_r2063797390)
+- 2025-04-28 `mgoin` commented: Could you also check if v1 flashinfer has this issue? (https://github.com/vllm-project/vllm/pull/17283#pullrequestreview-2799752981)
+- 2025-04-28 `LucasWilkinson`: Could you also check if v1 flashinfer has this issue? FlashInfer uses the cascade wrapper which doesnt have a batch size argument (https://github.com/vllm-project/vllm/pull/17283#issuecomment-2835656571)

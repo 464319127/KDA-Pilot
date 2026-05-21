@@ -1,0 +1,1 @@
+- 2025-11-18 `jayhshah`: I don't see any perf regression, indeed using the 4 correction warps for varlen epilogue over 2 shows a very minor gain, e.g. (https://github.com/Dao-AILab/flash-attention/pull/2014#issuecomment-3545984851)

@@ -1,0 +1,2 @@
+- 2025-10-27 `Fridge003`: Verifying accuracy: GSM8K GPQA (https://github.com/sgl-project/sglang/pull/12135#issuecomment-3449261315)
+- 2025-10-29 `hlu1`: With nvfp4 Deepseek V3.2 checkpoint: (https://github.com/sgl-project/sglang/pull/12135#issuecomment-3459298605)

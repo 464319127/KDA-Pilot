@@ -1,0 +1,1 @@
+- 2026-03-06 `michaelzhang-ai`: Here's the full explanation. Root Cause: forward native vs forward cuda return semantics The bug was introduced by creates new tensors via torch.cat: forward cuda modifies tensors in-place and returns the same input tensors: Why this causes aliasing in the three call ... (https://github.com/sgl-project/sglang/pull/19928#issuecomment-4013917438)

@@ -1,0 +1,2 @@
+- 2025-10-03 `yzh119` on `csrc/fmha_cutlass_sm100.cu`:105: Can you explain why TILE KV is set to a smaller value specifically for head dim = 64? (https://github.com/flashinfer-ai/flashinfer/pull/1850#discussion_r2402709275)
+- 2025-10-03 `yzh119` approved: Let's merge this first and add autotuner in later PRs, thanks for your contribution @kahyunnam ! (https://github.com/flashinfer-ai/flashinfer/pull/1850#pullrequestreview-3301267282)

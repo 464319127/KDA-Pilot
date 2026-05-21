@@ -1,0 +1,2 @@
+- 2025-08-15 `yzh119`: There are some conflicts on flashinfer/gemm.py, please rebase (https://github.com/flashinfer-ai/flashinfer/pull/1491#issuecomment-3190811579)
+- 2025-08-15 `ttyio`: There are some conflicts on flashinfer/gemm.py, please rebase rebased, thank you! (https://github.com/flashinfer-ai/flashinfer/pull/1491#issuecomment-3191791331)

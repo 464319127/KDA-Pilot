@@ -1,0 +1,1 @@
+- 2025-09-23 `etaf`: Hi, @atalman This cherry-pick for release/2.9 is to fix the new feature that support flex attention on Inductor Intel GPU backend. Could you kindly help have a review? (https://github.com/pytorch/pytorch/pull/163388#issuecomment-3322573867)

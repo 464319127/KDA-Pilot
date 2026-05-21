@@ -1,0 +1,1 @@
+- 2025-06-02 `yzh119` on `flashinfer/prefill.py`:2507: Please move it to plan, we don't want to synchronize for each run (https://github.com/flashinfer-ai/flashinfer/pull/1106#discussion_r2122304718)

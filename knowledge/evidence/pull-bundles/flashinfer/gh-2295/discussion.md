@@ -1,0 +1,2 @@
+- 2026-01-06 `yzh119` on `flashinfer/sampling.py`:38: @cyx-6 I suppose it's a false alarm, WDYT? (https://github.com/flashinfer-ai/flashinfer/pull/2295#discussion_r2664187595)
+- 2026-01-07 `yzh119` on `flashinfer/sampling.py`:38: fixed, the previous implementation is wrong, already fixed. (https://github.com/flashinfer-ai/flashinfer/pull/2295#discussion_r2667492143)

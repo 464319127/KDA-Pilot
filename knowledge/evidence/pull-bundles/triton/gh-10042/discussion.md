@@ -1,0 +1,1 @@
+- 2026-04-16 `plotfi` on `lib/Target/LLVMIR/LLVMDILocalVariable.cpp`:209: Use Operation &op to avoid needing to dereference. (https://github.com/triton-lang/triton/pull/10042#discussion_r3094718899)

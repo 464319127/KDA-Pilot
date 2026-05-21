@@ -1,0 +1,1 @@
+- 2025-12-02 `yuan-luo` on `sgl-kernel/benchmark/bench_moe_align_block_size.py`:343: bench script compare logic seems inconsistent with test script. vs (https://github.com/sgl-project/sglang/pull/14133#discussion_r2579623878)

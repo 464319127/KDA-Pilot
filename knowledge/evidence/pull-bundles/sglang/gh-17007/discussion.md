@@ -1,0 +1,3 @@
+- 2026-01-16 `RuixuanZhang06` on `python/sglang/srt/hardware_backend/npu/modules/deepseek_v2_attention_mla_npu.py`:304: mla event here is meaningless: main stream record event and then alt stream wait this event ? (https://github.com/sgl-project/sglang/pull/17007#discussion_r2698232921)
+- 2026-01-16 `RuixuanZhang06` on `python/sglang/srt/hardware_backend/npu/modules/deepseek_v2_attention_mla_npu.py`:366: if m.alt stream is not None: current stream.wait stream(m.alt stream) (https://github.com/sgl-project/sglang/pull/17007#discussion_r2698272803)
+- 2026-01-16 `RuixuanZhang06` on `python/sglang/srt/hardware_backend/npu/modules/deepseek_v2_attention_mla_npu.py`:366: dont need event / record (https://github.com/sgl-project/sglang/pull/17007#discussion_r2698273833)

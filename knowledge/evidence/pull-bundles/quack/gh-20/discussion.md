@@ -1,0 +1,1 @@
+- 2025-07-16 `lessw2020`: Note - pondering if an enum is better for the reduction option (Rust side in me says yes, but this is Python) so appreciate feedback on leave as string or add enum. (https://github.com/Dao-AILab/quack/pull/20#issuecomment-3081616654)

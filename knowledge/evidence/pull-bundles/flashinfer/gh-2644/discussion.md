@@ -1,0 +1,2 @@
+- 2026-03-17 `nv-yunzheq` on `flashinfer/gemm/gemm_base.py`:252: This seem to be a fix for an old incorrect information. Is it true? (https://github.com/flashinfer-ai/flashinfer/pull/2644#discussion_r2949891297)
+- 2026-03-17 `raayandhar` on `flashinfer/gemm/gemm_base.py`:252: Yes, we have tests for it. Exception is that for SM103 it doesn't work... Worth mentioning here you think? (https://github.com/flashinfer-ai/flashinfer/pull/2644#discussion_r2949998124)

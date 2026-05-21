@@ -1,0 +1,3 @@
+- 2025-11-04 `Lucaskabela`: Seems we also need this stack: - @PaulZhang12 can you confirm? I may not have enough context to support cherrypicking this particular feature so may have to turn this over to you if the change is more involved (https://github.com/pytorch/pytorch/pull/166922#issuecomment-3483624253)
+- 2025-11-04 `Lucaskabela`: Actually looking at the original PR, I don't think the template stuff is needed, just the assert removal, so I am going to try that change (https://github.com/pytorch/pytorch/pull/166922#issuecomment-3486980388)
+- 2025-11-04 `Lucaskabela`: Thanks @PaulZhang12! Let's wait for dev team to merge this but glad it looks good from your end (https://github.com/pytorch/pytorch/pull/166922#issuecomment-3487227708)

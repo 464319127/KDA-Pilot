@@ -1,0 +1,1 @@
+- 2026-04-06 `zianglih`: Hi, FlashinferTrtllmGenMoeBackendMXFP8Base also regressed similar to FlashinferTrtllmGenMoeBackendFP8Base. We can also set threshold from 0.93 to 0.89 there. (https://github.com/sgl-project/sglang/pull/22136#issuecomment-4195032205)

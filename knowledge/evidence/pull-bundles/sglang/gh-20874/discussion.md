@@ -1,0 +1,4 @@
+- 2026-03-18 `DarkSharpness` on `python/sglang/jit_kernel/nvfp4.py`:86: Can we remove this context? JIT kernel already use current arch major.minor. We just need to check that whether major = 10 here. (https://github.com/sgl-project/sglang/pull/20874#discussion_r2954818547)
+- 2026-03-18 `mmangkad` on `python/sglang/jit_kernel/nvfp4.py`:86: Don't we need the a suffix though? get cuda arch list() in utils.py returns major.minor without a, but NVFP4 requires sm a targets (https://github.com/sgl-project/sglang/pull/20874#discussion_r2954845039)
+- 2026-03-19 `DarkSharpness` on `python/sglang/jit_kernel/nvfp4.py`:86: ic. let's just keep it for now. (https://github.com/sgl-project/sglang/pull/20874#discussion_r2957439975)
+- 2026-03-19 `mmangkad` on `python/sglang/jit_kernel/nvfp4.py`:86: @DarkSharpness shall we land this now or do you still see any issues? (https://github.com/sgl-project/sglang/pull/20874#discussion_r2959052597)

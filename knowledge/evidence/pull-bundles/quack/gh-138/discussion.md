@@ -1,0 +1,6 @@
+- 2026-05-19 `tridao` on `quack/autotuner.py`:79: this is useful so it should prob be in quack/bench/ (https://github.com/Dao-AILab/quack/pull/138#discussion_r3268011920)
+- 2026-05-19 `tridao` on `quack/rmsnorm.py`:80: do we even want to tune this? (https://github.com/Dao-AILab/quack/pull/138#discussion_r3268015645)
+- 2026-05-19 `tridao` on `quack/rmsnorm.py`:25: latest main has from quack.cache import jit cache (https://github.com/Dao-AILab/quack/pull/138#discussion_r3268409226)
+- 2026-05-19 `tridao` on `quack/autotuner.py`:192: are these default values broadly applicable, or do thye need to changed for different functions (e.g. gemm vs rmsnorm)? (https://github.com/Dao-AILab/quack/pull/138#discussion_r3268422411)
+- 2026-05-19 `thakkarV` on `quack/rmsnorm.py`:80: probably not, can remove. I did not find a huge gain from this so it almost certainly does not justify 2xing the tuning cost. (https://github.com/Dao-AILab/quack/pull/138#discussion_r3269869556)
+- 2026-05-19 `thakkarV` on `quack/autotuner.py`:192: this I have not totally made sure of, but I think they should be yes. They are more a function of the tensor footprints than algorithm specific. (https://github.com/Dao-AILab/quack/pull/138#discussion_r3269872509)

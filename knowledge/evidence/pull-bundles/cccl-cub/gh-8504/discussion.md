@@ -1,0 +1,2 @@
+- 2026-04-27 `bernhardmgruber` on `thrust/thrust/mismatch.h`:281: Please apply this to the other overloads as well! (https://github.com/NVIDIA/cccl/pull/8504#discussion_r3145426710)
+- 2026-04-27 `edenfunf` on `thrust/thrust/mismatch.h`:281: Thank you, it has been corrected. Thank you for your review! (https://github.com/NVIDIA/cccl/pull/8504#discussion_r3145647474)

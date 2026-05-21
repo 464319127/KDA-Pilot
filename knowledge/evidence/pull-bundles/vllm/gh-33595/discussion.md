@@ -1,0 +1,1 @@
+- 2026-03-12 `jaewonlee-fb`: @zhuohan123 This is necessary for accurate NVFP4 benchmarking. Would you mind reviewing? (https://github.com/vllm-project/vllm/pull/33595#issuecomment-4050417629)

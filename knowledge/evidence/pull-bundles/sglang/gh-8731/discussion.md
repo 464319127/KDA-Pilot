@@ -1,0 +1,8 @@
+- 2025-08-03 `ispobock` on `python/sglang/srt/models/deepseek_v2.py`:224: nit: the name seems too long (https://github.com/sgl-project/sglang/pull/8731#discussion_r2250018960)
+- 2025-08-03 `ispobock` on `python/sglang/srt/models/deepseek_v2.py`:1893: For large model, is 100 enough? (https://github.com/sgl-project/sglang/pull/8731#discussion_r2250019486)
+- 2025-08-03 `ispobock` on `python/sglang/srt/models/deepseek_v2.py`:1929: Can we just pre-compute all the valid cases in a table and lookup it in the run time? Instead of updating the cache table dynamically. (https://github.com/sgl-project/sglang/pull/8731#discussion_r2250020438)
+- 2025-08-04 `BBuf` on `python/sglang/srt/models/deepseek_v2.py`:1929: Good idea, I have modified it. (https://github.com/sgl-project/sglang/pull/8731#discussion_r2250201671)
+- 2025-08-04 `BBuf` on `python/sglang/srt/models/deepseek_v2.py`:224: Yes, I change it to should allreduce fusion now. (https://github.com/sgl-project/sglang/pull/8731#discussion_r2250201962)
+- 2025-08-04 `BBuf` on `python/sglang/srt/models/deepseek_v2.py`:1893: I habe changed it to a static table now. (https://github.com/sgl-project/sglang/pull/8731#discussion_r2250202228)
+- 2025-08-11 `yyihuang` on `python/sglang/srt/layers/flashinfer_comm_fusion.py`:95: We could profile some other max token num settings (like 1024, 4096) later. But it's good the use 2048 here for now. (https://github.com/sgl-project/sglang/pull/8731#discussion_r2266008348)
+- 2025-08-11 `BBuf` on `python/sglang/srt/layers/flashinfer_comm_fusion.py`:95: Make sense, we can restruct it after v0.5.0 released. (https://github.com/sgl-project/sglang/pull/8731#discussion_r2266019455)

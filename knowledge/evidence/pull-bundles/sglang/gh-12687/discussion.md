@@ -1,0 +1,1 @@
+- 2025-11-05 `cicirori`: will try to add type check about seq lens to flashinfer later... it's not nice to have a silent error. (https://github.com/sgl-project/sglang/pull/12687#issuecomment-3490085171)

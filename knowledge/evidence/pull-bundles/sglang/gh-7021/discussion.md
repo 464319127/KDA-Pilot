@@ -1,0 +1,1 @@
+- 2025-06-10 `HaiShaw` on `python/sglang/srt/layers/attention/aiter_backend.py`:722: @kkHuang-amd please address gemini's proposal. (https://github.com/sgl-project/sglang/pull/7021#discussion_r2136949342)

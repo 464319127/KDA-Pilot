@@ -1,0 +1,1 @@
+- 2026-03-18 `mgoin` on `vllm/v1/attention/backends/mla/flashinfer_mla.py`:90: You are technically right :) (https://github.com/vllm-project/vllm/pull/37475#discussion_r2956638842)

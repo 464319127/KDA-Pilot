@@ -1,0 +1,2 @@
+- 2026-03-11 `robertgshaw2-redhat`: is this a bugfix or a new feature @MatthewBonanni ? (https://github.com/vllm-project/vllm/pull/36723#issuecomment-4035634794)
+- 2026-03-11 `MatthewBonanni`: @robertgshaw2-redhat important bugfix, addresses a substantial perf regression in 0.17.0 (https://github.com/vllm-project/vllm/pull/36723#issuecomment-4035648538)

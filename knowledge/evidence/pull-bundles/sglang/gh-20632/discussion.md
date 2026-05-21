@@ -1,0 +1,1 @@
+- 2026-03-16 `HydraQYH` approved: Great job. When we have a large number of kernel implementations, it is important to determine which kernel to use through benchmarks, rather than having users choose manually. (https://github.com/sgl-project/sglang/pull/20632#pullrequestreview-3951054045)

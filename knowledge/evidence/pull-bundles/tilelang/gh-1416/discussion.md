@@ -1,0 +1,1 @@
+- 2025-12-13 `LeiWang1999`: - [ ] The input of atomic add should be address of (ptr) instead of buffer load, otherwise sync and const related analysis may have wrong result. (https://github.com/tile-ai/tilelang/pull/1416#issuecomment-3649111086)

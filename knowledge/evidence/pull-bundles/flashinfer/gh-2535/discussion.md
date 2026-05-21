@@ -1,0 +1,1 @@
+- 2026-02-12 `yongwww`: @yongwww , can you trigger the CI for me? I've rebased on main triggered, and have added you to the allowed list. (https://github.com/flashinfer-ai/flashinfer/pull/2535#issuecomment-3887969569)

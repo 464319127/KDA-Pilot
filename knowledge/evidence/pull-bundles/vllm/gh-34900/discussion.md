@@ -1,0 +1,7 @@
+- 2026-02-19 `vadiklyutiy` on `vllm/model_executor/custom_op.py`:252: This code is not on hot path (https://github.com/vllm-project/vllm/pull/34900#discussion_r2829108084)
+- 2026-02-19 `mgoin` on `vllm/model_executor/custom_op.py`:208: I think keeping these comments are valuable, especially for the new section since it is so dense (https://github.com/vllm-project/vllm/pull/34900#discussion_r2829512992)
+- 2026-02-19 `vadiklyutiy` on `vllm/model_executor/custom_op.py`:208: removed by mistake. fixed (https://github.com/vllm-project/vllm/pull/34900#discussion_r2829633614)
+- 2026-02-19 `vadiklyutiy`: holy moly I always believed in torch.compile, not in hand-written kernels :-) (https://github.com/vllm-project/vllm/pull/34900#issuecomment-3929388268)
+- 2026-02-20 `ProExpertProg` on `vllm/model_executor/custom_op.py`:304: If we're just setting this as a class property, can we just set it directly in the class declaration? (https://github.com/vllm-project/vllm/pull/34900#discussion_r2831471681)
+- 2026-02-20 `vadiklyutiy` on `vllm/model_executor/custom_op.py`:304: We can, but current implementationt I like more because: 1. It correspond how we do it in compilation for model forward path. 2. Explicit arg here more visible. If somebody implements new CustomOp it is more likely they see this arg in ... (https://github.com/vllm-project/vllm/pull/34900#discussion_r2832482008)
+- 2026-02-20 `ProExpertProg` on `vllm/model_executor/custom_op.py`:304: Okay, that sounds good to me (https://github.com/vllm-project/vllm/pull/34900#discussion_r2833704387)

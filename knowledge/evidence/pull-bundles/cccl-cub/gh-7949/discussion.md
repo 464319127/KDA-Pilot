@@ -1,0 +1,7 @@
+- 2026-03-25 `bernhardmgruber` on `cub/benchmarks/bench/segmented_radix_sort/keys.cu`:21: This is a breaking change of the benchmark and I need feedback whether we are ok with that. We previously tested segmented radix sort with 32 and 64-bit offsets AND segment sizes. However, the public API allows 32 and 64-bit offsets but ... (https://github.com/NVIDIA/cccl/pull/7949#discussion_r2989704670)
+- 2026-03-25 `bernhardmgruber` on `cub/benchmarks/bench/radix_sort/keys.cu`:59: What to do here? (https://github.com/NVIDIA/cccl/pull/7949#discussion_r2991448304)
+- 2026-03-25 `bernhardmgruber` on `cub/benchmarks/bench/radix_sort/keys.cu`:53: TODO: This deadlocks now during benchmark execution. (https://github.com/NVIDIA/cccl/pull/7949#discussion_r2991593061)
+- 2026-03-30 `miscco` on `cub/cub/device/device_segmented_radix_sort.cuh`:2036: I am always a bit scared of just {} as function arguments. Can we add the type? (https://github.com/NVIDIA/cccl/pull/7949#discussion_r3007875135)
+- 2026-05-12 `bernhardmgruber` on `cub/benchmarks/bench/radix_sort/keys.cu`:53: Maybe this was also caused by 8901 (https://github.com/NVIDIA/cccl/pull/7949#discussion_r3227575193)
+- 2026-05-13 `bernhardmgruber` on `cub/benchmarks/bench/radix_sort/keys.cu`:59: Using CCCL TRY CUDA API (https://github.com/NVIDIA/cccl/pull/7949#discussion_r3235506660)
+- 2026-05-13 `bernhardmgruber` on `cub/benchmarks/bench/segmented_radix_sort/keys.cu`:21: Moved this to a different PR (https://github.com/NVIDIA/cccl/pull/7949#discussion_r3235887738)

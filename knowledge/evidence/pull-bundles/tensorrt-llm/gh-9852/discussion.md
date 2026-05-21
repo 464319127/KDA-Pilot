@@ -1,0 +1,4 @@
+- 2025-12-10 `tensorrt-cicd`: [PR Github 27740]( [ run ] completed with state SUCCESS. Commit: 3de8159 [/LLM/main/L0 MergeRequest PR pipeline 21168]( completed with status: 'SUCCESS' (https://github.com/NVIDIA/TensorRT-LLM/pull/9852#issuecomment-3638511786)
+- 2025-12-11 `yuxianq` on `tests/integration/defs/accuracy/test_llm_api_pytorch.py`:2911: Please add all new tests to test list and run them locally before merged. (https://github.com/NVIDIA/TensorRT-LLM/pull/9852#discussion_r2609403452)
+- 2025-12-13 `tensorrt-cicd`: [PR Github 28079]( [ run ] completed with state SUCCESS. Commit: 1c8ff8b [/LLM/main/L0 MergeRequest PR pipeline 21451]( completed with status: 'SUCCESS' (https://github.com/NVIDIA/TensorRT-LLM/pull/9852#issuecomment-3649035212)
+- 2025-12-13 `nvxuanyuc` on `tests/integration/defs/accuracy/test_llm_api_pytorch.py`:2911: Have verified all tests locally and added to qa list. (https://github.com/NVIDIA/TensorRT-LLM/pull/9852#discussion_r2616132941)

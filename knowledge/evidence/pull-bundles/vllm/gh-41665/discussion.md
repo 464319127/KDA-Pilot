@@ -1,0 +1,1 @@
+- 2026-05-06 `benchislett` on `csrc/topk.cu`:170: I don't think we need quite so much context in the comment. (https://github.com/vllm-project/vllm/pull/41665#discussion_r3197649731)

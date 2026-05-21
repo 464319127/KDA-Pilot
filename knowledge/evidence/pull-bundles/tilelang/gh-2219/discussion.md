@@ -1,0 +1,1 @@
+- 2026-05-18 `LeiWang1999` on `examples/deepseek_v32/sparse_mla_fwd.py`:110: T.alloc barrier(256) reads better. (https://github.com/tile-ai/tilelang/pull/2219#discussion_r3261005274)

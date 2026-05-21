@@ -1,0 +1,1 @@
+- 2025-11-23 `yzh119` commented: Thanks for the bugfix and it looks good to me overall, would you mind adding a unittest for the case However, kStrideBatch/vStrideBatch can be set to a large numel()-based value that overflows into a negative int32 sentinel. This negative stride is then ... (https://github.com/flashinfer-ai/flashinfer/pull/2134#pullrequestreview-3497451450)

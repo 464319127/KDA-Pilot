@@ -1,0 +1,2 @@
+- 2026-02-25 `bkryu` on `benchmarks/routines/attention.py`:266: torch.uint32 is only supported in very recent PyTorch versions (2.3+) Torch 2.3 is not recent at this point (https://github.com/flashinfer-ai/flashinfer/pull/2628#discussion_r2850242826)
+- 2026-02-25 `bkryu` on `benchmarks/routines/attention.py`:602: Fair point. Will disallow backend='auto' for speculative decoding. (https://github.com/flashinfer-ai/flashinfer/pull/2628#discussion_r2850277276)

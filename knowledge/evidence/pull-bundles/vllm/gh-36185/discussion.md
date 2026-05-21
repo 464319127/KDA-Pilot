@@ -1,0 +1,2 @@
+- 2026-03-05 `Rohan138` on `vllm/v1/attention/backends/mla/triton_mla.py`:48: redundant with get supported kernel block sizes (https://github.com/vllm-project/vllm/pull/36185#discussion_r2892910856)
+- 2026-03-05 `Rohan138` on `vllm/v1/attention/backends/mla/rocm_aiter_mla_sparse.py`:108: already default in MLACommonBackend (https://github.com/vllm-project/vllm/pull/36185#discussion_r2892912088)

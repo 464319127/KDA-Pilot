@@ -1,0 +1,1 @@
+- 2026-05-19 `wzhao18`: @mgoin Thanks for taking a look. Could you enable the Kernels (B200) test in CI? (https://github.com/vllm-project/vllm/pull/43119#issuecomment-4490414277)

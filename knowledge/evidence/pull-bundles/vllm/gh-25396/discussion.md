@@ -1,0 +1,2 @@
+- 2025-09-22 `mgoin` on `vllm/platforms/cuda.py`:341: is kv cache dtype supported isn't used anywhere anymore :( (https://github.com/vllm-project/vllm/pull/25396#discussion_r2369039089)
+- 2025-09-22 `mgoin` on `vllm/platforms/cuda.py`:344: fp8 kv cache is not supported for sm100 on flashattention, so I think this is right (https://github.com/vllm-project/vllm/pull/25396#discussion_r2369175624)

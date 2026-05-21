@@ -1,0 +1,2 @@
+- 2025-06-10 `fzyzcjy` on `python/sglang/srt/server_args.py`:169: not sure whether this is ep-related (https://github.com/sgl-project/sglang/pull/7037#discussion_r2137225139)
+- 2025-06-10 `fzyzcjy` on `python/sglang/srt/server_args.py`:169: this is implemented by me I said "not sure" b/c theoretically speaking it is about how dense layers in deepseek behaves (its TP size) and is unrelated to EP, but on the other hand currently its primary usage is use with EP ... (https://github.com/sgl-project/sglang/pull/7037#discussion_r2137299551)

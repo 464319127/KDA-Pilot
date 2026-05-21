@@ -1,0 +1,1 @@
+- 2025-11-12 `Fridge003` on `sgl-kernel/python/sgl_kernel/__init__.py`:53: Can you keep these two kernels in sgl-kernel. In case flashinfer causes some bug so we can easily shift it back (https://github.com/sgl-project/sglang/pull/12376#discussion_r2519576584)

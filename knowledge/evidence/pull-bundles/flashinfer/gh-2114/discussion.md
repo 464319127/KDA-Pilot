@@ -1,0 +1,1 @@
+- 2025-11-19 `staugust`: @yzh119 I've test this pr with script in 2113 , it runs as expected. With return lse base on e set to default value False, flashinfer return lse based on 2, which is the same with current implementation. flashinfer return lse base ... (https://github.com/flashinfer-ai/flashinfer/pull/2114#issuecomment-3552928035)

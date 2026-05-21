@@ -1,0 +1,2 @@
+- 2026-04-02 `tjtanaa` on `vllm/v1/attention/backends/mla/rocm_aiter_mla.py`:141: @wufann Gemini feedback is valid. Basically, what you are trying to fix is related to this condition needs head repeat (https://github.com/vllm-project/vllm/pull/38615#discussion_r3026571480)
+- 2026-04-02 `wufann` on `vllm/v1/attention/backends/mla/rocm_aiter_mla.py`:141: @tjtanaa thanks for review, I will follow gemini feedback. (https://github.com/vllm-project/vllm/pull/38615#discussion_r3026612119)

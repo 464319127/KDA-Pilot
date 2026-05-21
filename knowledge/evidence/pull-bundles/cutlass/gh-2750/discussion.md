@@ -1,0 +1,7 @@
+- 2025-11-05 `fengxie` on `examples/python/CuTeDSL/blackwell/tutorial_gemm/fp16_gemm_1.py`:82: How about adding small comment to say why 2? (https://github.com/NVIDIA/cutlass/pull/2750#discussion_r2492949627)
+- 2025-11-05 `fengxie` on `examples/python/CuTeDSL/blackwell/tutorial_gemm/fp16_gemm_1.py`:259: Does make rmem tensor like(tDgC[None, None, 0]) work? (https://github.com/NVIDIA/cutlass/pull/2750#discussion_r2492957104)
+- 2025-11-05 `fengxie` on `examples/python/CuTeDSL/blackwell/tutorial_gemm/fp16_gemm_1.py`:324: How about tDgC[None, None, i].store(tCrAcc.load().to(io dtype))? Will this impact generated code? (https://github.com/NVIDIA/cutlass/pull/2750#discussion_r2492965903)
+- 2025-11-05 `keithzzzzz` on `examples/python/CuTeDSL/blackwell/tutorial_gemm/fp16_gemm_1.py`:82: Thanks for reminding. Added. (https://github.com/NVIDIA/cutlass/pull/2750#discussion_r2493263414)
+- 2025-11-05 `keithzzzzz` on `examples/python/CuTeDSL/blackwell/tutorial_gemm/fp16_gemm_1.py`:324: Will this impact generated Yes, it won't generate cute.copy(..), thus, no st.global generated from PTX. (https://github.com/NVIDIA/cutlass/pull/2750#discussion_r2493268805)
+- 2025-11-05 `fengxie` on `examples/python/CuTeDSL/blackwell/tutorial_gemm/fp16_gemm_1.py`:324: It as tDgC.store which should generate st.global? (https://github.com/NVIDIA/cutlass/pull/2750#discussion_r2494671520)
+- 2025-11-05 `fengxie` on `examples/python/CuTeDSL/blackwell/tutorial_gemm/fp16_gemm_1.py`:25: How about just use utils.sm100 ? (https://github.com/NVIDIA/cutlass/pull/2750#discussion_r2494936131)

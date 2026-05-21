@@ -1,0 +1,2 @@
+- 2025-07-29 `yzh119` on `tests/test_trtllm_gen_decode.py`:352: why removing dynamic scale=True here? (https://github.com/flashinfer-ai/flashinfer/pull/1348#discussion_r2240546551)
+- 2025-07-29 `yyihuang` on `tests/test_trtllm_gen_decode.py`:352: @yzh119 Dynamic scale is not supported yet underlying. Should be added in 1342 (https://github.com/flashinfer-ai/flashinfer/pull/1348#discussion_r2240610141)

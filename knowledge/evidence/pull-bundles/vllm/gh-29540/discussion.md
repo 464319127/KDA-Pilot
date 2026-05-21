@@ -1,0 +1,2 @@
+- 2025-11-26 `yewentao256` commented: Thanks for the work! Let's run CI and see if we can pass (https://github.com/vllm-project/vllm/pull/29540#pullrequestreview-3512608816)
+- 2025-11-26 `hmellor`: It's worth noting that the TYPE CHECKING guard isn't always a workaround for circular imports. It can save time at runtime by not importing heavy modules that are only used for type checking. (https://github.com/vllm-project/vllm/pull/29540#issuecomment-3583445920)

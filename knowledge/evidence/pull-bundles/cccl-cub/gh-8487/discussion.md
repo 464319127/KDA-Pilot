@@ -1,0 +1,1 @@
+- 2026-04-16 `davebayer` on `libcudacxx/test/libcudacxx/cuda/hierarchy/warp_level/hierarchy_queries.pass.cpp`:284: @pciolkosz, I had to set the thread count to 32 to make this test pass, I'm not sure whether the assertion on block size being at least 32 for gpu thread.count(warp, hierarchy) is a good thing.. (https://github.com/NVIDIA/cccl/pull/8487#discussion_r3094310933)

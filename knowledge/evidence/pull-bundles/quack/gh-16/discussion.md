@@ -1,0 +1,5 @@
+- 2025-07-16 `tridao` on `quack/rmsnorm.py`:812: we can just subclass torch.nn.RMSNorm instead? and only change the forward? (https://github.com/Dao-AILab/quack/pull/16#discussion_r2209041274)
+- 2025-07-16 `tridao` on `quack/rmsnorm.py`:645: tdWgdW.element type should always be fp32, since we allocate dw partial to be in fp32. You can just put an assert here that type is fp32. (https://github.com/Dao-AILab/quack/pull/16#discussion_r2209042285)
+- 2025-07-16 `tridao`: Wow amazing that you're already seeing speedup in torch titan! (https://github.com/Dao-AILab/quack/pull/16#issuecomment-3076464523)
+- 2025-07-16 `lessw2020` on `quack/rmsnorm.py`:645: ah you are correct. I've removed this. (https://github.com/Dao-AILab/quack/pull/16#discussion_r2209249779)
+- 2025-07-16 `lessw2020` on `quack/rmsnorm.py`:812: in theory yes, but I started trying this tonight and hit various cute dsl issues in the process. Thus, I'd like to push this off as a seperate PR rather than try and do it here as we already have a lot ... (https://github.com/Dao-AILab/quack/pull/16#discussion_r2209257009)

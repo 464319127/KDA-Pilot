@@ -1,0 +1,1 @@
+- 2025-07-08 `yzh119` on `tests/test_cudnn_decode.py`:111: As discussed before we should remove these synchronization for unittests like in prefill kernels. (https://github.com/flashinfer-ai/flashinfer/pull/1221#discussion_r2191598705)

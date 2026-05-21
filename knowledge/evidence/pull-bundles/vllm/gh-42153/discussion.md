@@ -1,0 +1,2 @@
+- 2026-05-09 `jiahanc`: e2e benchmark on DeepSeek V4 Flash TP4 Concurrency 1 Baseline Concurrency 1 OPT (https://github.com/vllm-project/vllm/pull/42153#issuecomment-4412174680)
+- 2026-05-09 `jiahanc`: e2e benchmark on DeepSeek V4 Flash TP4 Concurrency 1024 Baseline Concurrency 1024 OPT (https://github.com/vllm-project/vllm/pull/42153#issuecomment-4412177248)

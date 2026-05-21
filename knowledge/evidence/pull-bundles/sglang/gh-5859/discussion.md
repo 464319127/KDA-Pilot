@@ -1,0 +1,1 @@
+- 2025-04-29 `JustinTong0323`: isl 1k osl 2k tp 1 is even worse I rerun the test, and it seems like the tuned config is better than default in all sets, the original score maybe a mistake. (https://github.com/sgl-project/sglang/pull/5859#issuecomment-2837414950)

@@ -1,0 +1,3 @@
+- 2026-01-28 `LeiWang1999` on `tilelang/utils/target.py`:67: would be better to rename it into determine fp8 type (https://github.com/tile-ai/tilelang/pull/1743#discussion_r2734610168)
+- 2026-01-28 `LeiWang1999` commented: Thanks for your contribution, I left a simple comment that would be better to rename the select fp8 type into determine fp8 type. (https://github.com/tile-ai/tilelang/pull/1743#pullrequestreview-3714330095)
+- 2026-01-29 `hubertlu-tw` on `tilelang/utils/target.py`:67: Addressed. Thank you very much for reviewing the PR. (https://github.com/tile-ai/tilelang/pull/1743#discussion_r2739180199)

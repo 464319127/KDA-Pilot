@@ -1,0 +1,1 @@
+- 2026-03-19 `amitz-nv` on `tests/autotuner/test_trtllm_fused_moe_autotuner_integration.py`:253: Fixed by resetting the cache every iteration of the loop (https://github.com/flashinfer-ai/flashinfer/pull/2821#discussion_r2962417349)

@@ -1,0 +1,2 @@
+- 2025-04-25 `johnnynunez`: @yzh119 cutlass 3.9.0 is officially released (https://github.com/flashinfer-ai/flashinfer/pull/1039#issuecomment-2831181642)
+- 2025-04-25 `yzh119`: Hi @johnnynunez , yes and we upgraded 3rdparty dependency to cutlass 3.9 several weeks ago: This PR changes the original implementation to unblocks the features we need. (https://github.com/flashinfer-ai/flashinfer/pull/1039#issuecomment-2831278697)

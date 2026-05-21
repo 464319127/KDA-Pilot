@@ -1,0 +1,2 @@
+- 2025-09-19 `yzh119` on `tvm_binding/grouped_gemm_fp8.cu`:289: Please remove these lines (https://github.com/flashinfer-ai/flashinfer/pull/1725#discussion_r2361914151)
+- 2025-09-20 `MasterJH5574` on `tvm_binding/grouped_gemm_fp8.cu`:22: Need to remove this given it was for debugging purpose. (https://github.com/flashinfer-ai/flashinfer/pull/1725#discussion_r2365833515)

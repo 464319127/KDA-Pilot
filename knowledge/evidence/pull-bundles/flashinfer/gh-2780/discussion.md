@@ -1,0 +1,2 @@
+- 2026-03-19 `aleozlx`: now that we merged the cutlass bump, this may work now (https://github.com/flashinfer-ai/flashinfer/pull/2780#issuecomment-4092571487)
+- 2026-03-20 `RobTand`: Confirming this fixes the race condition during CUDA graph capture on DGX Spark (SM121). I've been using FLASHINFER EXTRA CUDAFLAGS="-DCUTLASS ENABLE GDC FOR SM100=1" as a build-time workaround — this PR is the proper fix. Running NVFP4 MoE models (Nemotron-3-Super, Qwen3.5-122B) in ... (https://github.com/flashinfer-ai/flashinfer/pull/2780#issuecomment-4099479903)

@@ -1,0 +1,2 @@
+- 2026-05-18 `mgoin` on `vllm/model_executor/warmup/kernel_warmup.py`:104: Will merge this for now, but we should use the vllm cache path instead of a temp. Particularly for long term cache storage (https://github.com/vllm-project/vllm/pull/42857#discussion_r3260382901)
+- 2026-05-18 `mgoin` approved: Manually ran B200 CI and it all passed (https://github.com/vllm-project/vllm/pull/42857#pullrequestreview-4311846843)

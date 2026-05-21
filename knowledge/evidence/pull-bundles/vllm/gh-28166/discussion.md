@@ -1,0 +1,2 @@
+- 2025-11-05 `mxz297` on `vllm/model_executor/layers/fused_moe/flashinfer_cutlass_prepare_finalize.py`:251: No, the goal here is not type cast but reinterpret the bit values (https://github.com/vllm-project/vllm/pull/28166#discussion_r2496393411)
+- 2025-11-05 `mxz297`: After PR, FI-cutlass NVFP4 moe + FI-a2av works with DEP16 non-disagg on GB200 and got gsm8k score 0.96 (https://github.com/vllm-project/vllm/pull/28166#issuecomment-3493981535)

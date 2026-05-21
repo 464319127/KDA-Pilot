@@ -1,0 +1,7 @@
+- 2025-06-08 `yuan-luo`: Benchmark result, CUDA gains 10% improvement over Triton. (https://github.com/sgl-project/sglang/pull/6919#issuecomment-2953774244)
+- 2025-06-09 `BBuf` on `sgl-kernel/tests/test_ep_moe_silu_and_mul_kernel.py`:81: The function can be deleted now? (https://github.com/sgl-project/sglang/pull/6919#discussion_r2135044637)
+- 2025-06-09 `BBuf` on `sgl-kernel/benchmark/bench_moe_silu_and_mul.py`:27: Can these variables also take different value combinations in the configs above? (https://github.com/sgl-project/sglang/pull/6919#discussion_r2135046404)
+- 2025-06-09 `BBuf` on `sgl-kernel/csrc/moe/ep_moe_silu_and_mul_kernel.cu`:61: It might be worth considering how to handle the tail elements when hidden size is not divisible by vec size. (https://github.com/sgl-project/sglang/pull/6919#discussion_r2135051559)
+- 2025-06-09 `yuan-luo` on `sgl-kernel/csrc/moe/ep_moe_silu_and_mul_kernel.cu`:61: Added logic to handle tail elements when hidden size is not divisible by vec size. (https://github.com/sgl-project/sglang/pull/6919#discussion_r2135120027)
+- 2025-06-09 `yuan-luo` on `sgl-kernel/tests/test_ep_moe_silu_and_mul_kernel.py`:81: Replaced by torch.testing.assert close. (https://github.com/sgl-project/sglang/pull/6919#discussion_r2135123806)
+- 2025-06-09 `Alcanderian` on `sgl-kernel/csrc/moe/ep_moe_silu_and_mul_kernel.cu`:95: improve performance with dynamic block size refer to: (https://github.com/sgl-project/sglang/pull/6919#discussion_r2135351263)

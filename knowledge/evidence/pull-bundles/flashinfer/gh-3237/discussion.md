@@ -1,0 +1,3 @@
+- 2026-05-05 `zianglih` on `tests/utils/test_fp4_quantize.py`:594: Can we override the env var inside test nvfp4 per token quantize te reference to avoid skipping it (https://github.com/flashinfer-ai/flashinfer/pull/3237#discussion_r3191951912)
+- 2026-05-07 `IwakuraRein` on `csrc/nv_internal/tensorrt_llm/kernels/quantization.cuh`:793: uint32 t can represent 4G scale factors, corresponding to 4G 16 0.5 = 32GB tensor. (https://github.com/flashinfer-ai/flashinfer/pull/3237#discussion_r3204952590)
+- 2026-05-07 `IwakuraRein` on `csrc/nv_internal/tensorrt_llm/kernels/quantization.cuh`:793: Confirmed int64 t doesn't have significant overhead. Change revereted. (https://github.com/flashinfer-ai/flashinfer/pull/3237#discussion_r3205070922)

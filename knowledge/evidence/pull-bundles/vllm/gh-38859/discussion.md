@@ -1,0 +1,3 @@
+- 2026-04-03 `vadiklyutiy`: Do we know what PR in FI fixed it? Just worry a bit that there is no comments in But I confirm that test from passed successfully. (https://github.com/vllm-project/vllm/pull/38859#issuecomment-4181314847)
+- 2026-04-03 `yzong-rh`: Do we know what PR in FI fixed it? Not sure, I can do a bisect tmw. I just installed the 0.6.7 release and it's fixed. (https://github.com/vllm-project/vllm/pull/38859#issuecomment-4181318408)
+- 2026-04-03 `vadiklyutiy`: Do we know what PR in FI fixed it? Not sure, I can do a bisect tmw. I just installed the 0.6.7 release and it's fixed. In my opinion, it is not worth spending time on this. (https://github.com/vllm-project/vllm/pull/38859#issuecomment-4181322666)

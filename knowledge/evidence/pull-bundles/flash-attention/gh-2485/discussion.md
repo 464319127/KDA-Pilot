@@ -1,0 +1,1 @@
+- 2026-04-23 `drisspg`: Looks good, I also had opus writeup the custom op deffs such that we can get graph break freak + a pattern Richard mentioned for handling the callables: (https://github.com/Dao-AILab/flash-attention/pull/2485#issuecomment-4307145264)

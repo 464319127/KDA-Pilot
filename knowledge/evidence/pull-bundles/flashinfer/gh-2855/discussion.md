@@ -1,0 +1,1 @@
+- 2026-04-07 `yzh119` commented: Two suggestions: 1. Hardcoded jit args[7] - Fragile if the gen customize batch module signature changes. Could use a NamedTuple for jit args in the future to make this self-documenting, but not required for this PR. At minimum add a comment explaining ... (https://github.com/flashinfer-ai/flashinfer/pull/2855#pullrequestreview-4066247386)

@@ -1,0 +1,1 @@
+- 2025-08-19 `MatthewBonanni` on `vllm/v1/attention/backends/mla/common.py`:620: (note: num prefills 0 condition is not required here because this condition is checked at line 610) (https://github.com/vllm-project/vllm/pull/23183#discussion_r2285439770)

@@ -1,0 +1,1 @@
+- 2025-09-21 `HydraQYH` on `sgl-kernel/csrc/gemm/int8_gemm_kernel.cu`:415: Unnecessary. It is unnecessary to specialize ThreadBlockShape N or WarpShape N for different N, because N is usually much larger than ThreadBlockShape N or WarpShape N, which can easily reach the peak flops. (https://github.com/sgl-project/sglang/pull/10714#discussion_r2366232198)

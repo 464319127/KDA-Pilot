@@ -1,0 +1,1 @@
+- 2025-03-23 `yzh119`: After the changes, here is the norm python API performance (cpu and python overhead included, A100 Performance This PR v0.1.6 H100 Performance This PR (no PDL) This PR (w/ PDL) v0.1.6 (no PDL) (https://github.com/flashinfer-ai/flashinfer/pull/969#issuecomment-2746474903)

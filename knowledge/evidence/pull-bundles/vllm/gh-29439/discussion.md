@@ -1,0 +1,1 @@
+- 2025-12-04 `SageMoore` commented: This looks reasonable to me, but I'm not seeing a log in the code. Am I just missing something obvious? (https://github.com/vllm-project/vllm/pull/29439#pullrequestreview-3542496206)

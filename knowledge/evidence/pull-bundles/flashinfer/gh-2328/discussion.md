@@ -1,0 +1,1 @@
+- 2026-01-11 `yzh119` on `csrc/nv_internal/tensorrt_llm/common/reduceKernelUtils.cuh`:161: @claude write a simple python unittest to verify norm module compiles when ENABLE FP8 is disabled. (https://github.com/flashinfer-ai/flashinfer/pull/2328#discussion_r2679301998)

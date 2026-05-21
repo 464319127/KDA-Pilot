@@ -1,0 +1,2 @@
+- 2026-03-25 `mgoin`: Why did the original cutedsl moe get removed? (https://github.com/vllm-project/vllm/pull/38050#issuecomment-4124656494)
+- 2026-03-25 `zyongye`: Why did the original cutedsl moe get removed? It's not removed. It is moved to flashinfer cutedsl batched moe and we auto select between these two based on what prepare finalize we are using. Similar like what we do for deepgemm and ... (https://github.com/vllm-project/vllm/pull/38050#issuecomment-4128227625)

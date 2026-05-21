@@ -1,0 +1,4 @@
+- 2026-01-09 `yzh119` on `csrc/trtllm_fused_moe_routing_deepseek.cu`:61: is it possible to use negative zero? It's usually used as an invalid score in float. (https://github.com/flashinfer-ai/flashinfer/pull/2313#discussion_r2675252469)
+- 2026-01-09 `yzh119` commented: also cc @jiahanc and @ChristinaZ for another look. (https://github.com/flashinfer-ai/flashinfer/pull/2313#pullrequestreview-3642836287)
+- 2026-01-09 `b8zhong` on `csrc/trtllm_fused_moe_routing_deepseek.cu`:61: Here, I think it would not work? (I think signed 0 is a valid representation here right and will just be 0? Correct me if I'm wrong) (https://github.com/flashinfer-ai/flashinfer/pull/2313#discussion_r2677131613)
+- 2026-01-13 `ChristinaZ` on `csrc/trtllm_fused_moe_routing_deepseek.cu`:61: Agree, I think we can also use static constexpr float invalidScoreFloat = float{-INFINITY}; (https://github.com/flashinfer-ai/flashinfer/pull/2313#discussion_r2685391072)

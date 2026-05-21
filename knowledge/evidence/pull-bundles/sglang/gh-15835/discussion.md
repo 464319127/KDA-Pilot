@@ -1,0 +1,3 @@
+- 2025-12-26 `BBuf` on `python/sglang/jit_kernel/csrc/norm.cuh`:168: Can you add a comment for this line, I can't easily understand now. (https://github.com/sgl-project/sglang/pull/15835#discussion_r2648291364)
+- 2025-12-26 `BBuf` on `python/sglang/jit_kernel/tests/test_qknorm.py`:66: Add a torch.float16 is better (https://github.com/sgl-project/sglang/pull/15835#discussion_r2648296130)
+- 2025-12-26 `BBuf` commented: It seems that the kUsePDL template parameter in the JIT kernel doesn't automatically enable or disable itself based on GPU architecture? (https://github.com/sgl-project/sglang/pull/15835#pullrequestreview-3613532715)

@@ -1,0 +1,2 @@
+- 2025-10-17 `LucasWilkinson`: @bigPYJ1151 do you think you can help look at this? not that well versed in the CPU backend (https://github.com/vllm-project/vllm/pull/27035#issuecomment-3416096299)
+- 2025-10-18 `bigPYJ1151`: After some tests I found even set , the attention backend still got mixed batches. It's different from V0. This PR looks reasonable and fixed the bug. Please fix the failed pre-commit check, thanks :) (https://github.com/vllm-project/vllm/pull/27035#issuecomment-3418086610)

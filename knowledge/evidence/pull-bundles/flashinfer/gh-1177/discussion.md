@@ -1,0 +1,2 @@
+- 2025-06-25 `yzh119` on `flashinfer/sparse.py`:674: I'll appreciate it if you can create documentation page and attach the figure you put in this pull request. The media files are hosted in I have invited you to that repo. (https://github.com/flashinfer-ai/flashinfer/pull/1177#discussion_r2167451239)
+- 2025-06-25 `yzh119` on `flashinfer/sparse.py`:1181: My personal preference for this kind of reshaping is using [einops]( let me know if it works for your case. (https://github.com/flashinfer-ai/flashinfer/pull/1177#discussion_r2167455559)

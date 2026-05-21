@@ -11,9 +11,10 @@ This skill turns kernel research questions into citable evidence through three
 peer routes with non-overlapping scopes. Pick one, or combine them.
 
 - **Route A — Local PR diffs.** Materialized merged-PR pages and review diffs
-  for ~3.6k upstream GPU kernel PRs across SGLang, vLLM, TensorRT-LLM,
+  for ~3.8k upstream GPU kernel PRs across SGLang, vLLM, TensorRT-LLM,
   PyTorch, FlashAttention, FlashInfer, CUTLASS/CuTe, CCCL, Triton, DeepGEMM,
-  ThunderKittens, TileLang, QuACK, DeepSeek TileKernels.
+  ThunderKittens, TileLang, QuACK, DeepSeek TileKernels. PR bundles may also
+  include `discussion.md` when there was useful human review/comment signal.
 - **Route B — External source map.** `index.json` lists complementary code
   repositories that have no curated PR diffs in Route A: NVIDIA developer
   code samples, Colfax research kernels, simveit micro-tutorials. The agent
@@ -40,7 +41,8 @@ filters to keep results scoped to the current kernel context.
 
 Open the bundle named by `artifact_dir` before borrowing any idea: the
 implementation evidence lives in `review.diff`, `source-snapshot/`,
-`upstream.json`, and `ORIGIN.yaml`.
+`upstream.json`, and `ORIGIN.yaml`; `discussion.md` is an optional plain
+bullet list of useful review/comment points when such discussion exists.
 
 ## Route B: External Source Map
 

@@ -1,0 +1,2 @@
+- 2026-05-15 `bigPYJ1151` on `vllm/model_executor/layers/fused_moe/experts/cpu_moe.py`:197: will process the expert dim internally, no need to for-each here. (https://github.com/vllm-project/vllm/pull/41922#discussion_r3246127640)
+- 2026-05-15 `bigPYJ1151` commented: Thanks @yuwenzho Overall looks good :) Please also help to increase the timeout to 30m. Currently the tests take about 18m, close to the limit. (https://github.com/vllm-project/vllm/pull/41922#pullrequestreview-4295669770)

@@ -1,0 +1,3 @@
+- 2026-02-12 `HaiShaw` on `python/sglang/srt/layers/attention/aiter_backend.py`:199: don't disable 16bit kv cache case. (https://github.com/sgl-project/sglang/pull/18607#discussion_r2796625554)
+- 2026-02-12 `1am9trash` on `python/sglang/srt/layers/attention/aiter_backend.py`:199: Remove assert to make tp4 run with non-fp8 kv cache. Use non-ps kernel on tp8, and ps kernel on tp2, tp4. TP2: - fp8 kv: 0.909 - no fp8 kv: 0.902 TP4: - fp8 kv: 0.926 - no fp8 kv: 0.742 TP8: ... (https://github.com/sgl-project/sglang/pull/18607#discussion_r2796711893)
+- 2026-02-12 `HaiShaw` on `python/sglang/srt/layers/attention/aiter_backend.py`:199: Let's target accuracy on TP4 non-fp8 kv in separate PR. (https://github.com/sgl-project/sglang/pull/18607#discussion_r2796769917)

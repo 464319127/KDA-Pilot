@@ -1,0 +1,2 @@
+- 2026-03-16 `LucasWilkinson` on `vllm/model_executor/layers/fused_moe/experts/trtllm_nvfp4_moe.py`:76: why mul by 1? (https://github.com/vllm-project/vllm/pull/37217#discussion_r2942011291)
+- 2026-03-16 `LucasWilkinson` on `vllm/model_executor/layers/quantization/utils/flashinfer_fp4_moe.py`:273: I dont think comment is needed (https://github.com/vllm-project/vllm/pull/37217#discussion_r2942024711)

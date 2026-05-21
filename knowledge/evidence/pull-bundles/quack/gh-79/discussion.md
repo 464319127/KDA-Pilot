@@ -1,0 +1,3 @@
+- 2026-03-06 `tridao`: If we can cast IntValue to Int32, why don't we wrap cluster id in problem instead of changing the way cute.FastDivmodDivisor work? (https://github.com/Dao-AILab/quack/pull/79#issuecomment-4011594141)
+- 2026-03-06 `tridao`: I think cute.FastDivmodDivisor could potentially return Int64 if the divisor is Int64, so this change would limit that use case (not that we're using Int64 right now, but it's a potential bug later). (https://github.com/Dao-AILab/quack/pull/79#issuecomment-4011600981)
+- 2026-03-07 `tridao`: Nit: maybe put the Int32 cast inside the swizzle cta function since that's where the issue is (with float + int) (https://github.com/Dao-AILab/quack/pull/79#issuecomment-4015097886)

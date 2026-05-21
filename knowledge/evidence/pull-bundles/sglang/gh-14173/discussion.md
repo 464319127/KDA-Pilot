@@ -1,0 +1,1 @@
+- 2025-12-01 `yuan-luo` on `python/sglang/srt/layers/attention/flashinfer_backend.py`:166: Maybe add Qwen3OmniMoeForConditionalGeneration as well. (https://github.com/sgl-project/sglang/pull/14173#discussion_r2576383784)

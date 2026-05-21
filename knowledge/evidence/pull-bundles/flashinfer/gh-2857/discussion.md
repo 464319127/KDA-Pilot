@@ -1,0 +1,3 @@
+- 2026-04-07 `yzh119` commented: Suggestions: torch.empty(SINGLE KERNEL TMP SIZE, ...) replaces the cached buffer might introduce some allocation overhead, however PyTorch's CUDA caching allocator should make this cheap in steady state, so likely not a concern in practice. get alibi slopes(n).to(device) is recomputed on every call ... (https://github.com/flashinfer-ai/flashinfer/pull/2857#pullrequestreview-4066253899)
+- 2026-04-09 `yzh119` on `flashinfer/decode.py`:544: Seems we still have such patterns. (https://github.com/flashinfer-ai/flashinfer/pull/2857#discussion_r3055975426)
+- 2026-04-09 `yzh119` commented: @qsang-nv can you take another look? (https://github.com/flashinfer-ai/flashinfer/pull/2857#pullrequestreview-4080242122)

@@ -1,0 +1,3 @@
+- 2025-06-11 `yyihuang` on `include/flashinfer/comm/trtllm_allreduce.cuh`:224: keep it for now. (https://github.com/flashinfer-ai/flashinfer/pull/1136#discussion_r2140857558)
+- 2025-06-11 `yyihuang` on `tests/test_trtllm_allreduce.py`:53: to reduce test time (https://github.com/flashinfer-ai/flashinfer/pull/1136#discussion_r2140857820)
+- 2025-06-11 `yyihuang` on `tests/test_trtllm_allreduce.py`:168: bf16 introduces higher accuracy loss so we release the tolerance. (https://github.com/flashinfer-ai/flashinfer/pull/1136#discussion_r2140858669)

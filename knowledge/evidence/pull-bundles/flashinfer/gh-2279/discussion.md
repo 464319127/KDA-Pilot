@@ -1,0 +1,3 @@
+- 2026-01-02 `bkryu`: Thank @yzh119, the previous torch - cute-dsl overhead was a bit of a pain and this addresses the issue well. This PR would be helpful in preparing future cute-dsl kernels' APIs to correctly use tvm-ffi Once the merge conflict with 2260 has ... (https://github.com/flashinfer-ai/flashinfer/pull/2279#issuecomment-3704313455)
+- 2026-01-05 `tqchen`: cuteDSL related arm failure should be resolved by cuteDSL 4.3.4 (https://github.com/flashinfer-ai/flashinfer/pull/2279#issuecomment-3711681780)
+- 2026-01-06 `bkryu`: Hi @bkryu cu129 unittest on gb300 failed, do you think it's relevant? Failure was unrelated. I relaunched the test. Will keep an a eye on it and then approve (https://github.com/flashinfer-ai/flashinfer/pull/2279#issuecomment-3715847994)

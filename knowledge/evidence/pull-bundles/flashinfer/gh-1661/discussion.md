@@ -1,0 +1,2 @@
+- 2025-09-10 `yzh119` on `include/flashinfer/attention/scheduler.cuh`:558: agreed with gemini here, please rename to "clipped", or "effective" (https://github.com/flashinfer-ai/flashinfer/pull/1661#discussion_r2335255451)
+- 2025-09-10 `yzh119` on `tests/test_sliding_window.py`:225: Please don't remove the GQA case, changing sliding windows' behavior might influence GQA because of the use of GQA packing. (https://github.com/flashinfer-ai/flashinfer/pull/1661#discussion_r2335480267)

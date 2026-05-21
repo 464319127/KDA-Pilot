@@ -1,0 +1,2 @@
+- 2026-04-14 `aleozlx`: hi can you annotate public api using @flashinfer api (https://github.com/flashinfer-ai/flashinfer/pull/2563#issuecomment-4247248869)
+- 2026-04-15 `jinyangyuan-nvidia`: hi can you annotate public api using @flashinfer api Thanks for the suggestion. The code has been modified accordingly. (https://github.com/flashinfer-ai/flashinfer/pull/2563#issuecomment-4253311070)

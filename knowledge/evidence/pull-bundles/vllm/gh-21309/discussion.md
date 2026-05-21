@@ -1,0 +1,4 @@
+- 2025-07-24 `mgoin` on `csrc/quantization/fp4/nvfp4_scaled_mm_sm120_kernels.cu`:300: It seems these dtypes are swapped? (https://github.com/vllm-project/vllm/pull/21309#discussion_r2229287395)
+- 2025-07-24 `mgoin` on `csrc/quantization/fp4/nvfp4_scaled_mm_entry.cu`:43: This is probably good practice to do (https://github.com/vllm-project/vllm/pull/21309#discussion_r2229289988)
+- 2025-08-02 `fernandaspets`: Hi will this pull request work for NVFP4/Qwen3-235B-A22B-Thinking-2507-FP4? I can't load it with 0.10.1.dev235+g055bd3978.d20250731.cu129 i built the other day (did NOT use this pull request) curious to test on 2x 6000 pro blackwell (https://github.com/vllm-project/vllm/pull/21309#issuecomment-3146746311)
+- 2025-08-02 `mgoin`: Not yet, this PR is only for dense GEMMs. We need separate work to add a group GEMM kernel for MoEs (https://github.com/vllm-project/vllm/pull/21309#issuecomment-3146753663)

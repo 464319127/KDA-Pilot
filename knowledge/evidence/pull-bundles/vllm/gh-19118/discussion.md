@@ -1,0 +1,5 @@
+- 2025-06-04 `mgoin` on `vllm/platforms/cuda.py`:234: I'll add a log here and change it to ImportError, thanks (https://github.com/vllm-project/vllm/pull/19118#discussion_r2125213902)
+- 2025-06-04 `houseroad` on `vllm/platforms/cuda.py`:260: seems we will never use FLASH ATTN for Blackwell, is this expected? (https://github.com/vllm-project/vllm/pull/19118#discussion_r2126541024)
+- 2025-06-04 `mgoin` on `vllm/platforms/cuda.py`:260: I messed up my state here, will update (https://github.com/vllm-project/vllm/pull/19118#discussion_r2126623631)
+- 2025-06-05 `youkaichao` commented: why a new function rather than using get device capability() == 100? (https://github.com/vllm-project/vllm/pull/19118#pullrequestreview-2898648192)
+- 2025-06-05 `mgoin`: @youkaichao get device capability() returns Optional[DeviceCapability] so the full check would have to check for None and construct the DeviceCapability tuple - I think we will need this utility in more places going forward due to capability breaks between Hopper and Blackwell (https://github.com/vllm-project/vllm/pull/19118#issuecomment-2942588508)

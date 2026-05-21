@@ -1,0 +1,2 @@
+- 2025-09-15 `ProExpertProg`: Can you compare to the Inductor-generated fused kernel? (https://github.com/vllm-project/vllm/pull/24833#issuecomment-3292906908)
+- 2025-09-17 `mgoin` approved: Looks good to me as a bugfix, we should merge. @ProExpertProg I don't think we have nvfp4 quant in torch implemented in a serious way, so we should leave that to future work (https://github.com/vllm-project/vllm/pull/24833#pullrequestreview-3232191253)

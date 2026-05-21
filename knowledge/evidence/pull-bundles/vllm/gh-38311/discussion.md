@@ -1,0 +1,1 @@
+- 2026-03-27 `TheEpicDolphin` on `vllm/v1/worker/gpu/spec_decode/eagle/speculator.py`:282: This matches the GPU query start loc behavior. This method will be reused for draft prefill cudagraph, which is why we have a max query len variable here as well to handle that case. (https://github.com/vllm-project/vllm/pull/38311#discussion_r2998722583)

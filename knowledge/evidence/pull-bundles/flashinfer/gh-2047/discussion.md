@@ -1,0 +1,1 @@
+- 2025-12-09 `pavanimajety`: @yzh119 Sorry for the delayed follow up on this. I updated similar to fa3 calls and cutlass Arguments for q scale, k scale, v scale and o scale in [sm100 fmha fwd mainloop tma warpspecialized.hpp L173-L184]( Could you please review and provide ... (https://github.com/flashinfer-ai/flashinfer/pull/2047#issuecomment-3629722723)

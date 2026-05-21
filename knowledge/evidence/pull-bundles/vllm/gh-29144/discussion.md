@@ -1,0 +1,3 @@
+- 2025-11-21 `vadiklyutiy`: Does FlashInfer CUTLASS support GPU before Hopper? (https://github.com/vllm-project/vllm/pull/29144#issuecomment-3562378378)
+- 2025-11-21 `yewentao256` on `vllm/model_executor/layers/quantization/utils/flashinfer_utils.py`:293: To avoid duplicate logs across process (https://github.com/vllm-project/vllm/pull/29144#discussion_r2550222167)
+- 2025-11-21 `jiahanc`: Does FlashInfer CUTLASS support GPU before Hopper? Pre-Hopper is not supported. (https://github.com/vllm-project/vllm/pull/29144#issuecomment-3564031242)

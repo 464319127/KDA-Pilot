@@ -1,0 +1,4 @@
+- 2026-02-25 `tridao` on `flash_attn/cute/flash_bwd_preprocess.py`:32: I was thinking for the preprocess kernel we just call the hdim of O and dO to be "head dim" instead of "head dim v"? (https://github.com/Dao-AILab/flash-attention/pull/2270#discussion_r2850324259)
+- 2026-02-25 `tridao` on `flash_attn/cute/flash_bwd_preprocess.py`:32: do we ever need both head dim and head dim v in this kernel? (https://github.com/Dao-AILab/flash-attention/pull/2270#discussion_r2850351020)
+- 2026-02-25 `jayhshah` on `flash_attn/cute/flash_bwd_preprocess.py`:32: I was thinking for clearing dQaccum we need head dim (https://github.com/Dao-AILab/flash-attention/pull/2270#discussion_r2850418994)
+- 2026-02-25 `tridao` on `flash_attn/cute/flash_bwd_preprocess.py`:32: I see. Sounds great, then we need both head dim and head dim v. Code is good as is. (https://github.com/Dao-AILab/flash-attention/pull/2270#discussion_r2850894029)

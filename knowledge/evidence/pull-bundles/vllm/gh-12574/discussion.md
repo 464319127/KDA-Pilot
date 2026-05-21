@@ -1,0 +1,2 @@
+- 2025-02-01 `LucasWilkinson` on `csrc/moe/moe_align_sum_kernels.cu`:200: nit: what was changed? just the function name? everything else looks the same to me, if thats is the case we should just say taken from instead of temporarily adapted from (https://github.com/vllm-project/vllm/pull/12574#discussion_r1938341789)
+- 2025-02-01 `LucasWilkinson` on `vllm/model_executor/layers/fused_moe/fused_moe.py`:22: nit: we should move this to ENABLE MOE ALIGN BLOCK SIZE TRITON envs.py (https://github.com/vllm-project/vllm/pull/12574#discussion_r1938342299)

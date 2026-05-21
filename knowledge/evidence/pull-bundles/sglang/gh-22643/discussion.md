@@ -1,0 +1,1 @@
+- 2026-04-12 `2022tgoel` on `sgl-kernel/csrc/speculative/speculative_sampling.cuh`:164: Ideally, this would return some notion of invalid result similar to but I'm not sure the best way to do this. (https://github.com/sgl-project/sglang/pull/22643#discussion_r3070279474)

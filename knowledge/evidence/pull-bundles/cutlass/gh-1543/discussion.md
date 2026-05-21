@@ -1,0 +1,2 @@
+- 2024-05-28 `hwu36`: We actually need to make some change to your code. The problem you pointed out is correct. (https://github.com/NVIDIA/cutlass/pull/1543#issuecomment-2136253975)
+- 2024-06-27 `kongroo`: We actually need to make some change to your code. The problem you pointed out is correct. @hwu36 Hello, I was wondering if there might be any updates on this issue? (https://github.com/NVIDIA/cutlass/pull/1543#issuecomment-2193071113)

@@ -1,0 +1,1 @@
+- 2026-01-25 `yzh119` on `flashinfer/gdn_prefill.py`:193: Even though pytorch has cached allocator, it's still preferable to use a cached buffer here, you can try: (https://github.com/flashinfer-ai/flashinfer/pull/2415#discussion_r2725004257)

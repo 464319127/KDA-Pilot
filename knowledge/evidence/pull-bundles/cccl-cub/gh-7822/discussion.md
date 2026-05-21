@@ -1,0 +1,1 @@
+- 2026-02-27 `miscco` approved: The things you do for perf (https://github.com/NVIDIA/cccl/pull/7822#pullrequestreview-3865339331)

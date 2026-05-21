@@ -1,0 +1,2 @@
+- 2025-12-10 `nvpohanh` on `flashinfer/fused_moe/core.py`:376: I wish we could document the meaning of use packed weights somewhere in the code. It is not that obvious from its name. (https://github.com/flashinfer-ai/flashinfer/pull/2193#discussion_r2604910827)
+- 2025-12-10 `jimmyzho` on `flashinfer/fused_moe/core.py`:376: added comments to the docstring (https://github.com/flashinfer-ai/flashinfer/pull/2193#discussion_r2607984340)

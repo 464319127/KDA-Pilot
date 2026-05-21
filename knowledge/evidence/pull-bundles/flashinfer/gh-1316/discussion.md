@@ -1,0 +1,1 @@
+- 2025-07-29 `yzh119` commented: Overall LGTM, can you try using the flashinfer.testing benchmark apis in 1337 ? (https://github.com/flashinfer-ai/flashinfer/pull/1316#pullrequestreview-3069320543)

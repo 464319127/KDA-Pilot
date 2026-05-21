@@ -1,0 +1,2 @@
+- 2026-01-26 `iforgetmyname` on `python/sglang/srt/hardware_backend/npu/moe/topk.py`:45: add comments on router logits.shape[-1] <= 2048 (https://github.com/sgl-project/sglang/pull/17480#discussion_r2727143949)
+- 2026-01-28 `ping1jing2` on `python/sglang/srt/hardware_backend/npu/modules/deepseek_v2_attention_mla_npu.py`:108: it would be better to do it like below (https://github.com/sgl-project/sglang/pull/17480#discussion_r2736441625)

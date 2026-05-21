@@ -1,0 +1,1 @@
+- 2026-03-10 `zhuochenKIDD`: @drisspg hi is this seperate PR ok? I just think of little fix code might be easy for you to review，so others use sm80 can enable FMD/BWD themselves in interface.py, or should I supplement other code all in one to make sm80 ... (https://github.com/Dao-AILab/flash-attention/pull/2297#issuecomment-4029204830)

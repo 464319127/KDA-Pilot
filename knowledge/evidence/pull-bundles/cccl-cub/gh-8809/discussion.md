@@ -1,0 +1,6 @@
+- 2026-05-06 `NaderAlAwar` on `cub/cub/device/device_reduce.cuh`:194: Important: this should use reduce nondeterministic not reduce (https://github.com/NVIDIA/cccl/pull/8809#discussion_r3196604528)
+- 2026-05-06 `NaderAlAwar` on `c/parallel/src/reduce.cu`:376: Critical: the if and else bodies need to be swapped. The if branch should use reduce nondeterministic (https://github.com/NVIDIA/cccl/pull/8809#discussion_r3196608462)
+- 2026-05-06 `NaderAlAwar` on `cub/test/catch2_test_device_reduce_env.cu`:210: Important: should use reduce nondeterministic instead of reduce (https://github.com/NVIDIA/cccl/pull/8809#discussion_r3196610720)
+- 2026-05-06 `NaderAlAwar` on `cub/test/catch2_test_device_reduce_env.cu`:336: Important: same as above, should use nondeterministic (https://github.com/NVIDIA/cccl/pull/8809#discussion_r3196611795)
+- 2026-05-06 `NaderAlAwar` on `cub/benchmarks/bench/reduce/nondeterministic.cu`:30: Important: we should only be returning the nondeterministic policy now (https://github.com/NVIDIA/cccl/pull/8809#discussion_r3196614527)
+- 2026-05-07 `miscco`: haven't seen this one in a while @Jacobfaib that is why I am really worries about using [[no unique address]] (https://github.com/NVIDIA/cccl/pull/8809#issuecomment-4394466968)

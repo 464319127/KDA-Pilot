@@ -1,0 +1,4 @@
+- 2025-08-24 `Edenzzzz` on `include/flashinfer/attention/persistent.cuh`:486: guard with = SM100 flag? (https://github.com/flashinfer-ai/flashinfer/pull/1559#discussion_r2296525514)
+- 2025-08-24 `yzh119` on `include/flashinfer/attention/persistent.cuh`:486: Does it hurt performance on earlier architectures? (https://github.com/flashinfer-ai/flashinfer/pull/1559#discussion_r2296528426)
+- 2025-08-24 `Edenzzzz` on `include/flashinfer/attention/persistent.cuh`:486: may be negligible but makes it more clear? (https://github.com/flashinfer-ai/flashinfer/pull/1559#discussion_r2296528888)
+- 2025-08-24 `yzh119` on `include/flashinfer/attention/persistent.cuh`:486: It's still not clear why it only happens on blackwell (it might also exist hopper and ampere, but not found because of different hardware latency etc). I tend to leave a note here instead. (https://github.com/flashinfer-ai/flashinfer/pull/1559#discussion_r2296593902)

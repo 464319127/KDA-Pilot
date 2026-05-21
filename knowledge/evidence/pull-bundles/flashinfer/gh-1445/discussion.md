@@ -1,0 +1,1 @@
+- 2025-08-10 `yzh119` on `tests/test_fp8_quantize.py`:5: Can we rely on pytest.mark.parametrized instead? Or adding parameterized to docker container: (https://github.com/flashinfer-ai/flashinfer/pull/1445#discussion_r2265149518)

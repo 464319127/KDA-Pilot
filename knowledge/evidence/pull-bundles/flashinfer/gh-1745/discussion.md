@@ -1,0 +1,1 @@
+- 2025-09-22 `yzh119` on `flashinfer/decode.py`:2397: It will be no longer required after we move to GPU-based planning. (https://github.com/flashinfer-ai/flashinfer/pull/1745#discussion_r2366867041)

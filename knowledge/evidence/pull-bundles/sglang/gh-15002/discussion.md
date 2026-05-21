@@ -1,0 +1,1 @@
+- 2025-12-12 `Fridge003` changes_requested: Please move this logic for setting speculative-moe-runner-backend to server args.py (https://github.com/sgl-project/sglang/pull/15002#pullrequestreview-3573280285)

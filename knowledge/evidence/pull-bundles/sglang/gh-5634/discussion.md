@@ -1,0 +1,3 @@
+- 2025-04-22 `zhyncs` on `python/sglang/srt/server_args.py`:236: Can we use self.dp size here when it's greater than 1? (https://github.com/sgl-project/sglang/pull/5634#discussion_r2054446614)
+- 2025-04-22 `zhyncs` on `python/sglang/srt/server_args.py`:236: Consider both tp size and dp size. (https://github.com/sgl-project/sglang/pull/5634#discussion_r2054447414)
+- 2025-04-22 `Alcanderian` on `python/sglang/srt/server_args.py`:236: Found another critical cause in cuda graph capture bs. This change is reverted. (https://github.com/sgl-project/sglang/pull/5634#discussion_r2054489285)

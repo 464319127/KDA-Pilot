@@ -1,0 +1,2 @@
+- 2025-07-16 `LucasWilkinson`: GTG: Checked vllm serve runs when built on hopper Checked can run VLLM ATTENTION BACKEND=CUTLASS MLA VLLM V1 lm eval --model vllm --model args pretrained=deepseek-ai/DeepSeek-V2-Lite-Chat,trust remote code=true --tasks gsm 8k --batch size auto on Blackwell (https://github.com/vllm-project/vllm/pull/21020#issuecomment-3076483646)
+- 2025-07-16 `jeejeelee` commented: I have tested this PR locally, and it can fix thank you (https://github.com/vllm-project/vllm/pull/21020#pullrequestreview-3022905525)

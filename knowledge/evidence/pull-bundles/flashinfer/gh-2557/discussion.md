@@ -1,0 +1,1 @@
+- 2026-02-16 `ProExpertProg`: @aleozlx could we prioritize merging this (or a different fix if preferred)? It's causing an accuracy collapse for vLLM DS3-fp4 so we have to downgrade to unfused kernels, greatly affecting performance. (https://github.com/flashinfer-ai/flashinfer/pull/2557#issuecomment-3909677079)

@@ -1,0 +1,5 @@
+- 2026-04-20 `jiahanc` on `tests/moe/test_trtllm_cutlass_fused_moe.py`:328: can we keep both for better coverage? (https://github.com/flashinfer-ai/flashinfer/pull/3084#discussion_r3110075301)
+- 2026-04-21 `samuellees` on `csrc/fused_moe/cutlass_backend/flashinfer_cutlass_fused_moe_binding.cu`:1282: repleace all Hopper/hopper with sm90 (function name) (https://github.com/flashinfer-ai/flashinfer/pull/3084#discussion_r3117084286)
+- 2026-04-21 `samuellees` on `tests/moe/test_trtllm_cutlass_fused_moe.py`:2415: what is test moe w4a8? (https://github.com/flashinfer-ai/flashinfer/pull/3084#discussion_r3117099356)
+- 2026-04-21 `samuellees` on `tests/moe/test_trtllm_cutlass_fused_moe.py`:2784: @StudyingShao Could you help check if autotune is used in a correct way, please? Thanks! (https://github.com/flashinfer-ai/flashinfer/pull/3084#discussion_r3117118589)
+- 2026-04-21 `samuellees` on `tests/moe/test_trtllm_cutlass_fused_moe.py`:328: Done. Recover and add extra unit test for this PR (https://github.com/flashinfer-ai/flashinfer/pull/3084#discussion_r3117260974)

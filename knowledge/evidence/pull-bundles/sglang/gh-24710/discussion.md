@@ -1,0 +1,1 @@
+- 2026-05-09 `yuan-luo` approved: == 512 is a single-warp sweet spot. LGTM. (https://github.com/sgl-project/sglang/pull/24710#pullrequestreview-4256546071)

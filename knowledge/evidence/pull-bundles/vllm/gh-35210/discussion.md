@@ -1,0 +1,1 @@
+- 2026-02-25 `mgoin` on `csrc/quantization/fp4/activation_nvfp4_quant_fusion_kernels.cu`:145: I think this name is misleading now, it should be num packed cols like in nvfp4 quant kernels.cu, right? (https://github.com/vllm-project/vllm/pull/35210#discussion_r2854452486)

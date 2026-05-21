@@ -1,0 +1,2 @@
+- 2025-11-24 `yewentao256` on `vllm/model_executor/layers/quantization/mxfp4.py`:137: I think vllm requires torch 2.9.0 now, could we remove this? (https://github.com/vllm-project/vllm/pull/29339#discussion_r2557670062)
+- 2025-11-24 `mgoin` on `vllm/model_executor/layers/quantization/mxfp4.py`:137: CUDA does, but other hardware does not. Even though this is in a CUDA branch, I think some people still build with their own versions of torch. So would like to keep for now (https://github.com/vllm-project/vllm/pull/29339#discussion_r2557814093)

@@ -1,0 +1,1 @@
+- 2025-09-04 `jianyingzhu`: @jianyingzhu ut failed I only modified one file (fp8 blockwise gemm kernel.cu), but many kernels that I didn’t change are failing in the unit tests, such as test flash attn varlen output and test cutlass w4a8 moe mm.py. I also noticed that ... (https://github.com/sgl-project/sglang/pull/9969#issuecomment-3252986541)

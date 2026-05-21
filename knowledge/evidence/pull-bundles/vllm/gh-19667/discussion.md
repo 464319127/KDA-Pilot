@@ -1,0 +1,1 @@
+- 2025-06-16 `mgoin` approved: Can you run an eval on a model that uses the non-fp8 pathway to make sure? (https://github.com/vllm-project/vllm/pull/19667#pullrequestreview-2930479141)

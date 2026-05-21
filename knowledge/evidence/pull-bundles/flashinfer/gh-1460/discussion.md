@@ -1,0 +1,6 @@
+- 2025-08-12 `weireweire` on `flashinfer/prefill.py`:3230: please add check that o.shape + offset < scale.shape, only add in FP4Tensor.init is unsafe as user may change the tensor after init. (https://github.com/flashinfer-ai/flashinfer/pull/1460#discussion_r2268558652)
+- 2025-08-12 `weireweire` on `flashinfer/prefill.py`:3230: actually, even the out is None branch need this check, so add to outside the branch. (https://github.com/flashinfer-ai/flashinfer/pull/1460#discussion_r2268561812)
+- 2025-08-12 `weireweire` on `tests/utils_fp4.py`:89: maybe change to full m (https://github.com/flashinfer-ai/flashinfer/pull/1460#discussion_r2268572736)
+- 2025-08-12 `elvischenv` on `flashinfer/prefill.py`:3230: Thanks. Please help check if current change looks good to you. (https://github.com/flashinfer-ai/flashinfer/pull/1460#discussion_r2269299904)
+- 2025-08-14 `weireweire` on `tests/test_trtllm_gen_attention.py`:167: then line 177 should use "rounded extra size" for distinguish. (https://github.com/flashinfer-ai/flashinfer/pull/1460#discussion_r2275094201)
+- 2025-08-14 `elvischenv` on `tests/test_trtllm_gen_attention.py`:167: Fixed. Thanks for the review. (https://github.com/flashinfer-ai/flashinfer/pull/1460#discussion_r2275158041)

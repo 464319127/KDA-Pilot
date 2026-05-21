@@ -1,0 +1,1 @@
+- 2025-11-20 `MatthewBonanni` on `vllm/attention/backends/registry.py`:57: validate configuration isn't used for ROCm backends yet but this will need to be implemented in the future when the ROCm selector is updated. (https://github.com/vllm-project/vllm/pull/29103#discussion_r2547109975)

@@ -1,0 +1,7 @@
+- 2025-08-28 `mgoin` on `vllm/v1/attention/backends/mla/cutlass_mla.py`:195: Why not just replace with out = torch.empty like(q nope, dtype=torch.bfloat16)? (https://github.com/vllm-project/vllm/pull/23289#discussion_r2308475107)
+- 2025-08-29 `MatthewBonanni` on `vllm/v1/attention/backends/mla/cutlass_mla.py`:195: We want to support torch.float16 in/out too, right? The cutlass kernel supports half t (https://github.com/vllm-project/vllm/pull/23289#discussion_r2310394931)
+- 2025-08-29 `MatthewBonanni` on `vllm/v1/attention/backends/mla/cutlass_mla.py`:195: I could replace with edit: done (https://github.com/vllm-project/vllm/pull/23289#discussion_r2310403087)
+- 2025-08-29 `mgoin` on `tests/kernels/test_cutlass_mla_decode.py`:30: Nit: I think we actually only support it on sm100, so we should change this to is device capability (https://github.com/vllm-project/vllm/pull/23289#discussion_r2310482606)
+- 2025-08-29 `mgoin` on `tests/kernels/test_cutlass_mla_decode.py`:46: nit: remove float16, not common anymore (https://github.com/vllm-project/vllm/pull/23289#discussion_r2310483333)
+- 2025-08-29 `mgoin` on `vllm/v1/attention/backends/mla/cutlass_mla.py`:251: If you have bandwidth, could you remove the old cutlass mla in another PR? (https://github.com/vllm-project/vllm/pull/23289#discussion_r2310486526)
+- 2025-08-29 `mgoin` on `vllm/v1/attention/backends/mla/cutlass_mla.py`:195: Oh I just didn't understand the logic right, I see (https://github.com/vllm-project/vllm/pull/23289#discussion_r2310487692)

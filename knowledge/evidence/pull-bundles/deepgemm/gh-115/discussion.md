@@ -1,0 +1,1 @@
+- 2025-06-23 `LyricZhao`: Thanks! But actually the swizzle mode for wgrad kernels is fake, it is not used. Anyway, I will merge it for later usages. (https://github.com/deepseek-ai/DeepGEMM/pull/115#issuecomment-2994645479)

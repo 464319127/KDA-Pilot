@@ -1,0 +1,2 @@
+- 2026-04-09 `yzh119` on `flashinfer/fused_moe/cute_dsl/tuner.py`:282: do we need to fixed random see to guarantee consistent here? (https://github.com/flashinfer-ai/flashinfer/pull/3025#discussion_r3061120924)
+- 2026-04-09 `leejnau` on `flashinfer/fused_moe/cute_dsl/tuner.py`:282: do we need to fixed random see to guarantee consistent here? No, since these are throwaway dummy tensors for timing kernel execution during profiling. The values don't affect tactic selection. (https://github.com/flashinfer-ai/flashinfer/pull/3025#discussion_r3061139511)

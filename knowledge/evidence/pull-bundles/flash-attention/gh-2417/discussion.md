@@ -1,0 +1,2 @@
+- 2026-03-31 `drisspg` on `flash_attn/cute/block_sparsity.py`:105: nit: can we do if: shape.. else: shape.. idx = expand sparsity tensor(..) return Also a pattern I like is you do: [Note] Allowable kv count shapes: And then alter on See: [Note] Allowable kv count shapes (https://github.com/Dao-AILab/flash-attention/pull/2417#discussion_r3018782972)
+- 2026-03-31 `drisspg` commented: Can you add 1 test in test mask mod (https://github.com/Dao-AILab/flash-attention/pull/2417#pullrequestreview-4040585231)

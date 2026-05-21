@@ -1,0 +1,1 @@
+- 2026-02-25 `yzh119` on `tests/moe/test_cute_dsl_fused_moe.py`:306: Any specific reason we make this change? (https://github.com/flashinfer-ai/flashinfer/pull/2629#discussion_r2850134996)

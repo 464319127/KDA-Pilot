@@ -1,0 +1,1 @@
+- 2025-12-29 `AndreasKaratzas`: Full AMD CI also run with this branch and the regressions have all been resolved: (https://github.com/vllm-project/vllm/pull/31502#issuecomment-3697561027)

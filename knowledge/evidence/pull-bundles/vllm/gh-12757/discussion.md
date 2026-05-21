@@ -1,0 +1,1 @@
+- 2025-02-06 `dsikka`: @mgoin Can we enable weight-loading large tests so that MoE models can run (https://github.com/vllm-project/vllm/pull/12757#issuecomment-2638621096)

@@ -1,0 +1,2 @@
+- 2025-06-19 `yzh119` on `csrc/trtllm_moe_allreduce_fusion.cu`:50: can we use value or instead? (https://github.com/flashinfer-ai/flashinfer/pull/1161#discussion_r2157704271)
+- 2025-06-19 `yzh119` on `csrc/trtllm_moe_allreduce_fusion.cu`:50: ignore my comment :) (https://github.com/flashinfer-ai/flashinfer/pull/1161#discussion_r2157732797)

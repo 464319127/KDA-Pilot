@@ -1,0 +1,2 @@
+- 2026-01-15 `miscco` commented: We might want to add that its pre-SM90 (https://github.com/NVIDIA/cccl/pull/7245#pullrequestreview-3665612246)
+- 2026-01-15 `davebayer` on `libcudacxx/test/libcudacxx/cuda/memory/address_space.pass.cpp`:37: I wanted a very different block :) (https://github.com/NVIDIA/cccl/pull/7245#discussion_r2694387689)

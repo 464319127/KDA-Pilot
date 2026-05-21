@@ -1,0 +1,1 @@
+- 2025-11-21 `yzh119` on `csrc/trtllm_fused_moe_dev_kernel.cu`:248: @nekorobov do you think gemini's suggestion is reasonable? (https://github.com/flashinfer-ai/flashinfer/pull/2128#discussion_r2550796170)

@@ -1,0 +1,2 @@
+- 2025-12-20 `robertgshaw2-redhat` on `vllm/model_executor/layers/fused_moe/unquantized_fused_moe_method.py`:329: we shouldnt initialize this during the forward pass, we should just call it during the forward pass (https://github.com/vllm-project/vllm/pull/31052#discussion_r2636643646)
+- 2025-12-22 `robertgshaw2-redhat`: unblocked a couple things in the CI (https://github.com/vllm-project/vllm/pull/31052#issuecomment-3682960269)

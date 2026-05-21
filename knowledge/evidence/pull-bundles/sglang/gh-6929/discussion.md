@@ -1,0 +1,3 @@
+- 2025-06-07 `Fridge003`: Is the blocksize in the benchmark results the same meaning as pagesize in sglang? (https://github.com/sgl-project/sglang/pull/6929#issuecomment-2952039906)
+- 2025-06-07 `Alcanderian`: Is the blocksize in the benchmark results the same meaning as pagesize in sglang? yes (https://github.com/sgl-project/sglang/pull/6929#issuecomment-2952136736)
+- 2025-06-07 `Fridge003`: Is the blocksize in the benchmark results the same meaning as pagesize in sglang? yes Nice! I feel we can remove the limitation of page size=128 for cutlass mla backend (https://github.com/sgl-project/sglang/pull/6929#issuecomment-2952749906)

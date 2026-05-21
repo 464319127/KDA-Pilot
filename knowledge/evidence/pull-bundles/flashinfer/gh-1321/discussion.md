@@ -1,0 +1,3 @@
+- 2025-07-24 `timlee0212` on `include/flashinfer/comm/trtllm_mnnvl_allreduce.cuh`:150: Resolved. No fence required as the order will be guaranteed by polling the counter before doing the update. (https://github.com/flashinfer-ai/flashinfer/pull/1321#discussion_r2229493018)
+- 2025-07-24 `timlee0212` on `flashinfer/comm/mnnvl.py`:506: Resolved. This is correct and device pointer is used. (https://github.com/flashinfer-ai/flashinfer/pull/1321#discussion_r2229494122)
+- 2025-07-24 `timlee0212` on `tests/test_trtllm_mnnvl_allreduce.py`:222: finally block is already added to clean up the resource (https://github.com/flashinfer-ai/flashinfer/pull/1321#discussion_r2229547593)

@@ -1,0 +1,3 @@
+- 2025-03-06 `ZhongYingMatrix`: @LucasWilkinson Hi, would u please review this PR? Some shape printed time compare on DeepSeek-V2-Lite-Chat with 28k input len and 64 output len. (https://github.com/vllm-project/vllm/pull/13897#issuecomment-2703235641)
+- 2025-03-06 `ZhongYingMatrix`: @LucasWilkinson Hi, any clue of failed checks? I suppose the minor changes do not affect the tests. (https://github.com/vllm-project/vllm/pull/13897#issuecomment-2703665412)
+- 2025-03-06 `LucasWilkinson`: @LucasWilkinson Hi, any clue of failed checks? I suppose the minor changes do not affect the tests. The CI can be flaky, retrying. If that doesnt work we can ask for a force merge :+1: (https://github.com/vllm-project/vllm/pull/13897#issuecomment-2703850423)

@@ -1,0 +1,1 @@
+- 2026-03-05 `tridao`: There's a difference between cuda 12 and cuda 13 here. Need to special-case (https://github.com/Dao-AILab/quack/pull/78#issuecomment-4003154783)

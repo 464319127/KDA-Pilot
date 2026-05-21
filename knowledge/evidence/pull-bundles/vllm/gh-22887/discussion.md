@@ -1,0 +1,1 @@
+- 2025-08-28 `jikunshang`: maybe we should changed title to support data parallel for MoE models on XPU (https://github.com/vllm-project/vllm/pull/22887#issuecomment-3230330040)

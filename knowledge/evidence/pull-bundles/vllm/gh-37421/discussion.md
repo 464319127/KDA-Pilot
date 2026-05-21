@@ -1,0 +1,3 @@
+- 2026-03-24 `LucasWilkinson` on `csrc/persistent_topk.cuh`:162: nit: is this taken from somewhere? should we reference it? (https://github.com/vllm-project/vllm/pull/37421#discussion_r2983789763)
+- 2026-03-24 `LucasWilkinson` on `csrc/persistent_topk.cuh`:943: This feels like unnecessary wrapping, why not rename large topk cuda to persistent topk kernel? (https://github.com/vllm-project/vllm/pull/37421#discussion_r2983954158)
+- 2026-04-01 `LucasWilkinson` approved: This is really awesome! Thanks for all the hard work! one nit: instead of threading the topk workspace through the whole model definition can we just use current workspace manager().get simultaneous(...)? (https://github.com/vllm-project/vllm/pull/37421#pullrequestreview-4041383704)

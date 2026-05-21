@@ -1,0 +1,1 @@
+- 2026-03-23 `qiching` on `csrc/trtllm_fused_moe_kernel_launcher.cu`:1991: It's not required, but just to be nit. updated. (https://github.com/flashinfer-ai/flashinfer/pull/2853#discussion_r2977323642)

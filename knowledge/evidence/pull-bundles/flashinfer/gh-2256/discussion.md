@@ -1,0 +1,6 @@
+- 2025-12-22 `danisereb` on `benchmarks/routines/gemm.py`:946: Fixed, benchmark results after fix: No major change in tflops, but tb per sec increased to 5 TB/s. The HBM bandwidth is still under the max memory 8 TB/s of a single B200 (based on this spec This fix is possibly also ... (https://github.com/flashinfer-ai/flashinfer/pull/2256#discussion_r2639616501)
+- 2025-12-22 `danisereb` on `benchmarks/routines/gemm.py`:764: If you think it's better, I can merge this with the existing testBmmFp8. (https://github.com/flashinfer-ai/flashinfer/pull/2256#discussion_r2640822204)
+- 2025-12-23 `aleozlx` on `benchmarks/routines/gemm.py`:764: cc @bkryu for opinion (https://github.com/flashinfer-ai/flashinfer/pull/2256#discussion_r2641984098)
+- 2025-12-23 `aleozlx` on `flashinfer/gemm/gemm_base.py`:4178: i think cudnn shouldn't have such cuda version restriction (https://github.com/flashinfer-ai/flashinfer/pull/2256#discussion_r2641990270)
+- 2025-12-23 `aleozlx` commented: left minor comments. looks good so far (https://github.com/flashinfer-ai/flashinfer/pull/2256#pullrequestreview-3606617142)
+- 2025-12-25 `aleozlx`: the 33 failed on test bmm fp8 in the pipeline were expected from main. (https://github.com/flashinfer-ai/flashinfer/pull/2256#issuecomment-3690749208)

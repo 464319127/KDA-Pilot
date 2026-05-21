@@ -1,0 +1,3 @@
+- 2025-11-04 `bkryu` commented: Changes LGTM to me; @yzh119 can you take a quick look to give approval? (https://github.com/flashinfer-ai/flashinfer/pull/2033#pullrequestreview-3417784638)
+- 2025-11-04 `wenscarl` on `csrc/xqa/mha.cu`:1304: The comment could be updated, right? It's no longer a device memory. (https://github.com/flashinfer-ai/flashinfer/pull/2033#discussion_r2491491610)
+- 2025-11-04 `wenscarl` on `tests/attention/test_xqa.py`:573: Could you also test the case where the value isn’t 1.0? (https://github.com/flashinfer-ai/flashinfer/pull/2033#discussion_r2491492098)

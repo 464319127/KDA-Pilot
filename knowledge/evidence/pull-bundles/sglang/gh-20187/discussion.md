@@ -1,0 +1,1 @@
+- 2026-03-10 `HaiShaw`: @1am9trash Let's extend fp8 prefill attention to (in follow-up PRs): - other MHA models: - gfx942 (https://github.com/sgl-project/sglang/pull/20187#issuecomment-4030054311)

@@ -1,0 +1,2 @@
+- 2025-08-04 `yzh119` on `docs/api/comm.rst`:128: remove it from documentation (https://github.com/flashinfer-ai/flashinfer/pull/1374#discussion_r2250509077)
+- 2025-08-04 `yzh119` on `docs/api/testing.rst`:6: The testing module doesn't seem to be indexed properly, please double check. (https://github.com/flashinfer-ai/flashinfer/pull/1374#discussion_r2250511332)

@@ -1,0 +1,1 @@
+- 2026-04-20 `etaf`: The failed job: [xpu / linux-noble-xpu-n-py3.10 / test (default, 11, 12, linux.idc.xpu)]( ([gh]( test/test bmm outer product.py::TestBmmOuterProduct::test batch one is fixed in the other cherry-pick: (https://github.com/pytorch/pytorch/pull/180815#issuecomment-4280879055)

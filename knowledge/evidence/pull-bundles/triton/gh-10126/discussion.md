@@ -1,0 +1,2 @@
+- 2026-04-24 `peterbell10` commented: Can you add a test in accelerate-matmul.mlir (https://github.com/triton-lang/triton/pull/10126#pullrequestreview-4170119837)
+- 2026-04-27 `ThomasRaoux` on `test/TritonGPU/accelerate-matmul.mlir`:847: nit: can you minimize the tests and remove those ops (https://github.com/triton-lang/triton/pull/10126#discussion_r3148921630)

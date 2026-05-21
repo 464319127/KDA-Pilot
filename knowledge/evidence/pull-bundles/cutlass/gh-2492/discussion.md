@@ -1,0 +1,3 @@
+- 2025-07-30 `Junkai-Wu` on `examples/cute/tutorial/blackwell/04_mma_tma_2sm_sm100.cu`:480: These codes can be removed. (https://github.com/NVIDIA/cutlass/pull/2492#discussion_r2241808073)
+- 2025-07-30 `JJXiangJiaoJun` on `examples/cute/tutorial/blackwell/04_mma_tma_2sm_sm100.cu`:480: @Junkai-Wu these code has been removed (https://github.com/NVIDIA/cutlass/pull/2492#discussion_r2241953695)
+- 2025-07-30 `JJXiangJiaoJun` on `examples/cute/tutorial/blackwell/04_mma_tma_2sm_sm100.cu`:586: thanks for your suggestions (https://github.com/NVIDIA/cutlass/pull/2492#discussion_r2241961485)

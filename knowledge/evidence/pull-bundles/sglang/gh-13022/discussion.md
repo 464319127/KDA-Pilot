@@ -1,0 +1,2 @@
+- 2025-11-11 `Fridge003`: @hlu1 Have you tried concat mla absorb q general , like in this PR (https://github.com/sgl-project/sglang/pull/13022#issuecomment-3514807491)
+- 2025-11-11 `hlu1`: @hlu1 Have you tried concat mla absorb q general , like in this PR Yes, I put the perf comparison results and next steps in the Benchmarking and Profiling section is faster for prefill, but concat mla absorb q general only works ... (https://github.com/sgl-project/sglang/pull/13022#issuecomment-3515123638)

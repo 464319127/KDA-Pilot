@@ -1,0 +1,2 @@
+- 2026-04-21 `LeiWang1999`: @xuyufei-a Thanks for your contributions! Would you mind refactoring this example into eager style? In this style, we do not require T.prim func. cc: (https://github.com/tile-ai/tilelang/pull/2069#issuecomment-4286513011)
+- 2026-04-25 `SiriusNEO`: @xuyufei-a This PR only adds a new example, so theoretically it should not affect the tests. It might be due to random fluctuations in our CI. Let me take a look. 👀 (https://github.com/tile-ai/tilelang/pull/2069#issuecomment-4319588499)

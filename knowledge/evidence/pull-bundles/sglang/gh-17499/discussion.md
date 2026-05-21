@@ -1,0 +1,2 @@
+- 2026-01-23 `yeahdongcn` on `python/sglang/srt/distributed/device_communicators/cuda_wrapper.py`:116: It may be more straightforward to use "libcudart" if not is musa else "libmusart" and keep the existing assertion unchanged. (https://github.com/sgl-project/sglang/pull/17499#discussion_r2719937237)
+- 2026-01-23 `yeahdongcn` on `python/sglang/srt/distributed/device_communicators/custom_all_reduce.py`:58: Should this be 128MB? (https://github.com/sgl-project/sglang/pull/17499#discussion_r2719938425)

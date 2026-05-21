@@ -1,0 +1,4 @@
+- 2026-04-04 `wzhao18` on `flashinfer/jit/cubin_loader.py`:257: fixed. can you check again? (https://github.com/flashinfer-ai/flashinfer/pull/2979#discussion_r3035804267)
+- 2026-04-04 `johnnynunez`: @johnnynunez seems that you are running into this too. yes, vllm team... trying to upgrade to have the fix (https://github.com/flashinfer-ai/flashinfer/pull/2979#issuecomment-4187691284)
+- 2026-04-04 `wzhao18`: Added gen trtllm gen fused moe sm100 module race condition test. It fails on main and passed on this PR. (https://github.com/flashinfer-ai/flashinfer/pull/2979#issuecomment-4187866581)
+- 2026-04-04 `johnnynunez`: Added gen trtllm gen fused moe sm100 module race condition test. It fails on main and passed on this PR. Super thanks! (https://github.com/flashinfer-ai/flashinfer/pull/2979#issuecomment-4187923024)

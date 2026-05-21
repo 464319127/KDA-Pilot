@@ -1,0 +1,1 @@
+- 2026-04-10 `mgoin` on `vllm/model_executor/layers/quantization/compressed_tensors/compressed_tensors.py`:1130: nit: max works for 0D tensors too, so you could simplify like (https://github.com/vllm-project/vllm/pull/39418#discussion_r3066708332)

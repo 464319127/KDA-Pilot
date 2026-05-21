@@ -1,0 +1,1 @@
+- 2026-03-26 `rocking5566`: Yes, this PR should go first. 2350 (aiter migration) still uses the older CK version and hasn't been updated yet. Merging this first avoids conflicts since 2350 will need to rebase on top of the updated CK submodule. (https://github.com/Dao-AILab/flash-attention/pull/2400#issuecomment-4138145406)

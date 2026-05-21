@@ -1,0 +1,1 @@
+- 2026-03-03 `kkHuang-amd` on `test/registered/spec/eagle/test_eagle3_basic.py`:59: Do we need to keep the original target value 2.26 for non-ROCm platform? (https://github.com/sgl-project/sglang/pull/19362#discussion_r2877476288)

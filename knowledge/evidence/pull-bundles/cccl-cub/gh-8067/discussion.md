@@ -1,0 +1,3 @@
+- 2026-05-11 `miscco` on `cudax/include/cuda/experimental/__group/this_group.cuh`:476: Critical: This is not valid pre SM90, see (https://github.com/NVIDIA/cccl/pull/8067#discussion_r3217802879)
+- 2026-05-11 `davebayer` on `cudax/include/cuda/experimental/__group/this_group.cuh`:476: I don't think you are right, only NV THREAD SCOPE CLUSTER is unsupported before Hopper: (https://github.com/NVIDIA/cccl/pull/8067#discussion_r3217815596)
+- 2026-05-11 `miscco` on `cudax/include/cuda/experimental/__group/this_group.cuh`:476: Oh sorry you are right (https://github.com/NVIDIA/cccl/pull/8067#discussion_r3217836271)

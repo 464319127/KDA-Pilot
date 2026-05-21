@@ -1,0 +1,1 @@
+- 2026-03-18 `bernhardmgruber`: Please propose the changes to the unit test sizes as a separate PR. The benchmark numbers are concerning and we need to investigate. Could it be a 32 vs. 64bit index type issue? (https://github.com/NVIDIA/cccl/pull/8061#issuecomment-4084661165)

@@ -1,0 +1,2 @@
+- 2026-02-06 `yzh119`: Hi @xutizhou , yes we can use cache to reduce the overhead. But how about a simpler fix: instead of relying on cudaGetDeviceProperties (which has huge runtime overhead). We can try: Which should be much faster. (https://github.com/flashinfer-ai/flashinfer/pull/2509#issuecomment-3859665399)
+- 2026-02-07 `yzh119` on `flashinfer/gdn_decode.py`: For changes to this file, we can probably create another PR? (https://github.com/flashinfer-ai/flashinfer/pull/2509#discussion_r2777326064)

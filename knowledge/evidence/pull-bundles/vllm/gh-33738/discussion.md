@@ -1,0 +1,1 @@
+- 2026-02-03 `robertgshaw2-redhat`: I have a pr almost done which enables support for this, will revert the change once that’s done (https://github.com/vllm-project/vllm/pull/33738#issuecomment-3844291164)

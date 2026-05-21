@@ -1,0 +1,4 @@
+- 2025-10-17 `FlamingoPg`: Compile fixed, need upd tests. (https://github.com/sgl-project/sglang/pull/11717#issuecomment-3414653797)
+- 2025-10-18 `Fridge003`: @FlamingoPg What will be the size of wheel after integration of FlashMLA (https://github.com/sgl-project/sglang/pull/11717#issuecomment-3418846420)
+- 2025-10-20 `FlamingoPg`: @FlamingoPg What will be the size of wheel after integration of FlashMLA About 10M (https://github.com/sgl-project/sglang/pull/11717#issuecomment-3420763876)
+- 2025-10-21 `FlamingoPg`: No need for flash attn varlen forward this kernel, this is a custom MHA forward kernel (https://github.com/sgl-project/sglang/pull/11717#issuecomment-3425173388)

@@ -1,0 +1,2 @@
+- 2026-01-08 `yzh119` commented: Thanks for the timely fix, would you mind creating corresponding unittests? (https://github.com/flashinfer-ai/flashinfer/pull/2308#pullrequestreview-3638002620)
+- 2026-01-09 `HarryWu99`: I updated the logic for detecting the out of length condition following the guidance from Gemini, and added a corresponding unit test. The new test fails on the previous implementation and passes after this fix. I also ran the performance benchmark benchmarks/bench ... (https://github.com/flashinfer-ai/flashinfer/pull/2308#issuecomment-3727328450)

@@ -1,0 +1,1 @@
+- 2025-03-25 `yzh119` on `benchmarks/bench_renorm.py`:26: We don't really to fix seed here because there is no randomness in renorm kernels. Please move them to the front of main() to fix distrib. (https://github.com/flashinfer-ai/flashinfer/pull/970#discussion_r2011265931)

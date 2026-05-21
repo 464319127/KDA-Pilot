@@ -1,0 +1,4 @@
+- 2026-05-05 `Mogball` on `python/triton_kernels/tests/test_matmul_details/test_opt_flags_split_k.py`:76: what do these changes do? (https://github.com/triton-lang/triton/pull/10236#discussion_r3191676080)
+- 2026-05-05 `Mogball` on `python/triton_kernels/tests/test_matmul_details/test_opt_flags_split_k.py`:160: this one seems like testslop (https://github.com/triton-lang/triton/pull/10236#discussion_r3191676901)
+- 2026-05-05 `Mogball` on `python/triton_kernels/triton_kernels/matmul.py`:474: hm not sure this is correct. e.g. we might still have flex output even if the intermediate is not f32? (https://github.com/triton-lang/triton/pull/10236#discussion_r3191758712)
+- 2026-05-05 `ferrari-openai` on `python/triton_kernels/triton_kernels/matmul.py`:474: Discussed offline, PrecisionConfig(intermediate out dtype=torch.bfloat16) requires has has scratchpad (https://github.com/triton-lang/triton/pull/10236#discussion_r3192046821)

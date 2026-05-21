@@ -1,0 +1,2 @@
+- 2025-09-07 `minosfuture` on `vllm/v1/attention/backends/mla/cutlass_mla.py`:221: yes, now this is needed. (https://github.com/vllm-project/vllm/pull/24385#discussion_r2328481533)
+- 2025-09-07 `youkaichao` approved: locally verified that tests/distributed/test context parallel.py can pass on B200 now. thanks for the great job! (https://github.com/vllm-project/vllm/pull/24385#pullrequestreview-3194175752)

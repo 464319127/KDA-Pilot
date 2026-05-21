@@ -1,0 +1,3 @@
+- 2025-06-19 `HaiShaw` on `python/sglang/srt/layers/moe/ep_moe/layer.py`:1147: add a comment to +1 above and :-1 here (https://github.com/sgl-project/sglang/pull/7268#discussion_r2156429086)
+- 2025-06-19 `HaiShaw` on `python/sglang/srt/layers/moe/ep_moe/layer.py`:1180: add a comment on the scope of forward aiter here w.r.t. original path. (https://github.com/sgl-project/sglang/pull/7268#discussion_r2156431787)
+- 2025-06-21 `alexsun07`: @alexsun07 please provide full server launch commands for a reprod. Sure! To enable aiter fused moe for EP, please set env SGLANG USE AITER=1. My launch script: (https://github.com/sgl-project/sglang/pull/7268#issuecomment-2993525554)

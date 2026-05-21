@@ -1,0 +1,2 @@
+- 2025-08-10 `mgoin` on `vllm/model_executor/layers/fused_moe/layer.py`:727: Aren't the triton kernels also used for sm80 or sm120? I think this should be not current platform.is device capability(100) then (https://github.com/vllm-project/vllm/pull/22535#discussion_r2265391470)
+- 2025-08-10 `zyongye` on `vllm/model_executor/layers/fused_moe/layer.py`:727: It will be used for sm80. I think we can change this in another PR when we change these two lines together (https://github.com/vllm-project/vllm/pull/22535#discussion_r2265392728)

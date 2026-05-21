@@ -1,0 +1,1 @@
+- 2025-09-17 `nvmbreughe`: Hi @nvmbreughe can you provide some background of this PR? (e.g. in the PR description). Done. Thanks for reminding me! (https://github.com/flashinfer-ai/flashinfer/pull/1688#issuecomment-3301077338)

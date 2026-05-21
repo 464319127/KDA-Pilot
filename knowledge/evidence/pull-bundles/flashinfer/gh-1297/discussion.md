@@ -1,0 +1,3 @@
+- 2025-07-23 `aleozlx`: after slight refactor, double checked fp8 (https://github.com/flashinfer-ai/flashinfer/pull/1297#issuecomment-3106166638)
+- 2025-07-24 `aleozlx`: ready to merge! pytest -x -v tests/test trtllm gen fused moe.py 60 passed, 210 skipped in 239.06s (0:03:59) (https://github.com/flashinfer-ai/flashinfer/pull/1297#issuecomment-3114038038)
+- 2025-07-25 `aleozlx`: the latest cubin refresh addresses another integration request tested: 60 passed, 210 skipped in 271.29s (0:04:31) as discussed we won't wait for the cubin refactor. pls merge soon when you get a chance @yzh119 thx! (https://github.com/flashinfer-ai/flashinfer/pull/1297#issuecomment-3120454635)

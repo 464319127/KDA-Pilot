@@ -1,0 +1,1 @@
+- 2026-04-19 `yuan-luo` on `python/sglang/jit_kernel/diffusion/group_norm_silu.py`:32: Agree on this point. The rest part LGTM. (https://github.com/sgl-project/sglang/pull/23148#discussion_r3106127046)

@@ -1,0 +1,3 @@
+- 2025-08-08 `bkryu` on `flashinfer/prefill.py`:27: This causes ruff to delete this line. Ignoring suggestion. (https://github.com/flashinfer-ai/flashinfer/pull/1438#discussion_r2264070813)
+- 2025-08-08 `bkryu`: Yes this should be the correct fix, thank you @bkryu ! @yzh119 , it seems like the CI is failing for reasons outside of the contents of the PR (Docker environment issues?). Seems to be an issue that persists with PRs as ... (https://github.com/flashinfer-ai/flashinfer/pull/1438#issuecomment-3169468099)
+- 2025-08-08 `yzh119`: Just updated the docker: There were some issues hours ago while we were adding arm64 images, it should be fixed now. (https://github.com/flashinfer-ai/flashinfer/pull/1438#issuecomment-3169499669)

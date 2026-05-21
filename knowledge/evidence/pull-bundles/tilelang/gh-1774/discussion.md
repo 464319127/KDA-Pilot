@@ -1,0 +1,3 @@
+- 2026-02-06 `LeiWang1999` on `src/op/gemm.h`:133: why std::optional instead of ffi::Optional? (https://github.com/tile-ai/tilelang/pull/1774#discussion_r2773225270)
+- 2026-02-06 `LeiWang1999` on `src/op/gemm.h`:133: or just use tir::BufferLoad mbar ; and mbar .defined() (https://github.com/tile-ai/tilelang/pull/1774#discussion_r2773228721)
+- 2026-02-06 `LeiWang1999` on `src/op/utils.cc`:100: PrimExpr offset = 0; PrimExpr stride = 1; (https://github.com/tile-ai/tilelang/pull/1774#discussion_r2773231306)

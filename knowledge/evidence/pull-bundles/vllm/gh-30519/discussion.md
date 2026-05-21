@@ -1,0 +1,2 @@
+- 2026-01-06 `robertgshaw2-redhat` on `vllm/model_executor/layers/fused_moe/layer.py`:288: Is the idea that eventually we will have N of these, 1 for each routing method type? And then that FusedMoERouter would not have the layer as an attr? (https://github.com/vllm-project/vllm/pull/30519#discussion_r2665917567)
+- 2026-01-06 `bnellnm` on `vllm/model_executor/layers/fused_moe/layer.py`:288: And also (which comes before 30623) (https://github.com/vllm-project/vllm/pull/30519#discussion_r2665969600)

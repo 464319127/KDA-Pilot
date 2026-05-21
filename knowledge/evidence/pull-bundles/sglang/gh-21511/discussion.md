@@ -1,0 +1,1 @@
+- 2026-04-01 `1am9trash`: For the amd-bot review: - Restored the input-dimension assertion. - Added a short comment clarifying the FP8 scaling constants and why the softmax-range assumption is safe. - Refactored the duplicated skip rope for nsa tilelang fused condition into a shared helper. - ... (https://github.com/sgl-project/sglang/pull/21511#issuecomment-4167039205)

@@ -1,0 +1,1 @@
+- 2025-08-14 `weireweire`: This depends on the kernel artifact update, need to merge after that. (https://github.com/flashinfer-ai/flashinfer/pull/1490#issuecomment-3187500465)

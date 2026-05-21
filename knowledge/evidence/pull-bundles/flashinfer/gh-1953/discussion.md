@@ -1,0 +1,1 @@
+- 2025-10-21 `bkryu` on `flashinfer/artifacts.py`:96: I don't think this comment applies if this is the only hash that was missed and is therefore being corrected. (https://github.com/flashinfer-ai/flashinfer/pull/1953#discussion_r2446688264)

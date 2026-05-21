@@ -1,0 +1,4 @@
+- 2026-04-09 `mickqian` commented: some TODOs: 1. adapt quantization doc if necessary 2. add at least one testcase for modelopt fp8 (https://github.com/sgl-project/sglang/pull/22365#pullrequestreview-4080148744)
+- 2026-04-09 `mickqian` on `python/sglang/multimodal_gen/runtime/loader/transformer_load_utils.py`:329: maybe extract to a dedicated function here to better illustrate the quant load logic (https://github.com/sgl-project/sglang/pull/22365#discussion_r3055897093)
+- 2026-04-10 `BBuf`: Split the ModelOpt FP8 skill and helper tooling out into stacked PR 22492 so this PR stays focused on the runtime / loader / test changes. This PR now only keeps the runtime-side code, docs, and the diffusion FP8 correctness test. (https://github.com/sgl-project/sglang/pull/22365#issuecomment-4220767774)
+- 2026-04-10 `BBuf`: FLUX1 main pr (fp8) (https://github.com/sgl-project/sglang/pull/22365#issuecomment-4223850557)

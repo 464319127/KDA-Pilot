@@ -1,0 +1,1 @@
+- 2023-12-31 `Skylion007` on `torch/testing/_internal/common_methods_invocations.py`:15940: Why are we removing SM60OrLater given that we haven't removed SM53OrLater? (https://github.com/pytorch/pytorch/pull/116518#discussion_r1438904848)

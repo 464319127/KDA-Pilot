@@ -1,0 +1,1 @@
+- 2026-03-13 `jimmyzho` on `flashinfer/utils.py`:585: what gemini suggested, since 12x encapsulates 121a? (https://github.com/flashinfer-ai/flashinfer/pull/2751#discussion_r2932274001)

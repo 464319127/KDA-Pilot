@@ -1,0 +1,4 @@
+- 2025-09-29 `alexm-redhat` on `vllm/model_executor/layers/quantization/fp8.py`:942: One line fix, so simple, we really need CI tests working properly (https://github.com/vllm-project/vllm/pull/25895#discussion_r2388768624)
+- 2025-09-29 `pavanimajety` on `vllm/model_executor/layers/quantization/fp8.py`:942: Yeah, this and the return in the line below. (https://github.com/vllm-project/vllm/pull/25895#discussion_r2388803979)
+- 2025-09-30 `mgoin` on `vllm/model_executor/layers/quantization/fp8.py`:468: Note for future self: we should clean up these logs now that VLLM USE DEEP GEMM=1 by default (https://github.com/vllm-project/vllm/pull/25895#discussion_r2391881817)
+- 2025-09-30 `mgoin` on `vllm/model_executor/layers/quantization/fp8.py`:965: Is this a bug too? It seems like we need to return here rather than write to result (https://github.com/vllm-project/vllm/pull/25895#discussion_r2391889330)

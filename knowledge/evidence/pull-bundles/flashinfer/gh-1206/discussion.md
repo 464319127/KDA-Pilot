@@ -1,0 +1,1 @@
+- 2025-07-01 `yzh119` approved: Per discussion w/ @happierpig . The reason we can use small chunk size for MLA is that CTA TILE KV for MLA is small (64), and the only case that we can use chunk size which is not multiple of CTA TILE ... (https://github.com/flashinfer-ai/flashinfer/pull/1206#pullrequestreview-2977196164)

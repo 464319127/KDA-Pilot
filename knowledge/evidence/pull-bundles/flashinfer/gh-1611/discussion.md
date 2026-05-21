@@ -1,0 +1,1 @@
+- 2025-08-30 `yzh119` on `csrc/nv_internal/tensorrt_llm/kernels/quantization.cuh`:771: Gemini's suggestion is reasonable here. (https://github.com/flashinfer-ai/flashinfer/pull/1611#discussion_r2312007208)

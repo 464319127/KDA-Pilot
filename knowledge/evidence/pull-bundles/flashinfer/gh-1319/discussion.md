@@ -1,0 +1,2 @@
+- 2025-07-24 `aleozlx`: pytest -x -v tests/test trtllm gen fused moe.py -k FP8 18 passed, 42 skipped, 30 deselected in 58.99s (https://github.com/flashinfer-ai/flashinfer/pull/1319#issuecomment-3114172130)
+- 2025-07-25 `yzh119` commented: Can we update the type signature and docstring at python side as well? e.g. (https://github.com/flashinfer-ai/flashinfer/pull/1319#pullrequestreview-3055023970)

@@ -1,0 +1,2 @@
+- 2025-08-01 `pavanimajety` on `flashinfer/rope.py`:1162: Nit: Are you also supporting just applying rope and not quantizing? I think this function must make the quantize dtype argument not optional or explicitly convey through function name that it is rope quantize to fp8 (https://github.com/flashinfer-ai/flashinfer/pull/1339#discussion_r2248399691)
+- 2025-08-06 `farazkh80` on `flashinfer/rope.py`:1183: could we remove this? (https://github.com/flashinfer-ai/flashinfer/pull/1339#discussion_r2255762706)

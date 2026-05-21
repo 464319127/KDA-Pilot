@@ -1,0 +1,1 @@
+- 2026-04-15 `tridao`: for the sections of the code you don't want formatted you can mark them w comment (i forget, noqa or sth like that) (https://github.com/Dao-AILab/flash-attention/pull/2459#issuecomment-4248991835)

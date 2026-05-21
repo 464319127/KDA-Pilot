@@ -1,0 +1,4 @@
+- 2026-05-13 `kpham-sgl` on `python/sglang/srt/layers/attention/trtllm_mla_backend.py`:848: should we port this comment to trtllm batch decode with kv cache mla or compute decode bmm1 scale? (https://github.com/sgl-project/sglang/pull/24925#discussion_r3231038921)
+- 2026-05-13 `Fridge003` on `python/sglang/srt/layers/attention/trtllm_mla_backend.py`:755: Is there any risk changing this file (https://github.com/sgl-project/sglang/pull/24925#discussion_r3231641558)
+- 2026-05-13 `Qiaolin-Yu` on `python/sglang/srt/layers/attention/trtllm_mla_backend.py`:755: mostly just wrap some functions. so should be fine (https://github.com/sgl-project/sglang/pull/24925#discussion_r3231647426)
+- 2026-05-14 `Qiaolin-Yu`: failed CIs are also failed in main branch scheduled runs, so I think it's good to merge it now (https://github.com/sgl-project/sglang/pull/24925#issuecomment-4446308404)

@@ -1,0 +1,3 @@
+- 2026-04-23 `depaulmillz` on `include/flashinfer/gemm/mxfp8_gemm_template_sm120.h`:61: The newest push resolved this. (https://github.com/flashinfer-ai/flashinfer/pull/3152#discussion_r3128386951)
+- 2026-04-23 `depaulmillz` on `include/flashinfer/gemm/fp4_gemm_cutlass_template_sm120.h`:135: The newest push resolved this. (https://github.com/flashinfer-ai/flashinfer/pull/3152#discussion_r3128387284)
+- 2026-04-28 `bkryu`: Changes and internal CI LGTM. Will wait for another pair of eyes to review (https://github.com/flashinfer-ai/flashinfer/pull/3152#issuecomment-4338039593)

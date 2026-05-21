@@ -1,0 +1,8 @@
+- 2026-01-05 `drisspg` on `flash_attn/cute/flash_bwd_sm90.py`:933: tighten up comment, note that swapAB tranposes tile so switch indexing (https://github.com/Dao-AILab/flash-attention/pull/2137#discussion_r2660198566)
+- 2026-01-05 `drisspg` on `flash_attn/cute/flash_bwd_sm90.py`:933: just leave one [NOTE] SdP swapAB semantics and link back (https://github.com/Dao-AILab/flash-attention/pull/2137#discussion_r2660200423)
+- 2026-01-05 `drisspg` on `flash_attn/cute/flash_bwd_sm90.py`:1222: Hmm this she be in previous commit, but also we should only apply masking on the partial blocks and not the full blocks (https://github.com/Dao-AILab/flash-attention/pull/2137#discussion_r2660201354)
+- 2026-01-05 `drisspg` on `flash_attn/cute/flash_bwd_sm90.py`:1295: keep S in regs and let DCE gods have mercy on us if not used (https://github.com/Dao-AILab/flash-attention/pull/2137#discussion_r2660201844)
+- 2026-01-05 `drisspg` on `flash_attn/cute/interface.py`:986: double check this is consistent and not a flag set in init (https://github.com/Dao-AILab/flash-attention/pull/2137#discussion_r2660202978)
+- 2026-01-06 `niyunsheng`: Verified! I've tested this in our scenario and it works perfectly, and solves 2117. Really appreciate the quick turnaround and your hard work on this. Thanks! (https://github.com/Dao-AILab/flash-attention/pull/2137#issuecomment-3715136696)
+- 2026-01-09 `v0i0` on `flash_attn/cute/interface.py`:716: keep but make it [9,10,11]? (https://github.com/Dao-AILab/flash-attention/pull/2137#discussion_r2677585408)
+- 2026-01-09 `v0i0`: why is triton faster for small sizes? (https://github.com/Dao-AILab/flash-attention/pull/2137#issuecomment-3730532713)

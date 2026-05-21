@@ -1,0 +1,1 @@
+- 2025-07-02 `yzh119` on `flashinfer/cudnn/prefill.py`:105: Can we also add non blocking=True to the other branch? (https://github.com/flashinfer-ai/flashinfer/pull/1208#discussion_r2180783178)

@@ -1,0 +1,3 @@
+- 2025-06-03 `HaiShaw`: @saienduri - note the flag change to SGLANG USE AITER (https://github.com/sgl-project/sglang/pull/6838#issuecomment-2934689105)
+- 2025-06-04 `HaiShaw` on `python/sglang/srt/model_executor/model_runner.py`:360: let's be more specific on supported (https://github.com/sgl-project/sglang/pull/6838#discussion_r2126022865)
+- 2025-06-05 `HaiShaw` on `scripts/amd_ci_exec.sh`:8: SGLANG AITER MOE is no use (https://github.com/sgl-project/sglang/pull/6838#discussion_r2128120985)

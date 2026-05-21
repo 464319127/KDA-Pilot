@@ -1,0 +1,3 @@
+- 2026-02-02 `mgoin` on `csrc/cutlass_extensions/common.hpp`:76: Let's update this to enable sm120 family since "later" sounds like = sm120 (https://github.com/vllm-project/vllm/pull/33517#discussion_r2755050697)
+- 2026-02-06 `Code4me2`: @mgoin was there anything else to do for this one? I think this PR has all the changes you wanted (https://github.com/vllm-project/vllm/pull/33517#issuecomment-3862365537)
+- 2026-02-07 `Code4me2`: @mgoin is there anything else for me to do here? the checks that failed seem unrelated to the implementatino (https://github.com/vllm-project/vllm/pull/33517#issuecomment-3863546549)

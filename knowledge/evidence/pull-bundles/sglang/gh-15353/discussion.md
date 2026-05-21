@@ -1,0 +1,1 @@
+- 2025-12-27 `fzyzcjy` commented: not check details, but LGTM as long as it is making nextn follow the existing logics and tests pass (https://github.com/sgl-project/sglang/pull/15353#pullrequestreview-3614272644)

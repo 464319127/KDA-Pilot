@@ -1,0 +1,3 @@
+- 2025-08-28 `yongwww` on `include/flashinfer/sampling.cuh`:408: The change here is handled in (https://github.com/flashinfer-ai/flashinfer/pull/1597#discussion_r2306331103)
+- 2025-08-28 `yzh119` on `include/flashinfer/sampling.cuh`:408: As I mentioned, this PR is based on 1596 and will be rebased once 1596 is merged. Github do not support stacking PRs unfortunately, but it's a common practice. (https://github.com/flashinfer-ai/flashinfer/pull/1597#discussion_r2306336029)
+- 2025-08-28 `yongwww` on `include/flashinfer/sampling.cuh`:408: ahh, got it, thanks! (https://github.com/flashinfer-ai/flashinfer/pull/1597#discussion_r2306363030)

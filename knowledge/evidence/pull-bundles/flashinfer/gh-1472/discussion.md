@@ -1,0 +1,1 @@
+- 2025-08-12 `yzh119` on `flashinfer/fused_moe/core.py`:239: Yes we should never collide for any two extensions, can you also rename the other module as fused moe trtllm sm100? (https://github.com/flashinfer-ai/flashinfer/pull/1472#discussion_r2269086546)

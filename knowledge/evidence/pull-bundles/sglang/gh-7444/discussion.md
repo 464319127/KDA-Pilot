@@ -1,0 +1,1 @@
+- 2025-06-24 `Alcanderian`: TODO: 1. vectorization: 2. larger block size: (https://github.com/sgl-project/sglang/pull/7444#issuecomment-2998729509)

@@ -1,0 +1,3 @@
+- 2025-12-23 `robertgshaw2-redhat`: this is ready for review. Dont merge yet, I want to run through the test cases once more on my machines (https://github.com/vllm-project/vllm/pull/31169#issuecomment-3687920761)
+- 2025-12-24 `tjtanaa`: @robertgshaw2-redhat right now AMD CI only triggers when "rocm" label is added. "ready" won't trigger it. So, for your refactoring PRs, can you help to also add "rocm" label and monitor the status? Thank you so much. (https://github.com/vllm-project/vllm/pull/31169#issuecomment-3690165824)
+- 2025-12-27 `mgoin` approved: Nice work, everything looks in order to me. It makes it easier to do the same for CT FP8 (https://github.com/vllm-project/vllm/pull/31169#pullrequestreview-3614356285)

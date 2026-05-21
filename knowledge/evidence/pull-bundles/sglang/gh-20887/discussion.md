@@ -1,0 +1,1 @@
+- 2026-03-20 `b8zhong`: I further attached some reports using NCU: Before (Cooperative Mainloop / 2-Stage) After (Pingpong Mainloop / 3-Stage) It can also be seen that the memory bandwidth increased by around 80%, for M = 16. Anyway, there is still a lot to improve ... (https://github.com/sgl-project/sglang/pull/20887#issuecomment-4094846947)

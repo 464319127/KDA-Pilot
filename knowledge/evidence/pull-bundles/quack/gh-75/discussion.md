@@ -1,0 +1,1 @@
+- 2026-02-17 `GarlGuo`: But we may need more configs to tune. I will also compare with DeepGEMM SM90 and SM100 dense gemm, and triton dense gemm (and gluon) to make sure we can match or beat their throughput in ideally all cases. (https://github.com/Dao-AILab/quack/pull/75#issuecomment-3916774374)

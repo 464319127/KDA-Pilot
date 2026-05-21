@@ -1,0 +1,1 @@
+- 2025-12-17 `mgoin` approved: Unfortunately more code than I thought it would need, but I like the result and it is kept to this file so I'm good with it. Thanks! (https://github.com/vllm-project/vllm/pull/30903#pullrequestreview-3589932874)

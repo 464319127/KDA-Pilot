@@ -1,0 +1,4 @@
+- 2025-11-17 `MatthewBonanni` on `tests/kernels/attention/test_flash_attn.py`:23: The vLLM FA build has soft cap disabled (https://github.com/vllm-project/vllm/pull/28763#discussion_r2534486998)
+- 2025-11-17 `MatthewBonanni` on `cmake/external_projects/vllm_flash_attn.cmake`:41: This will be changed before merge (https://github.com/vllm-project/vllm/pull/28763#discussion_r2534488725)
+- 2025-11-18 `LucasWilkinson`: Do you know if FA2 is supported too? do you mine testing this on Ampere? I think it should be ok (https://github.com/vllm-project/vllm/pull/28763#issuecomment-3544847152)
+- 2025-11-19 `MatthewBonanni`: @LucasWilkinson pytest tests/kernels/attention/test flash attn.py passes on A100 with FA2 👍 (https://github.com/vllm-project/vllm/pull/28763#issuecomment-3550173436)

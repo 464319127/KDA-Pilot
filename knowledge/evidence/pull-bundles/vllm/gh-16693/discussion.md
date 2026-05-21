@@ -1,0 +1,1 @@
+- 2025-04-16 `DefTruth`: Looks good. Could you paste the test plan in the PR description? @houseroad local unit tests for this kernel is passed some performance results: tokens heads headsize dtype device torch triton cuda speedup --- --- --- --- --- --- --- --- --- ... (https://github.com/vllm-project/vllm/pull/16693#issuecomment-2808578894)

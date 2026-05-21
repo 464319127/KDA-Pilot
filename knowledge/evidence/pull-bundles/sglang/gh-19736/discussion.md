@@ -1,0 +1,1 @@
+- 2026-03-03 `yichiche` approved: This PR fixes a crash in the CUDA graph replay path for non-MLA backends by properly initializing the forward metadata. Previously, custom mask and mask indptr were not consistently set outside the MLA path, which could lead to invalid memory access during ... (https://github.com/sgl-project/sglang/pull/19736#pullrequestreview-3879899592)

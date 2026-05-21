@@ -53,6 +53,9 @@ Use web search, official docs, GitHub PR pages, and upstream source search.
 
 - `sources/prs/{repo}/PR-{N}.md` — one metadata page per tracked upstream PR
 - `evidence/pull-bundles/{repo}/gh-{N}/review.diff` — materialized PR diff
+- `evidence/pull-bundles/{repo}/gh-{N}/discussion.md` — optional plain
+  bullet list of useful human review/comment points from the submission-to-merge
+  window
 - `evidence/pull-bundles/{repo}/gh-{N}/source-snapshot/` — changed upstream
   source files captured from the PR
 - `evidence/pull-bundles/{repo}/gh-{N}/upstream.json` — upstream PR metadata

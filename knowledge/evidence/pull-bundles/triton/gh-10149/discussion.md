@@ -1,0 +1,3 @@
+- 2026-04-27 `Jokeren` on `python/triton/testing.py`:195: HIP cudagraph is not stable for now. Needs fine-tuning (https://github.com/triton-lang/triton/pull/10149#discussion_r3150658333)
+- 2026-04-27 `Jokeren`: I plan to replace all do bench functions in gluon examples and tutorials and see if we overestimate/understand performance previously. (https://github.com/triton-lang/triton/pull/10149#issuecomment-4331136400)
+- 2026-04-27 `Jokeren` on `python/triton/testing.py`:229: Actually I doubt we need 10 iterations, but we did use it in do bench cudagraph so I just kept the same value. (https://github.com/triton-lang/triton/pull/10149#discussion_r3150667110)

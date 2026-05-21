@@ -1,0 +1,2 @@
+- 2026-04-07 `robertgshaw2-redhat`: Why would this not be implemented by following the kernel abstraction? (https://github.com/vllm-project/vllm/pull/39129#issuecomment-4199937850)
+- 2026-04-08 `fxmarty-amd` on `vllm/model_executor/layers/quantization/utils/nvfp4_utils.py`:102: Maybe this warning should be moved & kept (https://github.com/vllm-project/vllm/pull/39129#discussion_r3049714146)

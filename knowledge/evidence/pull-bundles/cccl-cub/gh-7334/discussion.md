@@ -1,0 +1,5 @@
+- 2026-01-26 `miscco` on `cub/cub/device/dispatch/kernels/kernel_segmented_reduce.cuh`:110: That is some cursed formatting (https://github.com/NVIDIA/cccl/pull/7334#discussion_r2726528190)
+- 2026-01-26 `miscco` on `cub/cub/device/dispatch/dispatch_segmented_reduce.cuh`:30: We should not pull in all of but only those headers we need (https://github.com/NVIDIA/cccl/pull/7334#discussion_r2726530932)
+- 2026-01-26 `miscco` on `cub/cub/device/dispatch/dispatch_segmented_reduce.cuh`:492: Nitpick: We should always fully qualify host library code in production (https://github.com/NVIDIA/cccl/pull/7334#discussion_r2726535852)
+- 2026-01-26 `bernhardmgruber` on `cub/cub/device/dispatch/dispatch_segmented_reduce.cuh`:492: Oh really, ::std::stringstream as well here? (https://github.com/NVIDIA/cccl/pull/7334#discussion_r2727264535)
+- 2026-01-26 `miscco` on `cub/cub/device/dispatch/dispatch_segmented_reduce.cuh`:492: Big proponent of simple rules. Always is easier to follow than a list of bespoke exceptions (https://github.com/NVIDIA/cccl/pull/7334#discussion_r2727319477)

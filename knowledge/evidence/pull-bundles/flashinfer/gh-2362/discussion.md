@@ -1,0 +1,4 @@
+- 2026-01-15 `bkryu` on `benchmarks/routines/norm.py`:741: Expectation is that if no out dtype is provided, we default to nvfp4. Otherwise, mxfp4 can be provided. (https://github.com/flashinfer-ai/flashinfer/pull/2362#discussion_r2696212066)
+- 2026-01-16 `bkryu` on `benchmarks/routines/quantization.py`:98: Fair point will address in latest commit. (https://github.com/flashinfer-ai/flashinfer/pull/2362#discussion_r2696414529)
+- 2026-01-16 `bkryu` on `benchmarks/routines/norm.py`:753: Good point. Will address in latest commit. (https://github.com/flashinfer-ai/flashinfer/pull/2362#discussion_r2696420480)
+- 2026-01-16 `bkryu` on `benchmarks/routines/quantization.py`:323: Valid point .Will address in next commit. (https://github.com/flashinfer-ai/flashinfer/pull/2362#discussion_r2696434731)

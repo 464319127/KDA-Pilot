@@ -1,0 +1,2 @@
+- 2025-09-19 `mgoin` approved: This is just making a utility to make the compiler happy, it isn't changing any values right? (https://github.com/vllm-project/vllm/pull/25193#pullrequestreview-3247106292)
+- 2025-09-19 `yewentao256`: This is just making a utility to make the compiler happy, it isn't changing any values right? Yes and no, the logic now is max threads per sm / threads per block, so launch (512, 4) will not change, launch (1024, 4) ... (https://github.com/vllm-project/vllm/pull/25193#issuecomment-3313844685)

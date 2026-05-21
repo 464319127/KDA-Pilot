@@ -1,0 +1,1 @@
+- 2025-06-10 `houseroad` approved: it's a good idea to cache. (https://github.com/vllm-project/vllm/pull/19436#pullrequestreview-2915261354)

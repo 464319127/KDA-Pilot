@@ -1,0 +1,3 @@
+- 2025-04-23 `tridao`: The hdim dispatching should be based on max(params.d, params.d v) instead of based on params.d? E.g. if d = 128, d v = 192, then it should dispatch to kHeadDim=192 instead of kHeadDim=128? (https://github.com/Dao-AILab/flash-attention/pull/1604#issuecomment-2823096396)
+- 2025-04-23 `shcho1118`: I was initially thinking about the case where d = 192, d v = 128 like deepseek, but max(params.d, params.d v) would be more universal. (https://github.com/Dao-AILab/flash-attention/pull/1604#issuecomment-2823108831)
+- 2025-04-23 `shcho1118`: @tridao I took your advice and extended the support a bit more, now if max(params.d, params.dv) <= 256 it should work fine. (https://github.com/Dao-AILab/flash-attention/pull/1604#issuecomment-2823236391)

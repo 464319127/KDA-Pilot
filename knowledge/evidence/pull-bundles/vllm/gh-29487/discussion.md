@@ -1,0 +1,1 @@
+- 2025-11-27 `LucasWilkinson` commented: Thanks for the fix! Overall looks good to me but, do you know the current time for the current CP test; iirc they are already pretty long so im hesitant to add more cases till we can get the time under control; ... (https://github.com/vllm-project/vllm/pull/29487#pullrequestreview-3513500797)

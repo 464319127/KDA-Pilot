@@ -1,0 +1,1 @@
+- 2025-06-24 `yanbing-j`: @zhyncs @Alcanderian Could you please take a look this PR? This only changes sgl-kernel part, and is not related to python frontend. (https://github.com/sgl-project/sglang/pull/7462#issuecomment-2998969631)

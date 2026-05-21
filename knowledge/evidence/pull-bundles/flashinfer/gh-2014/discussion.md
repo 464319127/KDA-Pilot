@@ -1,0 +1,6 @@
+- 2025-11-05 `nekorobov` on `csrc/trtllm_fused_moe_kernel_launcher.cu`:1338: Check routing logits and routing bias here. (https://github.com/flashinfer-ai/flashinfer/pull/2014#discussion_r2493512677)
+- 2025-11-05 `jiahanc` on `csrc/trtllm_fused_moe_kernel_launcher.cu`:1338: The checks are in the launcher class, but agree moving there is more reasonable 😄 (https://github.com/flashinfer-ai/flashinfer/pull/2014#discussion_r2495584913)
+- 2025-11-08 `yzh119` on `flashinfer/fused_moe/core.py`:181: Can we cache the value with functools.cache? (https://github.com/flashinfer-ai/flashinfer/pull/2014#discussion_r2505918190)
+- 2025-11-08 `yzh119` on `flashinfer/fused_moe/core.py`:181: Regarding the naming, I prefer is trtllm moe supported, no need to mention flashinfer here. (https://github.com/flashinfer-ai/flashinfer/pull/2014#discussion_r2505918523)
+- 2025-11-08 `yzh119` on `tests/moe/test_trtllm_gen_fused_moe.py`:2288: Why changing this value? Can we test both? (https://github.com/flashinfer-ai/flashinfer/pull/2014#discussion_r2505919416)
+- 2025-11-08 `jiahanc` on `tests/moe/test_trtllm_gen_fused_moe.py`:2288: Just want to speed up testing and there is no model use this config (256 expert), will add both config for better coverage (https://github.com/flashinfer-ai/flashinfer/pull/2014#discussion_r2505920902)

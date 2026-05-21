@@ -1,0 +1,6 @@
+- 2025-08-05 `bkryu` on `benchmarks/routines/gemm.py`:290: Addressed in updated commit. (https://github.com/flashinfer-ai/flashinfer/pull/1390#discussion_r2255450445)
+- 2025-08-05 `bkryu` on `benchmarks/routines/attention.py`:1417: MLA requires separate testing. will not adress (https://github.com/flashinfer-ai/flashinfer/pull/1390#discussion_r2255450963)
+- 2025-08-05 `bkryu` on `benchmarks/routines/attention.py`:251: Addressed in updated commit. (https://github.com/flashinfer-ai/flashinfer/pull/1390#discussion_r2255451078)
+- 2025-08-06 `yzh119` on `benchmarks/routines/attention.py`:1600: Is it because we directly call the trtllm gen decode functions instead of going through the wrapper? (https://github.com/flashinfer-ai/flashinfer/pull/1390#discussion_r2258423244)
+- 2025-08-06 `bkryu` on `benchmarks/routines/attention.py`:1600: Yes. As stated in the . trtllm-gen directly needs to go to through (https://github.com/flashinfer-ai/flashinfer/pull/1390#discussion_r2258437742)
+- 2025-08-06 `yzh119` on `benchmarks/routines/attention.py`:1600: no problem, thanks for the explaination! (https://github.com/flashinfer-ai/flashinfer/pull/1390#discussion_r2258471862)

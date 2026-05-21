@@ -1,0 +1,3 @@
+- 2025-07-18 `Anerudhan` on `flashinfer/cudnn/decode.py`:123: No this is expected. (https://github.com/flashinfer-ai/flashinfer/pull/1283#discussion_r2215223521)
+- 2025-07-18 `yzh119`: For package level dependency, it's important to track the version of dependencies. Can you specify a minimal version number of nvidia-cudnn-cu12 and nvidia-cudnn-frontend: (https://github.com/flashinfer-ai/flashinfer/pull/1283#issuecomment-3088260383)
+- 2025-07-21 `Anerudhan`: Can you help flashinfer/flashinfer-ci:latest to install the pytorch such that the cudnn dependency is not hard coded ? (probably with custom constraint.txt and --no-deps option) @yzh119 (https://github.com/flashinfer-ai/flashinfer/pull/1283#issuecomment-3097382685)

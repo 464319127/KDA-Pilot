@@ -1,0 +1,1 @@
+- 2025-07-18 `Edenzzzz` on `csrc/nv_internal/tensorrt_llm/kernels/quantization.cuh`:431: there's no common header (https://github.com/flashinfer-ai/flashinfer/pull/1287#discussion_r2216365595)

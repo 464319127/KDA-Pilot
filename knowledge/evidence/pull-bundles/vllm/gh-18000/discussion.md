@@ -1,0 +1,1 @@
+- 2025-05-12 `dsikka`: Evals - Using CT with NVFp4A16 for a LLama 3.1 8b: (https://github.com/vllm-project/vllm/pull/18000#issuecomment-2873348129)

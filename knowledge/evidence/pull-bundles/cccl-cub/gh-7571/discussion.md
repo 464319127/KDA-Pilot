@@ -1,0 +1,5 @@
+- 2026-02-11 `bernhardmgruber`: we still have the problem with half and nv bfloat16 + their compound types 😢 Yeah, I still don't have a good solution for those except for removing cub::Traits and giving users a new opt-in. Or actually checking whether their half type ... (https://github.com/NVIDIA/cccl/pull/7571#issuecomment-3887775013)
+- 2026-02-13 `miscco` on `cub/cub/agent/agent_reduce.cuh`:218: The title talks about trivially copyable but this references trivially relocatable should this accept both? (https://github.com/NVIDIA/cccl/pull/7571#discussion_r2802807992)
+- 2026-02-21 `bernhardmgruber` on `cub/cub/agent/agent_reduce.cuh`:218: I updated the PR title. Trivially relocatable is fine I think. (https://github.com/NVIDIA/cccl/pull/7571#discussion_r2836738770)
+- 2026-02-22 `davebayer` on `cub/cub/agent/agent_reduce.cuh`:216: Q: Shouldn't any ContiguousRange be supported? (https://github.com/NVIDIA/cccl/pull/7571#discussion_r2838430998)
+- 2026-02-22 `bernhardmgruber` on `cub/cub/agent/agent_reduce.cuh`:216: Yes, which is why I added a comment three lines above :) (https://github.com/NVIDIA/cccl/pull/7571#discussion_r2838583761)

@@ -1,0 +1,2 @@
+- 2026-01-27 `xutizhou`: The precision is fine compared to the Triton reference. Performance improves by approximately 20% 40% over the Triton kernel at large batch sizes. However, for small batch sizes, the Triton reference should use BV=8. BS FlashInfer PR2405 MTP (us / GB/s) Triton ... (https://github.com/flashinfer-ai/flashinfer/pull/2405#issuecomment-3804187489)
+- 2026-01-28 `yzh119`: @xutizhou the performance gap for B=4 should be fixed in most recent commit. (https://github.com/flashinfer-ai/flashinfer/pull/2405#issuecomment-3809095831)

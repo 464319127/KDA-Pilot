@@ -1,0 +1,1 @@
+- 2025-12-04 `mingfeima`: @blzheng provide a mxfp4 moe kernel based on tinygemm interface and also other necessary changes to enable gpt oss 20B and 120B. (https://github.com/sgl-project/sglang/pull/14385#issuecomment-3609846590)

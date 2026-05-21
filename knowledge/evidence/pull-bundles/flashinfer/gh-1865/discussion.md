@@ -1,0 +1,2 @@
+- 2025-10-05 `yzh119` on `flashinfer/attention.py`:158: empty like will not inherit input tensor strides: Can you double checking this behavior? (https://github.com/flashinfer-ai/flashinfer/pull/1865#discussion_r2404224565)
+- 2025-10-05 `Edenzzzz` on `flashinfer/attention.py`:158: You are right, reverting (https://github.com/flashinfer-ai/flashinfer/pull/1865#discussion_r2404225697)

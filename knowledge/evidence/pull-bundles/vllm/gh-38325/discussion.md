@@ -1,0 +1,1 @@
+- 2026-03-27 `mgoin` approved: Nice work, the changes look solid to me for using swapAB with cutlass. I really appreciate you taking the time to optimize SM120! (https://github.com/vllm-project/vllm/pull/38325#pullrequestreview-4024142960)

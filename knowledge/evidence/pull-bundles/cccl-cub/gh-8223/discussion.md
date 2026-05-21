@@ -1,0 +1,2 @@
+- 2026-03-31 `miscco` commented: Question: Should this be conditional on the NVCC version? (https://github.com/NVIDIA/cccl/pull/8223#pullrequestreview-4035499344)
+- 2026-03-31 `davebayer`: Question: Should this be conditional on the NVCC version? No, specifying both doesn't make sense, nvcc 13.1+ just doesn't emit .maxntid in that case (https://github.com/NVIDIA/cccl/pull/8223#issuecomment-4160871568)

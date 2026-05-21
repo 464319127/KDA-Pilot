@@ -1,0 +1,1 @@
+- 2026-02-09 `huangzhilin-hzl`: Hi @yzh119 The PR with the fix is now ready for review. Could you please take a look when you have a moment? For context, this fix addresses the issue we discussed in (https://github.com/flashinfer-ai/flashinfer/pull/2489#issuecomment-3869238447)

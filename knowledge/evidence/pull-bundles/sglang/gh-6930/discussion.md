@@ -1,0 +1,2 @@
+- 2025-06-06 `Qiaolin-Yu` commented: Is this a typo 👀? And could we also test the performance of the flashinfer backend without setting fmha backend = "cutlass", just for reference. (https://github.com/sgl-project/sglang/pull/6930#pullrequestreview-2905734312)
+- 2025-06-06 `NorthmanPKU`: <img alt="image" width="862" src=" Is this a typo 👀? And could we also test the performance of the flashinfer backend without setting fmha backend = "cutlass", just for reference. Yeah you're right. Fixed it : ) (https://github.com/sgl-project/sglang/pull/6930#issuecomment-2950219103)

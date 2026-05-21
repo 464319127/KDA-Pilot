@@ -1,0 +1,2 @@
+- 2026-01-14 `LeiWang1999` on `src/op/atomic_add.cc`:29: can we reuse some existing code? (https://github.com/tile-ai/tilelang/pull/1667#discussion_r2689032603)
+- 2026-01-14 `Rachmanino` on `src/op/atomic_add.cc`:29: moved to utils.{h, cc} (https://github.com/tile-ai/tilelang/pull/1667#discussion_r2689068160)

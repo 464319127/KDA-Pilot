@@ -1,0 +1,4 @@
+- 2025-08-12 `yyihuang`: @nvpohanh Vllm impl is in with our tests passed locally. Could you help review and test it? I think we could merge DLFW update before merging at FI otherwise it would introduce some errors. (https://github.com/flashinfer-ai/flashinfer/pull/1463#issuecomment-3179400922)
+- 2025-08-13 `nvpohanh` on `csrc/trtllm_fmha_kernel_launcher.cu`:152: Can we delete the commented out code? (https://github.com/flashinfer-ai/flashinfer/pull/1463#discussion_r2271847041)
+- 2025-08-13 `nvpohanh` on `include/flashinfer/semaphore_utils.cuh`:51: should we remove these if we no longer use them? (https://github.com/flashinfer-ai/flashinfer/pull/1463#discussion_r2271847435)
+- 2025-08-13 `yzh119` on `tests/test_trtllm_gen_decode.py`:600: Can we remove them (if any of the combination is missing from pytest, just adding them to pytest parameters). (https://github.com/flashinfer-ai/flashinfer/pull/1463#discussion_r2272242743)
