@@ -58,7 +58,9 @@ edit, and let Humanize review the round evidence.
 
 ## Kernel Agent Loop
 
-![KernelPilot Agent Loop](docs/assets/kernel-agent-loop.svg)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/BBuf/kernel-pilot/main/docs/assets/kernel-agent-loop.svg" alt="KernelPilot Agent Loop" width="620">
+</p>
 
 ## KernelWiki
 
