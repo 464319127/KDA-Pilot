@@ -1,2 +1,0 @@
-- 2025-11-08 `jimmyzho` on `flashinfer/deep_gemm.py`:1490: We should also document this change in artifacts.py so contributors will know where to update. (https://github.com/flashinfer-ai/flashinfer/pull/2064#discussion_r2505948723)
-- 2025-11-08 `jimmyzho` on `flashinfer/artifacts.py`:101: Maybe like a docstring here "DEEPGEMM sha256 string is updated in flashinfer/deep gemm.py KernelMap.KERNEL MAP HASH" (https://github.com/flashinfer-ai/flashinfer/pull/2064#discussion_r2505949569)

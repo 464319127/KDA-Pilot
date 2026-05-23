@@ -1,5 +1,0 @@
-- 2026-03-20 `yzh119` on `ci/setup_python.env`:20: Please remove it after the CI passed. (https://github.com/flashinfer-ai/flashinfer/pull/2833#discussion_r2964449305)
-- 2026-03-21 `saltyminty`: Seems there are till GB200/300 failures due to cutedsl errors in CI. (https://github.com/flashinfer-ai/flashinfer/pull/2833#issuecomment-4101619097)
-- 2026-03-22 `yzh119`: The remaining failed kernel is: - tests/moe/test cute dsl fused moe.py on cu129 for both b200 and b300. (https://github.com/flashinfer-ai/flashinfer/pull/2833#issuecomment-4106760874)
-- 2026-03-24 `yzh119` approved: @limin2021 thanks for the contribution. Failed unittests are all about cudnn attention now, this is new regression: but not relevant to this PR, cc @aleozlx @bkryu @nv-yunzheq for viz in case you have any ideas. This PR itself should be ready to ... (https://github.com/flashinfer-ai/flashinfer/pull/2833#pullrequestreview-3999129327)
-- 2026-03-24 `yzh119`: Another failed b300 UT (b300-bia) on cu130 ( It looks very weird to me, might be a tvm-ffi issue, @cyx-6 could you double check? (https://github.com/flashinfer-ai/flashinfer/pull/2833#issuecomment-4118277468)

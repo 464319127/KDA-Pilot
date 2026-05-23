@@ -1,1 +1,0 @@
-- 2026-03-03 `tridao`: Long term plan is to have the cute implementation subsumes the FA2 and FA3 implementations. (https://github.com/Dao-AILab/flash-attention/pull/2282#issuecomment-3993057282)

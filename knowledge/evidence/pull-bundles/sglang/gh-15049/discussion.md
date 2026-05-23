@@ -1,1 +1,0 @@
-- 2025-12-17 `ispobock` on `python/sglang/srt/layers/quantization/utils.py`:615: Maybe we can remove these two additional comments. (https://github.com/sgl-project/sglang/pull/15049#discussion_r2626438334)

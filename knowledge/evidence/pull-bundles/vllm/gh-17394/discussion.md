@@ -1,2 +1,0 @@
-- 2025-05-06 `WoosukKwon` on `vllm/v1/worker/gpu_model_runner.py`:165: Is it necessary to have this initialized as None? Can we just initialize it in initialize kv cache? (https://github.com/vllm-project/vllm/pull/17394#discussion_r2074725189)
-- 2025-05-06 `WoosukKwon` on `vllm/v1/attention/backends/utils.py`:14: Please add a comment explaining what each tensor means (https://github.com/vllm-project/vllm/pull/17394#discussion_r2074727867)

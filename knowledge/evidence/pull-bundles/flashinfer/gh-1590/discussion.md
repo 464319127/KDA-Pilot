@@ -1,4 +1,0 @@
-- 2025-08-27 `weireweire` on `flashinfer/decode.py`:2095: let's also add check: (https://github.com/flashinfer-ai/flashinfer/pull/1590#discussion_r2303048563)
-- 2025-08-27 `elvischenv` on `flashinfer/decode.py`:2095: Inside this if out dtype == "nvfp4" or (out dtype is None and isinstance(out, FP4Tensor)):, out dtype could only be nvfp4 or None. The assert seems unnecessary. Do we still want to add it? (https://github.com/flashinfer-ai/flashinfer/pull/1590#discussion_r2303057465)
-- 2025-08-27 `weireweire` on `flashinfer/decode.py`:2095: I'd like to add for safety. code may change, and the overwrite may be issue in the future. (https://github.com/flashinfer-ai/flashinfer/pull/1590#discussion_r2303072857)
-- 2025-08-27 `elvischenv` on `flashinfer/decode.py`:2095: Added and thanks for the review. (https://github.com/flashinfer-ai/flashinfer/pull/1590#discussion_r2303084088)

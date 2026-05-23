@@ -1,4 +1,0 @@
-- 2025-08-22 `yzh119` on `flashinfer/prefill.py`:3196: Do we need this constraint? I don't see any specific logic for (192, 128) (https://github.com/flashinfer-ai/flashinfer/pull/1537#discussion_r2292748199)
-- 2025-08-22 `elfiegg` on `flashinfer/prefill.py`:3196: adde this since I observed all kernels in cubin path for SeparateQkv VarSeq are for mHeadDimQk 192 QK and mHeadDimV 128; I don't see other head dim and in fact it would throw kernel not found issue, hence the restriction (https://github.com/flashinfer-ai/flashinfer/pull/1537#discussion_r2294694802)
-- 2025-08-22 `zhyncs`: qq @elfiegg Is the accuracy and performance of e2e integration as expected (https://github.com/flashinfer-ai/flashinfer/pull/1537#issuecomment-3215699810)
-- 2025-08-22 `elfiegg`: @zhyncs in progress of testing e2e - found out last night lse wasn't handled and just got that fixed (https://github.com/flashinfer-ai/flashinfer/pull/1537#issuecomment-3215774922)

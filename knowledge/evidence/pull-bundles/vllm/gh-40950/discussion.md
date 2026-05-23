@@ -1,3 +1,0 @@
-- 2026-04-27 `benchislett` on `vllm/model_executor/models/deepseek_v4.py`:69: Any reason why you don't directly update or inherit-from DeepseekV2MLP here? (https://github.com/vllm-project/vllm/pull/40950#discussion_r3145063301)
-- 2026-04-27 `zyongye` on `vllm/model_executor/models/deepseek_v4.py`:69: I don't want the code to be entangled too much. (https://github.com/vllm-project/vllm/pull/40950#discussion_r3145069544)
-- 2026-04-27 `vadiklyutiy`: Is it really performance critical part to prefer this variant to simpler @benchislett 's variant in ? (https://github.com/vllm-project/vllm/pull/40950#issuecomment-4325022304)

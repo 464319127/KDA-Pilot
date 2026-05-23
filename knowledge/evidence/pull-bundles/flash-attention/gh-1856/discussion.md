@@ -1,2 +1,0 @@
-- 2025-09-02 `mingyangHao`: I believe at this point flash fwd.py could run successfully, but with one more changes i am not sure whether to add: SeqlenInfoQK is requiring batch idx as an input where sm80 kernel do not pass. In my local version I just ... (https://github.com/Dao-AILab/flash-attention/pull/1856#issuecomment-3244559829)
-- 2025-09-02 `tridao`: Thank you! The code for Sm80 eventually should have the same interface w Sm90 and Sm100 but that's for the future. (https://github.com/Dao-AILab/flash-attention/pull/1856#issuecomment-3245327399)

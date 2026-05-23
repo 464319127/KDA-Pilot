@@ -1,4 +1,0 @@
-- 2025-09-16 `shifangx`: Hi, @fzyzcjy, @kaixih and I noticed that --quantization modelopt fp4 is only used for decoding disaggregation-mode. Dose prefill disaggregation-mode will also support nvfp4 in the near future? (https://github.com/sgl-project/sglang/pull/10263#issuecomment-3296404466)
-- 2025-09-20 `kaixih`: Following @shifangx 's question: so the prefill side command in doesn't seem to use the fp4. I recall that we had an accuracy issue (DP padding?) that blocks us to use fp4. Considering the fix is in place, I believe you have ... (https://github.com/sgl-project/sglang/pull/10263#issuecomment-3314389737)
-- 2025-09-20 `fzyzcjy`: yes I use fp4 for P as well now, but not using deepep yet indeed (https://github.com/sgl-project/sglang/pull/10263#issuecomment-3314479013)
-- 2025-09-23 `fzyzcjy`: excluding the b200 which is known to have issues, cuda ci is green now (https://github.com/sgl-project/sglang/pull/10263#issuecomment-3322140093)

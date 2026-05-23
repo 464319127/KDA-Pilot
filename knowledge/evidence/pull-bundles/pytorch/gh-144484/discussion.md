@@ -1,2 +1,0 @@
-- 2025-01-09 `huydhn` on `third_party/cutlass`: Is this an expected change to cutlass? It has nothing to do with the PR (https://github.com/pytorch/pytorch/pull/144484#discussion_r1909349020)
-- 2025-01-09 `nmacchioni` on `third_party/cutlass`: No, I always forget to update sub modules :( will fix (https://github.com/pytorch/pytorch/pull/144484#discussion_r1909390808)

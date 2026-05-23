@@ -1,3 +1,0 @@
-- 2026-02-25 `tridao` on `flash_attn/cute/interface.py`:1281: we should document that the returned LSE currently doesn't support taking gradient. And we should mark it as nondifferentiable for now. We'll add support for LSE gradient later (https://github.com/Dao-AILab/flash-attention/pull/2271#discussion_r2850888054)
-- 2026-02-25 `tridao` on `flash_attn/cute/interface.py`:1333: returning 20 Nones is ok (https://github.com/Dao-AILab/flash-attention/pull/2271#discussion_r2850889482)
-- 2026-02-25 `tridao`: Thanks! return lse is better. return attn probs was a confusing name (since we don't actually return the attention probabilities). (https://github.com/Dao-AILab/flash-attention/pull/2271#issuecomment-3956889062)

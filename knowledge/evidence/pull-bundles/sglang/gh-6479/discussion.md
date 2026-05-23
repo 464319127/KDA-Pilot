@@ -1,3 +1,0 @@
-- 2025-05-25 `b8zhong` commented: Should the env var be prefixed with SGLANG ? Just a suggestion (https://github.com/sgl-project/sglang/pull/6479#pullrequestreview-2866967004)
-- 2025-05-28 `zhyncs` on `python/sglang/srt/layers/quantization/fp8_utils.py`:153: is sm100 supported should be cached instead of being invoked every time. (https://github.com/sgl-project/sglang/pull/6479#discussion_r2112870205)
-- 2025-05-28 `zhyncs` on `python/sglang/srt/layers/quantization/fp8_utils.py`:159: If ENABLE FLASHINFER GEMM is true but is flashinfer available is false, this will fail. So how about add is flashinfer available condition in ENABLE FLASHINFER GEMM? (https://github.com/sgl-project/sglang/pull/6479#discussion_r2112895845)

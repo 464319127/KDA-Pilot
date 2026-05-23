@@ -1,5 +1,0 @@
-- 2026-01-04 `Fridge003`: @b8zhong Will the warmup process be handled by flashinfer for this case? We know that original deepgemm kernels need a lot of time for warm up... (https://github.com/sgl-project/sglang/pull/15514#issuecomment-3707947590)
-- 2026-01-06 `b8zhong`: @Fridge003 I think, it uses the same DeepGEMM compiler under the hood. E.g during warmup you can see this process and a few similar ones. Although, I don't absolutely have the most context, so it may or may not be fully correct ... (https://github.com/sgl-project/sglang/pull/15514#issuecomment-3712665567)
-- 2026-01-06 `b8zhong` commented: Added accuracy numbers too (https://github.com/sgl-project/sglang/pull/15514#pullrequestreview-3629026031)
-- 2026-01-26 `Fridge003`: Can we add a test for this new fp8 gemm kernel (https://github.com/sgl-project/sglang/pull/15514#issuecomment-3799857283)
-- 2026-01-31 `Fridge003` on `python/sglang/srt/layers/quantization/fp8_utils.py`:139: Maybe change this variable to FLASHINFER TRTLLM to avoid confusion (https://github.com/sgl-project/sglang/pull/15514#discussion_r2749696672)

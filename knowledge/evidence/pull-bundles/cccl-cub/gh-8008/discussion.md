@@ -1,1 +1,0 @@
-- 2026-03-12 `bernhardmgruber`: With the changes in this PR, I can start a tuning run for the warpspeed scan: (https://github.com/NVIDIA/cccl/pull/8008#issuecomment-4046566310)

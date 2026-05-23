@@ -1,1 +1,0 @@
-- 2026-04-08 `mgoin`: @benchislett could you add a unit test for this kernel to the flashinfer moe tests? (https://github.com/vllm-project/vllm/pull/39315#issuecomment-4207654637)

@@ -1,1 +1,0 @@
-- 2026-04-21 `gyhintel`: Hi, May I ask a question? Why is "is swap ab" needed? The comment says it's "needed for combine fusion where output is M-major." The mma result in tensor memory is M-major. But I think it can be load to RF and ... (https://github.com/flashinfer-ai/flashinfer/pull/2944#issuecomment-4287166322)

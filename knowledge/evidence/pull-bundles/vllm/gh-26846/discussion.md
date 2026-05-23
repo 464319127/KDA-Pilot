@@ -1,2 +1,0 @@
-- 2025-10-14 `MatthewBonanni` on `csrc/attention/mla/cutlass_sm100_mla/device/sm100_mla.hpp`:146: This hang has been fixed by 26026 (https://github.com/vllm-project/vllm/pull/26846#discussion_r2430588058)
-- 2025-10-14 `MatthewBonanni` on `csrc/attention/mla/cutlass_sm100_mla/device/sm100_mla.hpp`:149: Hang has been fixed in 26026 (https://github.com/vllm-project/vllm/pull/26846#discussion_r2430591202)

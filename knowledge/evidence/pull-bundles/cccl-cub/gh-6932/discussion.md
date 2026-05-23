@@ -1,1 +1,0 @@
-- 2025-12-10 `bernhardmgruber` on `cub/test/catch2_test_device_reduce_env.cu`:231: Let's use the init we have and make clear what 0 is here. Applies another time below. (https://github.com/NVIDIA/cccl/pull/6932#discussion_r2607454372)

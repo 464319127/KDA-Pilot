@@ -1,2 +1,0 @@
-- 2025-07-18 `yzh119` on `benchmarks/bench_trtllm_fmha.py`:165: why setting this value? 4 is very small in my opinion? (https://github.com/flashinfer-ai/flashinfer/pull/1280#discussion_r2215017258)
-- 2025-07-18 `yyihuang` on `benchmarks/bench_trtllm_fmha.py`:165: update to 1000 reps. (https://github.com/flashinfer-ai/flashinfer/pull/1280#discussion_r2215045128)

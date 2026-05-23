@@ -1,1 +1,0 @@
-- 2025-03-05 `mgoin` commented: Unfortunately this doesn't seem to fix full R1 evals. I ran GSM8k on 8xH200 V0 works fine: V1 fails to get a good score (I get the same for VLLM ATTENTION BACKEND=FLASHMLA as well): (https://github.com/vllm-project/vllm/pull/14253#pullrequestreview-2662216545)

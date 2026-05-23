@@ -1,2 +1,0 @@
-- 2025-02-24 `dsikka` on `vllm/model_executor/layers/quantization/compressed_tensors/compressed_tensors_moe.py`:531: Have we verified the other MoE models with this change? At least to make sure generations are coherent. (https://github.com/vllm-project/vllm/pull/13769#discussion_r1968503069)
-- 2025-02-24 `mgoin` on `vllm/model_executor/layers/quantization/compressed_tensors/compressed_tensors_moe.py`:531: I ran Mixtral and that worked well (https://github.com/vllm-project/vllm/pull/13769#discussion_r1968536835)

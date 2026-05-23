@@ -1,2 +1,0 @@
-- 2025-08-12 `gshtras` approved: Thanks for the fix To clarify: this issue would present itself when using full cuda graph:true and using the unified attention backend. Would happen on CUDA and ROCm =7.0 ROCm<7.0 allows to access tensor contents on the CPU side (assert is one ... (https://github.com/vllm-project/vllm/pull/22758#pullrequestreview-3112723582)
-- 2025-09-13 `yewentao256` commented: Please merge from main to solve the pre-commit issue (https://github.com/vllm-project/vllm/pull/22758#pullrequestreview-3220864196)

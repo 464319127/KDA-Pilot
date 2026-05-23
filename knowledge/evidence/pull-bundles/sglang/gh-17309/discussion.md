@@ -1,1 +1,0 @@
-- 2026-01-19 `Fridge003`: All fp4 gemm tests passed (https://github.com/sgl-project/sglang/pull/17309#issuecomment-3768004481)

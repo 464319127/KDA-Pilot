@@ -1,4 +1,0 @@
-- 2025-12-18 `drisspg` on `tests/cute/test_score_mod.py`:618: for completeness I missed in the score mod pr (https://github.com/Dao-AILab/flash-attention/pull/2085#discussion_r2631969488)
-- 2025-12-18 `drisspg` on `tests/cute/test_mask_mod.py`:683: I need to look into this again, this was weird but on my machine the compiled verison was basically hanging (https://github.com/Dao-AILab/flash-attention/pull/2085#discussion_r2631970942)
-- 2025-12-18 `drisspg` on `tests/cute/test_mask_mod.py`:679: remove let default handle (https://github.com/Dao-AILab/flash-attention/pull/2085#discussion_r2631971356)
-- 2025-12-18 `drisspg` on `flash_attn/cute/mask.py`:469: nit: I dont how these if els are setup really want something like (https://github.com/Dao-AILab/flash-attention/pull/2085#discussion_r2631986508)

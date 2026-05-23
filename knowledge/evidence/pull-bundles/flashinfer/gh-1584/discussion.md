@@ -1,3 +1,0 @@
-- 2025-08-26 `yzh119` approved: Can you share the motivation of this change? Also cc @elfiegg for visibility (https://github.com/flashinfer-ai/flashinfer/pull/1584#pullrequestreview-3157042195)
-- 2025-08-26 `yzh119` on `csrc/trtllm_fmha_kernel_launcher.cu`:40: I would encourage to pass in this value as function arguments at python instead of hardcoded, to get rid of the possible issues of any changes on python side in the future. (https://github.com/flashinfer-ai/flashinfer/pull/1584#discussion_r2301974466)
-- 2025-08-26 `yyihuang` on `csrc/trtllm_fmha_kernel_launcher.cu`:40: Sure. We could do it in our future PR. (https://github.com/flashinfer-ai/flashinfer/pull/1584#discussion_r2301976569)

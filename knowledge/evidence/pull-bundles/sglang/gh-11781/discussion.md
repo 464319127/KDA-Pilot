@@ -1,3 +1,0 @@
-- 2025-10-17 `zhyncs` changes_requested: nit: we need to update the Dockerfile too. We can just remove BUILD TYPE. wdyt (https://github.com/sgl-project/sglang/pull/11781#pullrequestreview-3352315334)
-- 2025-10-17 `merrymercy`: @zhyncs good catch. I will keep blackwell and blackwell aarch64 in the pyproject.toml for now. We can delete them in the next PR. (https://github.com/sgl-project/sglang/pull/11781#issuecomment-3417482954)
-- 2025-10-18 `merrymercy`: BTW @mingfeima @HaiShaw May we use sglang-amx and sglang-rocm for the PyPI installation? It'll be easier for the user to install SGLang on Intel AMX CPU and AMD GPU. wdyt (inspired by yes, we should do this (https://github.com/sgl-project/sglang/pull/11781#issuecomment-3417656830)

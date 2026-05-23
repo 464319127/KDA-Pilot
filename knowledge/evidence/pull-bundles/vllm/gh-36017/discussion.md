@@ -1,2 +1,0 @@
-- 2026-03-04 `amitz-nv` on `vllm/model_executor/layers/fused_moe/experts/trtllm_nvfp4_moe.py`:326: That's just not true, that import exists there at lines 18-20. (https://github.com/vllm-project/vllm/pull/36017#discussion_r2884557451)
-- 2026-03-04 `benchislett` on `vllm/model_executor/layers/fused_moe/experts/trtllm_fp8_moe.py`:247: Seems correct, based on (https://github.com/vllm-project/vllm/pull/36017#discussion_r2884665290)

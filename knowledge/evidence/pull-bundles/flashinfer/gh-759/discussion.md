@@ -1,1 +1,0 @@
-- 2025-01-28 `yzh119` on `flashinfer/gemm.py`:160: We should keep this file instead of flashinfer ops sm90.cu (which is the pybind file for all sm90 operators and we don't want most of them), it was removed by accident in some early PRs, and we should add it back like (https://github.com/flashinfer-ai/flashinfer/pull/759#discussion_r1931344413)

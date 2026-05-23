@@ -1,1 +1,0 @@
-- 2026-04-18 `eugr`: I can confirm that this PR fixes the issue introduced by when compiled with only sm121 support. (https://github.com/vllm-project/vllm/pull/40191#issuecomment-4274211162)

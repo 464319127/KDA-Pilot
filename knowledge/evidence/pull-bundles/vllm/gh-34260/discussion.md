@@ -1,4 +1,0 @@
-- 2026-02-10 `rohan-reddy`: I finished my PR with similar changes shortly after yours, so I'll close it. A couple assumptions to check: 1. For all pre-Hopper GPUs we should also prefer DeepGEMM? 2. Should DeepGEMM be above Flash Infer on a Triton LLM backend, or ... (https://github.com/vllm-project/vllm/pull/34260#issuecomment-3880310840)
-- 2026-02-10 `robertgshaw2-redhat` on `tests/kernels/moe/test_fp8_moe_backend_selection.py`:4: I think its okay to remove this test (https://github.com/vllm-project/vllm/pull/34260#discussion_r2790054076)
-- 2026-02-10 `robertgshaw2-redhat`: thanks for this change (https://github.com/vllm-project/vllm/pull/34260#issuecomment-3880447911)
-- 2026-02-10 `elizabetht` on `tests/kernels/moe/test_fp8_moe_backend_selection.py`:4: Had the test to help understand what we are changing.. Can remove it if it absolutely must go.. (https://github.com/vllm-project/vllm/pull/34260#discussion_r2790324352)

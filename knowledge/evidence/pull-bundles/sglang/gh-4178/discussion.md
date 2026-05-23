@@ -1,1 +1,0 @@
-- 2025-03-07 `HaiShaw`: CI Note - PR Test (AMD) /accuracy-test-1-gpu-amd can be safely ignored, as the old/previous docker image is used for CI, which has not had the package this PR introduces. (https://github.com/sgl-project/sglang/pull/4178#issuecomment-2706189437)

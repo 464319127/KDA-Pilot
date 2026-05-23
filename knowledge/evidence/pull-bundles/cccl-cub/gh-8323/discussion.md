@@ -1,1 +1,0 @@
-- 2026-04-08 `gonidelis` on `cub/test/catch2_test_device_segmented_radix_sort_env_api.cu`:215: we need the sync because these are happening on a different stream than the cub API call (https://github.com/NVIDIA/cccl/pull/8323#discussion_r3051587328)

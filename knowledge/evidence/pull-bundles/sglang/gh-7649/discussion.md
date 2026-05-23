@@ -1,1 +1,0 @@
-- 2025-07-01 `DarkSharpness`: flashinfer has supported green context in [0.2.7]( maybe we can use their code since flashinfer is within the dependency of sglang? (https://github.com/sgl-project/sglang/pull/7649#issuecomment-3021686111)

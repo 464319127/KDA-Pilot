@@ -1,4 +1,0 @@
-- 2026-05-19 `jiahanc` on `flashinfer/comm/trtllm_mnnvl_ar.py`:302: none are handled in C++ (https://github.com/flashinfer-ai/flashinfer/pull/3322#discussion_r3263042414)
-- 2026-05-19 `samuellees` on `flashinfer/comm/trtllm_ar.py`:270: Could you also update the api doc, please? (https://github.com/flashinfer-ai/flashinfer/pull/3322#discussion_r3263435857)
-- 2026-05-19 `samuellees` on `tests/comm/test_gemma_ar_fusion.py`:111: Would this be too loose regarding BF16 vs BF32? (https://github.com/flashinfer-ai/flashinfer/pull/3322#discussion_r3263438913)
-- 2026-05-19 `jiahanc` on `tests/comm/test_gemma_ar_fusion.py`:111: 2e-2 is intentionally tighter than existing bf16 tests (which use 8e-1/0.2). update the comment to avoid misunderstanding (https://github.com/flashinfer-ai/flashinfer/pull/3322#discussion_r3263495942)

@@ -1,1 +1,0 @@
-- 2025-12-16 `tdoublep` on `vllm/v1/worker/gpu_model_runner.py`:1685: nit: should we do it all the time or also condition it on builder.supports update block table ? (https://github.com/vllm-project/vllm/pull/29627#discussion_r2622433176)

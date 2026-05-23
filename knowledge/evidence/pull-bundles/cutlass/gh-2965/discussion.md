@@ -1,1 +1,0 @@
-- 2026-01-22 `Junkai-Wu` on `include/cutlass/gemm/collective/sm90_mma_array_tma_gmma_ss_warpspecialized_fp8_blockwise_scaling.hpp`:216: Please use cute::conditional t here since using std:: here will break one of our internal pipelines. (https://github.com/NVIDIA/cutlass/pull/2965#discussion_r2715609841)

@@ -1,6 +1,0 @@
-- 2025-11-25 `UranusSeven` on `python/sglang/srt/models/glm4_moe.py`:363: Crash is preferred if the config is incorrect. (https://github.com/sgl-project/sglang/pull/13873#discussion_r2558399267)
-- 2025-11-26 `ShangmingCai` commented: Looks great. CC: @zRzRzRzRzRzRzR can you help review this PR? (https://github.com/sgl-project/sglang/pull/13873#pullrequestreview-3509303431)
-- 2025-11-27 `BBuf` on `python/sglang/srt/models/glm4_moe.py`:1031: self.num fused shared experts = 0 can be moved down. (https://github.com/sgl-project/sglang/pull/13873#discussion_r2568486857)
-- 2025-11-27 `BBuf` on `python/sglang/srt/models/glm4_moe.py`:1114: Don't add logs inside forward; put them in init instead. (https://github.com/sgl-project/sglang/pull/13873#discussion_r2568501061)
-- 2025-11-28 `jimmy-evo` on `python/sglang/srt/models/glm4_moe.py`:1139: assert self.config.n shared experts == 1 this assertion is in determine num fused shared experts (https://github.com/sgl-project/sglang/pull/13873#discussion_r2571872935)
-- 2025-11-28 `jimmy-evo` on `python/sglang/srt/models/glm4_moe.py`:1031: set in init as deepseek v2 does so (https://github.com/sgl-project/sglang/pull/13873#discussion_r2571874926)

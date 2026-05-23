@@ -1,1 +1,0 @@
-- 2025-04-04 `davebayer`: I don't understand why nvc++ shouldn't support these types. These types are ordinary C++ structures that do not require any aditional compiler support. I've just tested compiling these headers with nvc++ 25.3 and it seems to work fine. Is it somehow related ... (https://github.com/NVIDIA/cccl/pull/4340#issuecomment-2777607221)

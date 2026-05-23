@@ -1,1 +1,0 @@
-- 2025-05-11 `yzh119` on `3rdparty/cutlass`: Seems you downgrade cutlass to an older version, can you revert this change? (https://github.com/flashinfer-ai/flashinfer/pull/1052#discussion_r2083587493)

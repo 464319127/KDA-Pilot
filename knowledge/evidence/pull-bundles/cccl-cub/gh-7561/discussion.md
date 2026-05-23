@@ -1,1 +1,0 @@
-- 2026-02-07 `dkolsen-pgi`: Here is an example of the problem: The warning indicates that the kernel stack size might be wrong. This test program is small enough that the default stack size isn't an actual problem. But we have seen this warning followed by kernel ... (https://github.com/NVIDIA/cccl/pull/7561#issuecomment-3863679283)

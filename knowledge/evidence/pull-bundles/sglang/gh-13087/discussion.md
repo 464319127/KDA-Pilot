@@ -1,5 +1,0 @@
-- 2025-11-12 `HanHan009527`: Hi, could I know why we're putting FlashMLA into the sglang kernel, and where I can see the related plans? (https://github.com/sgl-project/sglang/pull/13087#issuecomment-3522865447)
-- 2025-11-12 `FlamingoPg`: Hi, could I know why we're putting FlashMLA into the sglang kernel, and where I can see the related plans? Hi, @HanHan009527 We didn’t directly put flashmla into the sgl kernel. You can see this in my stack PR. Our integration approach ... (https://github.com/sgl-project/sglang/pull/13087#issuecomment-3523142362)
-- 2025-11-12 `FlamingoPg`: Do you have any concerns about this PR, or are there any other integration-related questions I can answer for you? (https://github.com/sgl-project/sglang/pull/13087#issuecomment-3523148932)
-- 2025-11-13 `Fridge003`: @FlamingoPg This test seems failing (https://github.com/sgl-project/sglang/pull/13087#issuecomment-3524816855)
-- 2025-11-13 `Fridge003`: Custom fp8 flashmla kernel is only covered in sgl-kernel test, so as long as this passes it will be OK (https://github.com/sgl-project/sglang/pull/13087#issuecomment-3529642137)

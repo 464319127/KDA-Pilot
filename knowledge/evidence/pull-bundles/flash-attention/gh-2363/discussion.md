@@ -1,1 +1,0 @@
-- 2026-03-17 `eliasmagn`: Hi @rocking5566, nice to see we converged on a very similar direction here. When I saw the recent aiter-related merges, I decided to base this on the CK copy already pulled in through aiter, rather than keeping two overlapping CK copies in ... (https://github.com/Dao-AILab/flash-attention/pull/2363#issuecomment-4074670599)

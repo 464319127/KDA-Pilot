@@ -1,2 +1,0 @@
-- 2026-04-29 `askliar` on `flashinfer/gemm/gemm_base.py`:393: @bkryu Both indicate that there is not really a constrain on input size. I think docstring here: is wrong (https://github.com/flashinfer-ai/flashinfer/pull/3203#discussion_r3162485193)
-- 2026-04-29 `bkryu`: @askliar I see a pre-commit failure on the CI. Can you fix it? You should be able to fix with pre-commit run --all-files (https://github.com/flashinfer-ai/flashinfer/pull/3203#issuecomment-4345656032)

@@ -1,2 +1,0 @@
-- 2026-03-03 `amittell`: @amittell I used 5090. It's the same SM capability so it's fine @b8zhong would appreciate being added as a co-author via Co-authored-by: in the commit message, not just the PR description. Or I can reopen my original [PR that I authored]( (https://github.com/sgl-project/sglang/pull/19718#issuecomment-3987833515)
-- 2026-03-03 `amittell`: Without the git won't parse it correctly it won't show up in the contributor graph. Luckily looks like you didn't commit yet. (https://github.com/sgl-project/sglang/pull/19718#issuecomment-3987967349)

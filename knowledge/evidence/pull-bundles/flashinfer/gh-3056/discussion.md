@@ -1,1 +1,0 @@
-- 2026-04-14 `aleozlx`: possible chain of events 1. 1164 introduced std::optional in device code (latent bug) 2. AOT only compiled these for SM100, so arm64 cu126 CI never built them 3. 2772 added include as a fix for some other build config — CI passed ... (https://github.com/flashinfer-ai/flashinfer/pull/3056#issuecomment-4241057802)

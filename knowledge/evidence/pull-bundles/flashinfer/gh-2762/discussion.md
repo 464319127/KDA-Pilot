@@ -1,1 +1,0 @@
-- 2026-03-13 `yongwww`: I cancelled the pr test because the ci won't pass before lands, and please re-trigger the test after that pr get merged (https://github.com/flashinfer-ai/flashinfer/pull/2762#issuecomment-4056504648)

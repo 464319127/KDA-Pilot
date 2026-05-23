@@ -1,2 +1,0 @@
-- 2025-10-01 `yewentao256` on `vllm/model_executor/layers/quantization/fp8.py`:117: VLLM USE DEEP GEMM is enabled by default and we don't need this (https://github.com/vllm-project/vllm/pull/26044#discussion_r2395832633)
-- 2025-10-03 `mgoin` approved: Nice improvement! There are some further improvements we can make to the logic, clean it up for rocm, and bring to compressed tensors - but this is good to land for now. (https://github.com/vllm-project/vllm/pull/26044#pullrequestreview-3301016615)

@@ -1,2 +1,0 @@
-- 2026-04-05 `yewentao256` commented: CC @robertgshaw2-redhat if you want to rebase your PR (https://github.com/vllm-project/vllm/pull/39007#pullrequestreview-4059497687)
-- 2026-04-06 `Jackmin801`: I think the CI failures might be related to the CI machine and not the code change. Tried the failing tests on a local B200 machine and they pass: (https://github.com/vllm-project/vllm/pull/39007#issuecomment-4194261312)

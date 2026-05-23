@@ -1,4 +1,0 @@
-- 2025-12-05 `Fridge003` on `python/sglang/srt/server_args.py`:3013: Please update the server argument document with this argument (https://github.com/sgl-project/sglang/pull/13115#discussion_r2591675583)
-- 2025-12-05 `Fridge003` on `python/sglang/srt/models/deepseek_v2.py`:234: Why appending the condition of SGLANG NVFP4 CKPT FP8 GEMM IN ATTN (https://github.com/sgl-project/sglang/pull/13115#discussion_r2591681519)
-- 2025-12-05 `rainj-me` on `python/sglang/srt/models/deepseek_v2.py`:234: Try to avoid the MTP layer automatically quantize to ue8m0. Set moe a2a backend to none will help, but this is too hacky. I'm still expect we can somehow enable the a2a in the MTP layer. (https://github.com/sgl-project/sglang/pull/13115#discussion_r2593535589)
-- 2025-12-05 `Fridge003` on `python/sglang/srt/models/deepseek_v2.py`:234: I can try to fix this later (https://github.com/sgl-project/sglang/pull/13115#discussion_r2593541230)

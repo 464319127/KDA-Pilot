@@ -1,2 +1,0 @@
-- 2026-04-06 `LucasWilkinson` on `benchmarks/attention_benchmarks/configs/mla_prefill.yaml`:118: nit: why the change? (https://github.com/vllm-project/vllm/pull/38814#discussion_r3041931497)
-- 2026-04-06 `MatthewBonanni` on `benchmarks/attention_benchmarks/configs/mla_prefill.yaml`:118: That was unintentional, was running benchmarks on Blackwell and this change got picked up with a git commit -a. Fixed in (https://github.com/vllm-project/vllm/pull/38814#discussion_r3041956076)

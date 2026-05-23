@@ -1,4 +1,0 @@
-- 2025-11-26 `TomerBN-Nvidia` on `python/sglang/srt/layers/quantization/modelopt_quant.py`:838: is is aligned with other parts of the code (https://github.com/sgl-project/sglang/pull/13794#discussion_r2564890690)
-- 2025-11-30 `Fridge003` on `python/sglang/srt/server_args.py`:1510: Qualified quantization methods should be modelopt fp4, modelopt fp8 and bfloat16 here. This assertion message should be changed (https://github.com/sgl-project/sglang/pull/13794#discussion_r2574949514)
-- 2025-11-30 `Fridge003` on `python/sglang/srt/layers/quantization/modelopt_quant.py`:8: Should be moved to around line 90. Needs try-catch for detecting ImportError (https://github.com/sgl-project/sglang/pull/13794#discussion_r2574956534)
-- 2025-11-30 `ch-wan` on `python/sglang/srt/layers/quantization/modelopt_quant.py`:1623: Move it below to the comment in the next line (https://github.com/sgl-project/sglang/pull/13794#discussion_r2575244266)

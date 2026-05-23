@@ -1,1 +1,0 @@
-- 2025-09-22 `atalman`: @seemethere This will display warning if we try to execute CUDA 13.0 build on machine that is outside of the range: 7.5;8.0;8.6;9.0;10.0;12.0 (https://github.com/pytorch/pytorch/pull/163585#issuecomment-3321868965)

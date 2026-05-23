@@ -1,2 +1,0 @@
-- 2025-11-22 `Qiaolin-Yu` changes_requested: Why delete this? This cache is important and was added a very long time ago. Or perhaps the previous usage of this cache here was incorrect? Could you please explain more? 👀 I just took a close look at the code, and ... (https://github.com/sgl-project/sglang/pull/13738#pullrequestreview-3495276876)
-- 2025-11-22 `hnyls2002`: @Qiaolin-Yu @b8zhong Please track the CI status. After the test/srt/test deepseek v3 fp4 4gpu.py passes, add a read-to-merge label (https://github.com/sgl-project/sglang/pull/13738#issuecomment-3566949087)

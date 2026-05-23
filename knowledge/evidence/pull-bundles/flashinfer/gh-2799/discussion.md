@@ -1,1 +1,0 @@
-- 2026-04-22 `saltyminty` on `csrc/fmha_v2/fused_multihead_attention.h`:246: Unsure if this is in scope, but should these be added to fused multihead attention demo bert params.h as well? (https://github.com/flashinfer-ai/flashinfer/pull/2799#discussion_r3121678677)

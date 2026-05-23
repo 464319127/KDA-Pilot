@@ -1,2 +1,0 @@
-- 2025-03-17 `yzh119`: ci has some issues similar to The oom hook ( didn't totally avoid the issue. (https://github.com/flashinfer-ai/flashinfer/pull/951#issuecomment-2728517612)
-- 2025-03-17 `yzh119`: Temporary solution is to set environment variable PYTORCH CUDA ALLOC CONF=expandable segments:True to reduce fragmentation. (https://github.com/flashinfer-ai/flashinfer/pull/951#issuecomment-2730128263)

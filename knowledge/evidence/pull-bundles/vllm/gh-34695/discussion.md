@@ -1,3 +1,0 @@
-- 2026-02-17 `mgoin`: cc @LucasWilkinson @MatthewBonanni @pavanimajety to review (https://github.com/vllm-project/vllm/pull/34695#issuecomment-3915483779)
-- 2026-02-23 `cjackal`: I've checked that with this PR deepseek v3 awq checkpoint is loaded successfully and gets normal accuracy(gsm8k: 0.945) (naturally). The change looks accurate and simple, can we review this PR to unblock awq/gptq models from run on latest main w/ transformers v5? (https://github.com/vllm-project/vllm/pull/34695#issuecomment-3944269780)
-- 2026-02-23 `haosdent`: Thanks @cjackal 's test. @LucasWilkinson @MatthewBonanni @pavanimajety can you help to review? Thank you in advance. (https://github.com/vllm-project/vllm/pull/34695#issuecomment-3944462782)

@@ -1,10 +1,12 @@
 # Install Humanize for Kimi CLI
 
-This guide explains how to install the Humanize skills for [Kimi Code CLI](https://github.com/MoonshotAI/kimi-cli).
+This guide explains how to install the KernelPilot Humanize skills for
+[Kimi Code CLI](https://github.com/MoonshotAI/kimi-cli), including the external
+KernelWiki and ncu-report-skill skills.
 
 ## Overview
 
-Humanize provides four Agent Skills for kimi:
+KernelPilot provides these Agent Skills for kimi:
 
 | Skill | Type | Purpose |
 |-------|------|---------|
@@ -12,25 +14,30 @@ Humanize provides four Agent Skills for kimi:
 | `humanize-gen-plan` | Flow | Generate structured plan from draft |
 | `humanize-refine-plan` | Flow | Refine annotated plan with CMT blocks |
 | `humanize-rlcr` | Flow | Iterative development with Codex review |
+| `humanize-kernel-agent-loop` | Flow | Autonomous GPU kernel optimization loop |
+| `KernelWiki` | Standard | Kernel PR/wiki/source evidence |
+| `ncu-report-skill` | Standard | Nsight Compute profiling workflow |
 
 ## Installation
 
 ### Quick Install (Recommended)
 
-From the Humanize repo root, run:
+From the KernelPilot repo root, run:
 
 ```bash
-./scripts/install-skills-kimi.sh
+humanize/scripts/install-skills-kimi.sh
 ```
 
 This command will:
-- Sync `humanize`, `humanize-gen-plan`, `humanize-refine-plan`, and `humanize-rlcr` into `~/.config/agents/skills`
+- Sync `humanize`, `humanize-gen-plan`, `humanize-refine-plan`,
+  `humanize-rlcr`, `humanize-kernel-agent-loop`, `KernelWiki`, and
+  `ncu-report-skill` into `~/.config/agents/skills`
 - Copy runtime dependencies into `~/.config/agents/skills/humanize`
 
 Common installer script (all targets):
 
 ```bash
-./scripts/install-skill.sh --target kimi
+humanize/scripts/install-skill.sh --target kimi
 ```
 
 ### Manual Install
@@ -47,11 +54,14 @@ cd /path/to/humanize
 # Create the skills directory if it doesn't exist
 mkdir -p ~/.config/agents/skills
 
-# Copy all four skills
+# Copy core skills
 cp -r skills/humanize ~/.config/agents/skills/
 cp -r skills/humanize-gen-plan ~/.config/agents/skills/
 cp -r skills/humanize-refine-plan ~/.config/agents/skills/
 cp -r skills/humanize-rlcr ~/.config/agents/skills/
+cp -r skills/humanize-kernel-agent-loop ~/.config/agents/skills/
+cp -r ../external/KernelWiki ~/.config/agents/skills/
+cp -r ../external/ncu-report-skill ~/.config/agents/skills/
 
 # Copy runtime dependencies used by the skills
 # (must match install-skill.sh's install_runtime_bundle)
@@ -63,14 +73,20 @@ cp -r config ~/.config/agents/skills/humanize/
 cp -r agents ~/.config/agents/skills/humanize/
 
 # Hydrate runtime root placeholders inside SKILL.md files
-for skill in humanize humanize-gen-plan humanize-refine-plan humanize-rlcr; do
+for skill in humanize humanize-gen-plan humanize-refine-plan humanize-rlcr humanize-kernel-agent-loop; do
   sed -i.bak "s|{{HUMANIZE_RUNTIME_ROOT}}|$HOME/.config/agents/skills/humanize|g" \
+    "$HOME/.config/agents/skills/$skill/SKILL.md"
+  sed -i.bak "s|{{KERNELPILOT_ROOT}}|$(cd .. && pwd)|g" \
+    "$HOME/.config/agents/skills/$skill/SKILL.md"
+  sed -i.bak "s|{{KERNELWIKI_ROOT}}|$HOME/.config/agents/skills/KernelWiki|g" \
+    "$HOME/.config/agents/skills/$skill/SKILL.md"
+  sed -i.bak "s|{{NCU_REPORT_SKILL_ROOT}}|$HOME/.config/agents/skills/ncu-report-skill|g" \
     "$HOME/.config/agents/skills/$skill/SKILL.md"
 done
 
 # Strip user-invocable flag from SKILL.md files for runtime visibility
 # (This matches the behavior of scripts/install-skill.sh)
-for skill in humanize humanize-gen-plan humanize-refine-plan humanize-rlcr; do
+for skill in humanize humanize-gen-plan humanize-refine-plan humanize-rlcr humanize-kernel-agent-loop; do
   awk '
     BEGIN { in_fm = 0; fm_done = 0 }
     /^---[[:space:]]*$/ {
@@ -101,6 +117,9 @@ ls -la ~/.config/agents/skills/
 # humanize-gen-plan/
 # humanize-refine-plan/
 # humanize-rlcr/
+# humanize-kernel-agent-loop/
+# KernelWiki/
+# ncu-report-skill/
 ```
 
 ### 4. Restart kimi (if already running)

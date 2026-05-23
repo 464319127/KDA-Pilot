@@ -1,1 +1,0 @@
-- 2026-03-11 `jiahanc` on `flashinfer/jit/fused_moe.py`:297: it now uses f"{source.parent.name} {source.stem}{object suffix}" (https://github.com/flashinfer-ai/flashinfer/pull/2744#discussion_r2916832113)

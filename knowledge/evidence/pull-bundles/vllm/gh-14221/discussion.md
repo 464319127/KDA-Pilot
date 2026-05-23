@@ -1,2 +1,0 @@
-- 2025-03-04 `LucasWilkinson` on `vllm/attention/backends/triton_mla.py`:61: should this be is quantized kv cache? (https://github.com/vllm-project/vllm/pull/14221#discussion_r1979879079)
-- 2025-03-04 `WoosukKwon`: @LucasWilkinson Can we use FP8 attention with flash-attn (to support FP8 KV cache)? (https://github.com/vllm-project/vllm/pull/14221#issuecomment-2698490873)

@@ -1,3 +1,0 @@
-- 2024-01-12 `alexsamardzic`: This PR effectively reverts 951. Namely, 1189 brought EVT epilogues support for sparse GEMM, and sparse GEMM with row broadcasted bias vector could be easily implemented now through an EVT epilogue, so there is no need for dedicated kernel/device code implementing it. ... (https://github.com/NVIDIA/cutlass/pull/1302#issuecomment-1889170932)
-- 2024-01-16 `hwu36`: Could you please resolve the conflicts? Copyright year change mostly likely. (https://github.com/NVIDIA/cutlass/pull/1302#issuecomment-1894673872)
-- 2024-01-17 `alexsamardzic`: Could you please resolve the conflicts? Copyright year change mostly likely. Sure, done. (https://github.com/NVIDIA/cutlass/pull/1302#issuecomment-1895417467)

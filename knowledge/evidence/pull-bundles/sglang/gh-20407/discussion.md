@@ -1,2 +1,0 @@
-- 2026-03-12 `b8zhong` approved: QQ: by w4afp8 do we mean nvfp4 x fp8, because usually it mean w in int4 and activation in fp8, so it would be good to clarify (https://github.com/sgl-project/sglang/pull/20407#pullrequestreview-3936405118)
-- 2026-03-12 `mmangkad`: QQ: by w4afp8 do we mean nvfp4 x fp8, because usually it mean w in int4 and activation in fp8, so it would be good to clarify Existing w4afp8 is int4 weights + fp8 act, modelopt mixed is per-layer mixed (fp4 weights ... (https://github.com/sgl-project/sglang/pull/20407#issuecomment-4048027937)

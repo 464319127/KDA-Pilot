@@ -1,3 +1,0 @@
-- 2025-03-24 `zhyncs` on `.github/workflows/pr-test-amd.yml`:50: Currently AMD's sgl-kernel has not been adapted for CMake yet, hai @HaiShaw and bruce @BruceXcluding need to follow up. Thanks! (https://github.com/sgl-project/sglang/pull/4706#discussion_r2009492362)
-- 2025-03-25 `WineChord` on `sgl-kernel/CMakeLists.txt`:138: The file name has been changed to per token group quant 8bit in main branch. (https://github.com/sgl-project/sglang/pull/4706#discussion_r2011366477)
-- 2025-03-27 `zhyncs`: manylinux2014 x86 64 is only used for PyPI. Use this workaround for DeepGEMM Sampling tiny differences can be ignored for now. All of these issues will be resolved in the follow-up by @yinfan98 (https://github.com/sgl-project/sglang/pull/4706#issuecomment-2757081473)

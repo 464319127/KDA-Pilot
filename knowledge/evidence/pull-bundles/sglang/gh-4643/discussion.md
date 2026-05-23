@@ -1,5 +1,0 @@
-- 2025-03-21 `ch-wan` on `python/sglang/srt/layers/moe/ep_moe/kernels.py`:45: It can be init using torch.empty (https://github.com/sgl-project/sglang/pull/4643#discussion_r2006873981)
-- 2025-03-21 `ch-wan` on `python/sglang/srt/layers/moe/ep_moe/kernels.py`:21: compute src2dst triton kernel and deepep compute src2dst triton kernel are defined twice. (https://github.com/sgl-project/sglang/pull/4643#discussion_r2006884129)
-- 2025-03-21 `ch-wan` on `python/sglang/srt/layers/moe/ep_moe/kernels.py`:32: Why developing a triton kernel is necessary? Is it faster? (https://github.com/sgl-project/sglang/pull/4643#discussion_r2006887390)
-- 2025-03-21 `ch-wan` on `python/sglang/srt/layers/moe/ep_moe/kernels.py`:21: It is defined twice. (https://github.com/sgl-project/sglang/pull/4643#discussion_r2006889080)
-- 2025-03-21 `Edenzzzz` on `python/sglang/srt/models/deepseek_v2.py`:297: Should we add some short comments on the meaning/examples of reorder topk ids and seg indptr for readability? (https://github.com/sgl-project/sglang/pull/4643#discussion_r2008344853)

@@ -1,2 +1,0 @@
-- 2026-01-27 `robertgshaw2-redhat`: Nice job! Should this just be migrated to the Kernel abstraction? Or would this be a follow up? (https://github.com/vllm-project/vllm/pull/33201#issuecomment-3808177620)
-- 2026-01-28 `mgoin`: I wanted to start by deduplicating and standardizing on a consistent naming scheme for parameters. I had the thought of fully converting to use Kernel but it seemed like overkill at the time i.e. would cause more duplication. I can do it ... (https://github.com/vllm-project/vllm/pull/33201#issuecomment-3808665036)

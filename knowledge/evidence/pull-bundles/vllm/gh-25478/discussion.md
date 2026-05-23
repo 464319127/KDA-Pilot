@@ -1,2 +1,0 @@
-- 2025-09-23 `yewentao256` on `vllm/v1/attention/backends/mla/common.py`:488: In cutlass MLA case block size = 128, if max num seqs == 1024 it is back to 128 1024 again, so seems that we will meet an OOM issue again? (https://github.com/vllm-project/vllm/pull/25478#discussion_r2372683119)
-- 2025-09-23 `smarterclayton`: This allowed me to start a vllm using deepseek v3.1 again (DP=16, B200) (https://github.com/vllm-project/vllm/pull/25478#issuecomment-3324482117)

@@ -1,2 +1,0 @@
-- 2025-06-18 `robertgshaw2-redhat`: Do you think we should hard fail if we do not have FI on B200? (https://github.com/vllm-project/vllm/pull/19781#issuecomment-2982221823)
-- 2025-06-18 `mgoin`: Do you think we should hard fail if we do not have FI on B200? I think we need FA2 for feature support. Currently there will be a warning printed if FI cannot be installed, so I think this is sufficient to ... (https://github.com/vllm-project/vllm/pull/19781#issuecomment-2982302445)

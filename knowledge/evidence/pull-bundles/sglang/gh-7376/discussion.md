@@ -1,3 +1,0 @@
-- 2025-06-21 `Alcanderian` on `python/sglang/srt/model_loader/loader.py`:161: It is better to move it into DeepseekV2ForCausalLM:: init after applying this (https://github.com/sgl-project/sglang/pull/7376#discussion_r2160016616)
-- 2025-06-21 `pyc96`: How can we reproduce the gsm8k acc from to [here]( Ummm, I am not able to reproduce it either. I verified the performance of 6853 is good for R1-FP4. But some newer PR introduces a regression somewhere. 7327 acc is better but ... (https://github.com/sgl-project/sglang/pull/7376#issuecomment-2993705498)
-- 2025-06-22 `pyc96`: Bs=1 Output throughput: 146.233 token/s (https://github.com/sgl-project/sglang/pull/7376#issuecomment-2994502136)

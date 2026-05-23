@@ -1,2 +1,0 @@
-- 2026-02-26 `Fridge003` on `.gitignore`:248: AGENTS.md and .claude shoudn't be added to .gitignore (https://github.com/sgl-project/sglang/pull/19433#discussion_r2860518032)
-- 2026-02-26 `Fridge003` on `python/sglang/srt/layers/quantization/unquant.py`:391: The default activation type should be ActivationType.Swiglu, as defined here (https://github.com/sgl-project/sglang/pull/19433#discussion_r2860580453)

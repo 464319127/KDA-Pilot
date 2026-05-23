@@ -1,1 +1,0 @@
-- 2026-04-08 `yewentao256` on `vllm/model_executor/layers/quantization/utils/nvfp4_utils.py`:296: .contiguous() is not a good idea (https://github.com/vllm-project/vllm/pull/39322#discussion_r3053566092)

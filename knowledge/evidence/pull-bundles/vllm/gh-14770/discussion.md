@@ -1,1 +1,0 @@
-- 2025-03-14 `simon-mo` approved: Make sense for the memory savings (https://github.com/vllm-project/vllm/pull/14770#pullrequestreview-2684033422)

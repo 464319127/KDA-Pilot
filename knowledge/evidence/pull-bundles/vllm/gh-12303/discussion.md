@@ -1,6 +1,0 @@
-- 2025-02-11 `mgoin` on `vllm/model_executor/models/mixtral.py`:506: Is this something you specifically need for MoEs? I would like you to avoid touching model definitions, since we would have to do this to every MoE model. Hopefully you can move this into your hpu code (https://github.com/vllm-project/vllm/pull/12303#discussion_r1951252421)
-- 2025-02-11 `mgoin` on `vllm/model_executor/layers/fused_moe/layer.py`:207: Please assert/check the other kwargs i.e. (https://github.com/vllm-project/vllm/pull/12303#discussion_r1951255322)
-- 2025-02-11 `mgoin` on `vllm/model_executor/layers/fused_moe/layer.py`:205: Why isn't this an assert? (https://github.com/vllm-project/vllm/pull/12303#discussion_r1951259916)
-- 2025-02-12 `zhenwei-intel` on `vllm/model_executor/models/mixtral.py`:506: Thanks, fix oom issue in another way: 98a07f31c0929e6d84e64c1036cc8b8a57c40b67 (https://github.com/vllm-project/vllm/pull/12303#discussion_r1951981918)
-- 2025-02-12 `zhenwei-intel` on `vllm/model_executor/layers/fused_moe/layer.py`:207: updated this function bfe5d0cba0926cbfc1461e9edb187c02649321c2 (https://github.com/vllm-project/vllm/pull/12303#discussion_r1951982777)
-- 2025-02-19 `WoosukKwon` on `vllm/utils.py`:358: Could you move it to hpu utils.py? (https://github.com/vllm-project/vllm/pull/12303#discussion_r1962055150)

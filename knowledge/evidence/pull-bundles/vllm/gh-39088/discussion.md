@@ -1,2 +1,0 @@
-- 2026-04-06 `xuechendi`: @jikunshang , may you check, want to bring triton moe back on XPU and also remove hard-code in triton mla (https://github.com/vllm-project/vllm/pull/39088#issuecomment-4195098404)
-- 2026-04-07 `jikunshang`: thanks for fixing. use torch.cuda.get device properties(0).multi processor count which break TRITON MLA. (https://github.com/vllm-project/vllm/pull/39088#issuecomment-4195655215)

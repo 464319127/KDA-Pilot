@@ -1,2 +1,0 @@
-- 2025-11-11 `robertgshaw2-redhat`: Looks good. Nice simplify. Any risk on perf? Should we run a couple sanity check benchmarks? (https://github.com/vllm-project/vllm/pull/28431#issuecomment-3514775756)
-- 2025-11-11 `mgoin`: @robertgshaw2-redhat I added some microbenchmarks for the kernel itself to the description and it looks equivalent. I'll run an lm-eval with qwen3 to confirm (https://github.com/vllm-project/vllm/pull/28431#issuecomment-3517545696)

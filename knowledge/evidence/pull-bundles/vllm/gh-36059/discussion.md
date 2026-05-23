@@ -1,1 +1,0 @@
-- 2026-03-05 `frankwang28`: Could you add more context why FA4 doesn't supprot it in PR description/comments? The first place I found some invariance was the selection of q stage which depends on max seqlen q for a given batch: I tried fixing the max seqlen ... (https://github.com/vllm-project/vllm/pull/36059#issuecomment-4006900398)

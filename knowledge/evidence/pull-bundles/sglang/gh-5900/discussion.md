@@ -1,5 +1,0 @@
-- 2025-04-30 `zhyncs`: hi @lambert0312 is this benchmark result with triton attention backend (https://github.com/sgl-project/sglang/pull/5900#issuecomment-2840562808)
-- 2025-04-30 `lambert0312`: hi @lambert0312 is this benchmark result with triton attention backend No, I use flashinfer backend. If you need the result with triton attention backend, I can re-run it. (https://github.com/sgl-project/sglang/pull/5900#issuecomment-2840564992)
-- 2025-04-30 `zhyncs`: flashinfer: Module Not Found (https://github.com/sgl-project/sglang/pull/5900#issuecomment-2840576011)
-- 2025-04-30 `lambert0312`: flashinfer: Module Not Found I see the module checked is flashinfer, but we installed flashinfer python, and my version is flashinfer python: 0.2.3+cu124torch2.6 I saw that when other people reported issues, this check version also had problems. Can it be fixed as ... (https://github.com/sgl-project/sglang/pull/5900#issuecomment-2840578221)
-- 2025-04-30 `lambert0312`: Need the result with triton attention backend? (https://github.com/sgl-project/sglang/pull/5900#issuecomment-2840642313)

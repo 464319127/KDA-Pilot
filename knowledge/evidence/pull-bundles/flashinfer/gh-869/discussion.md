@@ -1,1 +1,0 @@
-- 2025-02-26 `yzh119` on `include/flashinfer/attention/hopper/variants.cuh`:107: Can you use pre-commit to format code? (https://github.com/flashinfer-ai/flashinfer/pull/869#discussion_r1971978290)

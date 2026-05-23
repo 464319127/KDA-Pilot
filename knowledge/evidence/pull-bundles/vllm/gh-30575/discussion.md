@@ -1,2 +1,0 @@
-- 2025-12-12 `LucasWilkinson` on `vllm/attention/layer.py`:582: nit: to avoid the overhead of creating a dictionary and unpacking it all the time you can use partial like: (https://github.com/vllm-project/vllm/pull/30575#discussion_r2615645579)
-- 2025-12-12 `MatthewBonanni` on `vllm/attention/layer.py`:582: Done in [b31b49b]( thanks! (https://github.com/vllm-project/vllm/pull/30575#discussion_r2615657656)

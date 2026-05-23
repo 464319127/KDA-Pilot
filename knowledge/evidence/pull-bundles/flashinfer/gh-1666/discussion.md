@@ -1,3 +1,0 @@
-- 2025-09-10 `yzh119` on `flashinfer/fp4_quantization.py`:699: Consider using instead, as we observed huge overhead of this function if not cached: (https://github.com/flashinfer-ai/flashinfer/pull/1666#discussion_r2336855842)
-- 2025-09-11 `yzh119` on `flashinfer/fp4_quantization.py`:699: done in also fixes the usage of get device capability in some other functions. (https://github.com/flashinfer-ai/flashinfer/pull/1666#discussion_r2338568007)
-- 2025-09-11 `sunghyunp-nvdia` on `flashinfer/fp4_quantization.py`:699: Ah, thank you for the comment and fix! :) (https://github.com/flashinfer-ai/flashinfer/pull/1666#discussion_r2338647786)

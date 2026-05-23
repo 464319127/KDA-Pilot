@@ -1,4 +1,0 @@
-- 2025-08-26 `bufferoverflow` on `vllm/model_executor/layers/fused_moe/configs/E=128,N=192,device_name=NVIDIA_H200_NVL.json`:146: I was thinking about the same: (https://github.com/vllm-project/vllm/pull/23642#discussion_r2300431996)
-- 2025-10-13 `tomschelsen`: In the same vein, what about the GH200 ? Running Qwen/Qwen3-Coder-30B-A3B-Instruct on an Nvidia GH200 NVL2 system, I get the following warning : So here device name = NVIDIA GH200 144G HBM3e There exist a config for the same E and N ... (https://github.com/vllm-project/vllm/pull/23642#issuecomment-3397382717)
-- 2025-10-21 `bufferoverflow` on `vllm/model_executor/layers/fused_moe/configs/E=128,N=192,device_name=NVIDIA_H200_NVL.json`:146: I just changes to do so. (https://github.com/vllm-project/vllm/pull/23642#discussion_r2447300521)
-- 2025-10-21 `bufferoverflow`: @tomschelsen I changed to use the same config for all H200 devices (https://github.com/vllm-project/vllm/pull/23642#issuecomment-3425472165)

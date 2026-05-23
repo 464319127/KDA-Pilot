@@ -1,1 +1,0 @@
-- 2025-07-10 `mgoin` on `vllm/model_executor/layers/fused_moe/fused_moe.py`:1193: I think this function should check a few extra things actually: activation, apply router weight on input, expert map and probably inplace (https://github.com/vllm-project/vllm/pull/20781#discussion_r2198595899)

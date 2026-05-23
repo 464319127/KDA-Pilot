@@ -1,2 +1,0 @@
-- 2025-11-04 `Fridge003`: Hi @Kh4L, what's the effect of this change? (https://github.com/sgl-project/sglang/pull/12581#issuecomment-3483347805)
-- 2025-11-04 `Kh4L`: Hi @Kh4L, what's the effect of this change? @Fridge003 instead of = was a typo from my side, CUDA arch fam of 1000 supports fp32 vec to e2m1 (https://github.com/sgl-project/sglang/pull/12581#issuecomment-3483356947)

@@ -1,3 +1,0 @@
-- 2026-05-13 `simveit`: yes that's what i was thinking. otherwise trace is extremely useful and super convenient to use for quick experimentation! (https://github.com/Dao-AILab/quack/pull/134#issuecomment-4437717613)
-- 2026-05-14 `tridao`: Can you add a comment saying why we need asm inline (with side effect) instead of calling nvvm directly? Then we can merge. (https://github.com/Dao-AILab/quack/pull/134#issuecomment-4448631584)
-- 2026-05-14 `simveit`: @tridao adjusted the comment. BTW: Here is a small minimal reproduction of the issue that I attach for our future reference to inspect similar issues here This gives (https://github.com/Dao-AILab/quack/pull/134#issuecomment-4449264543)

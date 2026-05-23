@@ -1,1 +1,0 @@
-- 2025-08-14 `mgoin` on `vllm/platforms/cuda.py`:319: Should this only be for SM90? Then we should use is for ==. has means = (https://github.com/vllm-project/vllm/pull/22933#discussion_r2277577641)

@@ -1,1 +1,0 @@
-- 2026-04-05 `lk-chen`: verified on TPU with same set up as MMMU-pro score is identical before/after this current PR. Performance metrics untested. (https://github.com/vllm-project/vllm/pull/38879#issuecomment-4189509587)

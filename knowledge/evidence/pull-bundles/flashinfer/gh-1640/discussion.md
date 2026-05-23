@@ -1,2 +1,0 @@
-- 2025-09-05 `yzh119` on `benchmarks/bench_trtllm_gen_mla.py`:112: Or removing the batch size here and multiply sum(seq lens) instead? (https://github.com/flashinfer-ai/flashinfer/pull/1640#discussion_r2324362048)
-- 2025-09-05 `RayWang96` on `benchmarks/bench_trtllm_gen_mla.py`:112: You're right. It is simpler. (https://github.com/flashinfer-ai/flashinfer/pull/1640#discussion_r2324381482)

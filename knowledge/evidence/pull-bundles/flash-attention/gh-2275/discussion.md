@@ -1,2 +1,0 @@
-- 2026-03-02 `KareemMusleh` on `flash_attn/cute/flash_bwd_sm90.py`:1516: This pattern should probably be added to SeqlenInfoQK, for better readability. But in a different PR (https://github.com/Dao-AILab/flash-attention/pull/2275#discussion_r2871983269)
-- 2026-03-02 `KareemMusleh`: @jayhshah Thoughts? benchmark: ![image]( (https://github.com/Dao-AILab/flash-attention/pull/2275#issuecomment-3987021589)

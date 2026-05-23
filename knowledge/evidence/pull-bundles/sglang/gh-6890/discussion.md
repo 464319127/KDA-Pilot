@@ -1,5 +1,0 @@
-- 2025-06-05 `Alcanderian`: Oops, there are some mistakes, the correct constraint is shape supported = weight.shape[0] % 64 == 0 and weight.shape[1] % 128 == 0 ref: But in the latest code, n % 64 == 0 has been removed, that is what we might ... (https://github.com/sgl-project/sglang/pull/6890#issuecomment-2943395737)
-- 2025-06-05 `Alcanderian`: n aligned to 64 is reasonable because n of fused qkv a proj with mqa is (1536 + 576) (https://github.com/sgl-project/sglang/pull/6890#issuecomment-2943449246)
-- 2025-06-05 `fzyzcjy`: Yes I find it to be multiple of 64 and not 128 and thus without the PR it goes to triton (https://github.com/sgl-project/sglang/pull/6890#issuecomment-2943501249)
-- 2025-06-05 `fzyzcjy`: so for simplicity maybe let me do 64&128, and if someone needs other shapes we can check further (https://github.com/sgl-project/sglang/pull/6890#issuecomment-2943507474)
-- 2025-06-05 `Alcanderian`: We have some H100 with 500W TGP so that some performance teat failed (https://github.com/sgl-project/sglang/pull/6890#issuecomment-2944876642)

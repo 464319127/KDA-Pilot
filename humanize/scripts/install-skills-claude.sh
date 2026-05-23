@@ -4,8 +4,8 @@
 #
 # Claude Code plugin installation copies the plugin into ~/.claude/plugins/cache
 # but does not hydrate SKILL.md placeholders. This wrapper performs the normal
-# marketplace install, exposes kernel-knowledge as a Claude skill, hydrates the
-# installed plugin cache, and verifies the result.
+# marketplace install, exposes KernelWiki and ncu-report-skill as Claude skills,
+# hydrates the installed plugin cache, and verifies the result.
 #
 
 set -euo pipefail
@@ -13,6 +13,8 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
 HUMANIZE_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 KERNELPILOT_ROOT="$(cd "$HUMANIZE_ROOT/.." && pwd)"
+KERNELWIKI_ROOT="${KERNELWIKI_ROOT:-}"
+NCU_REPORT_SKILL_ROOT="${NCU_REPORT_SKILL_ROOT:-}"
 CLAUDE_BIN="${CLAUDE_BIN:-}"
 CLAUDE_CONFIG_DIR="${CLAUDE_CONFIG_DIR:-${HOME}/.claude}"
 INSTALL_PIP="true"
@@ -28,9 +30,12 @@ Usage:
 
 Options:
   --kernelpilot-root PATH     KernelPilot checkout root (default: auto-detect)
+  --kernelwiki-root PATH      KernelWiki checkout root (default: external/KernelWiki)
+  --ncu-report-skill-root PATH
+                              ncu-report-skill checkout root (default: external/ncu-report-skill)
   --claude-bin PATH           Claude Code binary (default: claude or ~/.local/bin/claude)
   --claude-config-dir PATH    Claude config dir (default: ~/.claude)
-  --skip-pip                  Do not run pip install for knowledge requirements
+  --skip-pip                  Do not run pip install for KernelWiki requirements
   --keep-polyarch-enabled     Do not disable an existing humanize@PolyArch install
   --dry-run                   Print actions without writing
   -h, --help                  Show this help
@@ -83,16 +88,20 @@ hydrate_plugin_cache() {
         return
     fi
 
-    python3 - "$plugin_root" "$KERNELPILOT_ROOT" <<'PY'
+    python3 - "$plugin_root" "$KERNELPILOT_ROOT" "$KERNELWIKI_ROOT" "$NCU_REPORT_SKILL_ROOT" <<'PY'
 import pathlib
 import sys
 
 plugin_root = pathlib.Path(sys.argv[1])
 kernelpilot_root = pathlib.Path(sys.argv[2])
+kernelwiki_root = pathlib.Path(sys.argv[3])
+ncu_report_skill_root = pathlib.Path(sys.argv[4])
 
 replacements = {
     "{{HUMANIZE_RUNTIME_ROOT}}": str(plugin_root),
     "{{KERNELPILOT_ROOT}}": str(kernelpilot_root),
+    "{{KERNELWIKI_ROOT}}": str(kernelwiki_root),
+    "{{NCU_REPORT_SKILL_ROOT}}": str(ncu_report_skill_root),
 }
 
 for path in sorted((plugin_root / "skills").glob("*/SKILL.md")):
@@ -108,19 +117,19 @@ PY
 verify_no_placeholders() {
     local plugin_root="$1"
 
-    if grep -R '{{HUMANIZE_RUNTIME_ROOT}}\|{{KERNELPILOT_ROOT}}' "$plugin_root/skills" >/dev/null 2>&1; then
-        grep -R -n '{{HUMANIZE_RUNTIME_ROOT}}\|{{KERNELPILOT_ROOT}}' "$plugin_root/skills" >&2 || true
+    if grep -R '{{HUMANIZE_RUNTIME_ROOT}}\|{{KERNELPILOT_ROOT}}\|{{KERNELWIKI_ROOT}}\|{{NCU_REPORT_SKILL_ROOT}}' "$plugin_root/skills" >/dev/null 2>&1; then
+        grep -R -n '{{HUMANIZE_RUNTIME_ROOT}}\|{{KERNELPILOT_ROOT}}\|{{KERNELWIKI_ROOT}}\|{{NCU_REPORT_SKILL_ROOT}}' "$plugin_root/skills" >&2 || true
         die "unhydrated placeholders remain in Claude plugin skills"
     fi
 }
 
-install_knowledge_skill_link() {
+link_skill() {
+    local skill_name="$1"
+    local target="$2"
     local skills_dir="$CLAUDE_CONFIG_DIR/skills"
-    local link_path="$skills_dir/kernel-knowledge"
-    local target="$KERNELPILOT_ROOT/knowledge"
+    local link_path="$skills_dir/$skill_name"
 
-    [[ -f "$target/SKILL.md" ]] || die "KernelPilot knowledge skill not found: $target/SKILL.md"
-    [[ -d "$target/evidence/pull-bundles" ]] || die "KernelPilot PR evidence bundles not found: $target/evidence/pull-bundles"
+    [[ -f "$target/SKILL.md" ]] || die "$skill_name skill not found: $target/SKILL.md"
 
     if [[ "$DRY_RUN" == "true" ]]; then
         log "DRY-RUN link $link_path -> $target"
@@ -136,11 +145,41 @@ install_knowledge_skill_link() {
     ln -s "$target" "$link_path"
 }
 
+resolve_external_skill_roots() {
+    if [[ -z "$KERNELWIKI_ROOT" ]]; then
+        KERNELWIKI_ROOT="$KERNELPILOT_ROOT/external/KernelWiki"
+    fi
+    if [[ -z "$NCU_REPORT_SKILL_ROOT" ]]; then
+        NCU_REPORT_SKILL_ROOT="$KERNELPILOT_ROOT/external/ncu-report-skill"
+    fi
+
+    KERNELWIKI_ROOT="$(cd "$KERNELWIKI_ROOT" 2>/dev/null && pwd || true)"
+    NCU_REPORT_SKILL_ROOT="$(cd "$NCU_REPORT_SKILL_ROOT" 2>/dev/null && pwd || true)"
+
+    [[ -n "$KERNELWIKI_ROOT" ]] || die "could not resolve KernelWiki root"
+    [[ -f "$KERNELWIKI_ROOT/SKILL.md" ]] || die "KernelWiki skill not found: $KERNELWIKI_ROOT/SKILL.md"
+    [[ -f "$KERNELWIKI_ROOT/scripts/query.py" ]] || die "KernelWiki query script not found: $KERNELWIKI_ROOT/scripts/query.py"
+    [[ -d "$KERNELWIKI_ROOT/sources/prs" ]] || die "KernelWiki PR pages not found: $KERNELWIKI_ROOT/sources/prs"
+    [[ -n "$NCU_REPORT_SKILL_ROOT" ]] || die "could not resolve ncu-report-skill root"
+    [[ -f "$NCU_REPORT_SKILL_ROOT/SKILL.md" ]] || die "ncu-report-skill not found: $NCU_REPORT_SKILL_ROOT/SKILL.md"
+    [[ -d "$NCU_REPORT_SKILL_ROOT/reference" ]] || die "ncu-report-skill reference docs not found: $NCU_REPORT_SKILL_ROOT/reference"
+}
+
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --kernelpilot-root)
             [[ -n "${2:-}" ]] || die "--kernelpilot-root requires a value"
             KERNELPILOT_ROOT="$2"
+            shift 2
+            ;;
+        --kernelwiki-root)
+            [[ -n "${2:-}" ]] || die "--kernelwiki-root requires a value"
+            KERNELWIKI_ROOT="$2"
+            shift 2
+            ;;
+        --ncu-report-skill-root)
+            [[ -n "${2:-}" ]] || die "--ncu-report-skill-root requires a value"
+            NCU_REPORT_SKILL_ROOT="$2"
             shift 2
             ;;
         --claude-bin)
@@ -178,13 +217,15 @@ done
 KERNELPILOT_ROOT="$(cd "$KERNELPILOT_ROOT" 2>/dev/null && pwd || true)"
 [[ -n "$KERNELPILOT_ROOT" ]] || die "could not resolve KernelPilot root"
 [[ -f "$KERNELPILOT_ROOT/.claude-plugin/marketplace.json" ]] || die "KernelPilot marketplace not found: $KERNELPILOT_ROOT/.claude-plugin/marketplace.json"
-[[ -f "$KERNELPILOT_ROOT/knowledge/SKILL.md" ]] || die "KernelPilot knowledge skill not found: $KERNELPILOT_ROOT/knowledge/SKILL.md"
+resolve_external_skill_roots
 
 resolve_claude_bin
 VERSION="$(plugin_version)"
 PLUGIN_ROOT="$CLAUDE_CONFIG_DIR/plugins/cache/KernelPilot/humanize/$VERSION"
 
 log "kernelpilot root: $KERNELPILOT_ROOT"
+log "kernelwiki root: $KERNELWIKI_ROOT"
+log "ncu-report-skill root: $NCU_REPORT_SKILL_ROOT"
 log "claude binary: $CLAUDE_BIN"
 log "claude config dir: $CLAUDE_CONFIG_DIR"
 log "plugin cache root: $PLUGIN_ROOT"
@@ -204,13 +245,14 @@ if [[ "$DISABLE_POLYARCH" == "true" && "$DRY_RUN" != "true" ]]; then
     "$CLAUDE_BIN" plugin disable humanize@PolyArch >/dev/null 2>&1 || true
 fi
 
-install_knowledge_skill_link
+link_skill "KernelWiki" "$KERNELWIKI_ROOT"
+link_skill "ncu-report-skill" "$NCU_REPORT_SKILL_ROOT"
 
 if [[ "$INSTALL_PIP" == "true" ]]; then
     if [[ "$DRY_RUN" == "true" ]]; then
-        log "DRY-RUN python3 -m pip install -r $KERNELPILOT_ROOT/knowledge/requirements.txt"
+        log "DRY-RUN python3 -m pip install -r $KERNELWIKI_ROOT/requirements.txt"
     else
-        python3 -m pip install -r "$KERNELPILOT_ROOT/knowledge/requirements.txt"
+        python3 -m pip install -r "$KERNELWIKI_ROOT/requirements.txt"
     fi
 fi
 
@@ -231,6 +273,7 @@ Claude Code plugin:
 Hydrated runtime root:
   $PLUGIN_ROOT
 
-Kernel knowledge skill:
-  $CLAUDE_CONFIG_DIR/skills/kernel-knowledge -> $KERNELPILOT_ROOT/knowledge
+External skills:
+  $CLAUDE_CONFIG_DIR/skills/KernelWiki -> $KERNELWIKI_ROOT
+  $CLAUDE_CONFIG_DIR/skills/ncu-report-skill -> $NCU_REPORT_SKILL_ROOT
 EOF

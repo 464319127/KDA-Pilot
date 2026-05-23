@@ -1,2 +1,0 @@
-- 2025-07-01 `mgoin` approved: That's a huge perf improvement, nice! Thanks for the detailed comparisons. BTW do we have a kernel test for aiter fused moe that we could add a case for EP to? (https://github.com/vllm-project/vllm/pull/20270#pullrequestreview-2975299457)
-- 2025-07-01 `tjtanaa`: @mgoin Since ROCm/aiter repo is a repo for kernels, maybe it is better to keep the kernel level unit test within ROCm/aiter repo? (https://github.com/vllm-project/vllm/pull/20270#issuecomment-3023912797)

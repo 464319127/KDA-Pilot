@@ -1,1 +1,0 @@
-- 2026-05-20 `LeiWang1999`: local test can pass, looking forward to the regression test. (https://github.com/tile-ai/tilelang/pull/2216#issuecomment-4495343461)

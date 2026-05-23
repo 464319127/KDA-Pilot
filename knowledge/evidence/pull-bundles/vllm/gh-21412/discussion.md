@@ -1,6 +1,0 @@
-- 2025-07-23 `WoosukKwon`: For models like Gemma 3, is it using flash-attn for global attn and flashinfer for sliding window attn? (https://github.com/vllm-project/vllm/pull/21412#issuecomment-3105278276)
-- 2025-07-23 `heheda12345`: @WoosukKwon No, all layers are using flashinfer. Mixing flash-attn + flashinfer should be easy with the current design but prefer to put it into next pr if you think it is needed. (https://github.com/vllm-project/vllm/pull/21412#issuecomment-3105875452)
-- 2025-07-25 `LucasWilkinson` on `vllm/v1/attention/backends/flashinfer.py`:223: might play nicer with: if we do: instead (https://github.com/vllm-project/vllm/pull/21412#discussion_r2232248235)
-- 2025-07-26 `heheda12345`: my precommit fails at this test so I change some import re to import regex as re (https://github.com/vllm-project/vllm/pull/21412#issuecomment-3121129427)
-- 2025-07-26 `heheda12345` on `vllm/v1/attention/backends/flashinfer.py`:223: Thanks. I've fixed it. (https://github.com/vllm-project/vllm/pull/21412#discussion_r2232619495)
-- 2025-07-29 `heheda12345`: my precommit fails at this test , so I change some import re to import regex as re reverted due to ci failure. (https://github.com/vllm-project/vllm/pull/21412#issuecomment-3131117700)

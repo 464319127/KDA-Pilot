@@ -1,1 +1,0 @@
-- 2026-05-18 `antiagainst` on `third_party/amd/lib/TritonAMDGPUToLLVM/LoadStoreOpToLLVM.cpp`:815: Nit: we have a long list of captures right now. What about just using [&] to simplify? (https://github.com/triton-lang/triton/pull/10332#discussion_r3260409828)

@@ -1,1 +1,0 @@
-- 2025-08-06 `tjtanaa`: @LucasWilkinson Thank you for the quick fix XD. 🚀 Should we standardize the guard condition on both kernel unified attention 2d and kernel unified attention 3d? (https://github.com/vllm-project/vllm/pull/22368#issuecomment-3160738261)

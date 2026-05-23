@@ -1,6 +1,0 @@
-- 2025-06-28 `ispobock` on `python/sglang/srt/layers/flashinfer_fusion.py`:1: rename this file to flashinfer comm fusion? (https://github.com/sgl-project/sglang/pull/7621#discussion_r2173209355)
-- 2025-06-30 `BBuf`: Refer to [trt-llm]( , I change max token num to 1024 and get a better result: bs=1, 3.4%+ bs=8, 5%+ bs=16, 3.6+% (https://github.com/sgl-project/sglang/pull/7621#issuecomment-3019952545)
-- 2025-06-30 `Alcanderian` on `python/sglang/srt/layers/communicator.py`:410: hidden state.numel() hidden state.element size() < THRESHOLD (https://github.com/sgl-project/sglang/pull/7621#discussion_r2175656294)
-- 2025-07-01 `BBuf` on `python/sglang/srt/layers/communicator.py`:410: Make sense, I'll update it. (https://github.com/sgl-project/sglang/pull/7621#discussion_r2176199893)
-- 2025-07-01 `BBuf` on `python/sglang/srt/layers/communicator.py`:410: I think this feature could also be applied to other models. However, since different models may have varying hidden size values, directly checking max token num seems more general. Regarding the token number 1024: This value was estimated based on the workspace ... (https://github.com/sgl-project/sglang/pull/7621#discussion_r2176218489)
-- 2025-07-02 `zhyncs` on `python/sglang/srt/layers/communicator.py`:403: can we cache this result? (https://github.com/sgl-project/sglang/pull/7621#discussion_r2179166444)

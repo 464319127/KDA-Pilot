@@ -1,2 +1,0 @@
-- 2026-05-13 `mmangkad`: @MatthewBonanni @LucasWilkinson could you help take a look at this? (https://github.com/vllm-project/vllm/pull/42112#issuecomment-4437178697)
-- 2026-05-13 `MatthewBonanni` changes_requested: Thanks for finding this bug and contributing this fix! I'd prefer to just eagerly allocate the buffers though, rather than force attention for PIECEWISE warmups. (https://github.com/vllm-project/vllm/pull/42112#pullrequestreview-4283333468)

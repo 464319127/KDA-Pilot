@@ -1,1 +1,0 @@
-- 2025-08-25 `WoosukKwon` on `vllm/v1/attention/backends/flashinfer.py`:418: Below is mostly trivial re-location of the previous self. plan() (https://github.com/vllm-project/vllm/pull/23585#discussion_r2299016161)

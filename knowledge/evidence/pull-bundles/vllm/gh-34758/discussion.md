@@ -1,4 +1,0 @@
-- 2026-02-18 `mgoin` on `vllm/model_executor/models/deepseek_v2.py`:822: as spoke offline, DeepSeekV2FusedQkvAProjWithMqa should probably be on self.fused qkv a proj instead you need to fuse these two to get 2112 (https://github.com/vllm-project/vllm/pull/34758#discussion_r2819849346)
-- 2026-02-18 `mgoin` on `vllm/model_executor/models/deepseek_v2.py`:738: should be is device capability? unless you update the kernel to build for more SMs (https://github.com/vllm-project/vllm/pull/34758#discussion_r2819852474)
-- 2026-02-18 `mgoin` on `CMakeLists.txt`:779: Is this kernel Hopper only or SM90? You need to update this like the router gemm if so to include sm100f (https://github.com/vllm-project/vllm/pull/34758#discussion_r2819853982)
-- 2026-02-18 `mgoin` on `vllm/model_executor/models/deepseek_v2.py`:738: We still need to restrict so sm120 isn't valid (https://github.com/vllm-project/vllm/pull/34758#discussion_r2820108068)

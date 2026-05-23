@@ -1,2 +1,0 @@
-- 2025-07-14 `yzh119` on `csrc/gemm_groupwise_e4m3_bf16_sm100.cu`:1: Can we generate these files from jinja templates? We have similar practice in attention kernels before: (https://github.com/flashinfer-ai/flashinfer/pull/1251#discussion_r2205480671)
-- 2025-07-15 `jinyangyuan-nvidia` on `csrc/gemm_groupwise_e4m3_bf16_sm100.cu`:1: Thanks for the suggestion. Done. (https://github.com/flashinfer-ai/flashinfer/pull/1251#discussion_r2206356193)

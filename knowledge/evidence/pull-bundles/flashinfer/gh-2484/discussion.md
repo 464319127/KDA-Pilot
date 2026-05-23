@@ -1,1 +1,0 @@
-- 2026-02-05 `bkryu`: @vincentzed , please check commit de91629 for newly added refchecks in sampling APIs. cc @kahyunnam there was a suggestion to add refchecks to the sampling APIs so I added them. (https://github.com/flashinfer-ai/flashinfer/pull/2484#issuecomment-3851217879)

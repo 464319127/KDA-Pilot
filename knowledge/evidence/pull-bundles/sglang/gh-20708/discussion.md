@@ -1,4 +1,0 @@
-- 2026-03-16 `alexnails` on `python/sglang/srt/utils/hf_transformers_utils.py`:1237: do we keep this? (I actually think this is a useful fallback but it should be improved at a later point) (https://github.com/sgl-project/sglang/pull/20708#discussion_r2941841029)
-- 2026-03-16 `alexnails` on `benchmark/mmmu/eval_utils.py`:128: need to add rest of choices (https://github.com/sgl-project/sglang/pull/20708#discussion_r2941855764)
-- 2026-03-16 `JustinTong0323` on `benchmark/mmmu/eval_utils.py`:128: it's ok to keep it now as oai model is text only (https://github.com/sgl-project/sglang/pull/20708#discussion_r2941864857)
-- 2026-03-17 `JustinTong0323`: @dbari I've just pushed the fix you made on the rope. Thanks a lot for that! I also apologize for the earlier wrong decision of not including this fix. (https://github.com/sgl-project/sglang/pull/20708#issuecomment-4076676545)

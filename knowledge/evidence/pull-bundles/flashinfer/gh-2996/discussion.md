@@ -1,3 +1,0 @@
-- 2026-04-06 `yzh119` on `csrc/tinygemm2.cu`:202: Does this if-statement structure change make any different here? (https://github.com/flashinfer-ai/flashinfer/pull/2996#discussion_r3041540750)
-- 2026-04-06 `yzh119` on `csrc/tinygemm2.cu`:202: I have understood, ignore my comments here. (https://github.com/flashinfer-ai/flashinfer/pull/2996#discussion_r3042003724)
-- 2026-04-07 `jimmyzho`: cuda 12.9 internal ci is still hanging - investigating (https://github.com/flashinfer-ai/flashinfer/pull/2996#issuecomment-4195825671)

@@ -1,2 +1,0 @@
-- 2025-08-20 `Edwardf0t1` commented: @jingyu-ml Please rebase and resolve the conflict and let's test Qwen FP4 as well. -- (https://github.com/sgl-project/sglang/pull/7912#pullrequestreview-3137862236)
-- 2025-08-29 `Edwardf0t1` on `python/sglang/srt/layers/quantization/modelopt_quant.py`:521: If parsing group size in config.json failed, could we fallback to parse hf quant config.json instead? Let's thinkg about it for a follow-up PR. @jingyu-ml (https://github.com/sgl-project/sglang/pull/7912#discussion_r2311534735)

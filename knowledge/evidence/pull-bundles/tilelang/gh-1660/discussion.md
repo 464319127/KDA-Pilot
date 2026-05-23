@@ -1,1 +1,0 @@
-- 2026-01-13 `tzj-fxz`: Hi! Thank you for contribution! A small question: In your implementation of KDA kernels, there are two operators [chunk bwd intra.py]( and [chunk bwd intra op.py]( that share most part of code. It seems that they have totally same functionality. Could you ... (https://github.com/tile-ai/tilelang/pull/1660#issuecomment-3743869805)

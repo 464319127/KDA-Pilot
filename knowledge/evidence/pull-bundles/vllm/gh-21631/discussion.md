@@ -1,1 +1,0 @@
-- 2025-07-25 `yewentao256` on `vllm/model_executor/layers/quantization/utils/quant_utils.py`:641: .squeeze(0) is not a good idea, just follow the original code (https://github.com/vllm-project/vllm/pull/21631#discussion_r2231848825)

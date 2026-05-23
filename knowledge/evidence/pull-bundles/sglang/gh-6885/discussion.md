@@ -1,1 +1,0 @@
-- 2025-06-05 `ch-wan` commented: Thank you for your contribution. We have many users use TP16 for H20. Could you please also tune the config for TP16? Thanks! (https://github.com/sgl-project/sglang/pull/6885#pullrequestreview-2898899729)

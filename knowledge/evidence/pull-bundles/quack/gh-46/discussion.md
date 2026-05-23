@@ -1,6 +1,0 @@
-- 2025-10-01 `tridao` on `quack/gemm_interface.py`:908: there should just be "out", no "preact out" or "postact out". From a user perspective, it shouldn't matter how it's implemented (https://github.com/Dao-AILab/quack/pull/46#discussion_r2393186320)
-- 2025-10-01 `tridao` on `quack/symmetric_gemm.py`:29: This should take in "D" but no "PostAct". Then internally inside this function we construct "PostAct" as the trnapose of "D". (https://github.com/Dao-AILab/quack/pull/46#discussion_r2393187187)
-- 2025-10-01 `tridao` on `quack/symmetric_gemm.py`:97: varlen args = None (https://github.com/Dao-AILab/quack/pull/46#discussion_r2393310962)
-- 2025-10-01 `tridao` on `quack/gemm_interface.py`:907: Notation here should be (K, M) instead of (K, N) (https://github.com/Dao-AILab/quack/pull/46#discussion_r2393311986)
-- 2025-10-01 `tridao` on `quack/gemm_interface.py`:953: remove "postact", same w the rest of the function (https://github.com/Dao-AILab/quack/pull/46#discussion_r2393312488)
-- 2025-10-01 `tridao` on `quack/symmetric_gemm.py`:44: Let's be explict and have PostAct = D.mT here before passing to GemmWrapperBase (https://github.com/Dao-AILab/quack/pull/46#discussion_r2393313613)

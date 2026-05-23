@@ -1,1 +1,0 @@
-- 2026-05-12 `fbusato` changes_requested: I would prefer if ! CCCL COMPILER(GCC, <=, 8). cuda::std::default initializable is more precise than is default constructible (https://github.com/NVIDIA/cccl/pull/8924#pullrequestreview-4273863470)

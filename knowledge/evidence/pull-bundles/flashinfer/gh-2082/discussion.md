@@ -1,3 +1,0 @@
-- 2025-11-12 `aleozlx` on `flashinfer/jit/fused_moe.py`:59: this is because 2xFP4 is still needed for back up iiuc. (https://github.com/flashinfer-ai/flashinfer/pull/2082#discussion_r2519954103)
-- 2025-11-13 `yzh119`: There are output mismatch in test groupwise scaled gemm mxfp4 for b200 and gb300 UT, @aleozlx would you mind taking a look? (https://github.com/flashinfer-ai/flashinfer/pull/2082#issuecomment-3525117232)
-- 2025-11-14 `aleozlx`: as far as we can tell the error was a glitch. we'll be monitoring UT and if it shows up again, investigate/patch it then merging with multiple approvals (https://github.com/flashinfer-ai/flashinfer/pull/2082#issuecomment-3534303121)

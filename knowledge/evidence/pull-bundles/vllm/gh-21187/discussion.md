@@ -1,1 +1,0 @@
-- 2025-07-18 `yewentao256` on `vllm/utils/deep_gemm.py`:102: on B200, this is true, we will have another pr removing the wrapper (https://github.com/vllm-project/vllm/pull/21187#discussion_r2216203650)

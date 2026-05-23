@@ -1,2 +1,0 @@
-- 2025-10-31 `yewentao256` on `vllm/v1/attention/backends/mla/flashattn_mla.py`:167: Added cache to that function (https://github.com/vllm-project/vllm/pull/27884#discussion_r2481792395)
-- 2025-11-04 `mgoin` on `vllm/model_executor/layers/batch_invariant.py`:853: Why can't this just use the standard envs interface? This would take care of the caching issue in a more robust way (https://github.com/vllm-project/vllm/pull/27884#discussion_r2488831322)

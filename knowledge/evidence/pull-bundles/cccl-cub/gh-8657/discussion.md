@@ -1,2 +1,0 @@
-- 2026-04-24 `davebayer` on `cub/cub/device/dispatch/tuning/tuning_scan.cuh`:965: Please update the macros documentation (https://github.com/NVIDIA/cccl/pull/8657#discussion_r3135700648)
-- 2026-04-24 `bernhardmgruber` on `cub/cub/device/dispatch/tuning/tuning_scan.cuh`:965: I want to keep this macro hidden. Ideally, nobody should ever use it. I only want to reveal its existence if we get a bug report for a CCCL version that already shipped to production and we can no longer fix it. (https://github.com/NVIDIA/cccl/pull/8657#discussion_r3137652944)

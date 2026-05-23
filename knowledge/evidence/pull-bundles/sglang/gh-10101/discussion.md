@@ -1,1 +1,0 @@
-- 2025-09-06 `HydraQYH`: @zhyncs The compilation bug of CUDA 12.4 has been fixed. Ready to merge. (https://github.com/sgl-project/sglang/pull/10101#issuecomment-3262442475)

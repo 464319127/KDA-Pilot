@@ -1,3 +1,0 @@
-- 2025-12-30 `DarkSharpness` on `python/sglang/jit_kernel/include/sgl_kernel/vec.cuh`:70: will fix after ci passed (https://github.com/sgl-project/sglang/pull/16162#discussion_r2653242034)
-- 2025-12-31 `BBuf`: Any new benchmark can be posted for qknorm kernel. (https://github.com/sgl-project/sglang/pull/16162#issuecomment-3701083695)
-- 2025-12-31 `DarkSharpness`: cc @BBuf . Not significant but concrete gain in large batch size, slightly improve latency. GQA num head batch size Before After -- ------ -------- ------- --------- 4 1 1 0.976264 0.973582 4 1 2 1.152380 1.142620 4 1 4 1.170576 1.168099 ... (https://github.com/sgl-project/sglang/pull/16162#issuecomment-3702496797)

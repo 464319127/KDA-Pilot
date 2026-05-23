@@ -1,1 +1,0 @@
-- 2026-05-18 `LeiWang1999` commented: we can introduce mma sm75 macro generator instead of is turing? (https://github.com/tile-ai/tilelang/pull/2198#pullrequestreview-4307541571)

@@ -1,1 +1,0 @@
-- 2025-11-12 `yzh119` on `flashinfer/jit/xqa.py`:42: I would encourage encoding the output data type directly instead of use fp8 output as part of the URI, which is more concise. (https://github.com/flashinfer-ai/flashinfer/pull/2081#discussion_r2516559933)

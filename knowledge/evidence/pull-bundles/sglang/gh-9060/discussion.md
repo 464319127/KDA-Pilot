@@ -1,2 +1,0 @@
-- 2025-08-12 `yuan-luo` on `python/sglang/srt/layers/sampler.py`:85: This code dup is acceptable, as if sampling info.need min p sampling is False, the logic is different. (https://github.com/sgl-project/sglang/pull/9060#discussion_r2268413747)
-- 2025-08-12 `yuan-luo` on `sgl-kernel/python/sgl_kernel/sampling.py`:541: This is for the consideration of performance implications. (https://github.com/sgl-project/sglang/pull/9060#discussion_r2268415130)

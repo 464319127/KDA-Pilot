@@ -1,7 +1,0 @@
-- 2025-06-28 `Conless` on `flashinfer/green_ctx.py`:92: explicit destruction may not be that important (memory overhead is 4MB per context) (https://github.com/flashinfer-ai/flashinfer/pull/1190#discussion_r2173164167)
-- 2025-06-28 `yzh119` on `flashinfer/green_ctx.py`:165: Add some description about the meaning of rounded min count (https://github.com/flashinfer-ai/flashinfer/pull/1190#discussion_r2173547718)
-- 2025-06-28 `yzh119` on `flashinfer/green_ctx.py`:247: use round up function in utils.py (https://github.com/flashinfer-ai/flashinfer/pull/1190#discussion_r2173547896)
-- 2025-06-28 `yzh119` on `flashinfer/green_ctx.py`:93: Add some logging information about the success green context creation, and the real number of SM for each partition. (https://github.com/flashinfer-ai/flashinfer/pull/1190#discussion_r2173548039)
-- 2025-06-28 `yzh119` on `flashinfer/green_ctx.py`:31: major, minor = capability (https://github.com/flashinfer-ai/flashinfer/pull/1190#discussion_r2173548119)
-- 2025-06-28 `yzh119` on `flashinfer/green_ctx.py`:175: Add the index of this function to green ctx.rst (https://github.com/flashinfer-ai/flashinfer/pull/1190#discussion_r2173548210)
-- 2025-06-30 `yzh119` on `flashinfer/utils.py`:475: The semantic of round up itself do not include min value, so let keep round up(x, y) = ceil div(x, y) y, and we can call round up(max(min value, x), y) at caller side. (https://github.com/flashinfer-ai/flashinfer/pull/1190#discussion_r2174254140)

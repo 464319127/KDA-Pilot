@@ -1,2 +1,0 @@
-- 2026-05-06 `miscco` on `cub/benchmarks/bench/segmented_reduce/base.cuh`:34: Reminder: This will generate merge issues with 8840 (https://github.com/NVIDIA/cccl/pull/8836#discussion_r3193890308)
-- 2026-05-06 `bernhardmgruber` on `cub/benchmarks/bench/transform/common.h`:55: Nice! That's an actual bug! (https://github.com/NVIDIA/cccl/pull/8836#discussion_r3194107319)

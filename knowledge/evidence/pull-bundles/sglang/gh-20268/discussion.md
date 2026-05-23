@@ -1,2 +1,0 @@
-- 2026-03-10 `DarkSharpness`: Can we run full tests on nightly test? We should run all tests somewhere if not in normal CI. (https://github.com/sgl-project/sglang/pull/20268#issuecomment-4030525082)
-- 2026-03-10 `BBuf`: Can we run full tests on nightly test? We should run all tests somewhere if not in normal CI. Done in (https://github.com/sgl-project/sglang/pull/20268#issuecomment-4030724832)

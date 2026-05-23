@@ -1,3 +1,0 @@
-- 2025-04-27 `merrymercy` on `python/sglang/srt/layers/attention/merge_state.py`:34: move all imports to the upper level (https://github.com/sgl-project/sglang/pull/5428#discussion_r2061961810)
-- 2025-04-27 `merrymercy` on `python/sglang/srt/layers/attention/merge_state.py`:30: cache the result of is cuda with a global var (https://github.com/sgl-project/sglang/pull/5428#discussion_r2061961834)
-- 2025-04-27 `merrymercy` on `python/sglang/srt/layers/attention/merge_state.py`:20: def these functions in the top-level scope (https://github.com/sgl-project/sglang/pull/5428#discussion_r2061961868)

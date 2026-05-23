@@ -1,2 +1,0 @@
-- 2025-08-21 `yewentao256` on `vllm/v1/attention/backends/flashinfer.py`:308: Please add a comment here (https://github.com/vllm-project/vllm/pull/23214#discussion_r2289591181)
-- 2025-08-21 `yewentao256` commented: Looks good, could you also share more context about why we have the option before and why we could delete it now in the PR description? Thanks! (https://github.com/vllm-project/vllm/pull/23214#pullrequestreview-3138661906)

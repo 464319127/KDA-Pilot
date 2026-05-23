@@ -1,4 +1,0 @@
-- 2025-10-29 `drisspg` on `flash_attn/cute/mask.py`:144: Semantic change, I remove seqlen q and seqlen kv and instead switch to the flex mask mod api (https://github.com/Dao-AILab/flash-attention/pull/1970#discussion_r2471578645)
-- 2025-10-30 `drisspg` on `flash_attn/cute/interface.py`:364: This really shouldn't be necessary IMO and I dont really get this. But for the document mask case if we reuse the mask mod (which we should be able to) we get bad numerics and wrong outputs.. (https://github.com/Dao-AILab/flash-attention/pull/1970#discussion_r2476160202)
-- 2025-10-30 `drisspg` on `flash_attn/cute/interface.py`:364: probs cause we didnt mark dynamic .. (https://github.com/Dao-AILab/flash-attention/pull/1970#discussion_r2476166184)
-- 2025-10-30 `drisspg` on `flash_attn/cute/interface.py`:364: this is the way (https://github.com/Dao-AILab/flash-attention/pull/1970#discussion_r2476182192)

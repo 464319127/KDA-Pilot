@@ -1,6 +1,0 @@
-- 2025-11-13 `jayhshah` on `flash_attn/cute/paged_kv.py`:166: Need to zero fill for V or we could be taking inner product with NaNs which would fail validation. (https://github.com/Dao-AILab/flash-attention/pull/1999#discussion_r2520655729)
-- 2025-11-14 `jayhshah` on `tests/cute/test_flash_attn.py`:1157: Please enable num splits as an option for the kv cache test script (https://github.com/Dao-AILab/flash-attention/pull/1999#discussion_r2525494010)
-- 2025-11-14 `jayhshah` on `bench.py`: Remove this for the merge (https://github.com/Dao-AILab/flash-attention/pull/1999#discussion_r2525553660)
-- 2025-11-14 `jayhshah` on `main.py`: Remove this for the merge (https://github.com/Dao-AILab/flash-attention/pull/1999#discussion_r2525554354)
-- 2025-11-14 `jayhshah` on `flash_attn/cute/flash_fwd_sm100.py`:1212: We need to handle the edge case of n block max = 0, which could happen if is split kv is False. One suggestion is to change to: I'll note subsequent changes where they are needed. (https://github.com/Dao-AILab/flash-attention/pull/1999#discussion_r2525600432)
-- 2025-11-14 `jayhshah` on `flash_attn/cute/paged_kv.py`:153: The idea is to rely on zero fill for V to ultimately write out zero for O. (https://github.com/Dao-AILab/flash-attention/pull/1999#discussion_r2525605023)

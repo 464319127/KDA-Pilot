@@ -1,4 +1,0 @@
-- 2025-11-03 `jimmyzho` on `flashinfer/utils.py`:965: If the function signature does not indicate a default backend, get backend will return None. We should handle this edge case in the rest of the decorators, right? (https://github.com/flashinfer-ai/flashinfer/pull/2026#discussion_r2487477522)
-- 2025-11-03 `bkryu` commented: @nvmbreughe, I think the changes are straightforward, but we may want to add unit tests to check the unspecified backend case. Can we add these? (https://github.com/flashinfer-ai/flashinfer/pull/2026#pullrequestreview-3412411837)
-- 2025-11-03 `wenscarl`: Verified by not providing "backend" to mm fp4. LGTM. Thanks for the quick fix! (https://github.com/flashinfer-ai/flashinfer/pull/2026#issuecomment-3481983417)
-- 2025-11-03 `nvmbreughe` on `flashinfer/utils.py`:965: Should be fixed with apply defaults (https://github.com/flashinfer-ai/flashinfer/pull/2026#discussion_r2487695773)

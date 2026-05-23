@@ -1,1 +1,0 @@
-- 2025-10-04 `yzh119` approved: Tentatively rename tests/GEMM to tests/gemm for consistency with other components that use lowercase directory names across the codebase I don't have strong opinion on this but sounds reasonable (we didn't capitalize "moe" but capitalize "GEMM") cc @nvmbreughe (https://github.com/flashinfer-ai/flashinfer/pull/1862#pullrequestreview-3301642750)

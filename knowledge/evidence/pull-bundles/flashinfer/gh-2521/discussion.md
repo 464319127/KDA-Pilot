@@ -1,7 +1,0 @@
-- 2026-02-09 `yzh119`: @xutizhou can you explain what this PR is about? e.g. adding descriptions about what pool is in GDN. (https://github.com/flashinfer-ai/flashinfer/pull/2521#issuecomment-3874152773)
-- 2026-02-10 `xutizhou`: @xutizhou can you explain what this PR is about? e.g. adding descriptions about what pool is in GDN. updated in the description. (https://github.com/flashinfer-ai/flashinfer/pull/2521#issuecomment-3875142062)
-- 2026-02-17 `yzh119`: Hi @xutizhou can you also port your work to the f16 state kernel that have already been merged in 2498 ? (https://github.com/flashinfer-ai/flashinfer/pull/2521#issuecomment-3916782446)
-- 2026-02-24 `xutizhou`: Hi @xutizhou can you also port your work to the f16 state kernel that have already been merged in 2498 ? in this pr or open a new pr? (https://github.com/flashinfer-ai/flashinfer/pull/2521#issuecomment-3955137172)
-- 2026-02-26 `xutizhou`: Hi @xutizhou can you also port your work to the f16 state kernel that have already been merged in 2498 ? Ported in a new pr 2634 (https://github.com/flashinfer-ai/flashinfer/pull/2521#issuecomment-3964568368)
-- 2026-03-04 `yzh119` on `flashinfer/gdn_decode.py`:1145: why do we need pool size as part of the cache key? I suppose pool size could be a runtime parameter instead of compile time? (https://github.com/flashinfer-ai/flashinfer/pull/2521#discussion_r2882162859)
-- 2026-03-04 `xutizhou` on `flashinfer/gdn_decode.py`:1145: removed pool size from cache key. (https://github.com/flashinfer-ai/flashinfer/pull/2521#discussion_r2882236731)

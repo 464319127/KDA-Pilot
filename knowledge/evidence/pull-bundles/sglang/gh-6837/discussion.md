@@ -1,7 +1,0 @@
-- 2025-06-04 `Alcanderian` on `sgl-kernel/csrc/moe/ep_moe_reorder_kernel.cu`:93: As gemini said, we do not need computed flag. (https://github.com/sgl-project/sglang/pull/6837#discussion_r2125418282)
-- 2025-06-04 `Alcanderian`: Hello @yuan-luo , we have to support fp16/bf16/fp32 for this kernel. Ref: (https://github.com/sgl-project/sglang/pull/6837#issuecomment-2938422062)
-- 2025-06-04 `yuan-luo`: Hello @yuan-luo , we have to support fp16/bf16/fp32 for this kernel. Ref: 6858 Will follow up. (https://github.com/sgl-project/sglang/pull/6837#issuecomment-2938432982)
-- 2025-06-04 `yuan-luo` on `sgl-kernel/csrc/moe/ep_moe_reorder_kernel.cu`:162: token topk weights' dtype should be aligned with scalar t. Fixing in progress. (https://github.com/sgl-project/sglang/pull/6837#discussion_r2126538185)
-- 2025-06-04 `yuan-luo`: Performance improved, but the precision test case not passed. (https://github.com/sgl-project/sglang/pull/6837#issuecomment-2940105470)
-- 2025-06-04 `BBuf` on `sgl-kernel/benchmark/bench_moe_ep_post_reorder.py`:69: The allocation of input tensors can be moved outside to more accurately reflect kernel performance. (https://github.com/sgl-project/sglang/pull/6837#discussion_r2126928339)
-- 2025-06-05 `yuan-luo`: Updated performance result after revising benchmark time consuming calculation. (https://github.com/sgl-project/sglang/pull/6837#issuecomment-2942427628)

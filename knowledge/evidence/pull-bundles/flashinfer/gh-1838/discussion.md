@@ -1,2 +1,0 @@
-- 2025-10-02 `yzh119` on `flashinfer/deep_gemm.py`:938: could it be ArtifactPath.DEEPGEMM / cubin name (https://github.com/flashinfer-ai/flashinfer/pull/1838#discussion_r2396383253)
-- 2025-10-02 `jimmyzho` on `flashinfer/deep_gemm.py`:938: not in this case - both are str (https://github.com/flashinfer-ai/flashinfer/pull/1838#discussion_r2396975057)

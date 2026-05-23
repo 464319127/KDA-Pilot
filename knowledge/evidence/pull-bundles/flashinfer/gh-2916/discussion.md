@@ -1,1 +1,0 @@
-- 2026-03-31 `nvpohanh`: cc @trevor-m who is working on integrating routed moe into SGL (https://github.com/flashinfer-ai/flashinfer/pull/2916#issuecomment-4159221801)

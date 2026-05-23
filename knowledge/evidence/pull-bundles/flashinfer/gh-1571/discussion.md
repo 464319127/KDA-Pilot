@@ -1,1 +1,0 @@
-- 2025-08-26 `yzh119` on `include/flashinfer/cutlass_utils.cuh`:45: This change doesn't influence the semantics but I agree with using unified way to determine CUDA VERSION in macros. Will file a followup PR to refactor. (https://github.com/flashinfer-ai/flashinfer/pull/1571#discussion_r2299432537)

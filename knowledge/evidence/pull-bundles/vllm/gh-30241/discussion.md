@@ -1,2 +1,0 @@
-- 2025-12-08 `hmellor` changes_requested: vllm config already exists in the scope that you're using force use trtllm attention, so it should just be accessed directly (https://github.com/vllm-project/vllm/pull/30241#pullrequestreview-3551626145)
-- 2025-12-09 `nvpohanh` on `vllm/v1/attention/backends/flashinfer.py`:786: vllm config is not visible in this function, so I save the attention config in self.attention config instead. (https://github.com/vllm-project/vllm/pull/30241#discussion_r2601073001)

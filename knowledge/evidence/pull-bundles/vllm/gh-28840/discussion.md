@@ -1,2 +1,0 @@
-- 2025-11-19 `staugust`: @pavanimajety Would you like to take a look at this issue? I'm wondering which repo to fix this, flashinfer or vllm. (https://github.com/vllm-project/vllm/pull/28840#issuecomment-3551168253)
-- 2025-11-28 `staugust`: @LucasWilkinson @heheda12345 @pavanimajety From [state.cuh:45]( ,we can figure that flashinfer use 2 as base for all lse computation. (https://github.com/vllm-project/vllm/pull/28840#issuecomment-3587781648)

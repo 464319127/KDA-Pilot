@@ -1,3 +1,0 @@
-- 2025-08-08 `abcdabcd987` on `flashinfer/aot.py`:346: I guess we should raise here. Because if add comm explicitly request for comm. (https://github.com/flashinfer-ai/flashinfer/pull/1427#discussion_r2263487799)
-- 2025-08-08 `abcdabcd987` on `flashinfer/aot.py`:355: Same here. I guess maybe a reasonable approach would be split the add comm into two flags. (https://github.com/flashinfer-ai/flashinfer/pull/1427#discussion_r2263492834)
-- 2025-08-18 `abcdabcd987` on `flashinfer/aot.py`:121: is int64 index used? (https://github.com/flashinfer-ai/flashinfer/pull/1427#discussion_r2282771644)

@@ -1,3 +1,0 @@
-- 2025-07-25 `yzh119` on `pyproject.toml`:26: Where is the package being used? (https://github.com/flashinfer-ai/flashinfer/pull/1309#discussion_r2230880369)
-- 2025-07-25 `wenscarl` on `pyproject.toml`:26: It's a import dependency in generate kernels.py. (https://github.com/flashinfer-ai/flashinfer/pull/1309#discussion_r2231008066)
-- 2025-07-30 `yzh119`: Note (for future reference) regarding [e9e9de3]( The legacy nvidia-cutlass PyPI package ([link]( is being deprecated and conflicts in name with the newer nvidia-cutlass-dsl ([link]( which is based on the cute-dsl framework. Since our future development will rely on cute-dsl, we should avoid ... (https://github.com/flashinfer-ai/flashinfer/pull/1309#issuecomment-3135676015)

@@ -1,1 +1,0 @@
-- 2025-12-17 `yzh119` approved: Agreed with the change as we might set different cuda arch when compiling host-side code in AOT mode. (https://github.com/flashinfer-ai/flashinfer/pull/2228#pullrequestreview-3585946057)

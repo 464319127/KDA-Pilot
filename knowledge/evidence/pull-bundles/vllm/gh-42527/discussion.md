@@ -1,1 +1,0 @@
-- 2026-05-13 `jeejeelee` on `vllm/model_executor/layers/fused_moe/utils.py`:423: Hmm, you are wrong (https://github.com/vllm-project/vllm/pull/42527#discussion_r3235258578)

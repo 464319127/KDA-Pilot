@@ -1,1 +1,0 @@
-- 2025-10-17 `yewentao256` on `vllm/model_executor/layers/quantization/fp8.py`:571: Currently we can consider only 2d input (https://github.com/vllm-project/vllm/pull/27127#discussion_r2441400916)

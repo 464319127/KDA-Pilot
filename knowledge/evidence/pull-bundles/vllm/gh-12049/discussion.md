@@ -1,3 +1,0 @@
-- 2025-01-14 `robertgshaw2-redhat`: Hey @divakar-amd, I also made this branch which supports fp8 for tuning. (https://github.com/vllm-project/vllm/pull/12049#issuecomment-2591119314)
-- 2025-01-14 `divakar-amd`: Hi @robertgshaw2-redhat, this PR should already incorporate fp8 changes from your branch. Let me know in case I overlooked something. Thanks (https://github.com/vllm-project/vllm/pull/12049#issuecomment-2591209984)
-- 2025-01-16 `divakar-amd`: Yes, there might be a few that we would want to update. We can do that as a part of another PR though. (https://github.com/vllm-project/vllm/pull/12049#issuecomment-2596774403)

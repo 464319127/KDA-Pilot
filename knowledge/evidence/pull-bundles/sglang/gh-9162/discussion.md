@@ -1,1 +1,0 @@
-- 2025-08-13 `aleozlx`: Perf testing results (B200) ✅ TLDR, no regression instructions see Benchmark --max-concurrency 1 Benchmark --max-concurrency 4 Benchmark --max-concurrency 16 Benchmark --max-concurrency 32 (https://github.com/sgl-project/sglang/pull/9162#issuecomment-3186010370)

@@ -1,8 +1,0 @@
-- 2026-02-20 `Fridge003` on `python/sglang/srt/layers/attention/nsa/nsa_indexer.py`:233: Please try import deep gemm.bf16 gemm nt , and fallback when the import fails (https://github.com/sgl-project/sglang/pull/19041#discussion_r2833709704)
-- 2026-02-20 `Fridge003` on `python/sglang/srt/layers/attention/nsa/nsa_indexer.py`:240: Do we need to warmup for this kernel? Just like fp8 kernels (https://github.com/sgl-project/sglang/pull/19041#discussion_r2833709851)
-- 2026-02-20 `zianglih` on `python/sglang/srt/layers/attention/nsa/nsa_indexer.py`:240: Added warm up in (https://github.com/sgl-project/sglang/pull/19041#discussion_r2835289656)
-- 2026-02-20 `zianglih`: Added warm-up. Now 8k/2k performance is slightly better than baseline: The warm-up for GEMM NT BF16BF16F32 is shown in the srever log: (https://github.com/sgl-project/sglang/pull/19041#issuecomment-3937408627)
-- 2026-02-21 `Fridge003`: @zianglih Can you please move test nsa indexer.py to stage-b-test-large-1-gpu, since dpsk v32 is not supposed to run on 5090 (https://github.com/sgl-project/sglang/pull/19041#issuecomment-3938709697)
-- 2026-02-21 `zianglih`: @Fridge003 added the 1 line change. (https://github.com/sgl-project/sglang/pull/19041#issuecomment-3939354652)
-- 2026-02-21 `zianglih`: [test nsa indexer.py]( still fails on my B200 machines. Investigating. (https://github.com/sgl-project/sglang/pull/19041#issuecomment-3939684424)
-- 2026-02-22 `zianglih`: Before [test nsa indexer.py]( failed due to an invalid shape N=1, K=5120, M=1during deepgemm warm-up. The N=1 is from index n heads, which is never 1 in real models: For index n heads, GLM-5 uses 32, DeepSeek-V3.2 uses 64, so I bump ... (https://github.com/sgl-project/sglang/pull/19041#issuecomment-3939766061)

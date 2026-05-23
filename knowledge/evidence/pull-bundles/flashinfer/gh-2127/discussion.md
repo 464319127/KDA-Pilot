@@ -1,1 +1,0 @@
-- 2025-11-22 `yzh119` approved: It should be easy to support int64 indices for these kernels as well, but let's left them for future PRs. (https://github.com/flashinfer-ai/flashinfer/pull/2127#pullrequestreview-3495994502)

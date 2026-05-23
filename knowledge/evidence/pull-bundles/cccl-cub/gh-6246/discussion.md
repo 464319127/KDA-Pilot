@@ -1,6 +1,0 @@
-- 2025-10-15 `miscco` on `cub/cub/thread/thread_reduce.cuh`:455: @bernhardmgruber what is the difference between iter value t and ValueT? (https://github.com/NVIDIA/cccl/pull/6246#discussion_r2432144953)
-- 2025-10-15 `miscco` on `cub/cub/thread/thread_reduce.cuh`:455: I am deeply wondering how this works, because the only call site of ThreadReduce that specifies the template arguments, is below and that uses AccumT for that (https://github.com/NVIDIA/cccl/pull/6246#discussion_r2432158978)
-- 2025-10-15 `bernhardmgruber`: Comparing this branch with git checkout $(git merge-base upstream/branch/3.0.x upstream/branch/3.1.x) using cub.bench.select.if.base on H100 NVL shows that this PR recovers performance: (https://github.com/NVIDIA/cccl/pull/6246#issuecomment-3406366320)
-- 2025-10-15 `bernhardmgruber` on `cub/cub/thread/thread_reduce.cuh`:455: I don't know. @fbusato designed it this way. (https://github.com/NVIDIA/cccl/pull/6246#discussion_r2432934101)
-- 2025-10-15 `fbusato` on `cub/cub/thread/thread_reduce.cuh`:455: ValueT is specified on top on the declaration and it is defined as iter value t (https://github.com/NVIDIA/cccl/pull/6246#discussion_r2433141613)
-- 2025-10-15 `miscco` on `cub/cub/thread/thread_reduce.cuh`:470: This was part of the original implementation see (https://github.com/NVIDIA/cccl/pull/6246#discussion_r2433220015)

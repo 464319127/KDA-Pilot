@@ -1,1 +1,0 @@
-- 2025-11-11 `mgoin` on `vllm/platforms/cuda.py`:59: Just with respect to Blackwell, do we actually know how flashmla and fa mla work on there? I'm curious if fa mla is even a valid option (https://github.com/vllm-project/vllm/pull/27363#discussion_r2514973691)

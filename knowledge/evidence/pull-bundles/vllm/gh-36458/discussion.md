@@ -1,3 +1,0 @@
-- 2026-03-10 `yma11` on `vllm/model_executor/layers/fused_moe/oracle/fp8.py`:98: better to reword this comment. (https://github.com/vllm-project/vllm/pull/36458#discussion_r2908741145)
-- 2026-03-10 `yma11`: Is there some place to add a log telling user Triton MoE is used or such log already exists? (https://github.com/vllm-project/vllm/pull/36458#issuecomment-4027981665)
-- 2026-03-10 `jikunshang`: Is there some place to add a log telling user Triton MoE is used or such log already exists? right. with debug log level: (https://github.com/vllm-project/vllm/pull/36458#issuecomment-4027996812)

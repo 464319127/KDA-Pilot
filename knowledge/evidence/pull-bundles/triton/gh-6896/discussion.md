@@ -1,1 +1,0 @@
-- 2025-05-31 `zyongye`: why is this test failing? it is not related to the change at all. (https://github.com/triton-lang/triton/pull/6896#issuecomment-2924418660)

@@ -1,3 +1,0 @@
-- 2026-05-02 `pciolkosz` on `cudax/test/group/synchronizer/lane_synchronizer.cu`:36: I don't get why is this always thread in warp mapping, while the parent varies. Applies in other tests too (https://github.com/NVIDIA/cccl/pull/8755#discussion_r3175867999)
-- 2026-05-02 `pciolkosz` approved: A bit confused on the testing, but the tests pass, so it probably just confusion and I will approve (https://github.com/NVIDIA/cccl/pull/8755#pullrequestreview-4214135366)
-- 2026-05-04 `davebayer` on `cudax/test/group/synchronizer/lane_synchronizer.cu`:36: Because I'm just grouping threads within a warp in this test. I agree, it's a bit confusing (https://github.com/NVIDIA/cccl/pull/8755#discussion_r3179651853)

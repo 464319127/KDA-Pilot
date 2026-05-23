@@ -1,2 +1,0 @@
-- 2026-01-14 `Kangyan-Zhou` on `.github/workflows/nightly-test-nvidia.yml`:396: Do we need IS BLACKWELL=1 here as well? (https://github.com/sgl-project/sglang/pull/16971#discussion_r2689137167)
-- 2026-01-14 `dougyster` on `.github/workflows/nightly-test-nvidia.yml`:396: No prob - will add this; IS BLACKWELL increases the server startup timeout length but hasn't been added for this before - I can add it (https://github.com/sgl-project/sglang/pull/16971#discussion_r2689142993)

@@ -1,3 +1,0 @@
-- 2025-06-08 `yzh119` commented: At python side, flashinfer's rope kernel cast pos ids to int32. If both are needed, can you add an DISPATCHER (for IdType)? (https://github.com/flashinfer-ai/flashinfer/pull/1129#pullrequestreview-2908064104)
-- 2025-06-08 `Edenzzzz` on `csrc/rope.cu`:153: use IdType dispatch for this too? (https://github.com/flashinfer-ai/flashinfer/pull/1129#discussion_r2134709912)
-- 2025-06-08 `yzh119` on `csrc/rope.cu`:153: Good catch! Fixed in latest commit. (https://github.com/flashinfer-ai/flashinfer/pull/1129#discussion_r2134740535)

@@ -1,1 +1,0 @@
-- 2024-04-01 `huydhn`: Do we have an issue for this and maybe a reproducible script that I could run on CUDA to confirm that there is no regression there (I assume that ROCm has been tested as I don't have have a ROCm runner to ... (https://github.com/pytorch/pytorch/pull/122967#issuecomment-2030335026)

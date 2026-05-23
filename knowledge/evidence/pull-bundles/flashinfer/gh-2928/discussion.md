@@ -1,2 +1,0 @@
-- 2026-03-31 `yzh119` commented: I suppose this pattern was also used in other kernels? Do we need to populate to the entire codebase (other than only norm). (https://github.com/flashinfer-ai/flashinfer/pull/2928#pullrequestreview-4039824308)
-- 2026-03-31 `bkryu`: I suppose this pattern was also used in other kernels? Do we need to populate to the entire codebase (other than only norm). This is a good point. This PR directly addresses the regression reported in 2920, but I supposed that it ... (https://github.com/flashinfer-ai/flashinfer/pull/2928#issuecomment-4165212710)

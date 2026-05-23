@@ -1,1 +1,0 @@
-- 2025-10-31 `mgoin` on `csrc/quantization/w8a8/cutlass/c3x/scaled_mm_sm100_fp8_dispatch.cuh`:214: This matches the usage in sm90 fp8 swapab (https://github.com/vllm-project/vllm/pull/27284#discussion_r2480097688)

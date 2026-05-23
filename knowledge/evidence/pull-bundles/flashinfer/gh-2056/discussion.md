@@ -1,3 +1,0 @@
-- 2025-11-06 `yzh119` on `flashinfer/comm/mnnvl.py`:557: How about calling it comm backend or communicator? cc @nvmbreughe in case you have any preference. (https://github.com/flashinfer-ai/flashinfer/pull/2056#discussion_r2501070783)
-- 2025-11-07 `nvmbreughe` on `flashinfer/comm/mnnvl.py`:557: comm backend sounds good. Or even more explicit comm backend for handle transfer Besides the name I would also list some options: MpiComm() (https://github.com/flashinfer-ai/flashinfer/pull/2056#discussion_r2504649517)
-- 2025-11-07 `nvmbreughe` on `tests/comm/test_trtllm_mnnvl_allreduce_custom_comm.py`:102: Can we make this a helper function as tests/comm/test trtllm mnnvl allreduce.py also uses it? (https://github.com/flashinfer-ai/flashinfer/pull/2056#discussion_r2504662253)

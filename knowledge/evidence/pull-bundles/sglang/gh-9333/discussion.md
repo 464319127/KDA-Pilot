@@ -1,4 +1,0 @@
-- 2025-08-19 `kousakawang`: @kousakawang There is a CI failed after merge main. PTAL. from CI log , looks like an error occurred during downloading cudnn? (https://github.com/sgl-project/sglang/pull/9333#issuecomment-3201320887)
-- 2025-08-21 `HydraQYH` on `sgl-kernel/csrc/moe/fp8_blockwise_moe_kernel.cu`:489: Wrong schedule Type. Plz Fix it. (https://github.com/sgl-project/sglang/pull/9333#discussion_r2290485882)
-- 2025-08-21 `HydraQYH` commented: Wrong schedule Type. Fix it then restart CI. (https://github.com/sgl-project/sglang/pull/9333#pullrequestreview-3139867932)
-- 2025-08-21 `kousakawang`: performance benchmark: acc UT (https://github.com/sgl-project/sglang/pull/9333#issuecomment-3210073548)

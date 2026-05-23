@@ -1,2 +1,0 @@
-- 2025-12-30 `reubenconducts`: @drisspg @tridao minor QoL improvements surrounding compute block sparsity, plus change of mask mod signature to mimic score mod (https://github.com/Dao-AILab/flash-attention/pull/2100#issuecomment-3700858564)
-- 2026-01-05 `tridao` on `flash_attn/cute/flash_fwd.py`:2007: I think we'll need to change the bwd kernels to construct the attention mask this way too (https://github.com/Dao-AILab/flash-attention/pull/2100#discussion_r2662021941)

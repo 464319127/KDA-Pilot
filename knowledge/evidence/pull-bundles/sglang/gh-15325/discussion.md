@@ -1,1 +1,0 @@
-- 2025-12-17 `alphabetc1`: @FlamingoPg Hi, sorry to bother you. I noticed you previously worked on decoupling the quantization implementation from the vLLM dependency. Right now bitsandbytes doesn’t seem to work for me, and I’m not sure whether we need this PR or if there’s another ... (https://github.com/sgl-project/sglang/pull/15325#issuecomment-3666604227)

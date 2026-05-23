@@ -1,1 +1,0 @@
-- 2025-07-18 `nvpohanh`: Why creating two PRs for this item? Sorry for causing confusion. I saw your comment on 1285 and I think your comment is 100% correct. However, I don't know if he is still online, so I created another PR using your suggestion ... (https://github.com/flashinfer-ai/flashinfer/pull/1286#issuecomment-3089134703)

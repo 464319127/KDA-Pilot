@@ -1,1 +1,0 @@
-- 2026-05-15 `mgoin` on `csrc/attention/vertical_slash_index.cu`: You need to update CMakeLists.txt to remove this (https://github.com/vllm-project/vllm/pull/42767#discussion_r3250338041)

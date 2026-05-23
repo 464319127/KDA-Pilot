@@ -1,1 +1,0 @@
-- 2025-12-17 `HaiShaw`: code change only applies to amd path (https://github.com/sgl-project/sglang/pull/15304#issuecomment-3664116762)

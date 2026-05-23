@@ -1,1 +1,0 @@
-- 2025-06-21 `kkHuang-amd`: I can pass this test in my server. Please help to check CI server if it has upgraded the aiter version to 0.1.3. From the current failed message that like failed in the torch-compile. Since the failed error only happened on torch-compile ... (https://github.com/sgl-project/sglang/pull/7391#issuecomment-2993596377)

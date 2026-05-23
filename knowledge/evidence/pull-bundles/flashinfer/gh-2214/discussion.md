@@ -1,1 +1,0 @@
-- 2025-12-14 `yzh119` on `flashinfer/deep_gemm.py`:1396: The num groups != m looks confusing to me as well, @jimmyzho would you mind double checking? I don't see it in existing codebase. (https://github.com/flashinfer-ai/flashinfer/pull/2214#discussion_r2616702068)

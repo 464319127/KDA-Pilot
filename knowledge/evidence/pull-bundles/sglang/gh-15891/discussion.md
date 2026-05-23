@@ -1,2 +1,0 @@
-- 2025-12-26 `Fridge003` commented: Nice catch. I think this patch should solve the problem in 12228 (https://github.com/sgl-project/sglang/pull/15891#pullrequestreview-3613956533)
-- 2025-12-27 `ispobock` approved: Looks great! Maybe we can change the warm up input ids back to previous one and have a double check? (https://github.com/sgl-project/sglang/pull/15891#pullrequestreview-3614119094)

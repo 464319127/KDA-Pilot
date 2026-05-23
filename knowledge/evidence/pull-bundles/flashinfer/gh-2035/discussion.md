@@ -1,2 +1,0 @@
-- 2025-12-16 `bkryu` on `tests/attention/test_cudnn_prefill.py`:208: @Anerudhan, with the current setup, unit tests fail when cuDNN version is less than 9.18. Can you add a if statement to check the cuDNN version and skip if it is too low? (https://github.com/flashinfer-ai/flashinfer/pull/2035#discussion_r2621321427)
-- 2025-12-16 `bkryu` on `tests/attention/test_cudnn_prefill.py`:206: This is causing in unit tests. Should it be cudnn.backend version()? (https://github.com/flashinfer-ai/flashinfer/pull/2035#discussion_r2623975151)

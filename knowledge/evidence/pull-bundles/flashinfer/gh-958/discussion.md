@@ -1,2 +1,0 @@
-- 2025-03-18 `yzh119`: For pre-commit test to get passed, please setup [pre-commit]( For the unittest, you can try merging/rebasing to origin/main. (https://github.com/flashinfer-ai/flashinfer/pull/958#issuecomment-2734290002)
-- 2025-03-24 `yzh119` approved: Thanks for your contribution! @annanyapr (https://github.com/flashinfer-ai/flashinfer/pull/958#pullrequestreview-2708994189)

@@ -1,1 +1,0 @@
-- 2025-09-29 `tqchen`: thanks @hypdeb , cc @cyx-6 @yzh119 , we should also do a round of sweep on the codebase, now we can use tensor.numel() for this query (https://github.com/flashinfer-ai/flashinfer/pull/1800#issuecomment-3346624001)

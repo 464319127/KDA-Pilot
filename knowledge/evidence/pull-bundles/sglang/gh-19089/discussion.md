@@ -1,6 +1,0 @@
-- 2026-02-24 `hlu1`: Using longbench for perf benchmark isn't reliable because the number of output tokens varies from run to run. It's better to do standard perf benchmarks with a dataset. (https://github.com/sgl-project/sglang/pull/19089#issuecomment-3954566301)
-- 2026-03-09 `Fridge003` on `python/sglang/srt/environ.py`:346: Just for checking, setting None here means disabling skip softmax attention? (https://github.com/sgl-project/sglang/pull/19089#discussion_r2903099687)
-- 2026-03-09 `Fridge003` on `python/sglang/benchmark/datasets/longbench_v2.py`:1: Agree with maybe we don't need the longbench benchmark? (https://github.com/sgl-project/sglang/pull/19089#discussion_r2903370501)
-- 2026-03-09 `Fridge003`: Please post the accuracy results on longbench-v2 as the sparsity changes, and probably draw curves (similar to those in [trtllm]( if time permits (https://github.com/sgl-project/sglang/pull/19089#issuecomment-4021351079)
-- 2026-03-09 `Fridge003` on `python/sglang/srt/environ.py`:341: Please also update document docs/references/environment variables.md (https://github.com/sgl-project/sglang/pull/19089#discussion_r2903416419)
-- 2026-03-10 `Fridge003` on `python/sglang/benchmark/datasets/longbench_v2.py`:1: Oh I misunderstood, can close this right now (https://github.com/sgl-project/sglang/pull/19089#discussion_r2913520175)

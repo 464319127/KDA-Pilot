@@ -1,2 +1,0 @@
-- 2026-02-11 `xutizhou`: Hi @xutizhou. Can you confirm if there is any duplication in 17918 so we can close it? Yes, 17918 and 18361 use the exact same three FlashInfer GDN kernels: Phase Kernel Module --- --- --- Prefill chunk gated delta rule flashinfer.gdn prefill ... (https://github.com/sgl-project/sglang/pull/18361#issuecomment-3881607042)
-- 2026-02-11 `hlu1`: @xutizhou @samuellees If you have gpqa accuracy results, please add it to the PR description (https://github.com/sgl-project/sglang/pull/18361#issuecomment-3881732225)

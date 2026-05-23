@@ -1,2 +1,0 @@
-- 2025-11-04 `kaixih`: On a second look, this issue only affects the FlashInfer Cutlass MoE backend, so the fix is limited to that case. The change has been verified on a GB200 node and the server launches successfully with the following commands. (https://github.com/sgl-project/sglang/pull/12640#issuecomment-3487714328)
-- 2025-11-04 `Fridge003`: This PR (cutlass moe backend) is not covered by CI, so let's merge it first (https://github.com/sgl-project/sglang/pull/12640#issuecomment-3488206523)

@@ -1,1 +1,0 @@
-- 2026-03-12 `ChuanLi1101`: Hi @HaiShaw @kkHuang-amd, could you please help trigger CI by adding the \ un-ci\ label or commenting \/tag-run-ci-label\? This is a minimal 2-line fix for 16027 — adding missing \self.use mla\ guards in the \is draft extend v2()\ code paths of the ... (https://github.com/sgl-project/sglang/pull/20409#issuecomment-4044006347)

@@ -1,2 +1,0 @@
-- 2025-10-08 `yzh119` changes_requested: Waiting for B300 hanging issue to fix (https://github.com/flashinfer-ai/flashinfer/pull/1882#pullrequestreview-3313199580)
-- 2025-10-11 `yzh119` approved: Failed UT are not related to this PR, so this PR do not bring any regression, let's merge this first. (https://github.com/flashinfer-ai/flashinfer/pull/1882#pullrequestreview-3326331824)

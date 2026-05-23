@@ -1,2 +1,0 @@
-- 2025-08-01 `mgoin` on `vllm/model_executor/layers/quantization/fp8.py`:509: Unfortunately this might trigger for SM120, so I think we need to explicitly check 90 and 100 (https://github.com/vllm-project/vllm/pull/21968#discussion_r2248939821)
-- 2025-08-03 `yewentao256` on `vllm/model_executor/layers/quantization/fp8.py`:509: Thanks for the review! Fixed (https://github.com/vllm-project/vllm/pull/21968#discussion_r2249486603)

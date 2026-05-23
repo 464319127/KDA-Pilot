@@ -1,4 +1,0 @@
-- 2025-03-06 `houseroad` approved: The changes look good to me. The changes are only applied to hip, and straightforward. (https://github.com/vllm-project/vllm/pull/14316#pullrequestreview-2665863471)
-- 2025-03-07 `LucasWilkinson` on `vllm/attention/backends/mla/common.py`:1285: nit: if we are here we can just assume has context is true, since we only end up in compute prefill context if that is true (https://github.com/vllm-project/vllm/pull/14316#discussion_r1984213154)
-- 2025-03-07 `LucasWilkinson` on `vllm/attention/backends/mla/common.py`:1285: I think with this assumption we can simplify the code a bit and just rip out the triton kernel from here (https://github.com/vllm-project/vllm/pull/14316#discussion_r1984213716)
-- 2025-03-07 `SageMoore` on `vllm/attention/backends/mla/common.py`:1285: Done. Thanks for the feedback (https://github.com/vllm-project/vllm/pull/14316#discussion_r1985360633)

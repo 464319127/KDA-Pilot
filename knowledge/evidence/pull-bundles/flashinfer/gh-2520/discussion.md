@@ -1,2 +1,0 @@
-- 2026-03-01 `samuellees` on `tests/attention/test_xqa_batch_decode.py`:589: Cloud you please add test cases for Qwen3Next and Qwen3.5? Thank a lot (1, 1, 64, 2, 4), (1, 1, 64, 2, 8), (https://github.com/flashinfer-ai/flashinfer/pull/2520#discussion_r2868448644)
-- 2026-03-04 `yzh119` on `flashinfer/xqa.py`:197: Please also annotate the expected shape of scaling factors. (https://github.com/flashinfer-ai/flashinfer/pull/2520#discussion_r2882150483)

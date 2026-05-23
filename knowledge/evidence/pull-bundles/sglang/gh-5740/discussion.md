@@ -1,3 +1,0 @@
-- 2025-04-25 `yizhang2077`: Since there are so many configs need to be tune, could we add a warning log for users to guide them to tune config in their environment? (https://github.com/sgl-project/sglang/pull/5740#issuecomment-2829730018)
-- 2025-04-25 `BBuf`: Since there are so many configs need to be tune, could we add a warning log for users to guide them to tune config in their environment? Make sense, I'll go add a logging. (https://github.com/sgl-project/sglang/pull/5740#issuecomment-2829748282)
-- 2025-04-25 `saltyfish66`: I was surprised by the performance difference. 辛辛苦苦优化kernel的收益，有时还不如直接re-tuning config (https://github.com/sgl-project/sglang/pull/5740#issuecomment-2829898453)

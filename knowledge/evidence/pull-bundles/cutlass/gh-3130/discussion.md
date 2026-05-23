@@ -1,1 +1,0 @@
-- 2026-04-09 `brandon-yujie-sun`: Thanks for the change, LGTM. (https://github.com/NVIDIA/cutlass/pull/3130#issuecomment-4211671046)

@@ -1,1 +1,0 @@
-- 2026-04-28 `zhangnju`: hi @LeiWang1999 I run the CI test on local MI300 machine, and no error is reported. but the CI test on remote server still has 24 test cases to fail. it is very weird. my local CI test command is "PYTHONDEVMODE=1 PYTHONPATH="" ... (https://github.com/tile-ai/tilelang/pull/2105#issuecomment-4334677669)

@@ -1,3 +1,0 @@
-- 2025-09-23 `weireweire`: The added test can be a replacement of test attention sink blackwell.py but I didn't remove it yet. cc @IwakuraRein @joker-eph (https://github.com/flashinfer-ai/flashinfer/pull/1758#issuecomment-3323101461)
-- 2025-09-23 `yzh119` on `flashinfer/artifacts.py`:72: what's this change about? (https://github.com/flashinfer-ai/flashinfer/pull/1758#discussion_r2372944807)
-- 2025-09-24 `weireweire` on `flashinfer/artifacts.py`:72: fix sink attention accuracy regression，caused by adding the sink twice. (https://github.com/flashinfer-ai/flashinfer/pull/1758#discussion_r2373831818)

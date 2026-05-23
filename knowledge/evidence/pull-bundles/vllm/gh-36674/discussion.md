@@ -1,1 +1,0 @@
-- 2026-03-10 `yewentao256` on `vllm/distributed/device_communicators/flashinfer_all_reduce.py`:85: initialize fi ar quant workspace won't trigger the issue. (https://github.com/vllm-project/vllm/pull/36674#discussion_r2912904003)

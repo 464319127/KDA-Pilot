@@ -1,2 +1,0 @@
-- 2026-02-05 `drisspg` on `flash_attn/cute/interface.py`:86: just checked again and no this is not true we either have tmem error or cudaErrorIllegalAddress (https://github.com/Dao-AILab/flash-attention/pull/2227#discussion_r2767250263)
-- 2026-02-08 `tridao`: Iirrc we support hdim 192-128 on Sm90, at least in the forward. Btw one should be able to round up the headdim, e.g. if actual headdim is 144-128 it should be rounded up to 192-128. (https://github.com/Dao-AILab/flash-attention/pull/2227#issuecomment-3865861638)

@@ -1,8 +1,0 @@
-- 2026-03-11 `depaulmillz` on `tests/gemm/test_group_gemm_fp4.py`:49: This is fixed now. (https://github.com/flashinfer-ai/flashinfer/pull/2738#discussion_r2919443955)
-- 2026-03-11 `depaulmillz` on `tests/gemm/test_group_gemm_fp4.py`:49: This is gated now by pytest skip like other tests. (https://github.com/flashinfer-ai/flashinfer/pull/2738#discussion_r2919497396)
-- 2026-03-11 `depaulmillz` on `csrc/group_gemm_nvfp4_groupwise_sm120.cu`:102: We get the flow workspace buffer and int workspace buffer for a.device in gemm base.py. (https://github.com/flashinfer-ai/flashinfer/pull/2738#discussion_r2919503347)
-- 2026-03-11 `depaulmillz` on `include/flashinfer/gemm/group_gemm_nvfp4_groupwise_sm120.cuh`:73: This should be fixed now. (https://github.com/flashinfer-ai/flashinfer/pull/2738#discussion_r2919776667)
-- 2026-03-11 `depaulmillz` on `include/flashinfer/gemm/group_gemm_mxfp4_groupwise_sm120.cuh`:73: We use size t now. (https://github.com/flashinfer-ai/flashinfer/pull/2738#discussion_r2919778295)
-- 2026-03-11 `depaulmillz` on `tests/gemm/test_group_gemm_fp4.py`:25: We skip for non sm12x now. (https://github.com/flashinfer-ai/flashinfer/pull/2738#discussion_r2919780128)
-- 2026-03-27 `johnnynunez`: @aleozlx i ping again that this solves a lot of pains from users related with nvfp4 (https://github.com/flashinfer-ai/flashinfer/pull/2738#issuecomment-4140274478)
-- 2026-03-27 `eugr`: @depaulmillz - Looks like it needs some changes to be merged cleanly. EDIT: disregard, tried to apply as a patch. Merges without any issues, now building on DGX Spark... (https://github.com/flashinfer-ai/flashinfer/pull/2738#issuecomment-4143818260)

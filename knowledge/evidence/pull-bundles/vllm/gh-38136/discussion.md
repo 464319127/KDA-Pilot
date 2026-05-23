@@ -1,3 +1,0 @@
-- 2026-03-26 `ProExpertProg` on `vllm/envs.py`:1311: Has the issue with cudagraphs been resolved? Otherwise let's leave the link? (https://github.com/vllm-project/vllm/pull/38136#discussion_r2993350604)
-- 2026-03-26 `ProExpertProg` approved: Let's put the flashinfer link somewhere as well? (https://github.com/vllm-project/vllm/pull/38136#pullrequestreview-4012388651)
-- 2026-03-26 `wzhao18` on `vllm/envs.py`:1311: The issue was not resolved. I moved the link to here: (https://github.com/vllm-project/vllm/pull/38136#discussion_r2995863813)

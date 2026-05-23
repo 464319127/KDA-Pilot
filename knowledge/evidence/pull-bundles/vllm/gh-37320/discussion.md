@@ -1,1 +1,0 @@
-- 2026-03-17 `mgoin` on `csrc/quantization/w8a8/cutlass/moe/moe_data.cu`:24: n is a dimension of the weight so it won't be that large, on the order of 10k (https://github.com/vllm-project/vllm/pull/37320#discussion_r2948043060)

@@ -1,1 +1,0 @@
-- 2025-11-23 `DarkLight1337` on `vllm/model_executor/models/gpt_oss.py`:659: Can you add this to the interface definition? (https://github.com/vllm-project/vllm/pull/29222#discussion_r2554063082)

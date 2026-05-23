@@ -8,22 +8,29 @@
 
 ## Option 1: KernelPilot Marketplace (Recommended)
 
-Clone KernelPilot, add the repository root as a Claude Code marketplace, install
-the Humanize plugin, and expose the KernelPilot knowledge base as a Claude Code
-skill:
+Clone KernelPilot with its external skill submodules, add the repository root as
+a Claude Code marketplace, install the Humanize plugin, and expose the
+KernelWiki / ncu-report-skill skills:
 
 ```bash
-git clone https://github.com/BBuf/kernel-pilot.git
+git clone --recurse-submodules https://github.com/BBuf/kernel-pilot.git
 cd kernel-pilot
 
 humanize/scripts/install-skills-claude.sh
 ```
 
-The installer performs the marketplace install, links `kernel-knowledge`,
-installs the query dependency, hydrates Claude Code's installed skill cache with
-absolute `HUMANIZE_RUNTIME_ROOT` and `KERNELPILOT_ROOT` paths, and fails if
-either placeholder remains. Use the wrapper after manual plugin updates too,
-because Claude Code does not hydrate `SKILL.md` placeholders during
+For an existing checkout, initialize submodules first:
+
+```bash
+git submodule update --init --recursive
+```
+
+The installer performs the marketplace install, links `KernelWiki` and
+`ncu-report-skill`, installs KernelWiki query dependencies, hydrates Claude
+Code's installed skill cache with absolute `HUMANIZE_RUNTIME_ROOT`,
+`KERNELPILOT_ROOT`, `KERNELWIKI_ROOT`, and `NCU_REPORT_SKILL_ROOT` paths, and
+fails if any placeholder remains. Use the wrapper after manual plugin updates
+too, because Claude Code does not hydrate `SKILL.md` placeholders during
 `plugin install`.
 
 Manual equivalent:
@@ -33,8 +40,9 @@ claude plugin marketplace add ./
 claude plugin install humanize@KernelPilot
 
 mkdir -p ~/.claude/skills
-ln -s "$PWD/knowledge" ~/.claude/skills/kernel-knowledge
-python3 -m pip install -r knowledge/requirements.txt
+ln -s "$PWD/external/KernelWiki" ~/.claude/skills/KernelWiki
+ln -s "$PWD/external/ncu-report-skill" ~/.claude/skills/ncu-report-skill
+python3 -m pip install -r external/KernelWiki/requirements.txt
 humanize/scripts/install-skills-claude.sh --skip-pip
 ```
 
@@ -56,18 +64,20 @@ claude --plugin-dir /path/to/kernel-pilot/humanize \
   --add-dir /path/to/kernel-pilot
 ```
 
-This loads the plugin only for that Claude Code session. Add the knowledge skill
-separately if you want `kernel-knowledge` discovery:
+This loads the plugin only for that Claude Code session. Add the external
+skills separately if you want skill discovery:
 
 ```bash
 mkdir -p ~/.claude/skills
-ln -s /path/to/kernel-pilot/knowledge ~/.claude/skills/kernel-knowledge
+ln -s /path/to/kernel-pilot/external/KernelWiki ~/.claude/skills/KernelWiki
+ln -s /path/to/kernel-pilot/external/ncu-report-skill ~/.claude/skills/ncu-report-skill
 ```
 
 ## Option 3: Upstream Humanize Only
 
 If you only need generic Humanize RLCR and do not need KernelPilot's kernel
-loop or knowledge pack, install the upstream Humanize marketplace instead:
+loop or external kernel skills, install the upstream Humanize marketplace
+instead:
 
 ```text
 /plugin marketplace add PolyArch/humanize
@@ -75,12 +85,13 @@ loop or knowledge pack, install the upstream Humanize marketplace instead:
 ```
 
 That upstream plugin is useful for general implementation loops, but it does
-not provide `kernel-knowledge` from this repository.
+not provide `humanize-kernel-agent-loop`, `KernelWiki`, or
+`ncu-report-skill` from this repository.
 
 ## Verify Installation
 
 After installing the KernelPilot marketplace, you should see Humanize commands
-and the kernel-loop skill:
+and the kernel-loop skills:
 
 ```text
 /humanize:start-rlcr-loop
@@ -88,8 +99,8 @@ and the kernel-loop skill:
 /humanize:refine-plan
 /humanize:ask-codex
 humanize-kernel-agent-loop
-kernel-knowledge
-ncu-report
+KernelWiki
+ncu-report-skill
 ```
 
 You can also inspect the installed plugin from a shell:
@@ -111,7 +122,7 @@ source ~/.claude/plugins/cache/KernelPilot/humanize/<LATEST.VERSION>/scripts/hum
 Then use:
 
 ```bash
-humanize monitor rlcr   # Monitor RLCR loop
+humanize monitor rlcr
 ```
 
 ## Other Install Guides

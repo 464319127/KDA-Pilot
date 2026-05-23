@@ -1,3 +1,0 @@
-- 2025-07-22 `yaochengji` on `vllm/model_executor/layers/fused_moe/layer.py`:521: This ignores all other arguments, which is the same as forward cpu. (https://github.com/vllm-project/vllm/pull/21340#discussion_r2220660370)
-- 2025-07-24 `simon-mo` on `vllm/model_executor/layers/fused_moe/layer.py`:493: This code path is CPU (https://github.com/vllm-project/vllm/pull/21340#discussion_r2227017966)
-- 2025-07-24 `yaochengji` on `vllm/model_executor/layers/fused_moe/layer.py`:493: Thanks @simon-mo for catching this! (https://github.com/vllm-project/vllm/pull/21340#discussion_r2227033000)

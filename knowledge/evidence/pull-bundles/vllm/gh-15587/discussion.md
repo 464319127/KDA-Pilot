@@ -1,3 +1,0 @@
-- 2025-03-27 `robertgshaw2-redhat` on `vllm/model_executor/layers/fused_moe/layer.py`:887: this is dead code (its not used in the codebase) (https://github.com/vllm-project/vllm/pull/15587#discussion_r2015361135)
-- 2025-03-27 `tlrmchlsmth` on `vllm/model_executor/layers/quantization/compressed_tensors/compressed_tensors_moe.py`:276: we can mix and match (https://github.com/vllm-project/vllm/pull/15587#discussion_r2015458672)
-- 2025-03-27 `robertgshaw2-redhat` on `vllm/model_executor/layers/quantization/compressed_tensors/compressed_tensors_moe.py`:276: ok, will change this in a FUP (https://github.com/vllm-project/vllm/pull/15587#discussion_r2015546967)

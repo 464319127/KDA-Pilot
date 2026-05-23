@@ -1,1 +1,0 @@
-- 2026-04-18 `bkryu` on `flashinfer/gemm/gemm_base.py`:4541: Auto not selecting b12x on SM121 devices is intentional at this point. (https://github.com/flashinfer-ai/flashinfer/pull/3113#discussion_r3104197802)

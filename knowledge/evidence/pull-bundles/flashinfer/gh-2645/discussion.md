@@ -1,4 +1,0 @@
-- 2026-03-03 `yzh119` on `.gitignore`:28: good to know you are also using zed :) (https://github.com/flashinfer-ai/flashinfer/pull/2645#discussion_r2879632782)
-- 2026-03-03 `yzh119` on `.github/workflows/issue-claim.yml`:1: Please revert the change on this file. (https://github.com/flashinfer-ai/flashinfer/pull/2645#discussion_r2879712615)
-- 2026-03-03 `yzh119` on `flashinfer/mamba/selective_state_update.py`:164: do we consider cudagraph compatibility? If so we might also consider device-side random seed (stored in a integer gpu tensor with size 1). (https://github.com/flashinfer-ai/flashinfer/pull/2645#discussion_r2880569159)
-- 2026-03-03 `ishovkun` on `flashinfer/mamba/selective_state_update.py`:164: Oh I didn't know we are to change the seed on the fly... (https://github.com/flashinfer-ai/flashinfer/pull/2645#discussion_r2881016081)

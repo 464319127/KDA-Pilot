@@ -1,4 +1,0 @@
-- 2025-12-18 `yongwww` on `flashinfer/topk.py`:408: seems the aliases can be removed here (https://github.com/flashinfer-ai/flashinfer/pull/2215#discussion_r2632024897)
-- 2025-12-18 `yongwww` approved: Thanks for the great work on the Top-K optimizations and the new fused kernels for DSA. The performance gains are impressive (https://github.com/flashinfer-ai/flashinfer/pull/2215#pullrequestreview-3594231127)
-- 2025-12-18 `aleozlx` on `flashinfer/topk.py`:258: shall we mark these @flashinfer api (https://github.com/flashinfer-ai/flashinfer/pull/2215#discussion_r2632087436)
-- 2025-12-18 `bkryu` on `flashinfer/topk.py`:348: @flashinfer api for this one as well (https://github.com/flashinfer-ai/flashinfer/pull/2215#discussion_r2632721047)

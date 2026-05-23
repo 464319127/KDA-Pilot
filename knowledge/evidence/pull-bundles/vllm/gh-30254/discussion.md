@@ -1,3 +1,0 @@
-- 2025-12-09 `jeejeelee` on `vllm/model_executor/layers/quantization/gptq_marlin.py`:838: QQ: Why use lazy import here？ (https://github.com/vllm-project/vllm/pull/30254#discussion_r2600966957)
-- 2025-12-10 `Bhanu068` on `vllm/model_executor/layers/quantization/gptq_marlin.py`:838: The kernel and experts are not needed for GPTQMarlinLinearMethod so kept them as lazy import when MoE models are used. Moreover, select gemm impl method is invoked when LoRA is enabled. (https://github.com/vllm-project/vllm/pull/30254#discussion_r2605859587)
-- 2025-12-10 `Bhanu068` on `vllm/model_executor/layers/quantization/gptq_marlin.py`:875: Added a condition to raise an error for 8-bit weights (https://github.com/vllm-project/vllm/pull/30254#discussion_r2606025805)

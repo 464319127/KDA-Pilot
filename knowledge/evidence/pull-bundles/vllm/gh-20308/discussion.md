@@ -1,1 +1,0 @@
-- 2025-07-01 `tlrmchlsmth` on `vllm/attention/ops/triton_unified_attention.py`:151: Worth adding a comment to explain the optimization? (https://github.com/vllm-project/vllm/pull/20308#discussion_r2178302782)

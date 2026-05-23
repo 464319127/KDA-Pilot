@@ -1,1 +1,0 @@
-- 2026-05-13 `shiyu7`: Thanks @Fridge003 @yhyang201 ～ I found that when an nvshmem error occurs, the watchdog triggers and attempts to generate a Python dump. I believe these two issues are related. Since we haven't modified any DeepEP-related code, I've slightly increased the watchdog timeout ... (https://github.com/sgl-project/sglang/pull/24986#issuecomment-4438592789)

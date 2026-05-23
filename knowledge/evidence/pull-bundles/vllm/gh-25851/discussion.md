@@ -1,1 +1,0 @@
-- 2025-09-29 `wwl2755` on `vllm/model_executor/models/qwen3_vl.py`:327: QQ: Does FA has the similar problem in Blackwell? Because this logic may still select upstream FA is available. (https://github.com/vllm-project/vllm/pull/25851#discussion_r2386773461)

@@ -1,1 +1,0 @@
-- 2026-04-03 `bkryu` approved: CI results look good to me. I can also confirm that locally on a B300 that test trtllm gen attention.py that used to hang now passes with (https://github.com/flashinfer-ai/flashinfer/pull/2956#pullrequestreview-4057540990)

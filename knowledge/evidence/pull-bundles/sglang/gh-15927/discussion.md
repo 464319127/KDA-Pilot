@@ -1,1 +1,0 @@
-- 2025-12-29 `hebiao064`: Simply look at the consumed memory number from logs might not be a apple to apple comparison. We need to compare the peak memory usage for PCG vs no PCG, for example: use Related PR: and cc @merrymercy (https://github.com/sgl-project/sglang/pull/15927#issuecomment-3695726622)

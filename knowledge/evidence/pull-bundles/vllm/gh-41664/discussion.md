@@ -1,4 +1,0 @@
-- 2026-05-05 `yewentao256` on `vllm/model_executor/kernels/linear/mxfp4/flashinfer.py`:42: We will pad in swizzle mxfp4 scales, but here we will reshape using the current N eg Will this cause trouble? (https://github.com/vllm-project/vllm/pull/41664#discussion_r3191294058)
-- 2026-05-11 `yewentao256` dismissed: Sorry to block for a while, please take a look at my previous comment (https://github.com/vllm-project/vllm/pull/41664#pullrequestreview-4264851931)
-- 2026-05-11 `dsikka`: Sorry to block for a while, please take a look at my previous comment Sorry to block for a while, please take a look at my previous comment @yewentao256 Please take a look at the latest commits. This has been addressed to ... (https://github.com/vllm-project/vllm/pull/41664#issuecomment-4422050463)
-- 2026-05-11 `yewentao256` commented: Thanks for the work! A small update (https://github.com/vllm-project/vllm/pull/41664#pullrequestreview-4265915559)

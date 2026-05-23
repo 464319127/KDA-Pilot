@@ -1,2 +1,0 @@
-- 2025-12-26 `yzh119` on `include/flashinfer/comm/trtllm_allreduce_fusion.cuh`:675: Do you have any profiling results showing the register usage (e.g. from cuobjdump or ncu)? (https://github.com/flashinfer-ai/flashinfer/pull/2268#discussion_r2647757109)
-- 2025-12-26 `yzh119` on `include/flashinfer/comm/trtllm_allreduce_fusion.cuh`:1452: gemini's suggestion looks reasonable. (https://github.com/flashinfer-ai/flashinfer/pull/2268#discussion_r2647761812)

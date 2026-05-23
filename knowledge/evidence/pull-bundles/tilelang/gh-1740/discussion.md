@@ -1,4 +1,0 @@
-- 2026-01-27 `LeiWang1999` changes_requested: Overall LGTM, Thanks for your contributions! but I left a simple comment. (https://github.com/tile-ai/tilelang/pull/1740#pullrequestreview-3709962271)
-- 2026-01-27 `ZiguanWang` on `examples/deepseek_mla/amd/benchmark_mla_decode_amd_tilelang.py`:272: Sorry for that, But by default, printing the entire result tensor during debugging was a bit confusing, so I commented it out. Do I need to revert it? (https://github.com/tile-ai/tilelang/pull/1740#discussion_r2731049669)
-- 2026-01-28 `LeiWang1999` on `examples/deepseek_mla/amd/benchmark_mla_decode_amd_tilelang.py`:272: I think we can straightforwardly remove the print :) (https://github.com/tile-ai/tilelang/pull/1740#discussion_r2734612786)
-- 2026-01-28 `ZiguanWang` on `examples/deepseek_mla/amd/benchmark_mla_decode_amd_tilelang.py`:272: @LeiWang1999 Can you help check this PR (https://github.com/tile-ai/tilelang/pull/1740#discussion_r2734716191)

@@ -1,2 +1,0 @@
-- 2025-01-03 `mgoin`: This is an impressive improvement! Could you also show comparisons for equal input len/output len workloads, preferably with low batchsize? This could regress the TPOT for small decode batches. It seems there is no tuning for this kernel at the moment, so ... (https://github.com/vllm-project/vllm/pull/11698#issuecomment-2568574663)
-- 2025-01-08 `mgoin` approved: Nice work I appreciate the benchmarking, this is a clear win! (https://github.com/vllm-project/vllm/pull/11698#pullrequestreview-2537962077)

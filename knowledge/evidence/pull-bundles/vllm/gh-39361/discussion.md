@@ -1,1 +1,0 @@
-- 2026-04-09 `Harry-Chen`: @soodoshll I did run tests on GB200, but only on nodes with CDDM enabled. So thanks very much for the fix! (https://github.com/vllm-project/vllm/pull/39361#issuecomment-4211716363)

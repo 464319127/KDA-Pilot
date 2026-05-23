@@ -1,1 +1,0 @@
-- 2026-05-06 `jayhshah`: This PR follows up on to only disable 2cta for fwd on cuda 12. 2cta for backward is still faster in general and is necessary for hdim 192. (https://github.com/Dao-AILab/flash-attention/pull/2543#issuecomment-4392907010)

@@ -1,2 +1,0 @@
-- 2026-05-17 `miscco` approved: This is benchmarks only, but it also affects potential benchmarks results from QA. Do we want to backport? (https://github.com/NVIDIA/cccl/pull/9039#pullrequestreview-4305494459)
-- 2026-05-18 `bernhardmgruber`: it also affects potential benchmarks results from QA. Do we want to backport? Yes it does. I am redefining the benchmark to align with the dispatch function instantiation coming from the CUB public API. This way, 8927 can switch from the dispatch ... (https://github.com/NVIDIA/cccl/pull/9039#issuecomment-4475250115)

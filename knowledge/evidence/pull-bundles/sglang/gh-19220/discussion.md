@@ -1,3 +1,0 @@
-- 2026-02-24 `yuan-luo` on `python/sglang/srt/models/qwen3_5.py`:259: why remove this branch? (https://github.com/sgl-project/sglang/pull/19220#discussion_r2846353848)
-- 2026-02-24 `zminglei` on `python/sglang/srt/models/qwen3_5.py`:259: This branch was for PCG purpose (most likely copied from previous qwen3 next.py). But now it's not needed anymore since we added split op inside RadixLinearAttention. It's for the same purpose of this PR (https://github.com/sgl-project/sglang/pull/19220#discussion_r2848815154)
-- 2026-02-25 `Oasis-Git` approved: Maybe split the change for vl model to another pr if possible (https://github.com/sgl-project/sglang/pull/19220#pullrequestreview-3851920749)

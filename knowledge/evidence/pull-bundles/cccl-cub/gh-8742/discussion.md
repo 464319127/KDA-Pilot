@@ -1,2 +1,0 @@
-- 2026-04-29 `Jacobfaib` on `cub/test/catch2_test_device_topk_env.cu`:70: nit: the magic "3" and "1024" here and below could use a name, I assume it is supposed to be the size of the d keys out? (if so, perhaps d keys out.size()?) (https://github.com/NVIDIA/cccl/pull/8742#discussion_r3164339460)
-- 2026-05-12 `davebayer` on `cub/benchmarks/bench/topk/keys.cu`:94: lol, this is like telling a dog to come, you need to say it at least twice :D (https://github.com/NVIDIA/cccl/pull/8742#discussion_r3228133034)

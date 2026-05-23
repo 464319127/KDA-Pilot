@@ -1,1 +1,0 @@
-- 2025-07-21 `yzh119` on `include/flashinfer/trtllm/fmha/cubin/kernelMetaInfo.h`:111: For the next step, let's totally remove the kernelMetaInfo.h and get rid of the parser here, and prepare the meta info in a more convenient format in the artifactory. (https://github.com/flashinfer-ai/flashinfer/pull/1292#discussion_r2220042126)

@@ -1,2 +1,0 @@
-- 2025-11-05 `miscco` on `cub/cub/block/block_load_to_shared.cuh`:251: Why is this SM 90 when we support it from SM 80 onwards? (https://github.com/NVIDIA/cccl/pull/6496#discussion_r2495024999)
-- 2025-11-05 `bernhardmgruber` on `cub/cub/block/block_load_to_shared.cuh`:251: Because here, only the SM90 code path used a barrier for async copy synchronization. The SM80 code path uses a commit group and thus no barrier. (https://github.com/NVIDIA/cccl/pull/6496#discussion_r2495046447)

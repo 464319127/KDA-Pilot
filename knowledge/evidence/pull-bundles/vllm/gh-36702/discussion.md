@@ -1,1 +1,0 @@
-- 2026-03-12 `micah-wil`: AMD CI build with this PR to compare against nightly: Everything checks out, so this change should be good to merge. (https://github.com/vllm-project/vllm/pull/36702#issuecomment-4049907336)

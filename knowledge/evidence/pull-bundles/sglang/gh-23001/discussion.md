@@ -1,1 +1,0 @@
-- 2026-04-16 `zijiexia` on `docs_new/cookbook/diffusion/intro.mdx`:37: tiny fix for broken link (https://github.com/sgl-project/sglang/pull/23001#discussion_r3096880900)

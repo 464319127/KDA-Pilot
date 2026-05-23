@@ -1,3 +1,0 @@
-- 2025-11-20 `hmellor` commented: Thanks for the fix. If we need default rope type and to remove the factor could we just create a new dict for sliding layers? This would allow us to remove the copy in the line above because we would no longer ... (https://github.com/vllm-project/vllm/pull/29111#pullrequestreview-3489637945)
-- 2025-11-20 `hmellor` on `vllm/model_executor/models/gemma3.py`:174: This way no other rope parameters could sneak in (https://github.com/vllm-project/vllm/pull/29111#discussion_r2547464962)
-- 2025-11-21 `hmellor`: Failing Plamo3 test is failing on main and should be fixed by (https://github.com/vllm-project/vllm/pull/29111#issuecomment-3560716596)

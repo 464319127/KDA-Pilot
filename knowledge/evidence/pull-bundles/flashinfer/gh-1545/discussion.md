@@ -1,1 +1,0 @@
-- 2025-08-22 `yzh119` on `include/flashinfer/comm/trtllm_allreduce_fusion.cuh`:441: Please use cudaDeviceGetAttribute instead, cudaGetDeviceProperties has significant overhead. (https://github.com/flashinfer-ai/flashinfer/pull/1545#discussion_r2293365334)

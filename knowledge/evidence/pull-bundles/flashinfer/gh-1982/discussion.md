@@ -1,1 +1,0 @@
-- 2025-10-26 `cicirori`: I'm not familiar with PDL, not sure if it's meaningful to do a PDL on/off benchmark. testing on B200 (https://github.com/flashinfer-ai/flashinfer/pull/1982#issuecomment-3448166230)

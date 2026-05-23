@@ -1,1 +1,0 @@
-- 2025-08-14 `yongwww` on `flashinfer/fused_moe/core.py`:1181: pls take a look at this comment @IwakuraRein (https://github.com/flashinfer-ai/flashinfer/pull/1480#discussion_r2274948193)

@@ -1,2 +1,0 @@
-- 2026-02-06 `yzh119` on `include/flashinfer/gemm/fp4_gemm_cutlass_template_sm120.h`:118: Each DISPATCH macro will return, so I suppose it's fine. (https://github.com/flashinfer-ai/flashinfer/pull/2460#discussion_r2772612165)
-- 2026-02-06 `yzh119` approved: Thanks for the improvement, do we have any performance numbers btw? (https://github.com/flashinfer-ai/flashinfer/pull/2460#pullrequestreview-3761180693)

@@ -1,3 +1,0 @@
-- 2025-02-27 `LiuXiaoxuanPKU`: QQ: Just curiosity, what's the main reason that V1 is slower than V0 (say all use Flash MLA, and we look at ITL)? Is it because of chunked prefill? (https://github.com/vllm-project/vllm/pull/13867#issuecomment-2689083480)
-- 2025-02-27 `LucasWilkinson`: QQ: Just curiosity, what's the main reason that V1 is slower than V0 (say all use Flash MLA, and we look at ITL)? Is it because of chunked prefill? Its mostly likely because in V1 CUDA graphs are not used for attention, ... (https://github.com/vllm-project/vllm/pull/13867#issuecomment-2689133502)
-- 2025-02-27 `mgoin` approved: This looks clean to me, nice work! Have you run an accuracy smoke test? (https://github.com/vllm-project/vllm/pull/13867#pullrequestreview-2649158598)

@@ -1,4 +1,0 @@
-- 2026-02-26 `miscco` on `cub/benchmarks/bench/reduce/by_key.cu`:39: Question: should this be (https://github.com/NVIDIA/cccl/pull/7667#discussion_r2857401836)
-- 2026-02-26 `miscco` on `cub/cub/device/dispatch/dispatch_streaming_reduce_by_key.cuh`:51: Question: I see a ton of transitive includes in here, What is the CUB policy here? (https://github.com/NVIDIA/cccl/pull/7667#discussion_r2857416613)
-- 2026-02-26 `bernhardmgruber` on `cub/benchmarks/bench/reduce/by_key.cu`:39: Maybe, but I didn't want to change the benchmark definition in this PR. (https://github.com/NVIDIA/cccl/pull/7667#discussion_r2857653707)
-- 2026-02-26 `bernhardmgruber` on `cub/cub/device/dispatch/dispatch_streaming_reduce_by_key.cuh`:51: We should include what we use. I added a bunch of includes. (https://github.com/NVIDIA/cccl/pull/7667#discussion_r2857671965)

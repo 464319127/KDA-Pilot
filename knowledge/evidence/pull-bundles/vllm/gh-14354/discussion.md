@@ -1,5 +1,0 @@
-- 2025-03-06 `LucasWilkinson` on `CMakeLists.txt`:370: I thought this might be the case, but wanted to keep it the same with current main: (https://github.com/vllm-project/vllm/pull/14354#discussion_r1983446312)
-- 2025-03-06 `tlrmchlsmth` on `CMakeLists.txt`:370: @kushanam there's a disagreement here on current main between a couple of spots. Could you please advise on what the right arch strings to use are? and Also I think this means we should factor out the list of Blackwell archs - ... (https://github.com/vllm-project/vllm/pull/14354#discussion_r1983458685)
-- 2025-03-06 `tlrmchlsmth`: Let's make sure to confirm that the blackwell arches are correct before merging this (https://github.com/vllm-project/vllm/pull/14354#issuecomment-2704584196)
-- 2025-03-07 `DarkLight1337`: LoRA TP test keeps failing on this PR, PTAL as well. (https://github.com/vllm-project/vllm/pull/14354#issuecomment-2705733772)
-- 2025-03-07 `kushanam`: Confirming this works with Blackwell. Thanks @LucasWilkinson for the effort and fixings. (https://github.com/vllm-project/vllm/pull/14354#issuecomment-2707210924)

@@ -1,3 +1,0 @@
-- 2025-12-17 `robertgshaw2-redhat` on `vllm/model_executor/layers/quantization/fp8.py`:729: these were previously checked during .apply(), but now the FI, Triton, and DG pathways follow the same code so we instead check during initlaization (https://github.com/vllm-project/vllm/pull/30825#discussion_r2628856519)
-- 2025-12-19 `robertgshaw2-redhat` on `vllm/model_executor/layers/quantization/fp8.py`:729: note: in a follow up, this will be moved into the Kernel selection logic (https://github.com/vllm-project/vllm/pull/30825#discussion_r2635141967)
-- 2025-12-19 `robertgshaw2-redhat`: I unblocked several h100 jobs too (https://github.com/vllm-project/vllm/pull/30825#issuecomment-3676775029)

@@ -1,3 +1,0 @@
-- 2025-08-12 `mgoin` on `vllm/utils/flashinfer.py`:150: nit: just use cache (https://github.com/vllm-project/vllm/pull/22735#discussion_r2270164374)
-- 2025-08-14 `NickLucche`: Still seeing some OOMs in recent tests (https://github.com/vllm-project/vllm/pull/22735#issuecomment-3189770520)
-- 2025-08-15 `pavanimajety`: Eventually, it may also make sense to not have a dependency on kv cache layout because trtllm natively supports both HND and NHD layouts. The cubins for NHD would have to be added though. (https://github.com/vllm-project/vllm/pull/22735#issuecomment-3192797782)

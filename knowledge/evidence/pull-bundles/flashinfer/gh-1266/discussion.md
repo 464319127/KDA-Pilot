@@ -1,7 +1,0 @@
-- 2025-07-16 `yzh119` commented: Please also update the benchmark. (https://github.com/flashinfer-ai/flashinfer/pull/1266#pullrequestreview-3022737326)
-- 2025-07-16 `yzh119` on `benchmarks/bench_deepgemm_blackwell.py`:86: Please follow randn instead of rand (rand is positive tensor). (https://github.com/flashinfer-ai/flashinfer/pull/1266#discussion_r2209442006)
-- 2025-07-16 `yzh119` on `benchmarks/bench_deepgemm_blackwell.py`:89: Please generate a fp8 and b fp8 using fp8 quantize: (https://github.com/flashinfer-ai/flashinfer/pull/1266#discussion_r2209442924)
-- 2025-07-16 `yzh119` on `benchmarks/bench_deepgemm_blackwell.py`:101: out could be empty (non-initialized). (https://github.com/flashinfer-ai/flashinfer/pull/1266#discussion_r2209443595)
-- 2025-07-16 `yzh119` commented: Overall LGTM, please fix the data distribution in unittests and benchmarks, as well as the artifactory hash. (https://github.com/flashinfer-ai/flashinfer/pull/1266#pullrequestreview-3023426785)
-- 2025-07-16 `yzh119` on `flashinfer/utils.py`:528: Put them to testing/utils.py instead. (https://github.com/flashinfer-ai/flashinfer/pull/1266#discussion_r2209984284)
-- 2025-07-16 `yzh119` commented: Updated the artifact index. All test fp8 groupwise batch deepgemm masked tests passed but test fp8 groupwise group deepgemm failed, can you double check? (https://github.com/flashinfer-ai/flashinfer/pull/1266#pullrequestreview-3024278301)

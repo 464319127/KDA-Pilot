@@ -1,1 +1,0 @@
-- 2025-08-08 `yzh119` approved: Appended some changes for ruff compiliance. (https://github.com/flashinfer-ai/flashinfer/pull/1424#pullrequestreview-3102182403)

@@ -1,5 +1,0 @@
-- 2026-03-22 `BBuf` on `python/sglang/jit_kernel/__main__.py`:27: Should we keep -std=c++20 here as well? The JIT build still compiles these headers as C++20, and jit kernel/include/sgl kernel/utils.cuh already uses C++20 headers like . (https://github.com/sgl-project/sglang/pull/21022#discussion_r2971159960)
-- 2026-03-22 `BBuf` on `python/sglang/jit_kernel/utils.py`:247: Has this environment variable been added to the environment variable documentation? (https://github.com/sgl-project/sglang/pull/21022#discussion_r2971163695)
-- 2026-03-22 `DarkSharpness` on `python/sglang/jit_kernel/utils.py`:247: This environent var is internally used by tvm ffi. For JIT compilation, we choose to force override this flag because we only target current device. (https://github.com/sgl-project/sglang/pull/21022#discussion_r2971171267)
-- 2026-03-24 `DarkSharpness` on `python/sglang/jit_kernel/__main__.py`:27: it's a mistake. I will add it back (https://github.com/sgl-project/sglang/pull/21022#discussion_r2982826506)
-- 2026-03-24 `DarkSharpness`: should be ready as long as JIT kernel tests passed @BBuf (https://github.com/sgl-project/sglang/pull/21022#issuecomment-4119708986)

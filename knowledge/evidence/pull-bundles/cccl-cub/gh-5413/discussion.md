@@ -1,1 +1,0 @@
-- 2025-08-04 `davebayer` on `libcudacxx/include/cuda/std/__floating_point/constants.h`:181: I'd prefer to static assert on fp format of v != fp format:: fp8 nv e8m0 (https://github.com/NVIDIA/cccl/pull/5413#discussion_r2251506414)

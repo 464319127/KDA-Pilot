@@ -1,2 +1,0 @@
-- 2025-11-19 `ZJY0516`: Only minimax-m1 uses this backend. It's too large and I am still downloading it. I only test dummy load for now. @fhl2000 (https://github.com/vllm-project/vllm/pull/28934#issuecomment-3550541007)
-- 2025-11-24 `tdoublep` approved: I think this looks fine. I checked what needed to be done for Mamba FCG support (e.g., [here]( and it looks like the only additional thing needed was to insert PAD SLOT ID into the state indices tensor. I believe this is ... (https://github.com/vllm-project/vllm/pull/28934#pullrequestreview-3501274218)

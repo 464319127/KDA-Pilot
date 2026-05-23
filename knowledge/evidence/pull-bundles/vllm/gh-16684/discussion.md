@@ -1,1 +1,0 @@
-- 2025-04-16 `NickLucche` on `vllm/engine/arg_utils.py`:1532: I suppose that's not true anymore now (https://github.com/vllm-project/vllm/pull/16684#discussion_r2047263371)

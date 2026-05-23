@@ -1,2 +1,0 @@
-- 2025-11-25 `Fridge003` on `.github/workflows/pr-test.yml`:274: Why not uncomment the job above? (https://github.com/sgl-project/sglang/pull/13907#discussion_r2559150964)
-- 2025-11-25 `FlamingoPg` on `.github/workflows/pr-test.yml`:274: Oh i see, I just use previous commit (https://github.com/sgl-project/sglang/pull/13907#discussion_r2559283217)

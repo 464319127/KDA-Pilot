@@ -1,2 +1,0 @@
-- 2025-11-22 `hlu1`: Please add accuracy tests results on B200 (gpqa, gsm8k 20shots) (https://github.com/sgl-project/sglang/pull/13544#issuecomment-3565041376)
-- 2025-11-22 `YAMY1234`: Please add accuracy tests results on B200 (gpqa, gsm8k 20shots) Updated in the pr description (https://github.com/sgl-project/sglang/pull/13544#issuecomment-3567140226)

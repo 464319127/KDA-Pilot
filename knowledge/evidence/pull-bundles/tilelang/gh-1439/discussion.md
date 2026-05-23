@@ -1,3 +1,0 @@
-- 2025-12-22 `SiriusNEO` on `docs/_static/img/logo-row.svg`: Do we need to enable such trimming for SVG files? It looks a bit strange. (https://github.com/tile-ai/tilelang/pull/1439#discussion_r2639120963)
-- 2025-12-23 `XuehaiPan` on `maint/precision/compare_ops.py`: This is intentional because the file has a shebang. It needs a +x mode. (https://github.com/tile-ai/tilelang/pull/1439#discussion_r2643285606)
-- 2025-12-23 `XuehaiPan` on `docs/_static/img/logo-row.svg`: I can revert it and add an exclude pattern for .svg. I think the trimming change is a one-time change, and we can merge it to make things as simple as possible. (https://github.com/tile-ai/tilelang/pull/1439#discussion_r2643292167)

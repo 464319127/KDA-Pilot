@@ -1,3 +1,0 @@
-- 2026-03-17 `tridao` on `flash_attn/cute/flash_fwd_sm100.py`:490: you can use quack.copy utils.tiled copy 2d? (https://github.com/Dao-AILab/flash-attention/pull/2186#discussion_r2948256515)
-- 2026-03-17 `tridao` on `flash_attn/cute/flash_fwd_sm100.py`:491: I think you can use more than 1 warp to load Q since we have some empty warps? That might make it a bit faster, not sure (https://github.com/Dao-AILab/flash-attention/pull/2186#discussion_r2948407710)
-- 2026-03-17 `tridao`: Do we have tests that hit this code path? I guess we set nheads=6 and for mqa it should hit this code path? (https://github.com/Dao-AILab/flash-attention/pull/2186#issuecomment-4077371495)

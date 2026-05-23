@@ -1,3 +1,0 @@
-- 2025-07-22 `ttyio`: can we also apply the fix to the bmm fp8? thank you! (https://github.com/flashinfer-ai/flashinfer/pull/1303#issuecomment-3104527194)
-- 2025-07-22 `elfiegg` on `flashinfer/gemm.py`:829: As you said the cache hit based upon inputs. Would it ever happen when mm fp4 is cached but torch.cuda.stream(s2) is different from torch.cuda.stream(s1)? Notice s1 and s2 both are getting from input a; as long as a is triggering the cached ... (https://github.com/flashinfer-ai/flashinfer/pull/1303#discussion_r2223646100)
-- 2025-07-22 `yzh119` on `flashinfer/gemm.py`:829: I think gemini confuses cuda graph and cudnn graph here. Let's ignore it. (https://github.com/flashinfer-ai/flashinfer/pull/1303#discussion_r2223911238)

@@ -1,1 +1,0 @@
-- 2026-03-25 `Isotr0py` on `vllm/model_executor/models/qwen3_vl.py`:671: Not an issue for this PR. But I guess Ascend may want to add oot ops for similar optimization through PluggableLayer? @shen-shanshan (https://github.com/vllm-project/vllm/pull/37948#discussion_r2985327737)

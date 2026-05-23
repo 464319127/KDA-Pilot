@@ -1,2 +1,0 @@
-- 2025-08-07 `yzh119` on `benchmarks/bench_mixed_attention.py`:189: why duplicate the definition here? (https://github.com/flashinfer-ai/flashinfer/pull/1179#discussion_r2259234164)
-- 2025-08-07 `kaixih`: The changes to autotuner.py looks good to me. (https://github.com/flashinfer-ai/flashinfer/pull/1179#issuecomment-3165178964)

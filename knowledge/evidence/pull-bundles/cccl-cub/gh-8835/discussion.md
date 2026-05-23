@@ -1,2 +1,0 @@
-- 2026-05-06 `davebayer` on `cub/cub/agent/agent_batch_memcpy.cuh`:463: These are part of the public API and we cannot change those, right? (https://github.com/NVIDIA/cccl/pull/8835#discussion_r3193045969)
-- 2026-05-06 `miscco` on `cub/cub/agent/agent_reduce.cuh`:98: I assume this is going into a follow up (https://github.com/NVIDIA/cccl/pull/8835#discussion_r3193739835)

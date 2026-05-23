@@ -1,2 +1,0 @@
-- 2026-04-02 `jrhemstad` on `docs/libcudacxx/extended_api/type_traits/is_bitwise_comparable.rst`:56: suggestion: We should mention that users should take extra care with custom types that may contain padding bits. (https://github.com/NVIDIA/cccl/pull/8270#discussion_r3028443391)
-- 2026-04-02 `fbusato` on `docs/libcudacxx/extended_api/type_traits/is_bitwise_comparable.rst`:56: thanks. I will probably add a list of conditions to "avoid" (https://github.com/NVIDIA/cccl/pull/8270#discussion_r3028918890)

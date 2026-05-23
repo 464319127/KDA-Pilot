@@ -1,1 +1,0 @@
-- 2026-01-21 `dongjiyingdjy`: Hi @dongjiyingdjy would you mind explaning the context of this pull requests in the PR description? This PR ensures that all Q heads within the same group are in the same CTA. The previous tile select strategy did not account for this, ... (https://github.com/flashinfer-ai/flashinfer/pull/2380#issuecomment-3775985004)

@@ -1,1 +1,0 @@
-- 2025-08-07 `dfyz`: @simran-arora Hi! Could you please take a look at the fix in this PR? example 04 is a very cool starting point to play around with Ampere-style Tensor Cores, so I think it would be nice to have it working out of ... (https://github.com/HazyResearch/ThunderKittens/pull/141#issuecomment-3163840149)

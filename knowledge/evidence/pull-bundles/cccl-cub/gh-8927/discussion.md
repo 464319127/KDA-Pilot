@@ -1,1 +1,0 @@
-- 2026-05-15 `bernhardmgruber` on `cub/benchmarks/bench/segmented_radix_sort/keys.cu`:21: This causes the SASS diffs and I think the benchmark definition is wrong. The public API only allows a segment size type of int32. (https://github.com/NVIDIA/cccl/pull/8927#discussion_r3251428309)

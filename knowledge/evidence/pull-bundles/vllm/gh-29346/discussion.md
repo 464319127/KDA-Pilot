@@ -1,1 +1,0 @@
-- 2025-11-24 `bnellnm` on `vllm/model_executor/layers/quantization/fp8.py`:169: Should we check = 8 instead of == 8? (https://github.com/vllm-project/vllm/pull/29346#discussion_r2557902365)

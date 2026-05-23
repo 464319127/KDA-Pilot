@@ -1,2 +1,0 @@
-- 2025-07-24 `njhill` on `vllm/model_executor/layers/fused_moe/layer.py`:590: Suggestion for more concise version: (https://github.com/vllm-project/vllm/pull/21497#discussion_r2227863707)
-- 2025-07-24 `WoosukKwon` on `vllm/model_executor/layers/fused_moe/layer.py`:590: Actually I'm not sure if the suggested code is simpler. 😅 We need to compute local num experts anyways because it's one of the return values. (https://github.com/vllm-project/vllm/pull/21497#discussion_r2229485361)

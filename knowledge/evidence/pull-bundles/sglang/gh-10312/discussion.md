@@ -1,4 +1,0 @@
-- 2025-09-14 `fzyzcjy`: not sure is it just b/c this numerical implementation for this test dataset happens to be dropped a bit, since 2.9 vs 2.889 is just 0.011 accept length (https://github.com/sgl-project/sglang/pull/10312#issuecomment-3289492047)
-- 2025-09-20 `fzyzcjy`: seems the b200 fail is also on main (https://github.com/sgl-project/sglang/pull/10312#issuecomment-3314966029)
-- 2025-09-23 `fzyzcjy`: excluding the known b200 issue cuda ci is green (https://github.com/sgl-project/sglang/pull/10312#issuecomment-3322309536)
-- 2025-10-11 `fzyzcjy`: all cuda test pass, will merge after merging from main (https://github.com/sgl-project/sglang/pull/10312#issuecomment-3392747900)

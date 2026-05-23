@@ -1,3 +1,0 @@
-- 2025-08-05 `joker-eph` on `csrc/nv_internal/tensorrt_llm/kernels/quantization.h`:99: This seems backward to me. (https://github.com/flashinfer-ai/flashinfer/pull/1389#discussion_r2254667542)
-- 2025-08-05 `joker-eph`: @yzh119 : I pushed an extra commit to address Gemini's comment, but I haven't tested it yet. Let me know if I should pull it out of this PR. (https://github.com/flashinfer-ai/flashinfer/pull/1389#issuecomment-3155684574)
-- 2025-08-05 `IwakuraRein`: include/flashinfer/trtllm/fused moe/DevKernel.h:36: define CHECK CUDA(cmd) = define CHECK CUDA ERROR(cmd). This macro seems in conflict with csrc/pytorch extension utils.h:306 (https://github.com/flashinfer-ai/flashinfer/pull/1389#issuecomment-3155853673)

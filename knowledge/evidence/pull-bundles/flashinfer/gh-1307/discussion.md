@@ -1,4 +1,0 @@
-- 2025-07-23 `yzh119` on `include/flashinfer/trtllm/fmha/fmhaKernels.cuh`:411: I suppose they have the same meaning? (https://github.com/flashinfer-ai/flashinfer/pull/1307#discussion_r2224656424)
-- 2025-07-23 `yzh119` on `include/flashinfer/trtllm/fmha/fmhaKernels.cuh`:421: The heuristic looks reasonable to me, thank you for the bugfix. (https://github.com/flashinfer-ai/flashinfer/pull/1307#discussion_r2224658847)
-- 2025-07-23 `yzh119` commented: also cc @nvpohanh @weireweire @averyhNV @wenscarl for visibility. (https://github.com/flashinfer-ai/flashinfer/pull/1307#pullrequestreview-3046018440)
-- 2025-07-23 `PerkzZheng` on `include/flashinfer/trtllm/fmha/fmhaKernels.cuh`:411: yes, I am just going to revert the changes. I cherry-picked my fix from TRTLLM. (https://github.com/flashinfer-ai/flashinfer/pull/1307#discussion_r2224663071)

@@ -1,6 +1,0 @@
-- 2025-10-16 `tridao` on `tests/cute/test_flash_attn.py`:54: I would keep these tests (https://github.com/Dao-AILab/flash-attention/pull/1942#discussion_r2434442357)
-- 2025-10-16 `tridao` on `flash_attn/cute/flash_fwd.py`:1569: I would put the non-blocksparse case first (that's the simpler case to read) before the blocksparse case (https://github.com/Dao-AILab/flash-attention/pull/1942#discussion_r2434443924)
-- 2025-10-16 `tridao` on `flash_attn/cute/flash_fwd.py`:1782: Same here, we should put the non-blocksparse case first (https://github.com/Dao-AILab/flash-attention/pull/1942#discussion_r2434444417)
-- 2025-10-16 `tridao` on `flash_attn/cute/flash_fwd.py`:1797: Can we use functools.partial to make first/last half block overlap shorter to call? (https://github.com/Dao-AILab/flash-attention/pull/1942#discussion_r2434445752)
-- 2025-10-16 `tridao` commented: Overall looking good, I added some comments on the style (https://github.com/Dao-AILab/flash-attention/pull/1942#pullrequestreview-3342917951)
-- 2025-10-21 `jayhshah` on `flash_attn/cute/flash_fwd.py`:1968: Need to restore for pack gqa with score mod (https://github.com/Dao-AILab/flash-attention/pull/1942#discussion_r2449544400)

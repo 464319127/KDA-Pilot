@@ -1,2 +1,0 @@
-- 2025-12-19 `trevor-m`: @djns99 @yzh119 It would be great if this could make it into the next release, it makes the Sglang integraton of the new a2a much easier. (https://github.com/flashinfer-ai/flashinfer/pull/2247#issuecomment-3676595171)
-- 2025-12-21 `yzh119` approved: Hi @trevor-m thanks for the PR, I have no problem with this, it will be better if we have unittest coverage for the case of numLocalTokens=0. (https://github.com/flashinfer-ai/flashinfer/pull/2247#pullrequestreview-3601462429)

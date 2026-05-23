@@ -1,5 +1,0 @@
-- 2025-05-09 `WoosukKwon` on `vllm/v1/kv_cache_interface.py`:78: why do we need num query heads? (https://github.com/vllm-project/vllm/pull/17483#discussion_r2081820170)
-- 2025-05-09 `heheda12345` on `vllm/v1/kv_cache_interface.py`:78: You are right. Let me revert the changes. (https://github.com/vllm-project/vllm/pull/17483#discussion_r2081849258)
-- 2025-05-09 `WoosukKwon`: The precommit error is quite strange, I don't know how to fix it :( It happens on the main branch because of another PR. Please don't care about it. (https://github.com/vllm-project/vllm/pull/17483#issuecomment-2867433696)
-- 2025-05-09 `WoosukKwon` on `vllm/v1/attention/backends/flash_attn.py`:305: I think the term page size is a bit confusing here. Maybe worth a comment (while it's currently the same as block size). (https://github.com/vllm-project/vllm/pull/17483#discussion_r2082235119)
-- 2025-05-10 `heheda12345` on `vllm/v1/attention/backends/flash_attn.py`:305: I've changed all page size in this file to block size. (https://github.com/vllm-project/vllm/pull/17483#discussion_r2082801405)

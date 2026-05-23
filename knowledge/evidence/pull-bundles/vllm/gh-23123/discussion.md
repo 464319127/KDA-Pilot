@@ -1,4 +1,0 @@
-- 2025-08-25 `mgoin` on `vllm/model_executor/layers/fused_moe/cpu_fused_moe.py`:142: Maybe we could assert 1.0 here? (https://github.com/vllm-project/vllm/pull/23123#discussion_r2299028242)
-- 2025-08-25 `xyang16` on `vllm/model_executor/layers/fused_moe/cpu_fused_moe.py`:142: Yes that makes sense. Added assert. (https://github.com/vllm-project/vllm/pull/23123#discussion_r2299049789)
-- 2025-08-26 `xyang16`: @mgoin Since the routed scaling factor doesn't default to None in model config, see [here]( I still keep routed scaling factor default to 1.0, to keep the type consistent. But I have added the check to skip the multiply if routed scaling ... (https://github.com/vllm-project/vllm/pull/23123#issuecomment-3225086662)
-- 2025-08-29 `mgoin`: Could you run an eval on deepseek? A bit worried of leaving something behind here since we don't have great quantized moe tests at the moment (https://github.com/vllm-project/vllm/pull/23123#issuecomment-3237654442)

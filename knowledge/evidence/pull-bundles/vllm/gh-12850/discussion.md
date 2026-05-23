@@ -1,4 +1,0 @@
-- 2025-02-13 `tlrmchlsmth` on `csrc/moe/moe_align_sum_kernels.cu`:400: Better to initialize the cumsum buffer to 0 inside the kernel to avoid a separate kernel call for torch::zeros? (https://github.com/vllm-project/vllm/pull/12850#discussion_r1954963596)
-- 2025-02-13 `tlrmchlsmth` on `csrc/moe/moe_align_sum_kernels.cu`:268: Best practice to cast to int64 t before doing these multiplications (https://github.com/vllm-project/vllm/pull/12850#discussion_r1954970372)
-- 2025-02-13 `mgoin` on `csrc/moe/moe_align_sum_kernels.cu`:400: TBH I trust torch::zeros more than this kernel grid at the moment (https://github.com/vllm-project/vllm/pull/12850#discussion_r1955217878)
-- 2025-02-13 `mgoin` on `csrc/moe/moe_align_sum_kernels.cu`:268: In this case we know we only have very small indices (https://github.com/vllm-project/vllm/pull/12850#discussion_r1955309787)

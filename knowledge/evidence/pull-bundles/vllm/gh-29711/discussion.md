@@ -1,3 +1,0 @@
-- 2025-12-01 `ApostaC`: Hey @hholtmann , should this PR be merged to the main branch instead of releases/v0.11.2? In the mean time, cc @mgoin @tlrmchlsmth (https://github.com/vllm-project/vllm/pull/29711#issuecomment-3598664273)
-- 2025-12-01 `ProExpertProg` changes_requested: The diff seems polluted, can you rebase/merge from main? (https://github.com/vllm-project/vllm/pull/29711#pullrequestreview-3526869786)
-- 2025-12-01 `bbrowning`: I tested this on my DGX Spark (sm121), was able to reproduce the original issue, and confirm that this fixes the failing tests in test nvfp4 scaled mm.py. I normally just compile vLLM for my specific architecture, so had to first recompile ... (https://github.com/vllm-project/vllm/pull/29711#issuecomment-3599498107)

@@ -1,4 +1,0 @@
-- 2026-04-14 `miscco` commented: The code changes look good to me. However, it looks like there were no benchmark results (https://github.com/NVIDIA/cccl/pull/8395#pullrequestreview-4103759863)
-- 2026-04-14 `bernhardmgruber`: Perf results look ok on sm120, but not on the other architectures. (https://github.com/NVIDIA/cccl/pull/8395#issuecomment-4246807241)
-- 2026-04-14 `fbusato`: Perf results look ok on sm120, but not on the other architectures. It is fun that I just checked the SASS for Radix Sort on SM90, SM100, SM120 for all benchmark types (int8 t, int16 t, int32 t, int64 t, int128 t, ... (https://github.com/NVIDIA/cccl/pull/8395#issuecomment-4247021098)
-- 2026-04-27 `bernhardmgruber` on `ci/bench.yaml`: Please revert changes to this file. (https://github.com/NVIDIA/cccl/pull/8395#discussion_r3145508683)

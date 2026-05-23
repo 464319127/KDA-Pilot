@@ -1,3 +1,0 @@
-- 2026-03-11 `tridao` on `flash_attn/cute/interface.py`:633: we should just change the sm80 call signature (https://github.com/Dao-AILab/flash-attention/pull/2329#discussion_r2920452213)
-- 2026-03-11 `tridao` on `flash_attn/cute/interface.py`:670: let's change the sm80 call signature (https://github.com/Dao-AILab/flash-attention/pull/2329#discussion_r2920453887)
-- 2026-03-11 `tridao` on `flash_attn/cute/interface.py`:661: i think the epilogue code between sm80 and sm90 have the same checks. In any case, for sm80 we should put a if constexpr to avoid writing to LSE if LSE is not passed in. (https://github.com/Dao-AILab/flash-attention/pull/2329#discussion_r2920460730)

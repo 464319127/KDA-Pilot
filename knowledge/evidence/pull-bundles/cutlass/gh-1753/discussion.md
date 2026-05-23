@@ -1,1 +1,0 @@
-- 2024-09-20 `gau-nernst`: Thank you for the fix. I tried this locally and it works wonder! Much faster than ThreadblockSwizzleStreamK. Hope the maintainers can merge this. (https://github.com/NVIDIA/cutlass/pull/1753#issuecomment-2362536819)

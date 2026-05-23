@@ -1,4 +1,0 @@
-- 2025-05-23 `abcdabcd987` on `flashinfer/comm.py`:22: I think cuda-python is not widely adopted yet. cuda.bindings exists only after [v12.6.2]( For example, [v12.6.1]( and [v12.4]( don't have it. For compatibility, using ctypes might be a better choice. (https://github.com/flashinfer-ai/flashinfer/pull/1089#discussion_r2105464239)
-- 2025-05-24 `yyihuang` on `flashinfer/custom_all_reduce.py`: delete the empty file? (https://github.com/flashinfer-ai/flashinfer/pull/1089#discussion_r2105633544)
-- 2025-05-24 `yyihuang` on `tests/test_custom_allreduce.py`:122: We might init dist group on each world size for tests. (https://github.com/flashinfer-ai/flashinfer/pull/1089#discussion_r2105675541)
-- 2025-05-24 `yzh119` on `flashinfer/comm.py`:22: changed back in we will switch to cuda-python once the API is stable. (https://github.com/flashinfer-ai/flashinfer/pull/1089#discussion_r2105728311)

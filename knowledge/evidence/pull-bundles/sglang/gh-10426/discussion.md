@@ -1,5 +1,0 @@
-- 2025-09-14 `zhyncs` on `python/sglang/srt/layers/moe/topk.py`:678: In which use case will we have accuracy issues? (https://github.com/sgl-project/sglang/pull/10426#discussion_r2347553049)
-- 2025-09-14 `fzyzcjy` on `python/sglang/srt/layers/moe/topk.py`:678: it is more about UB in nvfp4 ckpt, not check in detail yesterday, I will check today. (https://github.com/sgl-project/sglang/pull/10426#discussion_r2347641912)
-- 2025-09-15 `ch-wan` on `python/sglang/srt/layers/moe/topk.py`:678: Is it related to 9834? (https://github.com/sgl-project/sglang/pull/10426#discussion_r2347669385)
-- 2025-09-15 `fzyzcjy` on `python/sglang/srt/layers/moe/topk.py`:678: yes I think so, I am going to investigate it today (https://github.com/sgl-project/sglang/pull/10426#discussion_r2347684392)
-- 2025-09-15 `zhyncs`: fix dsv3 fp4 cutlass moe etp (https://github.com/sgl-project/sglang/pull/10426#issuecomment-3290198254)

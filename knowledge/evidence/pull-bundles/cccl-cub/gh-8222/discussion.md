@@ -1,2 +1,0 @@
-- 2026-03-31 `bernhardmgruber` on `thrust/testing/scan.cu`:739: This check is currently failing spuriously in the CI, because rhs[lhs[i]] reads out of bounds here sometimes. This change makes the failure deterministic and explicit. (https://github.com/NVIDIA/cccl/pull/8222#discussion_r3013984682)
-- 2026-03-31 `miscco` on `cub/cub/device/dispatch/dispatch_scan.cuh`:509: I knew C++ error messages are long, but that they classify as novels is something ^^ (https://github.com/NVIDIA/cccl/pull/8222#discussion_r3014004528)

@@ -1,2 +1,0 @@
-- 2025-07-24 `czhu-cohere` on `csrc/quantization/machete/machete_prepacked_layout.cuh`:193: I think there are a few other places which checks the divisibility, also we don't expect the PPBlockShape to change (https://github.com/vllm-project/vllm/pull/21556#discussion_r2229522471)
-- 2025-07-25 `LucasWilkinson` approved: Awesome thank you for doing this! Such a small change for so much perf! (https://github.com/vllm-project/vllm/pull/21556#pullrequestreview-3053868788)

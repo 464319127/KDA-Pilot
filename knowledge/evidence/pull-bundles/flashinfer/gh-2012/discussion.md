@@ -1,2 +1,0 @@
-- 2025-10-30 `yongwww` on `flashinfer/gemm.py`:1833: 110 is also supported if I remember correctly, cc: @ttyio (https://github.com/flashinfer-ai/flashinfer/pull/2012#discussion_r2479157164)
-- 2025-10-30 `nvmbreughe` on `flashinfer/gemm.py`:1833: It was explicitly disabled on trtllm in the original checks. The other backends support it (https://github.com/flashinfer-ai/flashinfer/pull/2012#discussion_r2479158577)

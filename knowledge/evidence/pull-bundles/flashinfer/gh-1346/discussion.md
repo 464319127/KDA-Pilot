@@ -1,2 +1,0 @@
-- 2025-07-29 `weireweire` on `tests/test_trtllm_gen_context.py`:247: this is real issue, but wired it not causing accuracy issue, guess it's not used. (https://github.com/flashinfer-ai/flashinfer/pull/1346#discussion_r2239430680)
-- 2025-07-30 `weireweire` on `tests/test_trtllm_gen_context.py`:247: did a test, the one-element tensor can also pass the torch c++ api binding and got true value. (https://github.com/flashinfer-ai/flashinfer/pull/1346#discussion_r2241913451)

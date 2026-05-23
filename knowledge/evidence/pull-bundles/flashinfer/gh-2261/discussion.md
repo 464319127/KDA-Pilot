@@ -1,2 +1,0 @@
-- 2025-12-23 `bkryu` commented: Thanks @yongwww the PR makes sense to me. Let's wait for the unit test results to come back. (https://github.com/flashinfer-ai/flashinfer/pull/2261#pullrequestreview-3609013865)
-- 2025-12-24 `yzh119` approved: While I'm concerned about the performance of padding, at least it fixes the functionality issue. Thanks for working on this PR. (https://github.com/flashinfer-ai/flashinfer/pull/2261#pullrequestreview-3610051736)

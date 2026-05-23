@@ -1,2 +1,0 @@
-- 2026-03-25 `Jokeren` on `python/triton_kernels/bench/bench_dense_matmul.py`:192: Why do we still need do bench if we use proton? (https://github.com/triton-lang/triton/pull/9850#discussion_r2990991395)
-- 2026-03-25 `ThomasRaoux` on `python/triton_kernels/bench/bench_dense_matmul.py`:192: I guess the idea was to have an option independent of proton but yeah I have tested with proton actually (https://github.com/triton-lang/triton/pull/9850#discussion_r2991107455)

@@ -1,1 +1,0 @@
-- 2026-02-22 `bernhardmgruber`: There are substantial SASS diffs, for example in [...] on SM75. With the change from 7733, I asked Cursor: The last two commits lead to SASS differences on the benchmark cub.bench.run length encode.non trivial runs.base for SM75. This was likely caused by ... (https://github.com/NVIDIA/cccl/pull/7669#issuecomment-3940964595)

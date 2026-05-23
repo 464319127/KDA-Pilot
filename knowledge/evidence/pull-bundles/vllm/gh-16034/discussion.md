@@ -1,1 +1,0 @@
-- 2025-04-28 `gshtras` on `vllm/platforms/rocm.py`:112: Can we now also remove the old on mi250 mi300 function? (https://github.com/vllm-project/vllm/pull/16034#discussion_r2064361620)

@@ -1,1 +1,0 @@
-- 2025-07-09 `tlrmchlsmth` approved: Looks good to me -- I know that there are some possible approaches to reducing the worst case memory footprint that wouldn't need a CPU tensor with the number of tokens per expert. But this could be handy anyway so let's merge ... (https://github.com/vllm-project/vllm/pull/20332#pullrequestreview-3002685985)

@@ -1,2 +1,0 @@
-- 2025-08-26 `yzh119` on `flashinfer/fused_moe/core.py`:1145: remove .to(torch.bfloat16) which causes illegal memory access when using deepseek v3 routing. could you explain why? (https://github.com/flashinfer-ai/flashinfer/pull/1573#discussion_r2301491179)
-- 2025-08-26 `IwakuraRein` on `flashinfer/fused_moe/core.py`:1145: @yzh119 Currently DeepSeek V3 requires fp32 routing logits: (https://github.com/flashinfer-ai/flashinfer/pull/1573#discussion_r2301592209)

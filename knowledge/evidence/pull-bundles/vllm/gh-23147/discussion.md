@@ -1,1 +1,0 @@
-- 2025-08-19 `LucasWilkinson` on `vllm/v1/attention/backends/flashinfer.py`:228: side-note: (not PR related) im not sure why would only want to use fp8 Q for fp8 KV only when fusion is enabled; I would think think we would want it always?! (https://github.com/vllm-project/vllm/pull/23147#discussion_r2286034388)

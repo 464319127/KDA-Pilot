@@ -1,2 +1,0 @@
-- 2025-07-18 `bernhardmgruber` on `cub/cub/detail/integer_utils.cuh`:60: Thank you for adding this documentation! (https://github.com/NVIDIA/cccl/pull/5314#discussion_r2216920755)
-- 2025-07-18 `bernhardmgruber` on `cub/test/internal/catch2_test_integer_utils.cu`:5: I am not fully sure, but should this use angle brackets, since it's a different library? (and not a relative include) (https://github.com/NVIDIA/cccl/pull/5314#discussion_r2216921642)

@@ -1,1 +1,0 @@
-- 2025-12-01 `merrymercy` on `python/sglang/srt/configs/model_config.py`:157: Follow up: 1. is hybrid model - is hybrid llama4 model 2. remove --hybrid-kvcache-ratio 3. (optional) make is hybrid swa, is hybrid gdn an enum. (https://github.com/sgl-project/sglang/pull/14252#discussion_r2579056023)

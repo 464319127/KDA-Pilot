@@ -1,1 +1,0 @@
-- 2026-01-04 `HydraQYH`: After talking with @BBuf, we still chose to use flash attn varlen func to maintain consistency, but we set cu seqlens q/cu seqlens q to None to ensure that the Static Scheduler is used, thus guaranteeing performance. cc @mickqian (https://github.com/sgl-project/sglang/pull/16382#issuecomment-3708097571)

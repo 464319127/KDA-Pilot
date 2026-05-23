@@ -1,2 +1,0 @@
-- 2025-12-21 `b8zhong` on `python/sglang/srt/layers/quantization/compressed_tensors/schemes/compressed_tensors_w4a4_nvfp4.py`:157: QQ: we can just delete this wrapper now probably right (https://github.com/sgl-project/sglang/pull/15531#discussion_r2637480857)
-- 2025-12-21 `ispobock` on `python/sglang/srt/layers/quantization/compressed_tensors/schemes/compressed_tensors_w4a4_nvfp4.py`:157: yes, we can check the usage of it (https://github.com/sgl-project/sglang/pull/15531#discussion_r2637628309)

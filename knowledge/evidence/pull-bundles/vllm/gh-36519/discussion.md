@@ -1,1 +1,0 @@
-- 2026-03-10 `ZJY0516`: @MatthewBonanni I have a triton kernel for fp8 paged mqa logits torch which is cudagraph compatible. Could you please take a look (https://github.com/vllm-project/vllm/pull/36519#issuecomment-4028797194)

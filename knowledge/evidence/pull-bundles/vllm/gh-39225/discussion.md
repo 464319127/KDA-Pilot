@@ -1,1 +1,0 @@
-- 2026-04-07 `yewentao256` on `vllm/v1/attention/ops/rocm_aiter_mla_sparse.py`:534: num actual tokens is not a good value to use (https://github.com/vllm-project/vllm/pull/39225#discussion_r3047751794)

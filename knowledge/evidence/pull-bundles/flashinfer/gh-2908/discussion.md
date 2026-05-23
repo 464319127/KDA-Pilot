@@ -1,4 +1,0 @@
-- 2026-04-01 `saltyminty` on `flashinfer/gdn_prefill.py`:243: Similar, but probably not an actual issue – is ti safe to assume that the offsets monotonically increasing without an explicit guard? (https://github.com/flashinfer-ai/flashinfer/pull/2908#discussion_r3024797751)
-- 2026-04-02 `kahyunnam` on `flashinfer/gdn_prefill.py`:111: This is probably a breaking API change, let's double check cc @saltyminty (https://github.com/flashinfer-ai/flashinfer/pull/2908#discussion_r3030440736)
-- 2026-04-02 `kahyunnam` commented: Lgtm mostly, left one small comment (https://github.com/flashinfer-ai/flashinfer/pull/2908#pullrequestreview-4053284195)
-- 2026-04-05 `feldsherov`: Thank you for the review. What should I do to land this change? [CI failure is Docker build timeout]( which shouldn't be related. (https://github.com/flashinfer-ai/flashinfer/pull/2908#issuecomment-4188825504)

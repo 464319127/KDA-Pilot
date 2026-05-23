@@ -1,1 +1,0 @@
-- 2025-09-12 `yewentao256` on `tests/kernels/moe/test_mxfp4_moe.py`:778: What will happen if we don't add the to(device) here? (https://github.com/vllm-project/vllm/pull/24750#discussion_r2345511922)

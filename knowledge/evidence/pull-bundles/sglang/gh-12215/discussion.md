@@ -1,5 +1,0 @@
-- 2025-10-27 `Fridge003`: @bingps Can you please post some accuracy results, as well as performance benchmarks before/after this change? (https://github.com/sgl-project/sglang/pull/12215#issuecomment-3452796136)
-- 2025-10-28 `bingps`: @bingps Can you please post some accuracy results, as well as performance benchmarks before/after this change? Sure Here is a simple benchmark. The concat results are bit-wise equal, and it is 2.4x faster for 16K concat, while not slower when S=1. (https://github.com/sgl-project/sglang/pull/12215#issuecomment-3454632536)
-- 2025-10-28 `bingps`: However in my testing, the kernel fails for 30K inputs :crying cat face: See (https://github.com/sgl-project/sglang/pull/12215#issuecomment-3454694486)
-- 2025-10-29 `Johnsonms`: However in my testing, the kernel fails for 30K inputs 😿 See 12250 me too (https://github.com/sgl-project/sglang/pull/12215#issuecomment-3463271663)
-- 2025-11-03 `Fridge003`: Might wait for another sgl-kernel bump to include 12453 (https://github.com/sgl-project/sglang/pull/12215#issuecomment-3479023002)

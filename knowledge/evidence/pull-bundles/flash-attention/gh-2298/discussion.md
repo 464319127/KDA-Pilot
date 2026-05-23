@@ -1,1 +1,0 @@
-- 2026-03-02 `tridao`: Looks fine to me. Cc @drisspg : this is a limit of from dlpack, we should eventually switch to compiling with cute fake tensors. (https://github.com/Dao-AILab/flash-attention/pull/2298#issuecomment-3986362240)

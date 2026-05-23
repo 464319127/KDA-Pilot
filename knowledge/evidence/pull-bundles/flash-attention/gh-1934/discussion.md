@@ -1,1 +1,0 @@
-- 2025-10-13 `tridao` on `flash_attn/cute/flash_bwd.py`:264: I think vectorized copy should still work even in varlen since the contiguous dimension is the headdim (not the seqlen dim). But we can merge as is and fix later. (https://github.com/Dao-AILab/flash-attention/pull/1934#discussion_r2427344799)

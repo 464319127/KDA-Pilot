@@ -1,1 +1,0 @@
-- 2025-07-15 `srinivasyadav18`: Speed ups with tuning NOTE - Most of the improvements we see in one case i.e with 2^24 elements with 23% speedup, while other cases give only 1% speedup. - The tuning is only F32, so do we not see any improvements ... (https://github.com/NVIDIA/cccl/pull/5269#issuecomment-3076130189)

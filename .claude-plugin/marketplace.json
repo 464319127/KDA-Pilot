@@ -8,7 +8,7 @@
     {
       "name": "humanize",
       "source": "./humanize",
-      "description": "Humanize plus KernelPilot's autonomous GPU kernel optimization loop, ncu-report profiling, and review-gated iteration.",
+      "description": "Humanize plus KernelPilot's autonomous GPU kernel optimization loop, KernelWiki evidence, ncu-report-skill profiling, and review-gated iteration.",
       "version": "1.17.0"
     }
   ]

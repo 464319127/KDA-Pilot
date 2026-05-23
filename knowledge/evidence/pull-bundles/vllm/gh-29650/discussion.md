@@ -1,1 +1,0 @@
-- 2025-11-28 `DarkLight1337` on `tests/kernels/attention/test_rocm_attention_selector.py`:39: Using None actually fails the type checker in my IDE. What is the intention here? cc @tjtanaa (https://github.com/vllm-project/vllm/pull/29650#discussion_r2570633503)

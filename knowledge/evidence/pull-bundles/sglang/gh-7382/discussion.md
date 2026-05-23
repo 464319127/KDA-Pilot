@@ -1,2 +1,0 @@
-- 2025-06-20 `Edenzzzz` on `sgl-kernel/tests/test_kvcacheio.py`:78: This is trivial, but can use torch.zeros like(src k pool, device=device) (https://github.com/sgl-project/sglang/pull/7382#discussion_r2159689935)
-- 2025-06-21 `Alisehen`: I have evaluated this PR using the HiCache benchmark, and it shows clear performance improvements. For the multi-turn benchmark, I used the Qwen2.5-32B-INT8-TP2 model with 20 clients and 10 rounds. • When the input length is 512, the PR achieves a 1.14× ... (https://github.com/sgl-project/sglang/pull/7382#issuecomment-2993376749)

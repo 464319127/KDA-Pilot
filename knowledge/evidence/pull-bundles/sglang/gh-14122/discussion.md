@@ -1,1 +1,0 @@
-- 2025-11-29 `ispobock`: I built a temp image ispobock/sglang:v0.5.5.post3-cu129-amd64-ima-fix-v5 to include this new marlin kernel. The IMA issue seems cannot be reproduced in this image on my side. @0xymoro is helping us test in long-running scenarios. May share test results here. (https://github.com/sgl-project/sglang/pull/14122#issuecomment-3591070639)

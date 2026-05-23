@@ -1,5 +1,0 @@
-- 2025-09-01 `yzh119` on `tests/test_batch_attention.py`:28: Why removing them, these scripts can accelerate unittests (https://github.com/flashinfer-ai/flashinfer/pull/1614#discussion_r2312846867)
-- 2025-09-01 `yzh119` on `tests/test_batch_attention.py`:192: don't delete previous test cases (https://github.com/flashinfer-ai/flashinfer/pull/1614#discussion_r2312847210)
-- 2025-09-01 `happierpig` on `tests/test_batch_attention.py`:28: Oh. It fails on my local machines. I can add it back if needed (https://github.com/flashinfer-ai/flashinfer/pull/1614#discussion_r2312858899)
-- 2025-09-01 `yzh119` on `tests/test_batch_attention.py`:28: can you show me the error message? (https://github.com/flashinfer-ai/flashinfer/pull/1614#discussion_r2312915355)
-- 2025-09-02 `yongwww`: @happierpig it would be good if you rebase the pr on top of the latest main to get the ci green (https://github.com/flashinfer-ai/flashinfer/pull/1614#issuecomment-3246482462)

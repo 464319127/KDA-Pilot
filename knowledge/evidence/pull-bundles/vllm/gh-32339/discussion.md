@@ -1,3 +1,0 @@
-- 2026-01-14 `MatthewBonanni` on `vllm/platforms/cuda.py`:54: There is a disconnect between check and update config and the actual selection logic of get attn backend cls. These are somewhat independent of each other as check and update config is only used for adjusting the KV cache block size. It ... (https://github.com/vllm-project/vllm/pull/32339#discussion_r2691159151)
-- 2026-01-14 `robertgshaw2-redhat`: this looks good to me and is backed by the benchmarks (https://github.com/vllm-project/vllm/pull/32339#issuecomment-3750559585)
-- 2026-01-14 `yewentao256` commented: Thanks for the work! Just for the logs (https://github.com/vllm-project/vllm/pull/32339#pullrequestreview-3662680289)

@@ -1,6 +1,0 @@
-- 2025-01-20 `mgoin` approved: Thanks for this change, I just made a small update to fix the formatting. I will test with an eval now (https://github.com/vllm-project/vllm/pull/12222#pullrequestreview-2562777318)
-- 2025-01-20 `tlrmchlsmth` on `csrc/moe/moe_align_sum_kernels.cu`:235: For clarity and readability, I suggest: (https://github.com/vllm-project/vllm/pull/12222#discussion_r1922658641)
-- 2025-01-20 `tlrmchlsmth` on `csrc/moe/moe_align_sum_kernels.cu`:73: nit: avoid using C-style casts when possible: (https://github.com/vllm-project/vllm/pull/12222#discussion_r1922662541)
-- 2025-01-20 `houseroad` on `csrc/moe/moe_align_sum_kernels.cu`:36: nit: Add the original comments back? (https://github.com/vllm-project/vllm/pull/12222#discussion_r1922674110)
-- 2025-01-20 `houseroad` on `csrc/moe/moe_align_sum_kernels.cu`:254: Much better than directly use cudaMalloc (https://github.com/vllm-project/vllm/pull/12222#discussion_r1922703815)
-- 2025-01-20 `houseroad` approved: Yeah, this is more elegant implementation, 1) less intrusive, only touching the kernels, 2) considered removing the original hacks on hard code on 256 experts number, also 3) removed the cudaMalloc and cudaFree, which could be very slow. (https://github.com/vllm-project/vllm/pull/12222#pullrequestreview-2562852671)

@@ -1,3 +1,0 @@
-- 2026-03-04 `hubertlu-tw` approved: I previously added the triton path for AMD GPUs. I believe we lost AMD CI registration for AWQ functionality during the overhaul of SGLang CI suites. Thanks for pointing it out! (https://github.com/sgl-project/sglang/pull/19550#pullrequestreview-3886124520)
-- 2026-03-04 `HaiShaw` on `docs/advanced_features/quantization.md`:42: petit nvfp4 This shall work on AMD (Dense Layer only). cc @haohui (https://github.com/sgl-project/sglang/pull/19550#discussion_r2881783782)
-- 2026-03-04 `haohui` on `docs/advanced_features/quantization.md`:42: FYI adds the support of mxfp4 on dense layer (https://github.com/sgl-project/sglang/pull/19550#discussion_r2882619984)

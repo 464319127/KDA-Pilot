@@ -1,2 +1,0 @@
-- 2026-03-12 `kahyunnam`: @aleozlx does this still need to be merged? A bit confused about the current state of release plan (https://github.com/flashinfer-ai/flashinfer/pull/2730#issuecomment-4050269177)
-- 2026-03-20 `aleozlx`: we still need to merge it 0.6.6 ended up being cut before the breaking changes because the turn-around was unacceptable so this fix is to be merged before we cut 0.6.7 again wrt deprecation - warning is to be posted thru 0.7 ... (https://github.com/flashinfer-ai/flashinfer/pull/2730#issuecomment-4094629849)

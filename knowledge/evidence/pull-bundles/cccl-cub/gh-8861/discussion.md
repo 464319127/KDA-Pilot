@@ -1,3 +1,0 @@
-- 2026-05-07 `bernhardmgruber` on `cub/cub/detail/arch_dispatch.cuh`:59: Me: Wait, this was always unused? Dave: always has been shot fired (https://github.com/NVIDIA/cccl/pull/8861#discussion_r3199694307)
-- 2026-05-07 `davebayer` on `cub/cub/detail/arch_dispatch.cuh`:59: Yeah, I think we should rather remove it, if we ever need it later for some reason, it can be always found it the repo history (https://github.com/NVIDIA/cccl/pull/8861#discussion_r3199810577)
-- 2026-05-07 `bernhardmgruber` on `cub/cub/detail/arch_dispatch.cuh`:59: I think I added this while prototyping and just completely forgot about deleting it. I don't need it! (https://github.com/NVIDIA/cccl/pull/8861#discussion_r3199855474)

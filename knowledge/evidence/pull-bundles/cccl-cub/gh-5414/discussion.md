@@ -1,2 +1,0 @@
-- 2025-08-06 `bernhardmgruber` on `cub/cub/device/dispatch/kernels/transform.cuh`:658: This code is gone now. (https://github.com/NVIDIA/cccl/pull/5414#discussion_r2257232190)
-- 2025-08-06 `bernhardmgruber` on `cub/cub/device/dispatch/dispatch_transform.cuh`:248: By checking when the occupancy drops to zero instead of whether we exceed the available SMEM, we achieve the same effect but also handle the case when occupancy drops to zero for other reasons (like a rogue kernel emiting a highly aligned ... (https://github.com/NVIDIA/cccl/pull/5414#discussion_r2258069095)

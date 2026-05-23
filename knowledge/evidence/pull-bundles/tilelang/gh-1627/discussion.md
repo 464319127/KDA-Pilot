@@ -1,1 +1,0 @@
-- 2026-01-08 `copilot-pull-request-reviewer` commented: Pull request overview This PR fixes a bug in the MFMA layout index map selection for transposed A matrices when k dim==4 (used for float32 types), and re-enables previously disabled ROCm CI tests that were affected by this bug. Key Changes: - ... (https://github.com/tile-ai/tilelang/pull/1627#pullrequestreview-3637260891)

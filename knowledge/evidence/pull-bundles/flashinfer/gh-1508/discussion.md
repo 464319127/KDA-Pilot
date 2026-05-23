@@ -1,2 +1,0 @@
-- 2025-08-18 `yuan-luo`: This PR can make to support hopper. (https://github.com/flashinfer-ai/flashinfer/pull/1508#issuecomment-3196834898)
-- 2025-08-18 `yongwww`: This PR can make sgl-project/sglang 7946 to support hopper. out of curiosity — this change looks like it’s for CUDA version compatibility. Why does it specifically help Hopper here? if fp4 is the reason, then I think checking SM instead of cuda ... (https://github.com/flashinfer-ai/flashinfer/pull/1508#issuecomment-3198463959)

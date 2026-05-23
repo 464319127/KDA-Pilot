@@ -1,4 +1,0 @@
-- 2026-05-18 `aleozlx` on `.dockerignore`:27: So these aren't submodules but copies ? Oh this is docker ignore file... misunderstood (https://github.com/flashinfer-ai/flashinfer/pull/3315#discussion_r3255941457)
-- 2026-05-18 `aleozlx` on `3rdparty_patches/nixl/0001-meson-add-blackwell-arches.patch`:1: What's this file for ? Patching at runtime ? (https://github.com/flashinfer-ai/flashinfer/pull/3315#discussion_r3255948097)
-- 2026-05-18 `aleozlx` on `pyproject.toml`:37: Does torch exposed cuda access not satisfy it? (https://github.com/flashinfer-ai/flashinfer/pull/3315#discussion_r3255956153)
-- 2026-05-18 `aleozlx` on `pyproject.toml`:82: Im fuzzy what the package-data is used for... (https://github.com/flashinfer-ai/flashinfer/pull/3315#discussion_r3255959755)

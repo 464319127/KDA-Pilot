@@ -1,3 +1,0 @@
-- 2025-03-07 `tlrmchlsmth` on `vllm/model_executor/layers/quantization/utils/fp8_utils.py`:36: Could you file an issue for this? (https://github.com/vllm-project/vllm/pull/14390#discussion_r1984259552)
-- 2025-03-07 `tlrmchlsmth` approved: This looks good to me, thanks for the fix! Definitely think we should refactor this code further but better to land now rather than 14317 (https://github.com/vllm-project/vllm/pull/14390#pullrequestreview-2665962776)
-- 2025-03-07 `ProExpertProg`: Tested LLaMa-3.1-8B-FP8 locally for combinations of cutlass/non-cutlass, V0/V1, eager/cuda-graph/compiled, all work ✅ (https://github.com/vllm-project/vllm/pull/14390#issuecomment-2705353303)

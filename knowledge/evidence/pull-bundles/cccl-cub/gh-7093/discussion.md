@@ -1,1 +1,0 @@
-- 2026-01-07 `miscco` on `cub/test/catch2_test_arch_dispatch.cu`:60: Honestly I would rather have the static assert in the function body and always return cudaError t (https://github.com/NVIDIA/cccl/pull/7093#discussion_r2667349762)

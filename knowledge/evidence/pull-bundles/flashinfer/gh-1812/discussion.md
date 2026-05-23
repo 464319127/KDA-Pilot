@@ -1,2 +1,0 @@
-- 2025-09-30 `yzh119` on `tests/unlisted/test_cute_dsl_gemm_allreduce_two_shot.py`:485: Can you follow gemini's suggestion? (https://github.com/flashinfer-ai/flashinfer/pull/1812#discussion_r2391618060)
-- 2025-09-30 `yzh119` on `flashinfer/cute_dsl/gemm_allreduce_two_shot.py`:6: Can you explain more? (https://github.com/flashinfer-ai/flashinfer/pull/1812#discussion_r2392047653)

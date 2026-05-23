@@ -1,1 +1,0 @@
-- 2026-05-17 `ch-wan`: The profile traces are correct. The performance gain reported in the PR description is from reduced CPU overhead. I only use a 1-layer dummy model for benchmark. (https://github.com/sgl-project/sglang/pull/25525#issuecomment-4472610089)

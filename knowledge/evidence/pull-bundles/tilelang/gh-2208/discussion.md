@@ -1,3 +1,0 @@
-- 2026-05-15 `zhangnju`: @lhl Thanks for your bug fix. I also have a PR on RDNA4, which made some changes on RDNA.py. may I commit some changes to avoid the conficts? (https://github.com/tile-ai/tilelang/pull/2208#issuecomment-4461239000)
-- 2026-05-18 `LeiWang1999`: Thanks and sure @zhangnju. I've approved this pr. Feel free to let it in if you think it's ready! (https://github.com/tile-ai/tilelang/pull/2208#issuecomment-4474526546)
-- 2026-05-18 `zhangnju`: Thanks and sure @zhangnju. I've approved this pr. Feel free to let it in if you think it's ready! HI @LeiWang1999 please merge this PR, and then I modify my PR and fix the conflict issue based on the latest codes (https://github.com/tile-ai/tilelang/pull/2208#issuecomment-4475448293)

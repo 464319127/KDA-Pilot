@@ -1,1 +1,0 @@
-- 2025-02-04 `yzh119` on `setup.py`:32: (192, 128) is not compatible with page attention kernels, can we separate head dim for page attention and ragged attention kernels? (https://github.com/flashinfer-ai/flashinfer/pull/778#discussion_r1940501573)

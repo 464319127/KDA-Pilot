@@ -1,1 +1,0 @@
-- 2025-06-08 `merrymercy` on `python/sglang/srt/model_executor/cuda_graph_runner.py`:555: copy from forward batch.num token non padded is better because it is GPU-GPU copy, this statement incurs some GPU-CPU copy (https://github.com/sgl-project/sglang/pull/6965#discussion_r2134359585)

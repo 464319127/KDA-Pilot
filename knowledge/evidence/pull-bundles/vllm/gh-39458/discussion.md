@@ -1,2 +1,0 @@
-- 2026-04-10 `zyongye`: Can you test the accuracy as well? (https://github.com/vllm-project/vllm/pull/39458#issuecomment-4226375843)
-- 2026-04-10 `TheEpicDolphin`: @zyongye added the accuracy results for MTP=0, 1, and 3! There seems to be no change (https://github.com/vllm-project/vllm/pull/39458#issuecomment-4227127705)

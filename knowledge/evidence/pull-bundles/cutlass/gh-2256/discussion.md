@@ -1,2 +1,0 @@
-- 2025-04-21 `jackkosaian`: Should be fine as long as someone passes in the same stream to each. I think that's needed for our general device-level APIs that take in a stream parameter as well. (https://github.com/NVIDIA/cutlass/pull/2256#issuecomment-2818673994)
-- 2025-04-22 `HydraQYH`: Should be fine as long as someone passes in the same stream to each. I think that's needed for our general device-level APIs that take in a stream parameter as well. @jackkosaian @hwu36 So, can we approval this pr? (https://github.com/NVIDIA/cutlass/pull/2256#issuecomment-2820809705)

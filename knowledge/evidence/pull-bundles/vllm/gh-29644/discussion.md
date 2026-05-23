@@ -1,1 +1,0 @@
-- 2025-11-28 `LucasWilkinson` on `vllm/v1/attention/backends/utils.py`:891: we would want this to not be treated as uniform; we want the padding at the end (https://github.com/vllm-project/vllm/pull/29644#discussion_r2570472034)

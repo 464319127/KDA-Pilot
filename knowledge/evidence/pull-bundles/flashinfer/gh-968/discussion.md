@@ -1,2 +1,0 @@
-- 2025-03-22 `youkaichao`: any perf numbers? if this is significant, i can also help report it to the pytorch team. (https://github.com/flashinfer-ai/flashinfer/pull/968#issuecomment-2745146398)
-- 2025-03-22 `yzh119`: I do observe the gap being much smaller for small shapes. (from 30us to 10us). But after a period of time, the kernel launch gap without .default was reduced to 10us as well. (https://github.com/flashinfer-ai/flashinfer/pull/968#issuecomment-2745153072)

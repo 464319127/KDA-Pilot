@@ -1,2 +1,0 @@
-- 2026-02-21 `ynwang007` on `flashinfer/mla.py`:86: do we need modify this check for every model use mla? (https://github.com/flashinfer-ai/flashinfer/pull/2607#discussion_r2836318658)
-- 2026-02-22 `rainj-me` on `flashinfer/mla.py`:86: It should not, the reason to put here just because we currently have 2 MLA model families which can leverage trtllm-mla for the attn kernels. Just in case people misusing the kernel and get irrelevant result. Once we have models with different ... (https://github.com/flashinfer-ai/flashinfer/pull/2607#discussion_r2837343315)

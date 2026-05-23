@@ -1,4 +1,0 @@
-- 2025-11-13 `ispobock` commented: @b8zhong Could you add CI test for this change? (https://github.com/sgl-project/sglang/pull/13094#pullrequestreview-3457007196)
-- 2025-11-14 `b8zhong`: Errr, it looks like was merged before this, I will move it bc otherwise it's hard to find where they are acc registered (https://github.com/sgl-project/sglang/pull/13094#issuecomment-3534394026)
-- 2025-11-16 `ispobock` on `test/srt/test_piecewise_cuda_graph.py`:212: Do we need to adjust the estimated time in the run suite.py? (https://github.com/sgl-project/sglang/pull/13094#discussion_r2531051371)
-- 2025-11-17 `b8zhong` on `test/srt/test_piecewise_cuda_graph.py`:212: Kk, I bumped it up from 450s - 600s (but it feels long, perhaps I can split it up into test piecewise A and B files after) (https://github.com/sgl-project/sglang/pull/13094#discussion_r2532651379)

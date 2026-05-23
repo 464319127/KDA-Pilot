@@ -1,2 +1,0 @@
-- 2025-09-24 `samuellees` on `python/sglang/srt/layers/attention/attention_registry.py`:70: I think it is optional since doing this will make the code harder to read. (https://github.com/sgl-project/sglang/pull/10816#discussion_r2376010980)
-- 2025-09-24 `samuellees` on `python/sglang/srt/server_args.py`:769: Add a check and hint in attn backend wrapper for hybrid GDN model with NPU. cc @ping1jing2 for a very kindly remind, because I have no intention of introducing any break on NPU ^ ^ (https://github.com/sgl-project/sglang/pull/10816#discussion_r2376156736)

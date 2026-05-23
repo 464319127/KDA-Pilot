@@ -1,2 +1,0 @@
-- 2026-01-12 `hlu1`: Can you do benchmarks before/after this change? Thanks. (https://github.com/sgl-project/sglang/pull/16974#issuecomment-3740202443)
-- 2026-01-14 `Fridge003`: Profile results on GB200: One round of draft decode+verify+draft extend+postprocess+get next batch: 29ms - 25ms w/o this PR: w/ this PR: (https://github.com/sgl-project/sglang/pull/16974#issuecomment-3748483760)

@@ -1,1 +1,0 @@
-- 2025-08-20 `johnnynunez`: @LyricZhao could you merge it? Upcoming devices with cuda 13 are near (https://github.com/deepseek-ai/DeepGEMM/pull/157#issuecomment-3205523406)

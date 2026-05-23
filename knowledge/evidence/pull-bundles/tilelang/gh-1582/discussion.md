@@ -1,1 +1,0 @@
-- 2025-12-31 `LeiWang1999` commented: Can we merge those rng rand functions into a same rng rand? (https://github.com/tile-ai/tilelang/pull/1582#pullrequestreview-3620504551)

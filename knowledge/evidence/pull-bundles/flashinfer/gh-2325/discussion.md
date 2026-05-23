@@ -1,3 +1,0 @@
-- 2026-01-10 `yzh119` on `include/flashinfer/topk.cuh`:522: If state- histogram[0] can be non-zero at kernel start They are initialized to 0 at python-side when passing to the kernel at the first time, and we should guarantee they are 0 after kernel finished. (https://github.com/flashinfer-ai/flashinfer/pull/2325#discussion_r2678858830)
-- 2026-01-10 `yzh119` on `tests/utils/test_sampling.py`:591: We have enough GPU memory on CI. (https://github.com/flashinfer-ai/flashinfer/pull/2325#discussion_r2678859099)
-- 2026-01-10 `yzh119` on `include/flashinfer/topk.cuh`:522: After a second thought, I suppose the change we made here is redundant. (https://github.com/flashinfer-ai/flashinfer/pull/2325#discussion_r2678862698)

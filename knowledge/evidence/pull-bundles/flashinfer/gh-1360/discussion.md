@@ -1,4 +1,0 @@
-- 2025-07-31 `elvischenv` on `flashinfer/decode.py`:2024: should be out = out.data (https://github.com/flashinfer-ai/flashinfer/pull/1360#discussion_r2244843966)
-- 2025-08-01 `yzh119` on `flashinfer/prefill.py`:2975: Can you add some docstring here (to help user better understand the behavior of out dtype, especially for nvfp4)? (https://github.com/flashinfer-ai/flashinfer/pull/1360#discussion_r2246648618)
-- 2025-08-01 `weireweire`: kernel aritifactory and the hash updated, local test passed. we can merge now. (https://github.com/flashinfer-ai/flashinfer/pull/1360#issuecomment-3143764701)
-- 2025-08-01 `yzh119`: The failed test is because of ( the installed cudnn version is not compatible with torch, will fix that in standalone PRs. (https://github.com/flashinfer-ai/flashinfer/pull/1360#issuecomment-3145310701)

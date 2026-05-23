@@ -1,2 +1,0 @@
-- 2026-02-17 `kahyunnam`: Benchmarking results: python3 /workspace/benchmarks/bench cute dsl add rmsnorm fp4quant.py Before fix: After fix: (https://github.com/flashinfer-ai/flashinfer/pull/2573#issuecomment-3917258364)
-- 2026-02-18 `kahyunnam`: [FAILED] Pipeline [ 44234479]( 16/20 passed B300 only failed due to exceeded time, considering this passing (https://github.com/flashinfer-ai/flashinfer/pull/2573#issuecomment-3922291372)

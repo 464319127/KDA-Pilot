@@ -1,4 +1,0 @@
-- 2025-12-24 `PerkzZheng` on `include/flashinfer/trtllm/fmha/fmhaKernels.cuh`:666: It makes sense and I have fixed it. (https://github.com/flashinfer-ai/flashinfer/pull/2265#discussion_r2645899331)
-- 2025-12-24 `PerkzZheng` on `include/flashinfer/trtllm/fmha/kernelParams.h`:55: See where divisor 1 is properly handled so shift will just be ignored. However, I will make the changes so that is always positive. (https://github.com/flashinfer-ai/flashinfer/pull/2265#discussion_r2645919166)
-- 2026-01-07 `bkryu`: @yzh119, unit test failures on Blackwell cards are unrelated failures 👍 (https://github.com/flashinfer-ai/flashinfer/pull/2265#issuecomment-3721015466)
-- 2026-01-07 `yzh119`: The only failed public CI ("script returned exit code 143") is not relevant: bypass and merge to unblock 0.6.0 release (https://github.com/flashinfer-ai/flashinfer/pull/2265#issuecomment-3721302594)

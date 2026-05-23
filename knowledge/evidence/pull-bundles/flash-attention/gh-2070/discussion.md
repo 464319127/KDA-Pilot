@@ -1,1 +1,0 @@
-- 2025-12-15 `drisspg` on `flash_attn/cute/interface.py`:697: ima do this one in a follow up to keep PR cleaner (https://github.com/Dao-AILab/flash-attention/pull/2070#discussion_r2620888469)

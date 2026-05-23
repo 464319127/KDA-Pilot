@@ -1,1 +1,0 @@
-- 2025-09-16 `yzh119` on `flashinfer/deep_gemm.py`:1134: How about sm10x as we only support 100 and 103 at this moment (https://github.com/flashinfer-ai/flashinfer/pull/1694#discussion_r2353737537)

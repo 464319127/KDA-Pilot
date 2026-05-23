@@ -1,1 +1,0 @@
-- 2025-09-30 `yzh119` on `flashinfer/utils.py`:20: There are some other functions in this file using functools.cache, we should unify to style to either all using @functools.cache or @cache (https://github.com/flashinfer-ai/flashinfer/pull/1824#discussion_r2393012987)

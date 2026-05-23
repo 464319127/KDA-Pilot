@@ -1,3 +1,0 @@
-- 2026-01-14 `mickqian` commented: great job. have you tried if it works with --warmup --enable-torch-compile? (https://github.com/sgl-project/sglang/pull/17077#pullrequestreview-3660612413)
-- 2026-01-14 `yuan-luo`: great job. have you tried if it works with --warmup --enable-torch-compile? @mickqian It works. (https://github.com/sgl-project/sglang/pull/17077#issuecomment-3749520487)
-- 2026-01-14 `mickqian`: great job. have you tried if it works with --warmup --enable-torch-compile? I've tested and it works fine. brilliant job (https://github.com/sgl-project/sglang/pull/17077#issuecomment-3749538373)

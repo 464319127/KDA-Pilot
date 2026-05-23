@@ -1,3 +1,0 @@
-- 2026-02-07 `tridao`: @drisspg lets bump to cutlass dsl 4.4.0.dev1 and then we can merge (https://github.com/Dao-AILab/flash-attention/pull/2216#issuecomment-3864375951)
-- 2026-02-08 `drisspg` on `flash_attn/cute/pipeline.py`:215: Is this correct.. hmm (https://github.com/Dao-AILab/flash-attention/pull/2216#discussion_r2778368397)
-- 2026-02-08 `drisspg` on `flash_attn/cute/pipeline.py`:215: yes this is a subclass that is needed for tcgen05 (https://github.com/Dao-AILab/flash-attention/pull/2216#discussion_r2778372859)

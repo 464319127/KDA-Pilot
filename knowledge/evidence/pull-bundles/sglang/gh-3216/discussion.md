@@ -1,3 +1,0 @@
-- 2025-01-30 `BBuf`: Will the common library be compiled and linked automatically? (https://github.com/sgl-project/sglang/pull/3216#issuecomment-2624654525)
-- 2025-01-30 `zhyncs`: Will the common library be compiled and linked automatically? It's safe to merge since we haven't used any components yet. I will do this in a follow-up. (https://github.com/sgl-project/sglang/pull/3216#issuecomment-2624658477)
-- 2025-01-30 `zhyncs`: Q: Why not directly use tensorrt llm as a third party managed by git submodule? A: Because tensorrt llm itself is too large and has many dependencies. If used as a git submodule, installing and downloading it would either take up too ... (https://github.com/sgl-project/sglang/pull/3216#issuecomment-2624665301)

@@ -1,5 +1,0 @@
-- 2025-12-02 `ispobock` on `test/srt/test_piecewise_cuda_graph.py`:434: I think we can move it to another file, for example test piecewise cuda graph parallel.py. We can also add other parallel related test on it. It can be run on 4 gpu or 8 gpu runners. (https://github.com/sgl-project/sglang/pull/14164#discussion_r2581099616)
-- 2025-12-02 `ispobock` on `python/sglang/srt/layers/moe/fused_moe_triton/layer.py`:1142: use TopKOutputChecker.format is standard? (https://github.com/sgl-project/sglang/pull/14164#discussion_r2581147494)
-- 2025-12-02 `ispobock` on `test/srt/run_suite.py`:152: I saw this test is already in per-commit-4-gpu. (https://github.com/sgl-project/sglang/pull/14164#discussion_r2581157368)
-- 2025-12-02 `Oasis-Git` on `test/srt/run_suite.py`:152: Looks like it's added by @yuan-luo. Should we remove it to setup a new test parallel file? (https://github.com/sgl-project/sglang/pull/14164#discussion_r2582545472)
-- 2025-12-03 `ispobock` on `test/srt/run_suite.py`:161: Could you verify if it's still 1200? (https://github.com/sgl-project/sglang/pull/14164#discussion_r2585204693)

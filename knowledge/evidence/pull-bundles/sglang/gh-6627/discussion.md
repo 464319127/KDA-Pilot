@@ -1,8 +1,0 @@
-- 2025-05-26 `yuan-luo`: The benchmark script: Before the fix result: After fix result: (https://github.com/sgl-project/sglang/pull/6627#issuecomment-2909662320)
-- 2025-05-26 `BBuf`: The benchmark script: Before the fix result: After fix result: Good job. Can you add the benchmark script to (https://github.com/sgl-project/sglang/pull/6627#issuecomment-2909801247)
-- 2025-05-26 `yuan-luo`: The benchmark script: Before the fix result: After fix result: Good job. Can you add the benchmark script to Hi @BBuf, thanks for the comments. I've added benchmark test case in the folder. (https://github.com/sgl-project/sglang/pull/6627#issuecomment-2909993782)
-- 2025-05-27 `yuan-luo`: Refactored the test case according to @BBuf 's comments. Before fix, the result is: After fix, the result is: (https://github.com/sgl-project/sglang/pull/6627#issuecomment-2911003155)
-- 2025-05-27 `BBuf` on `benchmark/kernels/fused_moe_triton/benchmark_pre_reorder_triton.py`:12: The batch size (bs) and topk can be combined using the product function. Refer to for more details. (https://github.com/sgl-project/sglang/pull/6627#discussion_r2108103906)
-- 2025-05-27 `yuan-luo` on `benchmark/kernels/fused_moe_triton/benchmark_pre_reorder_triton.py`:12: Revised to use product. (https://github.com/sgl-project/sglang/pull/6627#discussion_r2108287334)
-- 2025-05-27 `BBuf` approved: Please rename benchmark script to benchmark ep pre reorder triton.py (https://github.com/sgl-project/sglang/pull/6627#pullrequestreview-2869806595)
-- 2025-05-27 `yuan-luo`: Please rename benchmark script to benchmark ep pre reorder triton.py Done. (https://github.com/sgl-project/sglang/pull/6627#issuecomment-2911391752)

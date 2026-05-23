@@ -1,2 +1,0 @@
-- 2025-10-28 `ch-wan`: @ishandhanani @wenscarl I have pushed a fix but I don't have a test environment. Could you take a look? (https://github.com/sgl-project/sglang/pull/12259#issuecomment-3458286674)
-- 2025-10-29 `trevor-m`: @ch-wan I am able to successfully launch the PD disagg server (same command as @wenscarl I believe) with your latest update (https://github.com/sgl-project/sglang/pull/12259#issuecomment-3459196298)

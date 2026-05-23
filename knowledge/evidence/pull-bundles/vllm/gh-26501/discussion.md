@@ -1,2 +1,0 @@
-- 2025-10-09 `csy1204` on `requirements/common.txt`:41: This version fixes the issue that occurred in the previous PR - PR: [ ci]( - Fixed PR (https://github.com/vllm-project/vllm/pull/26501#discussion_r2417341703)
-- 2025-10-13 `csy1204`: @mgoin All CI checks are green. When you get a chance, could you kindly review this PR? Thank you! (https://github.com/vllm-project/vllm/pull/26501#issuecomment-3398221705)

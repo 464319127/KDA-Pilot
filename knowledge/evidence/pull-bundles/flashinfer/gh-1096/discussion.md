@@ -1,4 +1,0 @@
-- 2025-05-31 `Edenzzzz`: Thanks for supporting this! I wonder what are the major performance benefits compared to NCCL and if there are benchmark numbers? (https://github.com/flashinfer-ai/flashinfer/pull/1096#issuecomment-2925313995)
-- 2025-06-02 `yzh119` on `flashinfer/comm.py`:519: I can confirm the values are aligned. (https://github.com/flashinfer-ai/flashinfer/pull/1096#discussion_r2119903549)
-- 2025-06-02 `yzh119` on `flashinfer/comm.py`:600: Better to confirm with trtllm team. (https://github.com/flashinfer-ai/flashinfer/pull/1096#discussion_r2119904310)
-- 2025-06-02 `yzh119` approved: Overall LGTM, let's move on to the following comm ops (moe). (https://github.com/flashinfer-ai/flashinfer/pull/1096#pullrequestreview-2886529054)

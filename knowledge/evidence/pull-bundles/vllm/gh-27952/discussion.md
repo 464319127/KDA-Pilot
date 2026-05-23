@@ -1,4 +1,0 @@
-- 2025-11-03 `hmellor`: Both Blackwell tests passed in last night's nightly. So these appear to be new and legitimate failures. (https://github.com/vllm-project/vllm/pull/27952#issuecomment-3482031538)
-- 2025-11-04 `hmellor`: The changelog doesn't look like it fixes any bugs. We have a fix for the unquantised test (relaxing the tolerances), but I'm still waiting for a solution for the quantised moe test. (https://github.com/vllm-project/vllm/pull/27952#issuecomment-3487428103)
-- 2025-11-07 `hmellor`: contains the MoE fix and was included in 0.5.2 released 1h ago (https://github.com/vllm-project/vllm/pull/27952#issuecomment-3500548072)
-- 2025-11-07 `hmellor`: Changing the requirements/dockerfile already does trigger full CI. There are some optional ones that are only run nightly, but many of those are failing already and so would block this PR from merging. (https://github.com/vllm-project/vllm/pull/27952#issuecomment-3505376795)

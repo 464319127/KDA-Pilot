@@ -1,3 +1,0 @@
-- 2025-11-12 `kaixih` approved: Just had a sync with @wenscarl. The root cause of the NaN issue wasn’t that the loader failed to map physical to logical experts correctly; rather, it was that the mapping must include all physical expert indices when sglang require global experts=True. ... (https://github.com/sgl-project/sglang/pull/13162#pullrequestreview-3455194995)
-- 2025-11-12 `Fridge003`: @kaixih @wenscarl Have you verified how this PR works on GB200? (https://github.com/sgl-project/sglang/pull/13162#issuecomment-3523865503)
-- 2025-11-12 `wenscarl`: @kaixih @wenscarl Have you verified how this PR works on GB200? Verified it fix the nan issue running PD disagg workload. (https://github.com/sgl-project/sglang/pull/13162#issuecomment-3523908127)

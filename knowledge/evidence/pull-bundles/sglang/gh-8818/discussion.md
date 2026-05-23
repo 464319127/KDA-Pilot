@@ -1,3 +1,0 @@
-- 2025-08-06 `HydraQYH`: Great Job. Thanks for porting the kernel updates. (https://github.com/sgl-project/sglang/pull/8818#issuecomment-3157162887)
-- 2025-08-12 `HydraQYH`: @hhzguo Hi, I saw you force pushed the code. The lint issue is resolved. Are there any other updates? (https://github.com/sgl-project/sglang/pull/8818#issuecomment-3177979732)
-- 2025-08-12 `hhzguo`: @hhzguo Hi, I saw you force pushed the code. The lint issue is resolved. Are there any other updates? @HydraQYH That's great and thank you for reviewing the change. I don't have other updates for the moment. (https://github.com/sgl-project/sglang/pull/8818#issuecomment-3180301580)

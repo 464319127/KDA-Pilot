@@ -1,2 +1,0 @@
-- 2025-10-18 `yzh119` on `tests/utils/test_fp4_quantize.py`:23: Why removing test cases? (https://github.com/flashinfer-ai/flashinfer/pull/1927#discussion_r2441730562)
-- 2025-10-22 `wenscarl`: @yzh119 could you trigger the CI? It seems the AI comments are just nit-picking. Not sure what exactly blocks the merge. (https://github.com/flashinfer-ai/flashinfer/pull/1927#issuecomment-3431197619)

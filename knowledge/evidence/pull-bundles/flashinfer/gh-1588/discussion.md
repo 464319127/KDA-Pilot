@@ -1,4 +1,0 @@
-- 2025-08-27 `yzh119` on `csrc/trtllm_fmha_kernel_launcher.cu`:164: better to annotate the reason why we specify 0 here. (https://github.com/flashinfer-ai/flashinfer/pull/1588#discussion_r2302571967)
-- 2025-08-27 `yzh119` on `flashinfer/decode.py`:2249: This value could be directly inferred from workspace buffer tensor so I don't think it's necessary to change interface at python side. (https://github.com/flashinfer-ai/flashinfer/pull/1588#discussion_r2302874376)
-- 2025-08-27 `yzh119` on `flashinfer/decode.py`:895: I don't feel like this is required as we can infered it from self.float workspace buffer (https://github.com/flashinfer-ai/flashinfer/pull/1588#discussion_r2302883416)
-- 2025-08-27 `yzh119` approved: cc @weireweire for the interface change, now workspace size is passed to C++ side as an argument (https://github.com/flashinfer-ai/flashinfer/pull/1588#pullrequestreview-3158514997)

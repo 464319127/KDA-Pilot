@@ -1,1 +1,0 @@
-- 2025-08-28 `youkaichao`: kernel tests passed, failed tests are unrelated. merging. (https://github.com/vllm-project/vllm/pull/23791#issuecomment-3232280392)

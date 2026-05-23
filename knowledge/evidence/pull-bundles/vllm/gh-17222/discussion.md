@@ -1,2 +1,0 @@
-- 2025-04-27 `tlrmchlsmth` on `vllm/config.py`:4091: Are there any caveats to the static forward context? Can we always use this or only sometimes? (I'm not sure) Could you add a comment if there's anything folks should be careful of? (https://github.com/vllm-project/vllm/pull/17222#discussion_r2061952718)
-- 2025-04-27 `heheda12345` on `vllm/config.py`:4091: I've updated the comment to show that there may be different types of layers in forward context. (https://github.com/vllm-project/vllm/pull/17222#discussion_r2061961567)

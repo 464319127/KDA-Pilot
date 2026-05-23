@@ -1,3 +1,0 @@
-- 2025-01-13 `youkaichao` on `vllm/attention/backends/abstract.py`:98: can you directly make this an attribute? why do we need a function here? (https://github.com/vllm-project/vllm/pull/11981#discussion_r1913147336)
-- 2025-01-14 `youkaichao` on `vllm/attention/backends/abstract.py`:37: upon reflection, I think this name is not intuitive enough. can you rename it to accept output buffer to be clear? (https://github.com/vllm-project/vllm/pull/11981#discussion_r1914267829)
-- 2025-01-14 `wangxiyuan` on `vllm/attention/backends/blocksparse_attn.py`:90: Base on previous logic, it's true to keep the same as before. See L95. While it should be False indeed after reading your PR (https://github.com/vllm-project/vllm/pull/11981#discussion_r1914307082)

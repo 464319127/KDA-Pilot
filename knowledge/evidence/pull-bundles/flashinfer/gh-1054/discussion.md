@@ -1,3 +1,0 @@
-- 2025-05-13 `Edenzzzz`: Confirmed that this combined with setting prefill bs to 1 does make the kernel faster. (H100) (https://github.com/flashinfer-ai/flashinfer/pull/1054#issuecomment-2874769673)
-- 2025-05-13 `yzh119`: Confirmed that this combined with setting prefill bs to 1 does make the kernel faster. <img alt="image" width="348" src=" Which is the GPU architecture you are testing on? (https://github.com/flashinfer-ai/flashinfer/pull/1054#issuecomment-2874978931)
-- 2025-05-13 `yzh119` on `include/flashinfer/attention/pod.cuh`:349: It's interesting to me, and likely a bug of cudaOccupancyMaxActiveBlocksPerMultiprocessor. Let's merge this first, thanks for the contribution! (https://github.com/flashinfer-ai/flashinfer/pull/1054#discussion_r2085936428)

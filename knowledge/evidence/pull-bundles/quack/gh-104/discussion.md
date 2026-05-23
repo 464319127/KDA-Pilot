@@ -1,1 +1,0 @@
-- 2026-04-13 `tridao`: If CUDA VISIBLE DEVICES isn't set, does this assign different GPUs to each subprocess? (https://github.com/Dao-AILab/quack/pull/104#issuecomment-4233644488)

@@ -1,3 +1,0 @@
-- 2026-04-13 `BBuf`: I dug into the default sglang JIT/CUTLASS NVFP4 failure we saw on B200 without the FlashInfer override. The failure is not in initialize() or run(): cutlass scaled fp4 mm sm100 is already rejecting the problem at can implement(). The first failing Wan2.2 ... (https://github.com/sgl-project/sglang/pull/22672#issuecomment-4235723873)
-- 2026-04-14 `BBuf`: wan2.2 - bf16 - nvfp4 (https://github.com/sgl-project/sglang/pull/22672#issuecomment-4240609451)
-- 2026-04-14 `mickqian`: bypassing diffusion b200 ci since runner down (https://github.com/sgl-project/sglang/pull/22672#issuecomment-4241861130)

@@ -1,1 +1,0 @@
-- 2025-12-11 `aleozlx`: ci pipeline seems clean (https://github.com/flashinfer-ai/flashinfer/pull/2190#issuecomment-3644074042)

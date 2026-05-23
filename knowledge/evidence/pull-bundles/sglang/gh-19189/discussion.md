@@ -1,4 +1,0 @@
-- 2026-02-24 `nvpohanh`: @wenscarl Should we mark this PR as DRAFT until FlashInfer PR has been merged and SGLang has upgraded to a new FlashInfer version containing the fix? Thanks! (https://github.com/sgl-project/sglang/pull/19189#issuecomment-3949902059)
-- 2026-02-25 `wenscarl`: @nvpohanh Actually this PR doesn't rely on flashinfer fix or update which add coverage to the cases when the first dim is not power of 2. (https://github.com/sgl-project/sglang/pull/19189#issuecomment-3959141703)
-- 2026-03-02 `nvpohanh`: @wenscarl Could you update the PR description? Credits to @danisereb. Depends on flashinfer fix: This line makes me wonder if this is blocked by FlashInfer PR. Thanks! (https://github.com/sgl-project/sglang/pull/19189#issuecomment-3982552407)
-- 2026-03-02 `nvpohanh`: @Fridge003 Could you assign this to the MoE expert for review? This is a small change. Thanks! (https://github.com/sgl-project/sglang/pull/19189#issuecomment-3982554001)

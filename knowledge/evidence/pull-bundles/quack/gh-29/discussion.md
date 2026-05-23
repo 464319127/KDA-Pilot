@@ -1,1 +1,0 @@
-- 2025-08-19 `tridao` on `quack/symmetric_dense_gemm_sm90.py`:1953: let's add d.stride(1) == 1 also (https://github.com/Dao-AILab/quack/pull/29#discussion_r2284026623)

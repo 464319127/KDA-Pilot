@@ -1,6 +1,0 @@
-- 2025-09-26 `lifuhuang` on `sgl-kernel/python/sgl_kernel/flash_attn.py`:158: TODO: Need to check in first and bump up sgl-kernel. (https://github.com/sgl-project/sglang/pull/10937#discussion_r2380817915)
-- 2025-09-26 `lifuhuang` on `sgl-kernel/python/sgl_kernel/flash_attn.py`:158: waiting for to merge first. (https://github.com/sgl-project/sglang/pull/10937#discussion_r2381180140)
-- 2025-09-27 `Swipe4057`: The H100-H200 series is not supported by FA4, right? (https://github.com/sgl-project/sglang/pull/10937#issuecomment-3341284988)
-- 2025-10-01 `cicirori`: The H100-H200 series is not supported by FA4, right? It was restricted to sm100 because of we only tested this on blackwell primary optimization object. and FA4 do support sm90 when page table is None. It would be nice if you can ... (https://github.com/sgl-project/sglang/pull/10937#issuecomment-3357931686)
-- 2025-10-07 `zhyncs` changes_requested: @lifuhuang can u upgrade sgl-kernel v0.3.15 in this pr (https://github.com/sgl-project/sglang/pull/10937#pullrequestreview-3308273833)
-- 2025-10-08 `lifuhuang`: @lifuhuang can u upgrade sgl-kernel v0.3.15 in this pr done (https://github.com/sgl-project/sglang/pull/10937#issuecomment-3379504723)

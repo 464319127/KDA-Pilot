@@ -1,1 +1,0 @@
-- 2026-04-22 `HaiShaw` on `python/sglang/srt/layers/quantization/fp8.py`:54: make sure this import is only on hip with use aiter. (https://github.com/sgl-project/sglang/pull/23319#discussion_r3121797019)

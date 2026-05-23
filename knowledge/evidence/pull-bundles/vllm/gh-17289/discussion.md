@@ -1,1 +1,0 @@
-- 2025-04-28 `LucasWilkinson` on `csrc/torch_bindings.cpp`:136: nit: maybe lets just move this down to after cutlass sparse compress so it falls in that same ifndef USE ROCM block (https://github.com/vllm-project/vllm/pull/17289#discussion_r2063990983)

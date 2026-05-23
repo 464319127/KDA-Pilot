@@ -1,1 +1,0 @@
-- 2025-08-25 `nvpohanh`: @WoosukKwon We found that this optimization can reduce gaps between decoding steps when running with low concurrency. Do you plan to continue working on this so that this can be merged? Thanks! (https://github.com/vllm-project/vllm/pull/23174#issuecomment-3219174623)

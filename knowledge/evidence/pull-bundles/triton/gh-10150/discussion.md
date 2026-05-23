@@ -1,2 +1,0 @@
-- 2026-04-29 `aeng-openai` on `python/triton_kernels/triton_kernels/matmul_details/_common.py`:189: this should do a loop and then accumulate flops and bytes it might not be the case that NUM SLICES BLOCK SIZE but better this way so it is generally correct (https://github.com/triton-lang/triton/pull/10150#discussion_r3158182360)
-- 2026-04-29 `aeng-openai` on `python/triton_kernels/triton_kernels/matmul_details/_common.py`:249: this can be min(next power of 2(..), 1024) or something (https://github.com/triton-lang/triton/pull/10150#discussion_r3158183670)

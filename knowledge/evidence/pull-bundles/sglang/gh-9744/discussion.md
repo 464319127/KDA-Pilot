@@ -1,5 +1,0 @@
-- 2025-09-11 `mingfeima` on `sgl-kernel/csrc/cpu/bmm.cpp`:98: change this to parallel 2d (https://github.com/sgl-project/sglang/pull/9744#discussion_r2339296735)
-- 2025-09-11 `mingfeima` on `sgl-kernel/csrc/cpu/gemm_fp8.cpp`:540: what's the difference with tinygemm kernel (https://github.com/sgl-project/sglang/pull/9744#discussion_r2339311053)
-- 2025-09-23 `blzheng` on `sgl-kernel/csrc/cpu/gemm_fp8.cpp`:540: The main difference between tinygemm kernel and tinygemm kernel2 lies in scale. - tinygemm kernel: block-wise scale - tinygemm kernel2: a single scale (https://github.com/sgl-project/sglang/pull/9744#discussion_r2370828737)
-- 2025-10-11 `mingfeima` on `sgl-kernel/csrc/cpu/bmm.cpp`:107: use int64 t, since all the rest are int64 t (https://github.com/sgl-project/sglang/pull/9744#discussion_r2422368989)
-- 2025-10-11 `mingfeima` on `sgl-kernel/csrc/cpu/gemm.h`:269: add a comment this one is for per tensor quantization, and the last one is for block quantization (https://github.com/sgl-project/sglang/pull/9744#discussion_r2422370220)

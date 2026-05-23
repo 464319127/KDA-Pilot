@@ -1,1 +1,0 @@
-- 2025-12-18 `Isotr0py` on `vllm/attention/ops/triton_unified_attention.py`:211: Let's leave sliding window pruning to a following PR. We need this PR to unblock Molmo2 models PR first. (https://github.com/vllm-project/vllm/pull/30974#discussion_r2633052587)

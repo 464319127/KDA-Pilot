@@ -1,1 +1,0 @@
-- 2026-01-29 `yzh119` approved: Besides this fix, another change we should think about is to add nvcc flags override similar to in (change to [9, 10, 11, 12]), cc @aleozlx for confirmation. It's weird to see this bug was not revealed in our previous CI, I'm ... (https://github.com/flashinfer-ai/flashinfer/pull/2439#pullrequestreview-3725522825)

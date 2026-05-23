@@ -1,4 +1,0 @@
-- 2025-11-22 `drisspg` on `flash_attn/cute/paged_kv.py`:179: from @fengxie is better but may be a perf hit (https://github.com/Dao-AILab/flash-attention/pull/2025#discussion_r2553455165)
-- 2025-11-22 `fengxie` on `flash_attn/cute/paged_kv.py`:179: Thanks fore reporting. This one probably better for perf. (https://github.com/Dao-AILab/flash-attention/pull/2025#discussion_r2553484139)
-- 2025-11-25 `drisspg` on `flash_attn/cute/flash_bwd_sm100.py`:564: this is all ruff formatting (https://github.com/Dao-AILab/flash-attention/pull/2025#discussion_r2560955324)
-- 2025-11-25 `drisspg` on `flash_attn/cute/tile_scheduler.py`:290: no public divisor attr on the divmods (https://github.com/Dao-AILab/flash-attention/pull/2025#discussion_r2560958712)

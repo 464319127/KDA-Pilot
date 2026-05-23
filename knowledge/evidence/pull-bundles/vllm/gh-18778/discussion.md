@@ -1,3 +1,0 @@
-- 2025-05-28 `houseroad` on `csrc/quantization/cutlass_w8a8/c3x/scaled_mm_sm100_fp8_dispatch.cuh`:50: Shall we try Shape ? (https://github.com/vllm-project/vllm/pull/18778#discussion_r2111125586)
-- 2025-05-28 `houseroad` approved: Looks good. shall we do some accuracy test? (https://github.com/vllm-project/vllm/pull/18778#pullrequestreview-2873892411)
-- 2025-06-03 `mgoin` on `csrc/quantization/cutlass_w8a8/c3x/scaled_mm_sm100_fp8_dispatch.cuh`:50: I found Shape to do best, updated (https://github.com/vllm-project/vllm/pull/18778#discussion_r2124806499)

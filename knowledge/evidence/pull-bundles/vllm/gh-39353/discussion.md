@@ -1,2 +1,0 @@
-- 2026-04-08 `yewentao256`: Note that this won't break V1 as well VLLM USE V2 MODEL RUNNER=0 pytest -s tests/v1/e2e/general/test async scheduling.py ================================ 1 passed, 2 skipped, 24 warnings in 199.62s (0:03:19) ================================= (https://github.com/vllm-project/vllm/pull/39353#issuecomment-4209841827)
-- 2026-04-09 `drisspg` commented: yeah this looks right, good catch (https://github.com/vllm-project/vllm/pull/39353#pullrequestreview-4084043543)

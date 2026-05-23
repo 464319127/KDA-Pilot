@@ -1,5 +1,0 @@
-- 2025-11-06 `ZhengdQin` on `python/sglang/srt/models/deepseek_v2.py`:3568: Is this useful for all the backends except NPU? (https://github.com/sgl-project/sglang/pull/12759#discussion_r2497912402)
-- 2025-11-06 `ZhengdQin` on `python/sglang/srt/models/deepseek_v2.py`:4015: Is this continue affects the other backends? (https://github.com/sgl-project/sglang/pull/12759#discussion_r2497916392)
-- 2025-11-06 `ZhengdQin` on `python/sglang/srt/model_executor/model_runner.py`:210: Add some comments here (https://github.com/sgl-project/sglang/pull/12759#discussion_r2497919955)
-- 2025-11-06 `ZhengdQin` on `python/sglang/srt/layers/moe/ep_moe/layer.py`:544: delete the path for w8a8 (https://github.com/sgl-project/sglang/pull/12759#discussion_r2498072230)
-- 2025-11-20 `iforgetmyname` on `python/sglang/srt/models/deepseek_v2.py`:1471: revert back this change (https://github.com/sgl-project/sglang/pull/12759#discussion_r2544137685)

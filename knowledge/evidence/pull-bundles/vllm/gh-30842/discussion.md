@@ -1,2 +1,0 @@
-- 2025-12-17 `houseroad`: Or wondering if we can support num kv heads=1 in FlashInfer trtllm kernel, cc: @yzh119 (https://github.com/vllm-project/vllm/pull/30842#issuecomment-3664039702)
-- 2025-12-17 `yeqcharlotte`: we run into the problem on a smaller debug model run. probably normal sized model wouldn't run into these issues. cc: @pavanimajety @mgoin if the change makes sense to you. (https://github.com/vllm-project/vllm/pull/30842#issuecomment-3664270023)

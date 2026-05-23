@@ -1,2 +1,0 @@
-- 2026-03-20 `sychen52` on `csrc/trtllm_fmha_kernel_launcher.cu`:318: duplicate twice should be fine. I don't see this being reuse in many places. (https://github.com/flashinfer-ai/flashinfer/pull/2844#discussion_r2968266317)
-- 2026-03-24 `saltyminty` on `include/flashinfer/trtllm/fmha/kernelParams.h`:485: Not a new regression I believe (this was already an issue as indicated by the comment on kernelParams.h:732 (https://github.com/flashinfer-ai/flashinfer/pull/2844#discussion_r2983496086)

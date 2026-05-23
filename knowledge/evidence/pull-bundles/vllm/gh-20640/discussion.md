@@ -1,1 +1,0 @@
-- 2025-07-08 `mgoin`: It would be helpful to have a kernel level result like benchmark cutlass fp4 moe.py but this result seems reasonable to me for Blackwell, thanks (https://github.com/vllm-project/vllm/pull/20640#issuecomment-3050291942)

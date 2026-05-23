@@ -1,2 +1,0 @@
-- 2025-11-24 `robertgshaw2-redhat` on `vllm/platforms/cuda.py`:417: Can we only do this for the first rank? (https://github.com/vllm-project/vllm/pull/29337#discussion_r2557641532)
-- 2025-11-24 `mgoin` on `vllm/platforms/cuda.py`:417: Not if we keep the list. scope="local" only works with once logs and if I try info once I get TypeError: unhashable type: 'list' We could extend the scope support to non- once methods, but currently we aren't overriding those at all ... (https://github.com/vllm-project/vllm/pull/29337#discussion_r2557797075)

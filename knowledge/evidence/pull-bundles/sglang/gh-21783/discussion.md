@@ -1,2 +1,0 @@
-- 2026-04-01 `Fridge003`: Benchmark results Model: GLM-5 fp8 on B200, TP8 Baseline: fp8 kv cache + flashmla sparse prefill + flashmla kv decode PR: fp8 kv cache + trtllm preill + trtllm decode Send-One Baseline: PR: 1k-isl-1k-osl-16-concurrency Baseline: PR: (https://github.com/sgl-project/sglang/pull/21783#issuecomment-4167711618)
-- 2026-04-01 `Fridge003`: Accuracy Results Launch: GSM8k-20 shots: GPQA: (https://github.com/sgl-project/sglang/pull/21783#issuecomment-4167886019)

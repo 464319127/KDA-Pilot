@@ -1,5 +1,0 @@
-- 2025-09-05 `yicwang`: Hi @yicwang would you mind fixing pre-commits errors: Sorry for that, just fixed the latest Gemini suggested change... (https://github.com/flashinfer-ai/flashinfer/pull/1633#issuecomment-3257208092)
-- 2025-09-05 `yzh119` on `flashinfer/fp4_quantization.py`:700: Please remove .cuda(), we should expect the input tensor to be device tensors. .cuda() will move tensors from GPU id = 1 to GPU 0: (https://github.com/flashinfer-ai/flashinfer/pull/1633#discussion_r2324236831)
-- 2025-09-05 `yzh119` approved: @yongwww can you help triggering Blackwell ci? We can merge once that got passed (https://github.com/flashinfer-ai/flashinfer/pull/1633#pullrequestreview-3190363299)
-- 2025-09-05 `yongwww`: @yongwww can you help triggering Blackwell ci? We can merge once that got passed Sure, I can trigger it manually and report back later (https://github.com/flashinfer-ai/flashinfer/pull/1633#issuecomment-3259330537)
-- 2025-09-06 `yongwww`: The test is passing on blackwell ci, looks good to me. (https://github.com/flashinfer-ai/flashinfer/pull/1633#issuecomment-3260093365)

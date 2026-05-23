@@ -1,3 +1,0 @@
-- 2025-11-10 `tridao`: Clarifying my understanding: if q stage == 1, is there overlapping between softmax and mma? (https://github.com/Dao-AILab/flash-attention/pull/1993#issuecomment-3509485564)
-- 2026-01-06 `jayhshah` on `flash_attn/cute/flash_fwd_sm100.py`:2062: Replacing total block count here looks like a mistake (https://github.com/Dao-AILab/flash-attention/pull/1993#discussion_r2666586142)
-- 2026-01-07 `jayhshah` on `flash_attn/cute/flash_fwd_sm100.py`:1067: This condition is always true (https://github.com/Dao-AILab/flash-attention/pull/1993#discussion_r2666659655)

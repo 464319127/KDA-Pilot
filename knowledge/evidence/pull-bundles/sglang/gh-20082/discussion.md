@@ -1,5 +1,0 @@
-- 2026-04-01 `mickqian` on `python/sglang/multimodal_gen/runtime/loader/fsdp_load.py`:292: move the logic to a helper in this file (https://github.com/sgl-project/sglang/pull/20082#discussion_r3020145438)
-- 2026-04-01 `mickqian` commented: could you attach reproducible command and output? (https://github.com/sgl-project/sglang/pull/20082#pullrequestreview-4042070670)
-- 2026-04-06 `mickqian` commented: sorry for the late review, appreciate this (https://github.com/sgl-project/sglang/pull/20082#pullrequestreview-4060730750)
-- 2026-04-12 `Edwardf0t1` on `python/sglang/multimodal_gen/runtime/loader/fsdp_load.py`:292: Created a helper function maybe dequantize fp8() (https://github.com/sgl-project/sglang/pull/20082#discussion_r3069185798)
-- 2026-04-12 `Edwardf0t1`: could you attach reproducible command and output? The command is included in the PR description: sglang generate --model-path /home/omniml data 3/zhiyuc/checkpoints/FLUX.1-dev-FP8 --prompt "A beautiful sunset over the mountains" --save-output --output-path outputs The output is attached. (https://github.com/sgl-project/sglang/pull/20082#issuecomment-4231049563)

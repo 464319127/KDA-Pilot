@@ -1,1 +1,0 @@
-- 2026-05-18 `jeejeelee` on `vllm/lora/model_manager.py`:122: Some models like gpt-oss are always 3D MoE (both Transformers 4.0 and 5.0), so we use is 3d moe model to init these models' MoE LoRA layer (FusedMoE3DWithLoRA). (https://github.com/vllm-project/vllm/pull/42242#discussion_r3255921484)

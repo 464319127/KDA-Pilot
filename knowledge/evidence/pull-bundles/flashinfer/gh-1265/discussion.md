@@ -1,1 +1,0 @@
-- 2025-07-15 `yzh119` commented: Overall LGTM, some suggestions: Following pytorch's API convention, the optional output should default to None. (https://github.com/flashinfer-ai/flashinfer/pull/1265#pullrequestreview-3022512655)

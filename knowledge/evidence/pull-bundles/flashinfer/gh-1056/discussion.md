@@ -1,1 +1,0 @@
-- 2025-05-14 `cyx-6` on `flashinfer/gemm.py`:848: use a.device directly, a[0] was lagacy of previous version of interface (https://github.com/flashinfer-ai/flashinfer/pull/1056#discussion_r2088252412)

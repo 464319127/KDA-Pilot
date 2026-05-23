@@ -1,1 +1,0 @@
-- 2025-08-24 `yzh119` approved: Thanks for the bug and yes it's beneficial to separate gen fp4 quantization sm90 module and gen fp4 quantization sm100 module, let's merge this first and then test it on (https://github.com/flashinfer-ai/flashinfer/pull/1565#pullrequestreview-3149490580)

@@ -1,4 +1,0 @@
-- 2026-01-09 `v0i0` on `flash_attn/cute/block_sparse_utils.py`:121: would we ever want this to be a fast divmod? we might already have one flying around for gqa right? (https://github.com/Dao-AILab/flash-attention/pull/2145#discussion_r2677615976)
-- 2026-01-10 `drisspg` on `flash_attn/cute/block_sparse_utils.py`:121: let me look, not a bad idea (https://github.com/Dao-AILab/flash-attention/pull/2145#discussion_r2678048100)
-- 2026-01-10 `drisspg` on `flash_attn/cute/block_sparse_utils.py`:121: so we have one for bwd but not fwd .. (https://github.com/Dao-AILab/flash-attention/pull/2145#discussion_r2678069492)
-- 2026-01-10 `drisspg` on `flash_attn/cute/block_sparse_utils.py`:121: we dont have one in the fwd surprisngly, wired one up perf seems a lil negligible will leave as a follow up (https://github.com/Dao-AILab/flash-attention/pull/2145#discussion_r2678136477)

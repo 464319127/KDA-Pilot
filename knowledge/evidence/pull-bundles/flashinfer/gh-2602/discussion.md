@@ -1,2 +1,0 @@
-- 2026-02-20 `jdebache`: Do we need to update other modules? I think usages like: are fine, since the underlying type is TensorView, so it shouldn't attempt to move? Other than that, I just went through every reference to TensorView and couldn't find any other similar ... (https://github.com/flashinfer-ai/flashinfer/pull/2602#issuecomment-3937079680)
-- 2026-02-20 `jdebache`: Looking at the test failures, e.g. Seems unrelated to these changes? I'm not sure what gdn is. Also this timeout: (https://github.com/flashinfer-ai/flashinfer/pull/2602#issuecomment-3937105149)

@@ -1,2 +1,0 @@
-- 2025-04-22 `zhyncs` on `docs/references/deepseek.md`:143: It's turned off by default for now. (https://github.com/sgl-project/sglang/pull/5628#discussion_r2054453392)
-- 2025-04-22 `Fridge003` on `docs/references/deepseek.md`:143: Do we need to turn it on? (https://github.com/sgl-project/sglang/pull/5628#discussion_r2054557541)

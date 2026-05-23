@@ -1,3 +1,0 @@
-- 2025-09-15 `alexm-redhat`: Removed the contiguous() call in sm100 cutlass mla decode(), gets additional 0.8%, for a total of 2.4% improvement. TPOT 18.7ms vs 19.15ms. (https://github.com/vllm-project/vllm/pull/24891#issuecomment-3293370589)
-- 2025-09-15 `mgoin` on `vllm/v1/attention/backends/mla/cutlass_mla.py`:218: I understand putting this in a conditional, but why can we remove the contiguous for out if we can't for lse? (https://github.com/vllm-project/vllm/pull/24891#discussion_r2349828060)
-- 2025-09-15 `alexm-redhat` on `vllm/v1/attention/backends/mla/cutlass_mla.py`:218: Most likely lse as well, I was just on the safe side, since I don't know how to test it. (https://github.com/vllm-project/vllm/pull/24891#discussion_r2349845442)

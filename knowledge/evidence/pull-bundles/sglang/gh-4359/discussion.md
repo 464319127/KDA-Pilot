@@ -1,2 +1,0 @@
-- 2025-03-13 `zhyncs`: @AniZpZ Can you rebase the main branch? BTW I tested it on an H200 with torch compile and it worked. It was a bit strange. What hardware are you using? (https://github.com/sgl-project/sglang/pull/4359#issuecomment-2719762436)
-- 2025-03-13 `AniZpZ`: @AniZpZ Can you rebase the main branch? BTW I tested it on an H200 with torch compile and it worked. It was a bit strange. What hardware are you using? ok , i will do the rebase. we tested it with H20 (https://github.com/sgl-project/sglang/pull/4359#issuecomment-2719763860)

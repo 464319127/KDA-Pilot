@@ -1,1 +1,0 @@
-- 2025-11-26 `fzyzcjy` on `python/sglang/srt/layers/moe/token_dispatcher/deepep.py`:311: iirc this may have issue, e.g. super big mem occupation (https://github.com/sgl-project/sglang/pull/13960#discussion_r2562866018)

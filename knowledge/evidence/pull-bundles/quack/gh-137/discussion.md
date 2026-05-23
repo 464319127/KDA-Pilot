@@ -1,1 +1,0 @@
-- 2026-05-14 `jaydenC88`: Some context for why this one-liner matters beyond the local B904 hit: PyTorch vendors this file at torch/ vendor/quack/cute dsl elf fix.py and runs Ruff B904 over the whole tree, so the unchained raise DSLRuntimeError(...) surfaces as a lint failure downstream (pytorch/pytorch ... (https://github.com/Dao-AILab/quack/pull/137#issuecomment-4448789262)

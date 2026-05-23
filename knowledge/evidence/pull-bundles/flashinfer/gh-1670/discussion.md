@@ -1,1 +1,0 @@
-- 2025-09-11 `yzh119`: Hi @gau-nernst sure we can go ahead with this, one note about decode.cuh: we are about to remove it, as it only uses cuda cores, and we encourage using tensor cores for decoding (where the file exists in prefill.cuh). (https://github.com/flashinfer-ai/flashinfer/pull/1670#issuecomment-3281689313)

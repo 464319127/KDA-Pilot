@@ -1,2 +1,0 @@
-- 2025-08-04 `bernhardmgruber` on `cub/cub/block/specializations/block_reduce_warp_reductions.cuh`:2: Important: I don't think we can just delete somebody's copyright, if it's explicitly listed next to NVIDIA's :S Please readd it. Otherwise the PR is good. (https://github.com/NVIDIA/cccl/pull/5408#discussion_r2252009304)
-- 2025-08-04 `miscco` on `cub/cub/block/specializations/block_reduce_warp_reductions.cuh`:28: Please include the actual algorithm file you are using (https://github.com/NVIDIA/cccl/pull/5408#discussion_r2252020249)

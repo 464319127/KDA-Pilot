@@ -1,2 +1,0 @@
-- 2025-08-19 `yiakwy-xpu-ml-framework-team` on `python/sglang/srt/layers/flashinfer_comm_fusion.py`:224: Hi, may I know the purpose of fake impl and senarios I should activate it ? (https://github.com/sgl-project/sglang/pull/9339#discussion_r2284600383)
-- 2025-08-20 `strgrb` on `python/sglang/srt/layers/flashinfer_comm_fusion.py`:224: I don't know it exactly but I followed other custom op registered in sglang, and it works for cuda graph (https://github.com/sgl-project/sglang/pull/9339#discussion_r2286860077)

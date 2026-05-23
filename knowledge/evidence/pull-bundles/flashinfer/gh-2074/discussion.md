@@ -1,3 +1,0 @@
-- 2025-11-11 `yzh119` on `flashinfer/comm/trtllm_mnnvl_ar.py`:139: Please also add buffer size in bytes to docstring. (https://github.com/flashinfer-ai/flashinfer/pull/2074#discussion_r2512835038)
-- 2025-11-12 `wenscarl` on `flashinfer/comm/trtllm_mnnvl_ar.py`:235: What If the inp is a 3D tensor? Could it be better: (https://github.com/flashinfer-ai/flashinfer/pull/2074#discussion_r2519749391)
-- 2025-11-14 `nvmbreughe` on `flashinfer/comm/trtllm_mnnvl_ar.py`:235: Added a check to ensure its a 2D tensor. Thanks for pointing this out. The check was done on the testing side, but we do need to enforce it here in addition. (https://github.com/flashinfer-ai/flashinfer/pull/2074#discussion_r2528452785)

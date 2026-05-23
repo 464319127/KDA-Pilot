@@ -1,2 +1,0 @@
-- 2026-05-09 `pyc96` on `python/sglang/srt/models/gemma4_mm.py`:828: Do we need the logs here? If the params were not loaded, we should log it in (https://github.com/sgl-project/sglang/pull/24696#discussion_r3212073160)
-- 2026-05-09 `yuan-luo` on `python/sglang/srt/models/gemma4_mm.py`:828: Good point. Removed the inline logger.warning; misses now fall through to the existing centralized unloaded params check, same as the other loader paths. (https://github.com/sgl-project/sglang/pull/24696#discussion_r3212401761)

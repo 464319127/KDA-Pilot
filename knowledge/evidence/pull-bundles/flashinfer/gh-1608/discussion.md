@@ -1,3 +1,0 @@
-- 2025-08-30 `aleozlx` on `tests/test_mm_fp4.py`:30: cc @yzh119 i can remove this block once quantization issue get resolved (https://github.com/flashinfer-ai/flashinfer/pull/1608#discussion_r2311719493)
-- 2025-08-30 `sricketts`: nit: should the title of this PR include sm110, sm120, and sm121? E.g. "feature: initial support for SM103, SM110, SM120, SM121"? (https://github.com/flashinfer-ai/flashinfer/pull/1608#issuecomment-3238922956)
-- 2025-09-02 `nvmbreughe` on `flashinfer/fp4_quantization.py`:91: If -DENABLE FP4 is not set (cuda version < 12.8), is there still any point in calling gen fp4 quantization module, or should we fail here? (https://github.com/flashinfer-ai/flashinfer/pull/1608#discussion_r2316961512)

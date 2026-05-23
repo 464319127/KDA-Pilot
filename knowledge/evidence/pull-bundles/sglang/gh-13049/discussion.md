@@ -1,4 +1,0 @@
-- 2025-11-11 `FlamingoPg`: Thanks a lot, I have some question about achieving an accuracy of 0.93 on GSM8K and 0.803 on AIME2025. Regarding these results, is there a comparison before and after adding this kernel? (https://github.com/sgl-project/sglang/pull/13049#issuecomment-3515274249)
-- 2025-11-11 `rogeryoungh`: I ran the comparison against the lmsysorg/sglang:dev image. On GSM8K, the accuracy was 0.9249 with the dev image and 0.9295 with this patch. For AIME2025, my measured accuracy is 0.803, while the official [MiniMax-M2]( model reports 0.78. (https://github.com/sgl-project/sglang/pull/13049#issuecomment-3515361327)
-- 2025-11-16 `BBuf`: Please add a kernel micro benchmark, refer to (https://github.com/sgl-project/sglang/pull/13049#issuecomment-3539387081)
-- 2025-11-17 `rogeryoungh`: I added micro-benchmarks, and below are the test results: (https://github.com/sgl-project/sglang/pull/13049#issuecomment-3541734715)

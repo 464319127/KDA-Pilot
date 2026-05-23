@@ -1,1 +1,0 @@
-- 2025-08-22 `Edenzzzz`: After this PR, I'm able to produce lossless results with Llama 3.1 8B on MMLU. Benchmark with 16k in, 4k out also runs fine. While some edge cases ([(8190, 7939)]) can still output nan, it should be fine to use in general ... (https://github.com/flashinfer-ai/flashinfer/pull/1533#issuecomment-3214164098)

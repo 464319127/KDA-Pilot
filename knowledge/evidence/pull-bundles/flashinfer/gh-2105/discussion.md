@@ -1,1 +1,0 @@
-- 2025-11-19 `yzh119` on `tests/attention/test_trtllm_gen_attention.py`:371: Can you vectorize the tensor construction loop? (and make it fully on GPU), we found that the process of creating tensor on cpu and then converting it to GPU tensor is always the bottleneck of unittests. (https://github.com/flashinfer-ai/flashinfer/pull/2105#discussion_r2540929697)

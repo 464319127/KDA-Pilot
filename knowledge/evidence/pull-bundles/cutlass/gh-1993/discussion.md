@@ -1,2 +1,0 @@
-- 2024-12-26 `alihassanijr`: @t4c1 Thank you for submitting this patch. Just a note on the assertion, it's there more as a warning to users that the generic sort comes with serious performance implications. Due to the control flow associated with it, it introduces somewhat heavy ... (https://github.com/NVIDIA/cutlass/pull/1993#issuecomment-2563076498)
-- 2024-12-26 `alihassanijr`: @hwu36 leave the assert there with a better message, or remove and make the doc clearer about the consequences? (https://github.com/NVIDIA/cutlass/pull/1993#issuecomment-2563092214)

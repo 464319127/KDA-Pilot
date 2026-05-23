@@ -1,2 +1,0 @@
-- 2025-05-09 `yzh119` on `include/flashinfer/sampling.cuh`:1229: min val and max val has dtype float, so it's encouraged to use (https://github.com/flashinfer-ai/flashinfer/pull/1050#discussion_r2081849641)
-- 2025-05-09 `yzh119` on `include/flashinfer/sampling.cuh`:1230: and this one as well.. (https://github.com/flashinfer-ai/flashinfer/pull/1050#discussion_r2082637069)

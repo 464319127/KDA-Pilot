@@ -1,2 +1,0 @@
-- 2026-01-01 `yzh119` on `flashinfer/gdn_prefill.py`:46: This is a real issue we should fix. (https://github.com/flashinfer-ai/flashinfer/pull/2276#discussion_r2656107922)
-- 2026-01-02 `yzh119` on `tests/gdn/test_prefill_delta_rule.py`:143: It was done in tests/gdn/conftest.py (https://github.com/flashinfer-ai/flashinfer/pull/2276#discussion_r2657029561)

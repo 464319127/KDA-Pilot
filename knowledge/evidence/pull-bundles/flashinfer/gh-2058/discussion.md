@@ -1,1 +1,0 @@
-- 2025-11-07 `bkryu` on `include/flashinfer/sampling.cuh`:296: This is a running maximum and used to be initialized as 0 as well so it should be fine (https://github.com/flashinfer-ai/flashinfer/pull/2058#discussion_r2501314878)

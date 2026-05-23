@@ -3,13 +3,12 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+KERNELPILOT_ROOT="$(cd "$PROJECT_ROOT/.." && pwd)"
 
-skill_dir="$PROJECT_ROOT/skills/ncu-report"
-skill_file="$skill_dir/SKILL.md"
-metrics_file="$skill_dir/references/metrics.md"
-examples_file="$skill_dir/references/examples.md"
-script_file="$skill_dir/scripts/ncu_report_digest.py"
+kernelwiki_dir="$KERNELPILOT_ROOT/external/KernelWiki"
+ncu_skill_dir="$KERNELPILOT_ROOT/external/ncu-report-skill"
 install_script="$PROJECT_ROOT/scripts/install-skill.sh"
+claude_install_script="$PROJECT_ROOT/scripts/install-skills-claude.sh"
 kernel_skill="$PROJECT_ROOT/skills/humanize-kernel-agent-loop/SKILL.md"
 
 fail() {
@@ -17,52 +16,48 @@ fail() {
     exit 1
 }
 
-[[ -f "$skill_file" ]] || fail "missing ncu-report skill"
-[[ -f "$metrics_file" ]] || fail "missing ncu-report metrics reference"
-[[ -f "$examples_file" ]] || fail "missing ncu-report examples reference"
-[[ -f "$script_file" ]] || fail "missing ncu-report digest helper"
+[[ -f "$kernelwiki_dir/SKILL.md" ]] || fail "missing KernelWiki skill"
+[[ -f "$kernelwiki_dir/scripts/query.py" ]] || fail "missing KernelWiki query helper"
+[[ -d "$kernelwiki_dir/sources/prs" ]] || fail "missing KernelWiki PR pages"
+[[ -d "$kernelwiki_dir/artifacts/prs" ]] || fail "missing KernelWiki PR artifacts"
+[[ -f "$kernelwiki_dir/queries/by-repo.md" ]] || fail "missing KernelWiki query indices"
 
-grep -q '"ncu-report"' "$install_script" \
-    || fail "install script does not install ncu-report"
-grep -q 'kernel-knowledge' "$install_script" \
-    || fail "install script does not install kernel-knowledge"
-grep -q 'sync_kernel_knowledge_skill' "$install_script" \
-    || fail "install script does not sync the KernelPilot knowledge skill"
-grep -q 'validate_kernelpilot_root' "$install_script" \
-    || fail "install script does not require a valid KernelPilot root"
-grep -q 'KernelPilot PR evidence bundles not found' "$install_script" \
-    || fail "install script does not validate PR evidence bundle path"
-grep -q 'profile first, diagnose second, optimize third' "$skill_file" \
-    || fail "skill does not encode profiling-grounded rule"
-grep -q 'SourceCounters' "$skill_file" \
-    || fail "skill does not require source-correlated counters"
-grep -q 'PmSampling' "$skill_file" \
-    || fail "skill does not require PM sampling evidence"
-grep -q 'PTX / SASS Analysis' "$skill_file" \
-    || fail "skill does not include PTX/SASS analysis"
-grep -q 'report.ncu-rep' "$skill_file" \
-    || fail "skill does not preserve ncu report artifacts"
-grep -q 'exactly one next edit' "$skill_file" \
-    || fail "skill does not force a single concrete edit"
-grep -q 'smsp__warp_issue_stalled_long_scoreboard' "$metrics_file" \
-    || fail "metrics reference lacks long scoreboard metric"
-grep -q 'smsp__warp_issue_stalled_short_scoreboard' "$metrics_file" \
-    || fail "metrics reference lacks short scoreboard metric"
-grep -q 'sm__inst_executed_pipe_tensor' "$metrics_file" \
-    || fail "metrics reference lacks tensor pipe metric"
-grep -q 'l1tex__data_bank_conflicts' "$metrics_file" \
-    || fail "metrics reference lacks shared bank conflict metric"
-grep -q 'Blackwell Pipeline Bubble Check' "$examples_file" \
-    || fail "examples lack Blackwell pipeline bubble flow"
-grep -q 'cuobjdump --dump-ptx' "$examples_file" \
-    || fail "examples lack PTX extraction"
-grep -q 'nvdisasm' "$examples_file" \
-    || fail "examples lack SASS disassembly"
-grep -q 'ncu_report_digest.py' "$examples_file" \
-    || fail "examples do not show digest helper usage"
-grep -q 'ncu-report' "$kernel_skill" \
-    || fail "kernel agent loop does not call ncu-report"
+[[ -f "$ncu_skill_dir/SKILL.md" ]] || fail "missing ncu-report-skill"
+[[ -f "$ncu_skill_dir/reference/01-workflow.md" ]] || fail "missing ncu-report-skill workflow reference"
+[[ -f "$ncu_skill_dir/reference/08-b200-metric-names.md" ]] || fail "missing ncu-report-skill B200 metric reference"
+[[ -f "$ncu_skill_dir/helpers/analyze_reports.py" ]] || fail "missing ncu-report-skill analyzer helper"
+[[ -f "$ncu_skill_dir/helpers/ncu_utils.py" ]] || fail "missing ncu-report-skill shared helper"
 
-python3 -m py_compile "$script_file"
+grep -q 'KERNELWIKI_ROOT' "$install_script" \
+    || fail "install script does not hydrate KernelWiki root"
+grep -q 'NCU_REPORT_SKILL_ROOT' "$install_script" \
+    || fail "install script does not hydrate ncu-report-skill root"
+grep -q 'sync_kernelwiki_skill' "$install_script" \
+    || fail "install script does not sync KernelWiki"
+grep -q 'sync_ncu_report_skill' "$install_script" \
+    || fail "install script does not sync ncu-report-skill"
+grep -q 'KernelWiki' "$claude_install_script" \
+    || fail "Claude installer does not link KernelWiki"
+grep -q 'ncu-report-skill' "$claude_install_script" \
+    || fail "Claude installer does not link ncu-report-skill"
 
-echo "PASS: ncu-report skill is wired"
+grep -q 'KernelWiki' "$kernel_skill" \
+    || fail "kernel agent loop does not call KernelWiki"
+grep -q 'ncu-report-skill' "$kernel_skill" \
+    || fail "kernel agent loop does not call ncu-report-skill"
+grep -q '{{KERNELWIKI_ROOT}}' "$kernel_skill" \
+    || fail "kernel agent loop does not expose KernelWiki root"
+grep -q '{{NCU_REPORT_SKILL_ROOT}}' "$kernel_skill" \
+    || fail "kernel agent loop does not expose ncu-report-skill root"
+
+python3 -m py_compile \
+    "$kernelwiki_dir/scripts/query.py" \
+    "$kernelwiki_dir/scripts/get_page.py" \
+    "$ncu_skill_dir/helpers/analyze_reports.py" \
+    "$ncu_skill_dir/helpers/extract_stall_hotspots.py"
+
+tmp_dir="$(mktemp -d)"
+trap 'rm -rf "$tmp_dir"' EXIT
+"$install_script" --target kimi --skills-dir "$tmp_dir/skills" --command-bin-dir "$tmp_dir/bin" --dry-run >/dev/null
+
+echo "PASS: KernelWiki and ncu-report-skill are wired"

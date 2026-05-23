@@ -1,2 +1,0 @@
-- 2025-06-18 `yzh119` on `include/flashinfer/sampling.cuh`:345: set granularity to VEC SIZE instead of 1. (https://github.com/flashinfer-ai/flashinfer/pull/1153#discussion_r2153661036)
-- 2025-06-22 `yzh119` on `include/flashinfer/sampling.cuh`:1275: Try adding [pdl]( support to all of these kernels, a reference can be found at 1117 (https://github.com/flashinfer-ai/flashinfer/pull/1153#discussion_r2160426565)

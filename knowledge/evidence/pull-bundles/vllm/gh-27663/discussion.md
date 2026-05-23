@@ -1,3 +1,0 @@
-- 2025-10-29 `pavanimajety` on `tests/v1/attention/test_mla_backends.py`:669: q: Why do we need to pad for backends other than cutlass mla? (https://github.com/vllm-project/vllm/pull/27663#discussion_r2474244990)
-- 2025-10-29 `pavanimajety` on `tests/v1/attention/utils.py`:250: Do we need to add a BackendConfig for FLASHINFER MLA as well? (https://github.com/vllm-project/vllm/pull/27663#discussion_r2474248686)
-- 2025-10-29 `MatthewBonanni` on `tests/v1/attention/test_mla_backends.py`:669: This is actually a requirement for FlashInfer MLA as well. I figured it doesn't hurt to just always do it (https://github.com/vllm-project/vllm/pull/27663#discussion_r2474351670)

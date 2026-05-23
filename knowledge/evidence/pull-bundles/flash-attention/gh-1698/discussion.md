@@ -1,1 +1,0 @@
-- 2025-06-06 `danthe3rd` on `hopper/flash_api.cpp`:259: I also had to use if constexpr to avoid linking errors, because some variants are not built for eg sm80. Apparently gcc is smart enough to optimize out the calls, but MSVC is not (https://github.com/Dao-AILab/flash-attention/pull/1698#discussion_r2132265675)

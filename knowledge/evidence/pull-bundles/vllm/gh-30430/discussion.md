@@ -1,3 +1,0 @@
-- 2025-12-11 `tjtanaa` on `vllm/v1/spec_decode/eagle.py`:187: A question, do we need this exception? I thought the class always exists. Am I missing something? (https://github.com/vllm-project/vllm/pull/30430#discussion_r2609091259)
-- 2025-12-11 `AndreasKaratzas` on `vllm/v1/spec_decode/eagle.py`:187: I can remove it. I thought it's a safer practice. Let me know if you insist on removing this. (https://github.com/vllm-project/vllm/pull/30430#discussion_r2609095029)
-- 2025-12-11 `AndreasKaratzas` on `vllm/v1/spec_decode/eagle.py`:187: @tjtanaa I removed the exception logic. (https://github.com/vllm-project/vllm/pull/30430#discussion_r2609121723)

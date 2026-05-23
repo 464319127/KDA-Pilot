@@ -1,1 +1,0 @@
-- 2026-01-16 `Fridge003` on `python/sglang/srt/model_executor/cuda_graph_runner.py`:208: Maybe add a comment on why we take bs num tokens per bs % mul base == 0 here as condition? (https://github.com/sgl-project/sglang/pull/16961#discussion_r2698361935)

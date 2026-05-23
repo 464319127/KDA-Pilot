@@ -1,1 +1,0 @@
-- 2025-12-17 `heheda12345` on `vllm/v1/attention/backends/triton_attn.py`:265: can you include the case for both include num layers dimension=True & =False in the comment? (https://github.com/vllm-project/vllm/pull/30687#discussion_r2625792104)

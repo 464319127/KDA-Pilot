@@ -1,4 +1,0 @@
-- 2026-05-01 `oleksandr-pavlyk` on `cub/cub/device/device_merge_sort.cuh`:106: Change from key/item to key/value improves readability, :+1:. Suggestion: Move this change to separate PR. It is not related to Python changes. (https://github.com/NVIDIA/cccl/pull/8772#discussion_r3174830938)
-- 2026-05-01 `oleksandr-pavlyk` on `docs/python/compute/index.rst`:96: Suggestion: Per naming convention outlined above, this should be d temp storage, or even d temp. (https://github.com/NVIDIA/cccl/pull/8772#discussion_r3174839291)
-- 2026-05-01 `NaderAlAwar` on `docs/python/compute/index.rst`:31: Nit: this works because it is keyword only but it would look better if we consistently put num items before op (https://github.com/NVIDIA/cccl/pull/8772#discussion_r3175060626)
-- 2026-05-01 `oleksandr-pavlyk` on `docs/python/compute/index.rst`:31: I suppose in examples as well. (https://github.com/NVIDIA/cccl/pull/8772#discussion_r3175096008)

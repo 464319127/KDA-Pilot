@@ -1,2 +1,0 @@
-- 2025-11-19 `ganyi1996ppo` on `vllm/v1/attention/backends/mla/rocm_aiter_mla.py`:186: Thanks for reminding, done. (https://github.com/vllm-project/vllm/pull/28624#discussion_r2540947411)
-- 2025-12-16 `tjtanaa`: Adding some more details to make this PR complete. These are the perf improvement on MI300x, under the workload Server command Performance Comparison: No MTP vs With MTP Metric No MTP With MTP Change % Improvement -------- -------- ---------- -------- --------------- Overall ... (https://github.com/vllm-project/vllm/pull/28624#issuecomment-3660162974)

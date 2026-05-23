@@ -1,1 +1,0 @@
-- 2024-03-18 `shunting314`: If we see some errors on this PR regarding triton API change. That should be expected since this PR is still running against a different version of triton rather than triton 2.2.x. Full tests is done in (https://github.com/pytorch/pytorch/pull/122139#issuecomment-2005215885)

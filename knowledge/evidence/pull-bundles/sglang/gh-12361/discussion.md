@@ -1,3 +1,0 @@
-- 2025-10-30 `fzyzcjy` on `python/sglang/srt/layers/attention/trtllm_mla_backend.py`:548: nit: shall we put it into forward prefill metadata etc to be more organized (https://github.com/sgl-project/sglang/pull/12361#discussion_r2476147307)
-- 2025-10-30 `wenscarl`: Could you link to the issue here? The failure should be caused by trtllm ragged attention deepseek is used for the prefill with weight absorption. We need a "decode like" kernel to handle this case. Shouldn't [trtllm batch decode with kv cache ... (https://github.com/sgl-project/sglang/pull/12361#issuecomment-3468786887)
-- 2025-10-30 `Fridge003`: trtllm batch decode with kv cache mla Will do it in the next PR (https://github.com/sgl-project/sglang/pull/12361#issuecomment-3469287221)

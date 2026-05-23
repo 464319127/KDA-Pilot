@@ -1,1 +1,0 @@
-- 2026-03-13 `tridao`: Amazing, i couldn't get the ptx patcher to work w tvm-ffi before! (https://github.com/Dao-AILab/quack/pull/83#issuecomment-4052564701)

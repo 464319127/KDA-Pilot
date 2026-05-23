@@ -1,1 +1,0 @@
-- 2026-05-19 `JayceSu98`: @JayceSu98 Nice work! One question: have you tested whether the PDL feature really works? I added an opt-in PDL microbenchmark under @pytest.mark.perf, so it is skipped by default and only runs with --run-perf. The benchmark compares: - a strict same-stream serial baseline ... (https://github.com/tile-ai/tilelang/pull/2220#issuecomment-4485349653)

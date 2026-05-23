@@ -1,3 +1,0 @@
-- 2026-05-11 `venkywonka` on `docs/source/torch/adding_custom_kernels.md`:26: Since CuTe vs CuTile can get a bit confusing, maybe worth adding external links (https://github.com/NVIDIA/TensorRT-LLM/pull/13917#discussion_r3220718390)
-- 2026-05-18 `chang-l` on `docs/source/torch/adding_custom_kernels.md`:26: Good call — done in 9029acc. Linked CuTe DSL and cuTile in the table header. (https://github.com/NVIDIA/TensorRT-LLM/pull/13917#discussion_r3262509266)
-- 2026-05-18 `tensorrt-cicd`: [PR Github 48992]( [ skip ] completed with state SUCCESS. Commit: 9029acc Skipping testing for commit 9029acc [Link to invocation]( (https://github.com/NVIDIA/TensorRT-LLM/pull/13917#issuecomment-4482886159)
