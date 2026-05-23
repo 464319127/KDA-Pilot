@@ -3,7 +3,7 @@
 # KernelPilot
 
 **An autonomous Humanize-powered GPU kernel optimization loop wired to
-KernelWiki evidence and the KDA Nsight Compute profiling skill.**
+KernelWiki evidence and the external Nsight Compute profiling skill.**
 
 [![GitHub stars](https://img.shields.io/github/stars/BBuf/kernel-pilot?style=social)](https://github.com/BBuf/kernel-pilot/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/BBuf/kernel-pilot?style=social)](https://github.com/BBuf/kernel-pilot/forks)
@@ -23,9 +23,9 @@ external skill submodules for kernel evidence and profiling:
 
 | Skill | Source | Role |
 | --- | --- | --- |
-| [`humanize-kernel-agent-loop`](humanize/skills/humanize-kernel-agent-loop/) | KernelPilot | Turns kernel definition `K`, reference `R`, and workload distribution `W` into task-acceptance pairs, a standalone optimization repo, autonomous research/iteration/autotuning, correctness tests, benchmarks, ledgers, dispatcher, tuning decisions, and review-gated iteration. |
-| [`KernelWiki`](external/KernelWiki/) | [`BBuf/KernelWiki`](https://github.com/BBuf/KernelWiki/tree/kernelpilot-knowledge-expansion) | Kernel evidence acquisition through PR pages/artifacts, wiki synthesis, blogs/docs/contests, and live upstream checks. |
-| [`ncu-report-skill`](external/ncu-report-skill/) | [`DongyunZou/ncu-report-skill`](https://github.com/DongyunZou/ncu-report-skill) | Nsight Compute workflow for B200/sm_100 profiling: harnesses, collection, Python report parsing, bottleneck diagnosis, and one ranked next optimization plan. |
+| [`humanize-kernel-agent-loop`](humanize/skills/humanize-kernel-agent-loop/) | KernelPilot | Creates a clean kernel optimization loop around `K`, `R`, and `W`: standalone workspace, correctness/benchmark evidence, lightweight ledgers, optional profiling, optional prior-art lookup, and Humanize review. |
+| [`KernelWiki`](external/KernelWiki/) | [`BBuf/KernelWiki`](https://github.com/BBuf/KernelWiki/tree/kernelpilot-knowledge-expansion) | Use when prior PRs, wiki synthesis, docs, blogs, or upstream kernel examples can inform the current design. |
+| [`ncu-report-skill`](external/ncu-report-skill/) | [`DongyunZou/ncu-report-skill`](https://github.com/DongyunZou/ncu-report-skill) | Use when Nsight Compute evidence is needed to profile a kernel, diagnose a bottleneck, explain a regression, or choose the next optimization edit. |
 
 Together they make an optimization loop that can work from a simple request:
 
@@ -33,22 +33,22 @@ Together they make an optimization loop that can work from a simple request:
 [$humanize-kernel-agent-loop] Optimize SGLang's GEMM path for M=64, N=2048, K=2048, fp16, bias=true, and beat the current SGLang baseline by at least 10%.
 ```
 
-The loop decides how to plan, when to query KernelWiki, what to profile, how to
-record lineage, how to scan the workload distribution, and when to ask the
-Humanize review gate whether another round is needed. The human should specify
-the target when it is ambiguous; the loop owns the rest.
+The loop keeps the engineering structure in place while staying light on
+policy: set up a clean workspace, prove correctness, measure latency, consult
+KernelWiki when prior art helps, profile when profiling would change the next
+edit, and let Humanize review the round evidence.
 
 ## Why Use It
 
-- **Peer evidence routes.** The agent can use KernelWiki PR artifacts, synthesis
-  pages, blogs/docs/contests, and live web/official/upstream research as equal
-  ways to gather kernel evidence.
+- **Prior art when useful.** The agent can use KernelWiki PR artifacts,
+  synthesis pages, blogs/docs/contests, and live upstream research when they
+  help the current kernel decision.
 - **Standalone by default.** Candidate kernels do not pollute SGLang, vLLM,
   PyTorch, or other large framework repos. The loop creates an isolated repo
   with bindings, tests, benchmarks, ledgers, lineage, and profile artifacts.
-- **Evidence-driven profiling.** The loop decides when `ncu-report-skill` is
-  worth running, then uses it to move from vague labels like "memory-bound" to
-  measured bottlenecks and one concrete next edit.
+- **Profiling when needed.** The agent uses `ncu-report-skill` when Nsight
+  Compute evidence can explain a baseline, regression, plateau, surprising win,
+  or next optimization edit.
 - **Review-gated iteration.** Humanize RLCR keeps the loop from declaring
   victory too early; default loop budget is 84 iterations unless configured
   otherwise.
@@ -60,40 +60,44 @@ the target when it is ambiguous; the loop owns the rest.
 
 ```mermaid
 flowchart LR
-    K[Kernel definition K] --> P[Plan P = task and AC pairs]
-    R[Correctness reference R] --> P
-    W[Workload distribution W] --> P
-    P --> S[Clean standalone repo]
+    U[User kernel request] --> KRW[Recover or define K / R / W]
+    KRW --> P[Build and refine P = task / AC pairs]
+    P --> S[Create clean standalone repo]
+    S --> L[Initialize tests, benchmarks, ledgers, profile-artifacts]
 
-    subgraph R0[Stage 1: Research]
-        KW[KernelWiki / PRs + wiki + live sources]
-        B[Baseline and repo inspection]
-        RD[Research digest and recipes]
+    subgraph ST1[Research When Useful]
+        SRC[Baseline and target repo inspection]
+        KW[KernelWiki / upstream prior art]
+        RD[Research notes]
+        SRC --> RD
         KW --> RD
-        B --> RD
     end
 
-    subgraph I0[Stage 2: Iterate]
-        T[Writer executes task t_i]
-        E[Inspect, edit, compile, test, benchmark, profile]
-        V{Reviewer checks evidence vs ac_i}
-        T --> E --> V
-        V -->|blocked feedback| T
+    subgraph ST2[RLCR Iteration]
+        WRI[Current writer agent executes next task]
+        RUN[Edit, compile, test, benchmark]
+        PROF{Profiler evidence needed?}
+        NCU[ncu-report-skill / Nsight Compute digest]
+        LED[Attempt, optimization, and lineage ledgers]
+        REV{Humanize Stop hook review}
+        WRI --> RUN --> PROF
+        PROF -->|yes| NCU --> LED
+        PROF -->|no| LED
+        LED --> REV
+        REV -->|blocked feedback| WRI
     end
 
-    subgraph A0[Stage 3: Autotune]
+    subgraph ST3[Autotune When W Needs It]
         PM[Performance map over W]
         D[Shape-aware dispatcher]
-        TD[Tuning decisions]
+        TD[Tuning decisions and fallback paths]
         PM --> D --> TD
     end
 
-    S --> RD --> T
-    V -->|pass| PM
-    E -->|profile evidence needed| NCU[ncu-report-skill / Nsight Compute]
-    NCU --> T
-    E -->|prior art needed| KW
-    TD --> O[Final kernels, dispatcher, correctness/benchmark matrix, fallback paths, unsupported regimes]
+    L --> RD --> WRI
+    REV -->|accepted| PM
+    RUN -->|prior art needed| KW
+    TD --> O[Final kernels, dispatcher, correctness / benchmark matrix]
 ```
 
 ## KernelWiki
@@ -157,7 +161,7 @@ For an existing checkout:
 git submodule update --init --recursive
 ```
 
-### Claude Code
+### Claude Code Install
 
 ```bash
 humanize/scripts/install-skills-claude.sh
@@ -174,7 +178,7 @@ Inside Claude Code, you should see commands such as
 `/humanize:start-rlcr-loop` and skills such as `humanize-kernel-agent-loop`,
 `KernelWiki`, and `ncu-report-skill`.
 
-### Codex
+### Codex Install
 
 ```bash
 humanize/scripts/install-skills-codex.sh
@@ -184,12 +188,6 @@ Generic installer:
 
 ```bash
 humanize/scripts/install-skill.sh --target codex
-```
-
-### Kimi
-
-```bash
-humanize/scripts/install-skills-kimi.sh
 ```
 
 After installation, restart the agent session and check that these skills are

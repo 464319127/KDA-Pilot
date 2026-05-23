@@ -128,7 +128,6 @@ humanize monitor rlcr
 ## Other Install Guides
 
 - [Install for Codex](install-for-codex.md)
-- [Install for Kimi](install-for-kimi.md)
 
 ## Next Steps
 

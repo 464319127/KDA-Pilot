@@ -29,7 +29,6 @@ REFINE_PLAN_SKILL="$SKILLS_DIR/humanize-refine-plan/SKILL.md"
 INSTALL_SKILL_SCRIPT="$SCRIPTS_DIR/install-skill.sh"
 CLAUDE_INSTALL_DOC="$DOCS_DIR/install-for-claude.md"
 CODEX_INSTALL_DOC="$DOCS_DIR/install-for-codex.md"
-KIMI_INSTALL_DOC="$DOCS_DIR/install-for-kimi.md"
 PLUGIN_JSON="$CLAUDE_PLUGIN_DIR/plugin.json"
 MARKETPLACE_JSON="$CLAUDE_PLUGIN_DIR/marketplace.json"
 README_FILE="$PROJECT_ROOT/README.md"
@@ -117,7 +116,20 @@ assert_equals() {
 frontmatter_value() {
     local file="$1"
     local key="$2"
-    sed -n "/^---$/,/^---$/{ /^${key}:[[:space:]]*/{ s/^${key}:[[:space:]]*//p; q; } }" "$file"
+    awk -v key="$key" '
+        /^---[[:space:]]*$/ {
+            if (!in_frontmatter) {
+                in_frontmatter = 1
+                next
+            }
+            exit
+        }
+        in_frontmatter && index($0, key ":") == 1 {
+            sub("^" key ":[[:space:]]*", "")
+            print
+            exit
+        }
+    ' "$file"
 }
 
 json_first_string_value() {
@@ -139,7 +151,16 @@ trim_string() {
 }
 
 collapse_whitespace() {
-    printf '%s' "$1" | tr '\n' ' ' | sed 's/[[:space:]]\+/ /g; s/^ //; s/ $//'
+    printf '%s' "$1" | tr '\n' ' ' | tr -s '[:space:]' ' ' | sed 's/^ //; s/ $//'
+}
+
+lower_string() {
+    printf '%s' "$1" | tr '[:upper:]' '[:lower:]'
+}
+
+portable_realpath_m() {
+    local path="$1"
+    realpath -m "$path" 2>/dev/null || printf '%s\n' "$path"
 }
 
 VALIDATOR_OUTPUT=""
@@ -530,17 +551,20 @@ scan_reference_comments() {
 }
 
 comment_matches_question() {
-    local text="${1,,}"
+    local text
+    text="$(lower_string "$1")"
     [[ "$text" == *"why"* || "$text" == *"how"* || "$text" == *"what"* || "$text" == *"explain"* || "$text" == *"clarify"* || "$text" == *"unclear"* ]]
 }
 
 comment_matches_change_request() {
-    local text="${1,,}"
+    local text
+    text="$(lower_string "$1")"
     [[ "$text" == *"add"* || "$text" == *"remove"* || "$text" == *"delete"* || "$text" == *"rewrite"* || "$text" == *"restore"* || "$text" == *"rename"* || "$text" == *"split"* || "$text" == *"merge"* || "$text" == *"modify"* ]]
 }
 
 comment_matches_research_request() {
-    local text="${1,,}"
+    local text
+    text="$(lower_string "$1")"
     [[ "$text" == *"investigate"* || "$text" == *"compare"* || "$text" == *"confirm"* || "$text" == *"current behavior"* || "$text" == *"gather evidence"* || "$text" == *"before deciding"* ]]
 }
 
@@ -561,7 +585,7 @@ normalize_alt_language() {
     local raw
     local lower
     raw="$(trim_string "$1")"
-    lower="${raw,,}"
+    lower="$(lower_string "$raw")"
 
     case "$lower" in
         chinese|zh) echo "Chinese|zh|variant" ;;
@@ -833,26 +857,12 @@ fi
 
 assert_file_contains "$CLAUDE_INSTALL_DOC" "/humanize:refine-plan" "install-for-claude.md mentions refine-plan command"
 assert_file_contains "$CODEX_INSTALL_DOC" "humanize-refine-plan" "install-for-codex.md mentions humanize-refine-plan skill"
-assert_file_contains "$KIMI_INSTALL_DOC" "humanize-refine-plan" "install-for-kimi.md mentions humanize-refine-plan skill"
-
-# Kimi manual-install runtime bundle copy assertions (6 directories)
-for bundle_dir in scripts hooks prompt-template templates config agents; do
-    assert_file_contains "$KIMI_INSTALL_DOC" "cp -r $bundle_dir ~/.config/agents/skills/humanize/" \
-        "install-for-kimi.md manual install copies $bundle_dir/ to skills/humanize/"
-done
-
-# Kimi manual-install user-invocable stripping section
-assert_file_contains "$KIMI_INSTALL_DOC" \
-    "# Strip user-invocable flag from SKILL.md files for runtime visibility" \
-    "install-for-kimi.md has user-invocable stripping section comment"
-assert_file_contains "$KIMI_INSTALL_DOC" \
-    'in_fm && $0 ~ /^user-invocable:' \
-    "install-for-kimi.md stripping section contains awk user-invocable filter"
-
-# Kimi uninstall section includes humanize-refine-plan
-assert_file_contains "$KIMI_INSTALL_DOC" \
-    "rm -rf ~/.config/agents/skills/humanize-refine-plan" \
-    "install-for-kimi.md uninstall removes humanize-refine-plan"
+RETIRED_INSTALL_TARGET="Ki""mi"
+if grep -qF "$RETIRED_INSTALL_TARGET" "$CLAUDE_INSTALL_DOC" "$CODEX_INSTALL_DOC" "$README_FILE"; then
+    fail "install docs no longer advertise retired skill target" "No retired-target references" "retired-target reference found"
+else
+    pass "install docs no longer advertise retired skill target"
+fi
 
 PLUGIN_VERSION="$(json_first_string_value "$PLUGIN_JSON" "version")"
 MARKETPLACE_VERSION="$(json_first_string_value "$MARKETPLACE_JSON" "version")"
@@ -1336,10 +1346,11 @@ else
     fail "validate-refine-plan-io: reports new-file mode" "Mode: new file" "missing"
 fi
 
-if echo "$VALIDATOR_OUTPUT" | grep -q "Output target: $(realpath -m "$NEW_FILE_DIR/refined-plan.md")"; then
+EXPECTED_OUTPUT_TARGET="$(portable_realpath_m "$NEW_FILE_DIR/refined-plan.md")"
+if echo "$VALIDATOR_OUTPUT" | grep -q "Output target: $EXPECTED_OUTPUT_TARGET"; then
     pass "validate-refine-plan-io: reports the resolved output target"
 else
-    fail "validate-refine-plan-io: reports the resolved output target" "$(realpath -m "$NEW_FILE_DIR/refined-plan.md")" "$VALIDATOR_OUTPUT"
+    fail "validate-refine-plan-io: reports the resolved output target" "$EXPECTED_OUTPUT_TARGET" "$VALIDATOR_OUTPUT"
 fi
 
 # ========================================

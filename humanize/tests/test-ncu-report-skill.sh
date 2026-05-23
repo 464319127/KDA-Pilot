@@ -58,6 +58,10 @@ python3 -m py_compile \
 
 tmp_dir="$(mktemp -d)"
 trap 'rm -rf "$tmp_dir"' EXIT
-"$install_script" --target kimi --skills-dir "$tmp_dir/skills" --command-bin-dir "$tmp_dir/bin" --dry-run >/dev/null
+"$install_script" --target codex \
+    --codex-skills-dir "$tmp_dir/skills" \
+    --codex-config-dir "$tmp_dir/codex" \
+    --command-bin-dir "$tmp_dir/bin" \
+    --dry-run >/dev/null
 
 echo "PASS: KernelWiki and ncu-report-skill are wired"

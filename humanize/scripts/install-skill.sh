@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 #
-# Install/upgrade Humanize skills for Kimi and/or Codex.
+# Install/upgrade KernelPilot Humanize skills for Codex CLI.
 #
 # What this does:
-# 1) Sync skills/{humanize,humanize-gen-plan,humanize-rlcr,...} to target skills dir(s)
+# 1) Sync skills/{humanize,humanize-gen-plan,humanize-rlcr,...} to the Codex skills dir
 # 2) Copy runtime dependencies into <skills-dir>/humanize/{scripts,hooks,prompt-template}
 # 3) Hydrate SKILL.md command paths with concrete runtime root paths
 #
@@ -12,9 +12,8 @@
 #
 # Options:
 #   --repo-root PATH        Humanize repo root (default: auto-detect)
-#   --target MODE           kimi|codex|both (default: kimi)
-#   --skills-dir PATH       Legacy alias for target skills dir (kept for compatibility)
-#   --kimi-skills-dir PATH  Kimi skills dir (default: ~/.config/agents/skills)
+#   --target MODE           codex (default: codex)
+#   --skills-dir PATH       Legacy alias for --codex-skills-dir
 #   --codex-skills-dir PATH Codex skills dir (default: ${CODEX_HOME:-~/.codex}/skills)
 #   --codex-config-dir PATH Codex config dir for hooks/config.toml (default: ${CODEX_HOME:-~/.codex})
 #   --dry-run               Print actions without writing
@@ -27,8 +26,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 SKILLS_SOURCE_ROOT=""
 RUNTIME_SOURCE_ROOT=""
-TARGET="kimi"
-KIMI_SKILLS_DIR="${HOME}/.config/agents/skills"
+TARGET="codex"
 CODEX_SKILLS_DIR="${CODEX_HOME:-${HOME}/.codex}/skills"
 CODEX_CONFIG_DIR="${CODEX_HOME:-${HOME}/.codex}"
 HUMANIZE_USER_CONFIG_DIR="${XDG_CONFIG_HOME:-${HOME}/.config}/humanize"
@@ -51,16 +49,17 @@ NCU_REPORT_SKILL_NAME="ncu-report-skill"
 
 usage() {
     cat <<'EOF'
-Install Humanize skills for Kimi and/or Codex.
+Install KernelPilot Humanize skills for Codex CLI.
+
+Claude Code uses scripts/install-skills-claude.sh.
 
 Usage:
   scripts/install-skill.sh [options]
 
 Options:
-  --target MODE           kimi|codex|both (default: kimi)
+  --target MODE           codex (default: codex)
   --repo-root PATH        Humanize repo root (default: auto-detect)
-  --skills-dir PATH       Legacy alias for target skills dir (compat)
-  --kimi-skills-dir PATH  Kimi skills dir (default: ~/.config/agents/skills)
+  --skills-dir PATH       Legacy alias for --codex-skills-dir
   --codex-skills-dir PATH Codex skills dir (default: ${CODEX_HOME:-~/.codex}/skills)
   --codex-config-dir PATH Codex config dir for hooks/config.toml (default: ${CODEX_HOME:-~/.codex})
   --command-bin-dir PATH  Install helper command shims here (default: ~/.local/bin)
@@ -479,10 +478,6 @@ EOF
     log "installed bitlesson-selector shim into: $shim_path"
 }
 
-install_kimi_target() {
-    sync_target "kimi" "$KIMI_SKILLS_DIR"
-}
-
 install_codex_target() {
     sync_target "codex" "$CODEX_SKILLS_DIR"
     install_codex_user_config "$CODEX_SKILLS_DIR/humanize" "$TARGET"
@@ -494,8 +489,8 @@ while [[ $# -gt 0 ]]; do
         --target)
             [[ -n "${2:-}" ]] || die "--target requires a value"
             case "$2" in
-                kimi|codex|both) TARGET="$2" ;;
-                *) die "--target must be one of: kimi, codex, both" ;;
+                codex) TARGET="$2" ;;
+                *) die "--target must be: codex" ;;
             esac
             shift 2
             ;;
@@ -507,11 +502,6 @@ while [[ $# -gt 0 ]]; do
         --skills-dir)
             [[ -n "${2:-}" ]] || die "--skills-dir requires a value"
             LEGACY_SKILLS_DIR="$2"
-            shift 2
-            ;;
-        --kimi-skills-dir)
-            [[ -n "${2:-}" ]] || die "--kimi-skills-dir requires a value"
-            KIMI_SKILLS_DIR="$2"
             shift 2
             ;;
         --codex-skills-dir)
@@ -566,25 +556,13 @@ validate_external_skill_roots
 validate_repo
 
 if [[ -n "$LEGACY_SKILLS_DIR" ]]; then
-    case "$TARGET" in
-        kimi) KIMI_SKILLS_DIR="$LEGACY_SKILLS_DIR" ;;
-        codex) CODEX_SKILLS_DIR="$LEGACY_SKILLS_DIR" ;;
-        both)
-            KIMI_SKILLS_DIR="$LEGACY_SKILLS_DIR"
-            CODEX_SKILLS_DIR="$LEGACY_SKILLS_DIR"
-            ;;
-    esac
+    CODEX_SKILLS_DIR="$LEGACY_SKILLS_DIR"
 fi
 
 log "repo root: $REPO_ROOT"
 log "target: $TARGET"
-if [[ "$TARGET" == "kimi" || "$TARGET" == "both" ]]; then
-    log "kimi skills dir: $KIMI_SKILLS_DIR"
-fi
-if [[ "$TARGET" == "codex" || "$TARGET" == "both" ]]; then
-    log "codex skills dir: $CODEX_SKILLS_DIR"
-    log "codex config dir: $CODEX_CONFIG_DIR"
-fi
+log "codex skills dir: $CODEX_SKILLS_DIR"
+log "codex config dir: $CODEX_CONFIG_DIR"
 log "command bin dir: $COMMAND_BIN_DIR"
 if [[ -n "$KERNELPILOT_ROOT" ]]; then
     log "kernelpilot root: $KERNELPILOT_ROOT"
@@ -593,18 +571,9 @@ log "kernelwiki root: $KERNELWIKI_ROOT"
 log "ncu-report-skill root: $NCU_REPORT_SKILL_ROOT"
 
 case "$TARGET" in
-    kimi)
-        install_kimi_target
-        install_bitlesson_selector_shim "$KIMI_SKILLS_DIR/humanize"
-        ;;
     codex)
         install_codex_target
-        install_bitlesson_selector_shim "$CODEX_SKILLS_DIR/humanize" "$KIMI_SKILLS_DIR/humanize"
-        ;;
-    both)
-        install_kimi_target
-        install_codex_target
-        install_bitlesson_selector_shim "$CODEX_SKILLS_DIR/humanize" "$KIMI_SKILLS_DIR/humanize"
+        install_bitlesson_selector_shim "$CODEX_SKILLS_DIR/humanize"
         ;;
 esac
 
@@ -615,22 +584,14 @@ Done.
 Skills synced:
 EOF
 
-if [[ "$TARGET" == "kimi" || "$TARGET" == "both" ]]; then
-    cat <<EOF
-  - kimi:  $KIMI_SKILLS_DIR
-EOF
-fi
-
-if [[ "$TARGET" == "codex" || "$TARGET" == "both" ]]; then
-    cat <<EOF
+cat <<EOF
   - codex: $CODEX_SKILLS_DIR
   - codex hooks: $CODEX_CONFIG_DIR/hooks.json
 EOF
-fi
 
 cat <<EOF
 
-Runtime root per target:
+Runtime root:
   <skills-dir>/humanize
 
 Codex installs also update native hook/config state in:

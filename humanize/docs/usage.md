@@ -296,7 +296,7 @@ When installing the Humanize runtime into Codex CLI, Humanize also seeds
 `${XDG_CONFIG_HOME:-~/.config}/humanize/config.json` with a Codex/OpenAI
 `bitlesson_model` and `provider_mode: "codex-only"` when those keys are unset.
 That flag is only a routing hint for that Codex runtime; the repository also
-supports Claude Code and Kimi installs.
+supports Claude Code installs.
 
 Codex model is resolved with this precedence:
 1. CLI `--codex-model` flag (highest priority)

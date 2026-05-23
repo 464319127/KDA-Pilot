@@ -23,7 +23,7 @@ When installing the Humanize runtime into Codex CLI, Humanize writes
 is present, the selector forces BitLesson selection onto the Codex/OpenAI path
 before provider resolution, even if an older default such as `haiku` would
 otherwise route to Claude. This is not a repository-level limitation: Claude
-Code and Kimi installs are supported separately.
+Code installs are supported separately.
 
 ## Workflow
 

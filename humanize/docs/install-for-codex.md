@@ -94,12 +94,6 @@ Expected:
 - for `--target codex`, `${XDG_CONFIG_HOME:-~/.config}/humanize/config.json`
   also contains `provider_mode: "codex-only"` for that Codex runtime
 
-## Optional: Install for Both Codex and Kimi
-
-```bash
-humanize/scripts/install-skill.sh --target both
-```
-
 ## Useful Options
 
 ```bash
