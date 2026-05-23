@@ -59,45 +59,67 @@ edit, and let Humanize review the round evidence.
 ## Kernel Agent Loop
 
 ```mermaid
-flowchart LR
-    U[User kernel request] --> KRW[Recover or define K / R / W]
-    KRW --> P[Build and refine P = task / AC pairs]
-    P --> S[Create clean standalone repo]
-    S --> L[Initialize tests, benchmarks, ledgers, profile-artifacts]
+%%{init: {"theme": "base", "themeVariables": {"fontFamily": "Inter, ui-sans-serif, system-ui", "primaryTextColor": "#111827", "lineColor": "#64748b", "clusterBkg": "#f8fafc", "clusterBorder": "#cbd5e1"}}}%%
+flowchart TB
+    U([Kernel request]):::entry
+    KRW[K / R / W<br/>kernel, reference, workload]:::contract
+    PLAN[Small task / AC plan]:::plan
+    REPO[Standalone optimization repo]:::repo
+    HARNESS[Correctness tests<br/>benchmark harness<br/>minimal ledgers]:::repo
 
-    subgraph ST1[Research When Useful]
-        SRC[Baseline and target repo inspection]
-        KW[KernelWiki / upstream prior art]
-        RD[Research notes]
-        SRC --> RD
-        KW --> RD
+    U --> KRW --> PLAN --> REPO --> HARNESS
+
+    subgraph LOOP[Humanize RLCR optimization loop]
+        direction TB
+        WRITE[Write candidate kernel]:::work
+        CHECK{Correct?}:::gate
+        BENCH[Benchmark on W]:::bench
+        NEED{Need more evidence?}:::gate
+        REVIEW{Stop hook review}:::review
+
+        WRITE --> CHECK
+        CHECK -- no --> WRITE
+        CHECK -- yes --> BENCH
+        BENCH --> NEED
+        NEED -- enough evidence --> REVIEW
+        REVIEW -- blocked feedback --> WRITE
     end
 
-    subgraph ST2[RLCR Iteration]
-        WRI[Current writer agent executes next task]
-        RUN[Edit, compile, test, benchmark]
-        PROF{Profiler evidence needed?}
-        NCU[ncu-report-skill / Nsight Compute digest]
-        LED[Attempt, optimization, and lineage ledgers]
-        REV{Humanize Stop hook review}
-        WRI --> RUN --> PROF
-        PROF -->|yes| NCU --> LED
-        PROF -->|no| LED
-        LED --> REV
-        REV -->|blocked feedback| WRI
+    subgraph TOOLS[Evidence tools used on demand]
+        direction TB
+        KW[KernelWiki<br/>prior PRs, wiki, docs, upstream kernels]:::tool
+        NCU[ncu-report-skill<br/>Nsight Compute diagnosis]:::tool
+        LIVE[Live upstream<br/>source, docs, current PRs]:::tool
     end
 
-    subgraph ST3[Autotune When W Needs It]
-        PM[Performance map over W]
-        D[Shape-aware dispatcher]
-        TD[Tuning decisions and fallback paths]
-        PM --> D --> TD
+    subgraph SHIP[Package the result]
+        direction TB
+        MAP[Performance map]:::ship
+        DISPATCH[Shape-aware dispatcher<br/>or trivial single-shape decision]:::ship
+        FINAL[Final kernel<br/>correctness / benchmark matrix<br/>fallbacks and unsupported regimes]:::final
+        MAP --> DISPATCH --> FINAL
     end
 
-    L --> RD --> WRI
-    REV -->|accepted| PM
-    RUN -->|prior art needed| KW
-    TD --> O[Final kernels, dispatcher, correctness / benchmark matrix]
+    HARNESS --> WRITE
+    NEED -- prior art useful --> KW
+    NEED -- profile needed --> NCU
+    NEED -- source check useful --> LIVE
+    KW --> WRITE
+    NCU --> WRITE
+    LIVE --> WRITE
+    REVIEW -- accepted --> MAP
+
+    classDef entry fill:#0f172a,stroke:#0f172a,color:#ffffff,stroke-width:2px;
+    classDef contract fill:#ede9fe,stroke:#7c3aed,color:#2e1065,stroke-width:1.5px;
+    classDef plan fill:#dbeafe,stroke:#2563eb,color:#172554,stroke-width:1.5px;
+    classDef repo fill:#ecfeff,stroke:#0891b2,color:#164e63,stroke-width:1.5px;
+    classDef work fill:#fff7ed,stroke:#f97316,color:#7c2d12,stroke-width:1.5px;
+    classDef bench fill:#dcfce7,stroke:#16a34a,color:#14532d,stroke-width:1.5px;
+    classDef gate fill:#fef3c7,stroke:#d97706,color:#78350f,stroke-width:1.5px;
+    classDef review fill:#fae8ff,stroke:#c026d3,color:#581c87,stroke-width:1.5px;
+    classDef tool fill:#f1f5f9,stroke:#475569,color:#0f172a,stroke-width:1.5px;
+    classDef ship fill:#e0f2fe,stroke:#0284c7,color:#0c4a6e,stroke-width:1.5px;
+    classDef final fill:#022c22,stroke:#047857,color:#ecfdf5,stroke-width:2px;
 ```
 
 ## KernelWiki
