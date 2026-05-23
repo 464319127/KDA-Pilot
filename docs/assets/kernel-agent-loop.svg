@@ -1,0 +1,141 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1560" viewBox="0 0 1200 1560" role="img" aria-labelledby="title desc">
+  <title id="title">KernelPilot Kernel Agent Loop</title>
+  <desc id="desc">Vertical workflow diagram for the KernelPilot kernel optimization loop.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f8fafc"/>
+      <stop offset="55%" stop-color="#eef6ff"/>
+      <stop offset="100%" stop-color="#f5f3ff"/>
+    </linearGradient>
+    <linearGradient id="dark" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#134e4a"/>
+    </linearGradient>
+    <linearGradient id="green" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#064e3b"/>
+      <stop offset="100%" stop-color="#047857"/>
+    </linearGradient>
+    <linearGradient id="blue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#dbeafe"/>
+      <stop offset="100%" stop-color="#e0f2fe"/>
+    </linearGradient>
+    <filter id="shadow" x="-12%" y="-12%" width="124%" height="132%">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#0f172a" flood-opacity="0.14"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b"/>
+    </marker>
+    <marker id="arrowGreen" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#059669"/>
+    </marker>
+    <style>
+      .title { font: 800 38px Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #0f172a; letter-spacing: 0; }
+      .subtitle { font: 500 18px Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #475569; }
+      .section { font: 800 18px Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #334155; letter-spacing: 0.04em; }
+      .label { font: 800 20px Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #0f172a; }
+      .small { font: 500 15px Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #475569; }
+      .white { fill: #ffffff; }
+      .whiteSub { fill: #d1fae5; }
+      .tiny { font: 700 13px Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #64748b; letter-spacing: 0.02em; }
+      .card { rx: 18; filter: url(#shadow); stroke-width: 1.5; }
+      .line { fill: none; stroke: #64748b; stroke-width: 2.5; marker-end: url(#arrow); }
+      .loopLine { fill: none; stroke: #059669; stroke-width: 3; marker-end: url(#arrowGreen); }
+      .dash { fill: none; stroke: #64748b; stroke-width: 2.5; stroke-dasharray: 8 8; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <rect width="1200" height="1560" fill="url(#bg)"/>
+  <circle cx="1020" cy="150" r="240" fill="#bae6fd" opacity="0.28"/>
+  <circle cx="170" cy="1260" r="300" fill="#ddd6fe" opacity="0.24"/>
+
+  <text x="600" y="76" text-anchor="middle" class="title">KernelPilot Agent Loop</text>
+  <text x="600" y="110" text-anchor="middle" class="subtitle">A lightweight Humanize loop for kernel correctness, benchmark evidence, and on-demand prior art / profiling.</text>
+
+  <rect x="110" y="150" width="980" height="245" rx="28" fill="#ffffff" stroke="#cbd5e1" filter="url(#shadow)"/>
+  <text x="145" y="190" class="section">1. FRAME THE TASK</text>
+  <rect x="150" y="220" width="220" height="105" rx="18" fill="url(#dark)" class="card"/>
+  <text x="260" y="260" text-anchor="middle" class="label white">Kernel request</text>
+  <text x="260" y="288" text-anchor="middle" class="small whiteSub">user goal + target GPU</text>
+
+  <rect x="430" y="220" width="230" height="105" rx="18" fill="#ede9fe" stroke="#8b5cf6" class="card"/>
+  <text x="545" y="255" text-anchor="middle" class="label">K / R / W</text>
+  <text x="545" y="283" text-anchor="middle" class="small">kernel, reference, workload</text>
+
+  <rect x="720" y="220" width="250" height="105" rx="18" fill="#dbeafe" stroke="#2563eb" class="card"/>
+  <text x="845" y="255" text-anchor="middle" class="label">Small task plan</text>
+  <text x="845" y="283" text-anchor="middle" class="small">acceptance checks</text>
+
+  <path d="M 370 272 L 430 272" class="line"/>
+  <path d="M 660 272 L 720 272" class="line"/>
+  <path d="M 845 325 C 845 360 600 360 600 430" class="line"/>
+
+  <rect x="210" y="430" width="780" height="160" rx="26" fill="#ecfeff" stroke="#0891b2" filter="url(#shadow)"/>
+  <text x="600" y="474" text-anchor="middle" class="label">Standalone optimization repo</text>
+  <text x="600" y="506" text-anchor="middle" class="small">tests / benchmark harness / bindings / minimal ledgers / profile artifacts</text>
+  <text x="600" y="538" text-anchor="middle" class="small">large framework checkout stays clean unless the user asks for an in-place patch</text>
+  <path d="M 600 590 L 600 650" class="line"/>
+
+  <rect x="110" y="650" width="980" height="455" rx="30" fill="#ffffff" stroke="#cbd5e1" filter="url(#shadow)"/>
+  <text x="145" y="690" class="section">2. HUMANIZE RLCR OPTIMIZATION LOOP</text>
+
+  <rect x="210" y="730" width="220" height="96" rx="18" fill="#fff7ed" stroke="#f97316" class="card"/>
+  <text x="320" y="770" text-anchor="middle" class="label">Write candidate</text>
+  <text x="320" y="797" text-anchor="middle" class="small">kernel edit or design reset</text>
+
+  <path d="M 430 778 L 510 778" class="line"/>
+  <path d="M 600 710 L 600 730" class="line"/>
+
+  <path d="M 600 710 L 600 710" fill="none"/>
+  <polygon points="600,718 690,778 600,838 510,778" fill="#fef3c7" stroke="#d97706" stroke-width="2" filter="url(#shadow)"/>
+  <text x="600" y="773" text-anchor="middle" class="label">Correct?</text>
+  <text x="600" y="800" text-anchor="middle" class="small">compare with R</text>
+
+  <rect x="770" y="730" width="220" height="96" rx="18" fill="#dcfce7" stroke="#16a34a" class="card"/>
+  <text x="880" y="770" text-anchor="middle" class="label">Benchmark on W</text>
+  <text x="880" y="797" text-anchor="middle" class="small">latency and regimes</text>
+
+  <path d="M 690 778 L 770 778" class="line"/>
+  <path d="M 600 838 C 600 910 320 910 320 826" class="loopLine"/>
+  <text x="480" y="900" class="tiny">fix correctness</text>
+
+  <polygon points="880,890 990,960 880,1030 770,960" fill="#fef3c7" stroke="#d97706" stroke-width="2" filter="url(#shadow)"/>
+  <text x="880" y="948" text-anchor="middle" class="label">Need evidence?</text>
+  <text x="880" y="978" text-anchor="middle" class="small">prior art or profile</text>
+  <path d="M 880 826 L 880 890" class="line"/>
+
+  <polygon points="600,890 710,960 600,1030 490,960" fill="#fae8ff" stroke="#c026d3" stroke-width="2" filter="url(#shadow)"/>
+  <text x="600" y="948" text-anchor="middle" class="label">Stop hook</text>
+  <text x="600" y="978" text-anchor="middle" class="small">review round evidence</text>
+  <path d="M 770 960 L 710 960" class="line"/>
+  <path d="M 600 1030 C 600 1085 320 1085 320 826" class="loopLine"/>
+  <text x="395" y="1070" class="tiny">blocked feedback</text>
+
+  <rect x="140" y="1125" width="920" height="205" rx="28" fill="#f8fafc" stroke="#cbd5e1" filter="url(#shadow)"/>
+  <text x="175" y="1165" class="section">EVIDENCE TOOLS USED ON DEMAND</text>
+
+  <rect x="175" y="1195" width="245" height="95" rx="18" fill="#f1f5f9" stroke="#475569" class="card"/>
+  <text x="297" y="1232" text-anchor="middle" class="label">KernelWiki</text>
+  <text x="297" y="1260" text-anchor="middle" class="small">PRs / wiki / docs</text>
+
+  <rect x="478" y="1195" width="245" height="95" rx="18" fill="#f1f5f9" stroke="#475569" class="card"/>
+  <text x="600" y="1232" text-anchor="middle" class="label">ncu-report-skill</text>
+  <text x="600" y="1260" text-anchor="middle" class="small">Nsight Compute diagnosis</text>
+
+  <rect x="780" y="1195" width="245" height="95" rx="18" fill="#f1f5f9" stroke="#475569" class="card"/>
+  <text x="902" y="1232" text-anchor="middle" class="label">Live upstream</text>
+  <text x="902" y="1260" text-anchor="middle" class="small">source / docs / current PRs</text>
+
+  <path d="M 880 1030 C 880 1145 902 1145 902 1195" class="dash"/>
+  <path d="M 850 1020 C 750 1135 600 1135 600 1195" class="dash"/>
+  <path d="M 810 1000 C 620 1130 297 1130 297 1195" class="dash"/>
+  <path d="M 297 1290 C 297 1395 320 1395 320 826" class="dash"/>
+  <path d="M 600 1290 C 600 1390 360 1390 320 826" class="dash"/>
+  <path d="M 902 1290 C 902 1410 380 1410 320 826" class="dash"/>
+
+  <path d="M 600 1030 C 600 1095 600 1095 600 1360" class="line"/>
+
+  <rect x="210" y="1360" width="780" height="145" rx="28" fill="url(#green)" stroke="#047857" filter="url(#shadow)"/>
+  <text x="600" y="1403" text-anchor="middle" class="label white">Package the result</text>
+  <text x="600" y="1435" text-anchor="middle" class="small whiteSub">performance map / dispatcher / tuning / final kernel</text>
+  <text x="600" y="1466" text-anchor="middle" class="small whiteSub">correctness matrix / benchmark matrix / fallbacks / unsupported regimes</text>
+</svg>

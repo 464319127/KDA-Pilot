@@ -58,72 +58,7 @@ edit, and let Humanize review the round evidence.
 
 ## Kernel Agent Loop
 
-```mermaid
-%%{init: {"theme": "base", "themeVariables": {"fontFamily": "Inter, ui-sans-serif, system-ui", "primaryTextColor": "#111827", "lineColor": "#64748b", "clusterBkg": "#f8fafc", "clusterBorder": "#cbd5e1"}}}%%
-flowchart LR
-    subgraph SETUP["1. Frame the kernel task"]
-        direction TB
-        U([Kernel request]):::entry
-        KRW[K / R / W<br/>kernel, reference, workload]:::contract
-        PLAN[Small task / AC plan]:::plan
-        REPO[Standalone repo<br/>tests, benchmarks, ledgers]:::repo
-        U --> KRW --> PLAN --> REPO
-    end
-
-    subgraph LOOP["2. Humanize RLCR loop"]
-        direction TB
-        WRITE[Write candidate]:::work
-        CHECK{Correct?}:::gate
-        BENCH[Benchmark on W]:::bench
-        NEED{Need more evidence?}:::gate
-        REVIEW{Stop hook review}:::review
-
-        WRITE --> CHECK
-        CHECK -- no --> WRITE
-        CHECK -- yes --> BENCH
-        BENCH --> NEED
-        NEED -- enough evidence --> REVIEW
-        REVIEW -- blocked feedback --> WRITE
-    end
-
-    subgraph TOOLS["Evidence on demand"]
-        direction TB
-        KW[KernelWiki<br/>prior PRs, wiki, docs]:::tool
-        NCU[ncu-report-skill<br/>Nsight Compute diagnosis]:::tool
-        LIVE[Live upstream<br/>source, docs, current PRs]:::tool
-    end
-
-    subgraph SHIP["3. Package the result"]
-        direction TB
-        MAP[Performance map]:::ship
-        DISPATCH[Dispatcher / tuning<br/>or single-shape decision]:::ship
-        FINAL[Final kernel<br/>correctness + benchmark matrix<br/>fallbacks and unsupported regimes]:::final
-        MAP --> DISPATCH --> FINAL
-    end
-
-    REPO --> WRITE
-    NEED -. prior art useful .-> KW
-    NEED -. profile needed .-> NCU
-    NEED -. source check useful .-> LIVE
-    KW -. informs next edit .-> WRITE
-    NCU -. informs next edit .-> WRITE
-    LIVE -. informs next edit .-> WRITE
-    REVIEW -- accepted --> MAP
-    FINAL ~~~ SAFE[ ]:::spacer
-
-    classDef entry fill:#0f172a,stroke:#0f172a,color:#ffffff,stroke-width:2px;
-    classDef contract fill:#ede9fe,stroke:#7c3aed,color:#2e1065,stroke-width:1.5px;
-    classDef plan fill:#dbeafe,stroke:#2563eb,color:#172554,stroke-width:1.5px;
-    classDef repo fill:#ecfeff,stroke:#0891b2,color:#164e63,stroke-width:1.5px;
-    classDef work fill:#fff7ed,stroke:#f97316,color:#7c2d12,stroke-width:1.5px;
-    classDef bench fill:#dcfce7,stroke:#16a34a,color:#14532d,stroke-width:1.5px;
-    classDef gate fill:#fef3c7,stroke:#d97706,color:#78350f,stroke-width:1.5px;
-    classDef review fill:#fae8ff,stroke:#c026d3,color:#581c87,stroke-width:1.5px;
-    classDef tool fill:#f1f5f9,stroke:#475569,color:#0f172a,stroke-width:1.5px;
-    classDef ship fill:#e0f2fe,stroke:#0284c7,color:#0c4a6e,stroke-width:1.5px;
-    classDef final fill:#022c22,stroke:#047857,color:#ecfdf5,stroke-width:2px;
-    classDef spacer fill:transparent,stroke:transparent,color:transparent;
-```
+![KernelPilot Agent Loop](docs/assets/kernel-agent-loop.svg)
 
 ## KernelWiki
 
