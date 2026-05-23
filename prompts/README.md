@@ -14,3 +14,10 @@ prompts. The FA4 card is seeded from
 
 Each prompt is intended to be pasted as one complete task. The prompt itself
 names the required remote GPU skill and acceptance target.
+
+## Opus 4.7 B200 int8_scaled_mm Run
+
+The image below is from an Opus 4.7 model run using the
+[B200 int8_scaled_mm](b200-int8-scaled-mm.md) prompt.
+
+[![Opus 4.7 B200 int8_scaled_mm optimization result](https://raw.githubusercontent.com/BBuf/kernel-pilot/main/prompts/opus47-b200-int8-scaled-mm-result.png)](https://raw.githubusercontent.com/BBuf/kernel-pilot/main/prompts/opus47-b200-int8-scaled-mm-result.png)
