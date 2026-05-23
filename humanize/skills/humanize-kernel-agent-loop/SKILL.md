@@ -141,6 +141,10 @@ If the user's prompt names a remote GPU skill or host such as `/ion-b200`,
 `/b200`, `ion-b200`, or `B200`, treat remote execution as part of the current
 round, not as optional future work.
 
+- Read the named remote skill's `SKILL.md` first and follow its connection and
+  container workflow. For `/ion-b200`, commands that need CUDA must run through
+  `ssh ion-b200 'docker exec sglang_bbuf ...'` or an equivalent shell inside
+  that container.
 - Sync the exact workspace snapshot to the remote host or container before
   build/test/benchmark commands.
 - Run compile, correctness, benchmark, and NCU steps on the named GPU
