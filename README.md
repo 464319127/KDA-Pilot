@@ -163,19 +163,12 @@ ncu-report-skill
 
 ## Prompt Card
 
-```text
-[$humanize-kernel-agent-loop] Optimize SGLang's int8_scaled_mm kernel on H100 for M=64, N=2048, K=2048, out_dtype=fp16, bias=true. Keep the work in a clean standalone repo, compare correctness and latency against the current SGLang baseline, and beat that baseline by at least 10% p50 latency on this focused case.
-```
+End-to-end prompt cards live in [`prompts/`](prompts/):
 
-The stop hook summary should make the round outcome and review decision easy to
-inspect:
-
-![Humanize stop hook summary](docs/assets/humanize-stop-hook-summary.png)
-
-The optimization ledger should make selected versions and rejected follow-ups
-easy to scan:
-
-![KernelPilot optimization ledger](docs/assets/kernelpilot-optimization-ledger.png)
+| Prompt | Goal |
+| --- | --- |
+| [`B200 int8_scaled_mm`](prompts/b200-int8-scaled-mm.md) | Optimize SGLang `int8_scaled_mm` on B200 for M=64, N=2048, K=2048, fp16 output with bias, targeting at least 2.5x speedup over the SGLang baseline. |
+| [`B200 FA4 MHA`](prompts/b200-fa4-mha.md) | Build a standalone BF16 forward-only MHA kernel and beat official FlashAttention-4 by at least 5% geometric-mean TFLOPS across the configured B200 cases. |
 
 ## Maintenance
 
