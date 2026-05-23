@@ -60,18 +60,19 @@ edit, and let Humanize review the round evidence.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"fontFamily": "Inter, ui-sans-serif, system-ui", "primaryTextColor": "#111827", "lineColor": "#64748b", "clusterBkg": "#f8fafc", "clusterBorder": "#cbd5e1"}}}%%
-flowchart TB
-    U([Kernel request]):::entry
-    KRW[K / R / W<br/>kernel, reference, workload]:::contract
-    PLAN[Small task / AC plan]:::plan
-    REPO[Standalone optimization repo]:::repo
-    HARNESS[Correctness tests<br/>benchmark harness<br/>minimal ledgers]:::repo
-
-    U --> KRW --> PLAN --> REPO --> HARNESS
-
-    subgraph LOOP[Humanize RLCR optimization loop]
+flowchart LR
+    subgraph SETUP["1. Frame the kernel task"]
         direction TB
-        WRITE[Write candidate kernel]:::work
+        U([Kernel request]):::entry
+        KRW[K / R / W<br/>kernel, reference, workload]:::contract
+        PLAN[Small task / AC plan]:::plan
+        REPO[Standalone repo<br/>tests, benchmarks, ledgers]:::repo
+        U --> KRW --> PLAN --> REPO
+    end
+
+    subgraph LOOP["2. Humanize RLCR loop"]
+        direction TB
+        WRITE[Write candidate]:::work
         CHECK{Correct?}:::gate
         BENCH[Benchmark on W]:::bench
         NEED{Need more evidence?}:::gate
@@ -85,29 +86,30 @@ flowchart TB
         REVIEW -- blocked feedback --> WRITE
     end
 
-    subgraph TOOLS[Evidence tools used on demand]
+    subgraph TOOLS["Evidence on demand"]
         direction TB
-        KW[KernelWiki<br/>prior PRs, wiki, docs, upstream kernels]:::tool
+        KW[KernelWiki<br/>prior PRs, wiki, docs]:::tool
         NCU[ncu-report-skill<br/>Nsight Compute diagnosis]:::tool
         LIVE[Live upstream<br/>source, docs, current PRs]:::tool
     end
 
-    subgraph SHIP[Package the result]
+    subgraph SHIP["3. Package the result"]
         direction TB
         MAP[Performance map]:::ship
-        DISPATCH[Shape-aware dispatcher<br/>or trivial single-shape decision]:::ship
-        FINAL[Final kernel<br/>correctness / benchmark matrix<br/>fallbacks and unsupported regimes]:::final
+        DISPATCH[Dispatcher / tuning<br/>or single-shape decision]:::ship
+        FINAL[Final kernel<br/>correctness + benchmark matrix<br/>fallbacks and unsupported regimes]:::final
         MAP --> DISPATCH --> FINAL
     end
 
-    HARNESS --> WRITE
-    NEED -- prior art useful --> KW
-    NEED -- profile needed --> NCU
-    NEED -- source check useful --> LIVE
-    KW --> WRITE
-    NCU --> WRITE
-    LIVE --> WRITE
+    REPO --> WRITE
+    NEED -. prior art useful .-> KW
+    NEED -. profile needed .-> NCU
+    NEED -. source check useful .-> LIVE
+    KW -. informs next edit .-> WRITE
+    NCU -. informs next edit .-> WRITE
+    LIVE -. informs next edit .-> WRITE
     REVIEW -- accepted --> MAP
+    FINAL ~~~ SAFE[ ]:::spacer
 
     classDef entry fill:#0f172a,stroke:#0f172a,color:#ffffff,stroke-width:2px;
     classDef contract fill:#ede9fe,stroke:#7c3aed,color:#2e1065,stroke-width:1.5px;
@@ -120,6 +122,7 @@ flowchart TB
     classDef tool fill:#f1f5f9,stroke:#475569,color:#0f172a,stroke-width:1.5px;
     classDef ship fill:#e0f2fe,stroke:#0284c7,color:#0c4a6e,stroke-width:1.5px;
     classDef final fill:#022c22,stroke:#047857,color:#ecfdf5,stroke-width:2px;
+    classDef spacer fill:transparent,stroke:transparent,color:transparent;
 ```
 
 ## KernelWiki
