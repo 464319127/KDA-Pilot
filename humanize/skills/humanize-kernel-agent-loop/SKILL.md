@@ -1,6 +1,6 @@
 ---
 name: humanize-kernel-agent-loop
-description: "Run a Humanize kernel optimization loop: recover K/R/W, create a clean standalone repo, iterate with correctness and benchmark evidence, use KernelWiki when prior art is useful, and use ncu-report-skill when profiling is needed."
+description: "Run a Humanize kernel optimization loop: recover K/R/W, use one clean standalone workspace, iterate with correctness and benchmark evidence, use KernelWiki when prior art is useful, and use ncu-report-skill when profiling is needed."
 type: flow
 ---
 
@@ -59,7 +59,7 @@ run `gen-plan`, `refine-plan`, or `humanize-rlcr`.
 
 1. Turn the user's request into a small kernel-specific plan with acceptance
    checks.
-2. Create or enter a clean standalone optimization repo.
+2. Select or create exactly one clean standalone optimization workspace.
 3. Add a correctness harness, benchmark harness, and minimal ledgers.
 4. Inspect the baseline/reference enough to know what must be matched.
 5. Iterate on candidate kernels with correctness and benchmark evidence.
@@ -72,10 +72,27 @@ This is a loop, not a fixed research checklist. A good round may be a tiny
 correctness fix, a benchmark cleanup, a KernelWiki-informed redesign, an NCU
 profile digest, or an autotuning pass, depending on what the evidence says.
 
-## Standalone Repo Skeleton
+## Workspace Root
 
-Create a focused workspace rather than editing a large framework checkout by
-default:
+Use one workspace root for the whole loop. This is the directory that contains
+`README.md`, `src/`, `tests/`, `benchmarks/`, `ledgers/`, and `.humanize/`.
+
+Selection rules:
+
+- If the current directory is already an empty or intended optimization
+  workspace, use the current directory directly.
+- If the current directory is a large framework checkout such as SGLang, vLLM,
+  or PyTorch, create a sibling standalone workspace for the experiment.
+- If the current directory already contains `.humanize/`, `ledgers/`, `src/`,
+  or a prior scaffold for this task, do not create another nested repo. Continue
+  from that root unless the user explicitly asks for a fresh workspace.
+- Never create a git repository inside another optimization repository. If a
+  nested repo already exists, stop and report the split before continuing.
+- Run Humanize/RLCR from the same workspace root that contains the kernel code
+  and ledgers. Do not keep RLCR state in one repo while committing code in
+  another.
+
+Create this skeleton in the chosen workspace root:
 
 ```text
 .gitignore
@@ -115,7 +132,24 @@ if git ls-files --error-unmatch .humanize/kernel-agent/refined-plan.md >/dev/nul
 fi
 ```
 
-Commit the scaffold and harness files, not `.humanize/` loop state.
+Commit the scaffold and harness files from the workspace root, not
+`.humanize/` loop state.
+
+## Remote GPU Execution
+
+If the user's prompt names a remote GPU skill or host such as `/ion-b200`,
+`/b200`, `ion-b200`, or `B200`, treat remote execution as part of the current
+round, not as optional future work.
+
+- Sync the exact workspace snapshot to the remote host or container before
+  build/test/benchmark commands.
+- Run compile, correctness, benchmark, and NCU steps on the named GPU
+  environment when they are required by the acceptance checks.
+- If remote access fails, record the connection or environment error as the
+  blocker. Do not replace hardware validation with a local-only runner script
+  unless the user explicitly asks for a handoff artifact.
+- Keep remote artifacts tied back to the workspace ledgers: build logs,
+  correctness output, benchmark CSV, NCU reports, and the next concrete edit.
 
 ## Lightweight Acceptance Checks
 
@@ -190,8 +224,8 @@ evidence is already enough for the current step.
 
 ## RLCR Startup
 
-After writing and committing the standalone repo scaffold, start the loop from
-inside the standalone repo:
+After writing and committing the workspace scaffold, start the loop from inside
+the chosen workspace root:
 
 ```bash
 "{{HUMANIZE_RUNTIME_ROOT}}/scripts/setup-rlcr-loop.sh" .humanize/kernel-agent/refined-plan.md --yolo
