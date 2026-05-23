@@ -123,6 +123,31 @@ verify_no_placeholders() {
     fi
 }
 
+sync_plugin_cache_from_source() {
+    local plugin_root="$1"
+
+    if [[ "$DRY_RUN" == "true" ]]; then
+        log "DRY-RUN sync local plugin source into $plugin_root"
+        return
+    fi
+
+    mkdir -p "$plugin_root"
+    if command -v rsync >/dev/null 2>&1; then
+        rsync -a --delete --exclude '.git' "$HUMANIZE_ROOT/" "$plugin_root/"
+    else
+        local tmp_root
+        tmp_root="$(mktemp -d "$(dirname "$plugin_root")/.plugin_sync_tmp.XXXXXX")"
+        if cp -a "$HUMANIZE_ROOT/." "$tmp_root/"; then
+            rm -rf "$tmp_root/.git"
+            rm -rf "$plugin_root"
+            mv "$tmp_root" "$plugin_root"
+        else
+            rm -rf "$tmp_root"
+            die "failed to copy local plugin source into $plugin_root"
+        fi
+    fi
+}
+
 link_skill() {
     local skill_name="$1"
     local target="$2"
@@ -245,6 +270,7 @@ if [[ "$DISABLE_POLYARCH" == "true" && "$DRY_RUN" != "true" ]]; then
     "$CLAUDE_BIN" plugin disable humanize@PolyArch >/dev/null 2>&1 || true
 fi
 
+sync_plugin_cache_from_source "$PLUGIN_ROOT"
 link_skill "KernelWiki" "$KERNELWIKI_ROOT"
 link_skill "ncu-report-skill" "$NCU_REPORT_SKILL_ROOT"
 
