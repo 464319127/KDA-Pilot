@@ -135,26 +135,6 @@ fi
 Commit the scaffold and harness files from the workspace root, not
 `.humanize/` loop state.
 
-## Remote GPU Execution
-
-If the user's prompt names a remote GPU skill or host such as `/ion-b200`,
-`/b200`, `ion-b200`, or `B200`, treat remote execution as part of the current
-round, not as optional future work.
-
-- Read the named remote skill's `SKILL.md` first and follow its connection and
-  container workflow. For `/ion-b200`, commands that need CUDA must run through
-  `ssh ion-b200 'docker exec sglang_bbuf ...'` or an equivalent shell inside
-  that container.
-- Sync the exact workspace snapshot to the remote host or container before
-  build/test/benchmark commands.
-- Run compile, correctness, benchmark, and NCU steps on the named GPU
-  environment when they are required by the acceptance checks.
-- If remote access fails, record the connection or environment error as the
-  blocker. Do not replace hardware validation with a local-only runner script
-  unless the user explicitly asks for a handoff artifact.
-- Keep remote artifacts tied back to the workspace ledgers: build logs,
-  correctness output, benchmark CSV, NCU reports, and the next concrete edit.
-
 ## Lightweight Acceptance Checks
 
 The refined plan should keep these checks visible without turning them into a
