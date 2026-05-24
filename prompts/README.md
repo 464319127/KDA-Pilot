@@ -15,6 +15,15 @@ prompts. The FA4 card is seeded from
 Each prompt is intended to be pasted as one complete task. The prompt itself
 names the required remote GPU skill and acceptance target.
 
+## Recommended Claude Code Launch
+
+Start Claude Code with Opus, maximum reasoning effort, and bypassed permission
+prompts before pasting one of these end-to-end prompt cards:
+
+```bash
+claude --permission-mode bypassPermissions --model opus --effort max
+```
+
 ## Opus 4.7 B200 int8_scaled_mm Run
 
 The image below is from an Opus 4.7 model run using the
