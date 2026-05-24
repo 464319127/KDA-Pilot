@@ -17,9 +17,15 @@ Do not run Python, pip, nvcc, builds, tests, benchmarks, or profiling directly
 on the ion-b200 host. Do not pip install flash-attn on the host. The container
 already has FlashAttention-4 installed; use it as the main baseline.
 
-Task:
-Implement a standalone CUDA/inline-PTX forward-only MHA attention kernel for
-NVIDIA B200.
+Task contract:
+- Task name: B200 FA4-comparable BF16 MHA forward kernel
+- Objective: implement a standalone CUDA/inline-PTX forward-only MHA attention
+  kernel for NVIDIA B200.
+- Comparison target: official FlashAttention-4 installed in the same
+  ion-b200 container.
+- Promotion criterion: the final correct implementation must beat official
+  FlashAttention-4 by at least 5% geometric-mean TFLOPS across the configured
+  B200 cases.
 
 Loop bootstrap:
 - Before implementing kernel candidates or running long benchmarks, ensure the
@@ -29,15 +35,25 @@ Loop bootstrap:
   was started with `--strict-success`. If RLCR did not start, stop and report
   the setup failure instead of continuing outside the loop.
 
+Kernel information:
+- Operation type: dense multi-head attention forward
+- Baseline solution name: official FlashAttention-4 in the container
+- Workload count: 8 configured cases
+- Constant axes:
+  - dtype: BF16
+  - head_dim: 128
+  - num_heads: 16
+  - total tokens: 32768
+- Variable axes:
+  - batch
+  - seqlen
+  - causal
+
 Scope:
 - Forward pass only
 - No backward
 - No GQA
 - No serving or framework integration
-- dtype: BF16
-- head_dim: 128
-- num_heads: 16
-- total tokens: 32768
 
 Benchmark cases:
 - batch=8, seqlen=4096
@@ -50,10 +66,20 @@ Target:
 Beat official FlashAttention-4 by at least 5% geometric-mean TFLOPS across the
 configured B200 cases.
 
+Reference computation:
+- Match standard scaled dot-product attention forward semantics for BF16 Q, K,
+  and V with head_dim=128.
+- Apply causal masking only when `causal=true`.
+- Use a numerically stable online softmax/LSE-compatible formulation in the
+  kernel. Correctness may be checked against PyTorch and/or official
+  FlashAttention-4.
+
 Correctness:
 - Compare against PyTorch reference and/or official FlashAttention-4 output.
 - Report explicit max error and relative error tolerances.
 - The final candidate must pass correctness before benchmark claims count.
+- Preserve explicit NaN/Inf checks in every validator. Do not weaken the
+  correctness harness or redefine the reference to make a candidate pass.
 
 Benchmarking:
 - Follow Dao-AILab/flash-attention benchmarks/benchmark_attn.py methodology as
@@ -62,6 +88,10 @@ Benchmarking:
 - Include FlashAttention-4 baseline numbers from the same B200 GPU0 container
   environment.
 - Keep benchmark scripts and raw result logs in the workspace.
+- Do not change the FlashAttention-4 baseline, benchmark formula, warmup/repeat
+  policy, or target cases after the first baseline is recorded unless the user
+  explicitly asks for a methodology change. If a benchmark bug is found, record
+  the before/after methodology in the ledger.
 
 Shape specialization:
 - You may write multiple specialized kernels or template/config variants for
@@ -77,6 +107,40 @@ Shape specialization:
 - Do not force a single universal kernel if evidence shows that different
   sequence lengths or causal modes need different CTA, warpgroup, TMEM, or
   register-pressure tradeoffs.
+
+Workflow requirements:
+- Round 0 must produce a short implementation plan before kernel edits. The
+  plan should identify the baseline command, correctness command, benchmark
+  command, first candidate direction, major risks, and promotion evidence.
+- Record every candidate in the attempt ledger with: name, parent candidate,
+  changed files, hypothesis, correctness result, per-case benchmark result,
+  profiler evidence if any, and promote/reject reason.
+- Keep `benchmarks/performance-map.json` or an equivalent table updated with
+  per-case baseline and candidate numbers.
+- Keep `ledgers/lineage.jsonl` updated so a future engineer can reconstruct
+  which candidate became the selected lineage and why.
+- Record rejected ideas instead of silently discarding them, especially when a
+  branch fails correctness, regresses a shape, or only wins one regime.
+- A partial per-shape win may be retained as dispatcher evidence even if it is
+  not the final universal lineage.
+
+Phase strategy:
+- Phase 1: establish the immutable FlashAttention-4 baseline, implement the
+  simplest correct standalone kernel, and prove the correctness/benchmark
+  harness is trustworthy. Performance matters, but a clean correct baseline is
+  the priority.
+- Phase 2: start from the best correct Phase 1 candidate and run
+  profiling-guided exploration. List candidate optimization directions, rank
+  them by expected benefit and risk, then explore them systematically.
+- For each Phase 2 optimization direction, try at most five focused iterations
+  before deciding whether to keep, revise, or reject that direction. If a
+  direction cannot be implemented cleanly, fails correctness, or has no
+  credible path to improvement after those iterations, record the evidence and
+  move to the next ranked direction.
+- Phase 3: analyze the full configured workload distribution and decide whether
+  shape-specialized dispatch or autotuning is justified by measured wins.
+  Evaluate the promoted candidate or dispatcher on all 8 configured cases, not
+  only on a convenient subset.
 
 Optimization guidance:
 - Use KernelWiki when prior B200, SM100, FlashAttention-4, CUTLASS, CuTe, or
