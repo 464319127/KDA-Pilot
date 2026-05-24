@@ -21,6 +21,14 @@ Task:
 Implement a standalone CUDA/inline-PTX forward-only MHA attention kernel for
 NVIDIA B200.
 
+Loop bootstrap:
+- Before implementing kernel candidates or running long benchmarks, ensure the
+  Humanize RLCR loop is active in the chosen workspace.
+- The workspace must be a git repository with one clean scaffold commit.
+- Confirm that `.humanize/rlcr/<timestamp>/state.md` exists and that the loop
+  was started with `--strict-success`. If RLCR did not start, stop and report
+  the setup failure instead of continuing outside the loop.
+
 Scope:
 - Forward pass only
 - No backward
