@@ -81,6 +81,28 @@ Correctness:
 - Preserve explicit NaN/Inf checks in every validator. Do not weaken the
   correctness harness or redefine the reference to make a candidate pass.
 
+FA4 numerical cross-check:
+- Treat PyTorch/FP32 attention as the semantic correctness oracle. Official
+  FlashAttention-4 is the performance baseline and a useful cross-check, but it
+  is also a tiled BF16 implementation with its own reduction order.
+- Do not use a fixed `5e-3` absolute difference against FA4 as a hard
+  correctness gate for all cases. SGLang's FA4 unit tests use dynamic numerical
+  bounds relative to PyTorch BF16/reordered-reference error, not a universal
+  fixed FA4-vs-reference threshold.
+- Use an SGLang-style dynamic bound when practical: compare the candidate's
+  error against the PyTorch/FP32 oracle to the error of a PyTorch BF16 or
+  reordered BF16 reference, and require the candidate to stay within a small
+  multiple of that numerical-error scale while also passing NaN/Inf checks.
+- If the harness cannot cheaply compute a dynamic bound, use the FA4 comparison
+  as diagnostic evidence and keep the semantic pass/fail gate on the
+  PyTorch/FP32 oracle. A relaxed FA4 cross-check such as `abs <= 2e-2` and
+  `rel <= 0.10` may be used to catch gross divergence, but it should be recorded
+  as methodology rather than confused with the semantic oracle.
+- If a candidate passes the PyTorch/FP32 oracle but only fails a too-strict
+  fixed FA4 cross-check, do not stall the loop on numerical mimicry. Record the
+  per-case FA4 diff, explain the reduction-order/tile-structure source, and
+  continue toward the Phase 2/Phase 3 performance work.
+
 Benchmarking:
 - Follow Dao-AILab/flash-attention benchmarks/benchmark_attn.py methodology as
   closely as practical, including warmup and repeat logic.
