@@ -34,9 +34,10 @@ Together they make an optimization loop that can work from a simple request:
 ```
 
 The loop keeps the engineering structure in place while staying light on
-policy: set up a clean workspace, prove correctness, measure latency, consult
-KernelWiki when prior art helps, profile when profiling would change the next
-edit, and let Humanize review the round evidence.
+policy: set up a clean workspace, commit the scaffold, verify an active
+strict-success RLCR state before kernel edits, prove correctness, measure
+latency, consult KernelWiki when prior art helps, profile when profiling would
+change the next edit, and let Humanize review the round evidence.
 
 ## Why Use It
 

@@ -63,6 +63,21 @@ Benchmarking:
   environment.
 - Keep benchmark scripts and raw result logs in the workspace.
 
+Shape specialization:
+- You may write multiple specialized kernels or template/config variants for
+  different benchmark cases, including separate non-causal and causal paths,
+  when the evidence suggests this is the right tradeoff.
+- A shape dispatcher or autotune table is allowed when one kernel cannot
+  dominate all cases; it is not required if one correct implementation is best
+  across the workload distribution.
+- The final score may use the fastest correct variant per configured case, but
+  every dispatched variant must pass correctness for its assigned case.
+- Record the dispatcher decision table with per-case baseline, candidate,
+  latency, TFLOPS, and promote/reject reason.
+- Do not force a single universal kernel if evidence shows that different
+  sequence lengths or causal modes need different CTA, warpgroup, TMEM, or
+  register-pressure tradeoffs.
+
 Optimization guidance:
 - Use KernelWiki when prior B200, SM100, FlashAttention-4, CUTLASS, CuTe, or
   attention-kernel evidence is useful.

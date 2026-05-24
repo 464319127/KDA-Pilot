@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="720" height="1280" viewBox="0 0 720 1280" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="1390" viewBox="0 0 720 1390" role="img" aria-labelledby="title desc">
   <title id="title">KernelPilot Agent Loop</title>
   <desc id="desc">A narrow vertical workflow diagram for the KernelPilot kernel optimization loop.</desc>
   <defs>
@@ -43,8 +43,8 @@
     </style>
   </defs>
 
-  <rect width="720" height="1280" class="bg"/>
-  <rect x="38" y="34" width="644" height="1212" rx="30" fill="#ffffff" stroke="#e2e8f0"/>
+  <rect width="720" height="1390" class="bg"/>
+  <rect x="38" y="34" width="644" height="1322" rx="30" fill="#ffffff" stroke="#e2e8f0"/>
 
   <text x="360" y="86" text-anchor="middle" class="title">KernelPilot Agent Loop</text>
   <text x="360" y="114" text-anchor="middle" class="subtitle">Clean kernel experiments with correctness, benchmarks, and evidence only when it helps.</text>
@@ -70,57 +70,62 @@
   <rect x="114" y="426" width="492" height="96" rx="20" class="blue" filter="url(#shadow)"/>
   <text x="360" y="462" text-anchor="middle" class="label">Standalone optimization repo</text>
   <text x="360" y="486" text-anchor="middle" class="small">minimal bindings, tests, benchmark harness, ledgers, profile artifacts</text>
-  <path d="M 360 522 L 360 568" class="line"/>
+  <path d="M 360 522 L 360 548" class="line"/>
 
-  <rect x="84" y="568" width="552" height="438" rx="22" class="panel"/>
-  <text x="112" y="604" class="section">HUMANIZE RLCR LOOP</text>
+  <rect x="114" y="548" width="492" height="82" rx="20" class="amber" filter="url(#shadow)"/>
+  <text x="360" y="579" text-anchor="middle" class="label">RLCR bootstrap gate</text>
+  <text x="360" y="602" text-anchor="middle" class="small">scaffold commit, strict-success setup, state.md check</text>
+  <path d="M 360 630 L 360 668" class="line"/>
 
-  <rect x="126" y="632" width="306" height="62" rx="15" class="amber"/>
-  <text x="279" y="656" text-anchor="middle" class="label">Write candidate</text>
-  <text x="279" y="676" text-anchor="middle" class="small">kernel edit or design reset</text>
+  <rect x="84" y="668" width="552" height="438" rx="22" class="panel"/>
+  <text x="112" y="704" class="section">HUMANIZE RLCR LOOP</text>
 
-  <path d="M 432 663 L 488 663" class="lineSoft"/>
-  <rect x="488" y="626" width="106" height="74" rx="18" class="mint"/>
-  <text x="541" y="655" text-anchor="middle" class="label">Correct?</text>
-  <text x="541" y="675" text-anchor="middle" class="small">compare R</text>
-  <path d="M 541 700 C 541 734 444 735 360 716 C 284 699 203 711 203 694" class="loop"/>
+  <rect x="126" y="732" width="306" height="62" rx="15" class="amber"/>
+  <text x="279" y="756" text-anchor="middle" class="label">Write candidate</text>
+  <text x="279" y="776" text-anchor="middle" class="small">kernel edit or design reset</text>
 
-  <path d="M 541 700 L 541 746" class="line"/>
-  <rect x="388" y="746" width="206" height="62" rx="15" class="mint"/>
-  <text x="491" y="771" text-anchor="middle" class="label">Benchmark on W</text>
-  <text x="491" y="790" text-anchor="middle" class="small">latency, regimes, variance</text>
+  <path d="M 432 763 L 488 763" class="lineSoft"/>
+  <rect x="488" y="726" width="106" height="74" rx="18" class="mint"/>
+  <text x="541" y="755" text-anchor="middle" class="label">Correct?</text>
+  <text x="541" y="775" text-anchor="middle" class="small">compare R</text>
+  <path d="M 541 800 C 541 834 444 835 360 816 C 284 799 203 811 203 794" class="loop"/>
 
-  <path d="M 388 777 L 330 777" class="lineSoft"/>
-  <rect x="126" y="746" width="204" height="62" rx="15" class="blue"/>
-  <text x="228" y="771" text-anchor="middle" class="label">Evidence?</text>
-  <text x="228" y="790" text-anchor="middle" class="small">lookup or profile if useful</text>
+  <path d="M 541 800 L 541 846" class="line"/>
+  <rect x="388" y="846" width="206" height="62" rx="15" class="mint"/>
+  <text x="491" y="871" text-anchor="middle" class="label">Benchmark on W</text>
+  <text x="491" y="890" text-anchor="middle" class="small">latency, regimes, variance</text>
 
-  <rect x="126" y="854" width="306" height="62" rx="15" class="purple"/>
-  <text x="279" y="879" text-anchor="middle" class="label">Stop hook review</text>
-  <text x="279" y="898" text-anchor="middle" class="small">accept, revise, or continue the loop</text>
-  <path d="M 228 808 L 228 854" class="line"/>
-  <path d="M 432 885 C 552 888 595 825 491 808" class="loop"/>
+  <path d="M 388 877 L 330 877" class="lineSoft"/>
+  <rect x="126" y="846" width="204" height="62" rx="15" class="blue"/>
+  <text x="228" y="871" text-anchor="middle" class="label">Evidence?</text>
+  <text x="228" y="890" text-anchor="middle" class="small">lookup or profile if useful</text>
 
-  <rect x="458" y="842" width="136" height="118" rx="16" class="soft"/>
-  <text x="526" y="866" text-anchor="middle" class="section">ON DEMAND</text>
-  <text x="526" y="893" text-anchor="middle" class="small">KernelWiki</text>
-  <text x="526" y="918" text-anchor="middle" class="small">ncu-report-skill</text>
-  <text x="526" y="943" text-anchor="middle" class="small">Live upstream</text>
-  <path d="M 330 777 C 410 808 424 858 458 880" class="dash"/>
-  <path d="M 458 930 C 379 988 248 970 279 916" class="dash"/>
+  <rect x="126" y="954" width="306" height="62" rx="15" class="purple"/>
+  <text x="279" y="979" text-anchor="middle" class="label">Stop hook review</text>
+  <text x="279" y="998" text-anchor="middle" class="small">accept, revise, or continue the loop</text>
+  <path d="M 228 908 L 228 954" class="line"/>
+  <path d="M 432 985 C 552 988 595 925 491 908" class="loop"/>
 
-  <path d="M 279 916 C 279 970 360 969 360 1038" class="line"/>
+  <rect x="458" y="942" width="136" height="118" rx="16" class="soft"/>
+  <text x="526" y="966" text-anchor="middle" class="section">ON DEMAND</text>
+  <text x="526" y="993" text-anchor="middle" class="small">KernelWiki</text>
+  <text x="526" y="1018" text-anchor="middle" class="small">ncu-report-skill</text>
+  <text x="526" y="1043" text-anchor="middle" class="small">Live upstream</text>
+  <path d="M 330 877 C 410 908 424 958 458 980" class="dash"/>
+  <path d="M 458 1030 C 379 1088 248 1070 279 1016" class="dash"/>
 
-  <rect x="84" y="1038" width="552" height="166" rx="22" fill="url(#green)" stroke="#0f766e" filter="url(#shadow)"/>
-  <text x="360" y="1078" text-anchor="middle" class="label white">Package the result</text>
-  <rect x="126" y="1104" width="138" height="54" rx="14" fill="#ecfeff" opacity="0.94"/>
-  <text x="195" y="1126" text-anchor="middle" class="label">Map</text>
-  <text x="195" y="1145" text-anchor="middle" class="small">shape regimes</text>
-  <rect x="291" y="1104" width="138" height="54" rx="14" fill="#ecfeff" opacity="0.94"/>
-  <text x="360" y="1126" text-anchor="middle" class="label">Decide</text>
-  <text x="360" y="1145" text-anchor="middle" class="small">dispatch/tuning</text>
-  <rect x="456" y="1104" width="138" height="54" rx="14" fill="#ecfeff" opacity="0.94"/>
-  <text x="525" y="1126" text-anchor="middle" class="label">Ship</text>
-  <text x="525" y="1145" text-anchor="middle" class="small">kernel + fallbacks</text>
-  <text x="360" y="1186" text-anchor="middle" class="small whiteSub">correctness matrix / benchmark matrix / unsupported regimes</text>
+  <path d="M 279 1016 C 279 1070 360 1069 360 1148" class="line"/>
+
+  <rect x="84" y="1148" width="552" height="166" rx="22" fill="url(#green)" stroke="#0f766e" filter="url(#shadow)"/>
+  <text x="360" y="1188" text-anchor="middle" class="label white">Package the result</text>
+  <rect x="126" y="1214" width="138" height="54" rx="14" fill="#ecfeff" opacity="0.94"/>
+  <text x="195" y="1236" text-anchor="middle" class="label">Map</text>
+  <text x="195" y="1255" text-anchor="middle" class="small">shape regimes</text>
+  <rect x="291" y="1214" width="138" height="54" rx="14" fill="#ecfeff" opacity="0.94"/>
+  <text x="360" y="1236" text-anchor="middle" class="label">Decide</text>
+  <text x="360" y="1255" text-anchor="middle" class="small">dispatch/tuning</text>
+  <rect x="456" y="1214" width="138" height="54" rx="14" fill="#ecfeff" opacity="0.94"/>
+  <text x="525" y="1236" text-anchor="middle" class="label">Ship</text>
+  <text x="525" y="1255" text-anchor="middle" class="small">kernel + fallbacks</text>
+  <text x="360" y="1296" text-anchor="middle" class="small whiteSub">correctness matrix / benchmark matrix / unsupported regimes</text>
 </svg>
