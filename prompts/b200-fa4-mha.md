@@ -19,8 +19,13 @@ already has FlashAttention-4 installed; use it as the main baseline.
 
 Task contract:
 - Task name: B200 FA4-comparable BF16 MHA forward kernel
-- Objective: implement a standalone CUDA/inline-PTX forward-only MHA attention
-  kernel for NVIDIA B200.
+- Objective: implement a FA4-comparable BF16 MHA forward-only attention kernel
+  for NVIDIA B200 in a standalone optimization workspace.
+- "Standalone" means the candidate has its own build, harness, ledger, and
+  dispatch path in this workspace. It does not mean clean-room or from-scratch.
+  Do not call official FlashAttention-4 from the candidate execution path, but
+  you may study, copy, port, adapt, or simplify public/reference kernel source
+  when license-compatible and recorded in the ledger.
 - Comparison target: official FlashAttention-4 installed in the same
   ion-b200 container.
 - Promotion criterion: the final correct implementation must beat official
@@ -54,6 +59,31 @@ Scope:
 - No backward
 - No GQA
 - No serving or framework integration
+
+Implementation-source policy:
+- This run is AVO-style baseline-aware evolution, not blind kernel synthesis.
+- Treat official FlashAttention-4, CUTLASS/CuTe SM100 examples, TileLang
+  kernels, and other public Blackwell attention kernels as working materials.
+  They may be used as reference, parent implementation, or source for canonical
+  helper code when license-compatible. Record the exact source path, commit or
+  installed version, and what was adapted.
+- The first performance-oriented candidate should be baseline-derived or
+  canonical-helper-derived unless there is a measured reason not to. A naive
+  kernel is acceptable only as a harness/correctness smoke test, not as the
+  main optimization lineage.
+- Do not hand-derive tcgen05 SmemDescriptor encodings, TMEM layouts, TMA
+  swizzles, warpgroup synchronization protocols, or Blackwell MMA instruction
+  wrappers when an official or de facto canonical helper exists. Prefer porting
+  the helper and validating it with a microcase.
+- CUDA/C++ and inline PTX are allowed, but not required to be the only
+  implementation substrate. CuTe, CUTLASS, TileLang, or small generated helper
+  code are allowed when they make the Blackwell-specific details more reliable.
+- If a correct candidate is more than 3x slower than official FlashAttention-4
+  after one tensor-core-capable attempt, stop local micro-tuning of that lineage
+  and reset to a stronger FA4/CUTLASS/CuTe/TileLang-derived parent.
+- If a tensor-core/TMEM/tcgen05 microcase remains incorrect for two focused
+  iterations, stop hand-deriving that path and switch to canonical helper
+  extraction or a different parent implementation.
 
 Benchmark cases:
 - batch=8, seqlen=4096
@@ -134,6 +164,10 @@ Workflow requirements:
 - Round 0 must produce a short implementation plan before kernel edits. The
   plan should identify the baseline command, correctness command, benchmark
   command, first candidate direction, major risks, and promotion evidence.
+- Round 0 must also identify the concrete source lineage for the first
+  performance-oriented candidate: official FA4 source path/version and at least
+  one canonical Blackwell helper source such as CUTLASS/CuTe, TileLang, or an
+  equivalent public SM100 attention kernel.
 - Record every candidate in the attempt ledger with: name, parent candidate,
   changed files, hypothesis, correctness result, per-case benchmark result,
   profiler evidence if any, and promote/reject reason.
@@ -148,9 +182,10 @@ Workflow requirements:
 
 Phase strategy:
 - Phase 1: establish the immutable FlashAttention-4 baseline, implement the
-  simplest correct standalone kernel, and prove the correctness/benchmark
-  harness is trustworthy. Performance matters, but a clean correct baseline is
-  the priority.
+  smallest correctness smoke-test needed to prove the harness, then immediately
+  move to a baseline-derived or canonical-helper-derived performance candidate.
+  Do not spend multiple rounds optimizing a naive lineage that is structurally
+  incapable of approaching FA4.
 - Phase 2: start from the best correct Phase 1 candidate and run
   profiling-guided exploration. List candidate optimization directions, rank
   them by expected benefit and risk, then explore them systematically.
@@ -167,6 +202,9 @@ Phase strategy:
 Optimization guidance:
 - Use KernelWiki when prior B200, SM100, FlashAttention-4, CUTLASS, CuTe, or
   attention-kernel evidence is useful.
+- Before attempting a hand-written Blackwell primitive, inspect the relevant
+  upstream/reference implementation and write down whether the run will port,
+  wrap, simplify, or deliberately avoid it.
 - Use Nsight Compute evidence when a candidate is correct but not clearly
   target-complete.
 - Consider B200/SM100-specific features and attention patterns such as TMA,
