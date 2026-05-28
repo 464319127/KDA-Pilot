@@ -101,6 +101,22 @@ across **all** configured shapes. Per-shape specialization is allowed and
 encouraged when profiler or benchmark evidence shows that one kernel cannot
 cover the whole axis space. See the Shape Specialization Policy below.
 
+## Required Claude Code Skill
+
+This task talks to the remote GPU box exclusively through the local
+Claude Code skills `~/.claude/skills/ion8-h200/SKILL.md` (primary)
+and `~/.claude/skills/ion9-h200/SKILL.md` (interchangeable backup
+with the same H200 topology and the same `sglang_bbuf` container).
+Either skill owns the SSH alias, container lifecycle (privileged
++ Nsight Compute access), idle-GPU selection rule, and the
+`kill-idle` shortcut.
+
+Pick whichever skill currently has idle H200 GPUs available; the
+remote workspace path, container name, and benchmark commands in
+the next section apply to both. If neither skill is loaded, fetch
+them before starting the loop; do not paraphrase the SSH pattern by
+hand.
+
 ## Environment And Remote Rule
 
 Use the `ion8-h200 (or ion9-h200 as backup)` remote GPU environment for all NVIDIA H200

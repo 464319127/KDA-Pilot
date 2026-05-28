@@ -94,6 +94,21 @@ across **all** configured shapes. Per-shape specialization is allowed and
 encouraged when profiler or benchmark evidence shows that one kernel cannot
 cover the whole axis space. See the Shape Specialization Policy below.
 
+## Required Claude Code Skill
+
+This task talks to the remote GPU box exclusively through the local
+Claude Code skill `~/.claude/skills/ion-b200/SKILL.md`. The skill
+owns the SSH alias `ion-b200`, the `sglang_bbuf` Docker container
+lifecycle (the create command keeps `--privileged --cap-add=SYS_ADMIN
+--security-opt seccomp=unconfined` so `ncu --set basic` can collect
+counters), the idle-GPU selection rule (`nvidia-smi` 0% util + low
+memory), and the `kill-idle` shortcut.
+
+If the skill is missing on the box that launches Humanize/RLCR, fetch
+it before starting the loop; do not paraphrase the SSH pattern by
+hand. The skill's SKILL.md is the single source of truth for `ion-b200`
+host conventions; this prompt only consumes them.
+
 ## Environment And Remote Rule
 
 Use the `ion-b200` remote GPU environment for all NVIDIA B200
