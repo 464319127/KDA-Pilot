@@ -242,16 +242,16 @@ KERNEL_SLUG = "h200_cutedsl_norm_scale_shift__diffusion_multi_shape"
 OP_TYPE = "cutedsl_norm_scale_shift"
 
 def optimized_wrapper(*args, **kwargs):
-    ...
+...
 
 def register() -> dict:
-    return {
-        "name": KERNEL_SLUG,
-        "op_type": OP_TYPE,
-        "callable": optimized_wrapper,
-        "version": "dev",
-        "source": __file__,
-    }
+return {
+"name": KERNEL_SLUG,
+"op_type": OP_TYPE,
+"callable": optimized_wrapper,
+"version": "dev",
+"source": __file__,
+}
 ```
 
 `optimized_wrapper` must preserve the recovered SGLang callsite contract and

@@ -240,16 +240,16 @@ KERNEL_SLUG = "b200_norm_infer__diffusion_multi_shape"
 OP_TYPE = "layer_or_rms_norm_infer"
 
 def optimized_wrapper(*args, **kwargs):
-    ...
+...
 
 def register() -> dict:
-    return {
-        "name": KERNEL_SLUG,
-        "op_type": OP_TYPE,
-        "callable": optimized_wrapper,
-        "version": "dev",
-        "source": __file__,
-    }
+return {
+"name": KERNEL_SLUG,
+"op_type": OP_TYPE,
+"callable": optimized_wrapper,
+"version": "dev",
+"source": __file__,
+}
 ```
 
 `optimized_wrapper` must preserve the recovered SGLang callsite contract and

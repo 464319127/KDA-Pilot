@@ -20,3 +20,17 @@ tests/test_correctness.py
 ```
 
 Use the matching launcher under `../scripts/launch_kernels/` to start a task.
+
+## SGLang Diffusion Multi-Shape Tasks
+
+The `*_diffusion_multi_shape/` folders cover SGLang's non-gemm / non-attention
+diffusion kernels under `python/sglang/jit_kernel/diffusion/`. Their shape
+tables come from a live sweep of the SGLang diffusion benchmark presets with
+a `kernel_shape_capture.py` monkey-patch active. See:
+
+- `diffusion_shapes_ledger.md` — cross-task summary of every observed shape.
+- `diffusion_kernel_coverage.md` — kernel × preset coverage matrix, including
+  which entries are empirical vs analytical fallbacks.
+- `<task>/docs/captured_shapes_<arch>.{jsonl,md}` — raw and rendered captures
+  for one task.
+- `../scripts/diffusion_shape_capture/` — the capture and replay tooling.
