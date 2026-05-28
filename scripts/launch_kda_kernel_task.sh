@@ -30,6 +30,12 @@ Environment overrides:
   KDA_TASK_LABEL        Override the friendly label used for branch/worktree names
   KDA_BOOTSTRAP_DRAFT=0 Skip automatic .humanize/kernel-agent/draft.md creation
   KDA_NO_CLAUDE=1       Create the worktree and print commands without launching Claude
+  HUMANIZE_CODEX_BYPASS_SANDBOX
+                        Forwarded to the spawned Claude process (default: true).
+                        Lets Codex inside the RLCR loop skip its per-call sandbox /
+                        approval prompts. Set to anything other than true|1 to
+                        re-enable the sandbox; only safe to leave on for trusted
+                        dev environments (the worktree is task-isolated already).
 EOF
 }
 
@@ -235,7 +241,10 @@ if [[ "${KDA_NO_CLAUDE:-}" == "1" ]]; then
   exit 0
 fi
 
-exec env CLAUDE_PROJECT_DIR="$PWD" "$CLAUDE_BIN" \
+exec env \
+  CLAUDE_PROJECT_DIR="$PWD" \
+  HUMANIZE_CODEX_BYPASS_SANDBOX="${HUMANIZE_CODEX_BYPASS_SANDBOX:-true}" \
+  "$CLAUDE_BIN" \
   --permission-mode bypassPermissions \
   --model "$CLAUDE_MODEL" \
   --effort "$CLAUDE_EFFORT" \

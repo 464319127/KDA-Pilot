@@ -194,6 +194,10 @@ KDA_NO_CLAUDE=1                              # prepare the worktree only
 CLAUDE_BIN=claude                            # Claude executable
 CLAUDE_MODEL=opus                            # Claude model flag
 CLAUDE_EFFORT=max                            # Claude effort flag
+HUMANIZE_CODEX_BYPASS_SANDBOX=true           # default; forwarded into Claude's env so
+                                             # Codex in the RLCR loop skips per-call
+                                             # sandbox/approval prompts. Set anything
+                                             # other than true|1 to re-enable.
 ```
 
 ## Kernel Folder Contract
