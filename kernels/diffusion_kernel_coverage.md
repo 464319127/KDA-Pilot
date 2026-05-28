@@ -34,7 +34,7 @@ contributed live captures for `qwen-edit`, `zimage`, `wan-ti2v`, and partial
 | `ltx2` | LTX-2 | ion9-h200 | ✅ `ltx2_rotary.apply_ltx2_split_rotary_emb` @ 32 heads with split half_dim |
 | `hunyuanvideo` | HunyuanVideo | ion9-h200 (phase 2) | ✅ standard `apply_rotary_embedding`, GroupNorm+SiLU VAE (image and 5D video), CuTe-DSL fused_norm_scale_shift, scale_shift, triton_one_pass_rms_norm |
 | `mova-720p` | MOVA-720p | ion8-h200 (phase 2) | ⚠️ install events only; 4-GPU launch slow + timed out before DiT kernels |
-| `helios` | Helios-Base | ion9-h200 (phase 2) | ✅ qknorm_rope, scale_shift, scale_residual_norm_scale_shift |
+| `helios` | Helios-Base | ion9-h200 + ion8-h200 (phase 2) | ✅ qknorm_rope, scale_shift, scale_residual_norm_scale_shift, **`norm.norm_infer`** (new — the 2-pass LayerNorm baseline) |
 
 ## Kernel Capture Status (14 entry points)
 
@@ -48,17 +48,20 @@ contributed live captures for `qwen-edit`, `zimage`, `wan-ti2v`, and partial
 | `scale_shift.fuse_scale_shift_kernel` | qwen, qwen-edit, hunyuanvideo, helios | ✅ |
 | `scale_shift.fuse_layernorm_scale_shift_gate_select01_kernel` | qwen-edit | ✅ |
 | `scale_shift.fuse_residual_layernorm_scale_shift_gate_select01_kernel` | qwen-edit | ✅ |
-| `rmsnorm_onepass.triton_one_pass_rms_norm` | zimage, hunyuanvideo | ✅ |
+| `rmsnorm_onepass.triton_one_pass_rms_norm` | zimage, flux2, hunyuanvideo | ✅ |
+| `norm.norm_infer` | helios | ✅ (new in phase 2) |
 | `ltx2_rotary.apply_ltx2_split_rotary_emb` | ltx2 | ✅ |
 | `rotary.apply_rotary_embedding` | hunyuanvideo | ✅ (new in phase 2) |
 | `group_norm_silu.apply_group_norm_silu` | hunyuanvideo | ✅ (new in phase 2) |
 | `group_norm_silu.triton_group_norm_silu` | hunyuanvideo | ✅ (new in phase 2) |
 | `norm.rms_norm_fn` | — | ❌ Not exercised by any of the 12 sweep presets (all routes go through CuTe-DSL or fused-QKNorm). Analytical shape table only. |
 
-**13 of 14 kernel entry points have empirical capture coverage** after the
-phase-2 sweep. Only the flash-attention-style 1-pass `rms_norm_fn` remains in
-the analytical-only column, because the current SGLang diffusion code paths
-never dispatch to it for the sweep presets.
+**14 of 15 kernel entry points have empirical capture coverage** after the
+phase-2 sweep (helios picked up `norm.norm_infer` as the very last addition).
+Only the flash-attention-style 1-pass `norm.rms_norm_fn` remains in the
+analytical-only column, because the current SGLang diffusion code paths never
+dispatch to it for the 12 sweep presets — it stays available as a generic
+LayerNorm/RMSNorm fast path for future models.
 
 ## Re-capture procedure
 
