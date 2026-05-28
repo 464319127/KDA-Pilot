@@ -60,6 +60,23 @@ being claimed as part of the promotion target. Note: tensor shapes are
 arch-independent for this kernel; if `captured_shapes_b200.jsonl` is empty
 the agent must treat the H200 capture as the authoritative shape ledger.
 
+## Canonical Regression Shapes (from SGLang test)
+
+Source: `python/sglang/jit_kernel/tests/diffusion/test_qwen_image_modulation.py`
+(this is the file that exercises `norm_infer` end-to-end as part of the Z-Image / Qwen-Image
+select01 dual-modulation baseline).
+
+- `batch_size`: `[1, 2, 4]` (CI subset `[1, 2]`).
+- `seq_len`: `[6, 33, 128, 257]` (CI subset `[6, 128]`).
+- `hidden_size`: `[512, 1024, 1536, 3072]` (CI subset `[512, 3072]`).
+- `dtype`: `[torch.float16, torch.bfloat16, torch.float32]` (CI subset `[fp16, bf16]`).
+- `eps`: `1e-6`.
+- `is_rms_norm`: explicit kernel argument; the test uses `False` (LayerNorm).
+- Tolerance: `(atol=5e-2, rtol=5e-2)` for non-fp32, `1e-5` for fp32.
+
+Cross-validate `triton_one_pass_rms_norm` on the same row counts (`M = B*S`) and on per-head tiles
+`(4096, 128)` / `(16384, 128)` (the live captures from Z-Image).
+
 ## Configurable Optimization Axes
 
 Each candidate kernel/family may need different code paths or autotune

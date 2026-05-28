@@ -61,6 +61,26 @@ being claimed as part of the promotion target. Note: tensor shapes are
 arch-independent for this kernel; if `captured_shapes_b200.jsonl` is empty
 the agent must treat the H200 capture as the authoritative shape ledger.
 
+## Canonical Regression Shapes (from SGLang test)
+
+Source: `python/sglang/jit_kernel/tests/diffusion/test_qknorm_rope.py`.
+Every candidate must still pass this enumerated grid in nightly /
+`base-b-kernel-unit-1-gpu-large` CI:
+
+- `batch_size` (== total tokens before view): every power of two in `[1, 4096]`
+  plus `x+1` for each, plus CI-extra `[1, 9, 129, 257, 2049, 4097]`.
+- `num_heads`: `[8, 16, 24, 32]` (CI subset `[8, 24]`).
+- `head_dim`: `[64, 128, 256]`.
+- `rope_dim`: `{64: [64], 128: [64, 128], 256: [64, 128, 256]}` per `head_dim`.
+- `is_neox`: `[False, True]`; when `True`, only `rope_dim` values yielding a power-of-two
+  rotary-lane count are valid (see `can_use_fused_inplace_qknorm_rope` gate).
+- `position_dtype`: `[torch.int32, torch.int64]`.
+- `dtype`: `torch.bfloat16`; `eps=1e-6`; tolerance `ATOL=8e-2, RTOL=1e-2`.
+- Oracle: SGLang `fused_inplace_qknorm` + `flashinfer.rope.apply_rope_with_cos_sin_cache_inplace`.
+
+The candidate kernel must support every `(batch_size, num_heads, head_dim, rope_dim, is_neox, position_dtype)`
+tuple above or fall back to the SGLang baseline for the unsupported tail.
+
 ## Configurable Optimization Axes
 
 Each candidate kernel/family may need different code paths or autotune

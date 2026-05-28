@@ -60,6 +60,21 @@ being claimed as part of the promotion target. Note: tensor shapes are
 arch-independent for this kernel; if `captured_shapes_b200.jsonl` is empty
 the agent must treat the H200 capture as the authoritative shape ledger.
 
+## Canonical Regression Shapes (from SGLang test)
+
+Source: `python/sglang/jit_kernel/tests/test_rope.py` (standard `apply_rotary_embedding` enumeration).
+
+- `batch_size` (== total tokens): `[1, 2, 4, ..., 2048]` (powers of two) plus `[1, 129, 2048, 2049]` CI-extra.
+- `num_kv_heads`: `[1, 2, 8]` (CI subset `[1, 8]`).
+- `gqa_ratio`: `[1, 4, 8]` (CI subset `[1, 8]`). `num_qo_heads = num_kv_heads * gqa_ratio`.
+- `rope_dim`: `[64, 128, 256, 512]` (CI subset `[64, 256]`).
+- `is_neox`: `[False, True]`.
+- `dtype`: bfloat16 default plus mixed `[int32, int64]` for the `positions` dtype edge case.
+- Oracle: FlashInfer `apply_rope_with_cos_sin_cache_inplace`. Tolerance `1e-2` abs/rel.
+
+For the LTX-2 split-rotary variant (`apply_ltx2_split_rotary_emb`) there is no dedicated SGLang test;
+the empirical shapes captured from the `ltx2` benchmark preset are the regression contract.
+
 ## Configurable Optimization Axes
 
 Each candidate kernel/family may need different code paths or autotune

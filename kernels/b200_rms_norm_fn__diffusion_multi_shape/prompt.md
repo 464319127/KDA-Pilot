@@ -56,6 +56,21 @@ table above reflects analytical/derived shapes from each model's published
 config. Re-run the sweep with the matching presets before final promotion;
 write the captured raw JSONL to `docs/captured_shapes_<arch>.jsonl`.
 
+## Canonical Regression Shapes (from SGLang test)
+
+Source: `python/sglang/jit_kernel/tests/test_rmsnorm.py` (closest in-repo enumeration; no diffusion-specific test exists yet for `rms_norm_fn`).
+
+- `batch_size` (== row count `M`): every power of two in `[1, 8192]` plus `x+i+1` jitter,
+  CI subset `[1, 9, 256, 4109]`.
+- `hidden_size` (`N`): `[64, 128, 256, 512, 1024, 2048, 3072, 4096, 5120, 6144, 7168, 8192, 2304, 2560, 12288, 16384]`;
+  CI subset `[256, 1024, 16384]`.
+- `dtype`: `[torch.float16, torch.bfloat16]`; `eps=1e-6`.
+- `specify_out`: `[True, False]` (out tensor preallocated vs reuse input).
+- `hidden_size` support gate: `[64, 128, 256, 512, 8192, 8704, 16384]` (extra `_is_supported_rmsnorm_hidden_size` cases).
+- Oracle: FlashInfer `flashinfer_rmsnorm`, tolerance `1e-2`.
+
+These cover only the LLM-style hidden sizes. The diffusion-specific extras (residual / x1 / weight1 / bias1 / zero_centered_weight / out_dtype) must be exercised manually using the production shape table.
+
 ## Configurable Optimization Axes
 
 Each candidate kernel/family may need different code paths or autotune

@@ -58,6 +58,24 @@ table above reflects analytical/derived shapes from each model's published
 config. Re-run the sweep with the matching presets before final promotion;
 write the captured raw JSONL to `docs/captured_shapes_<arch>.jsonl`.
 
+## Canonical Regression Shapes (from SGLang test)
+
+Source: `python/sglang/jit_kernel/tests/diffusion/test_group_norm_silu.py`.
+
+- 2D / 3D / 5D test cases:
+  - `(2, 64, 32, 32)`, `num_groups=32`, id=`image_2d`.
+  - `(1, 64, 4, 16, 16)`, `num_groups=32`, id=`video_3d`.
+  - `(4, 128)`, `num_groups=32`, id=`token_2d`.
+- Large-tile bf16 case: `(1, 128, 20, 256, 256)`, `num_groups=32`, id=`large_tile`.
+- `dtype`: `[torch.float16, torch.bfloat16, torch.float32]`.
+- Tolerance: `(atol=3e-3, rtol=3e-3)` fp16; `(7e-2, 2e-2)` bf16; `(1e-5, 1e-5)` fp32.
+- Oracle: `F.silu(F.group_norm(x, num_groups, weight, bias, eps=1e-5))`.
+- The wrapper test (`apply_group_norm_silu(x, nn.GroupNorm(...), nn.SiLU())`) only runs on the 2D / 3D
+  shapes and `[fp16, bf16]`.
+
+Promotion candidates must clear both the regression grid above and the production VAE shapes in
+the workload table.
+
 ## Configurable Optimization Axes
 
 Each candidate kernel/family may need different code paths or autotune

@@ -61,6 +61,28 @@ being claimed as part of the promotion target. Note: tensor shapes are
 arch-independent for this kernel; if `captured_shapes_b200.jsonl` is empty
 the agent must treat the H200 capture as the authoritative shape ledger.
 
+## Canonical Regression Shapes (from SGLang test)
+
+Source: `python/sglang/jit_kernel/tests/diffusion/test_fused_norm_scale_shift.py`.
+
+- `SHAPES = [(B, S, F, D)]` = `[(1, 1024, 8, 3072), (4, 512, 16, 3072)]`.
+- `dtype`: `[torch.float16, torch.bfloat16, torch.float32]`.
+- `norm_type`: `["layer", "rms"]`.
+- `affine_mode`: `["D", "NAT"]`.
+- `scale/shift` layouts (`index_mode`):
+  `["BSD", "1", "1SD", "BD", "B1D", "D", "1D", "11D", "BF1D"]`.
+- Frame-divisibility precondition: `S % F == 0` whenever scale/shift use the `BF1D` (4D) layout.
+  The validator raises `"S(<S>) must be divisible by F(<F>)"` otherwise (covered explicitly by
+  `test_validate_scale_shift_rejects_non_divisible_frames`).
+- D constraint: `D % 256 == 0` and `D <= 8192`.
+- `eps`: `1e-5`.
+- Tolerance: `(atol=5e-2, rtol=5e-2)` non-fp32; `1e-5` fp32.
+- Oracle: `norm(x) * (1 + scale) + shift` with `_apply_scale_shift` handling 2D/3D/4D layouts.
+
+The residual variant `fused_scale_residual_norm_scale_shift` additionally consumes
+`(residual, gate)` and outputs `(y, res_out)`; `gate_mode` defaults to `B1D` but is parameterized
+across the same index-mode list.
+
 ## Configurable Optimization Axes
 
 Each candidate kernel/family may need different code paths or autotune

@@ -61,6 +61,26 @@ being claimed as part of the promotion target. Note: tensor shapes are
 arch-independent for this kernel; if `captured_shapes_b200.jsonl` is empty
 the agent must treat the H200 capture as the authoritative shape ledger.
 
+## Canonical Regression Shapes (from SGLang test)
+
+Source: `python/sglang/jit_kernel/tests/diffusion/test_qwen_image_modulation.py` (covers all three
+scale-shift Triton entry points: `fuse_scale_shift_kernel`, the `select01` variant and the
+residual `select01` variant).
+
+- `batch_size`: `[1, 2, 4]` (CI subset `[1, 2]`).
+- `seq_len`: `[6, 33, 128, 257]` (CI subset `[6, 128]`).
+- `hidden_size`: `[512, 1024, 1536, 3072]` (CI subset `[512, 3072]`).
+- `dtype`: `[float16, bfloat16, float32]` (CI subset `[fp16, bf16]`).
+- `eps`: `1e-6`.
+- `scale0/shift0/gate0/scale1/shift1/gate1`: each shaped `(B, C)`.
+- `index`: shaped `(B, L)`, bool / int — required by the `select01` dispatch path.
+- Residual / residual_gate path tested on the same grid via
+  `fuse_residual_layernorm_scale_shift_gate_select01_kernel`.
+- Tolerance: `(atol=5e-2, rtol=5e-2)` non-fp32; `1e-5` fp32.
+
+The simple `fuse_scale_shift_kernel` accepts both 2D `(B,C)` scale/shift and 4D `(B,F,1,C)` scale/shift
+(video frames). Cover both layouts during regression.
+
 ## Configurable Optimization Axes
 
 Each candidate kernel/family may need different code paths or autotune

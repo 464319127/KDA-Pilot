@@ -59,6 +59,24 @@ being claimed as part of the promotion target. Note: tensor shapes are
 arch-independent for this kernel; if `captured_shapes_b200.jsonl` is empty
 the agent must treat the H200 capture as the authoritative shape ledger.
 
+## Canonical Regression Shapes (from SGLang test)
+
+Source: `python/sglang/jit_kernel/tests/diffusion/test_fused_norm_scale_shift.py`
+(same enumeration as the sister CuTe-DSL `fused_norm_scale_shift` family).
+
+- `SHAPES = [(B, S, F, D)]` = `[(1, 1024, 8, 3072), (4, 512, 16, 3072)]`.
+- `dtype`: `[torch.float16, torch.bfloat16, torch.float32]`.
+- `norm_type`: `["layer", "rms"]`.
+- `affine_mode`: `["D", "NAT"]` (weight/bias as `[D]` tensor or `None`).
+- `scale/shift` layouts (`index_mode`):
+  `["BSD", "1", "1SD", "BD", "B1D", "D", "1D", "11D", "BF1D"]`.
+- D constraint: `D % 256 == 0` and `D <= 8192`.
+- `eps`: `1e-5`.
+- Tolerance: `(atol=5e-2, rtol=5e-2)` non-fp32; `1e-5` fp32.
+- Oracle: `torch.layer_norm` / `torch.rms_norm` followed by `* tanh(scale) + shift`.
+
+The second-norm-scale variant adds `(weight2, bias2, scale2)` over the same shape grid.
+
 ## Configurable Optimization Axes
 
 Each candidate kernel/family may need different code paths or autotune
