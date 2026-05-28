@@ -37,7 +37,7 @@ class Family:
 
 FAMILIES: list[Family] = [
     Family(
-        slug="qknorm_rope__diffusion_multi_shape",
+        slug="diffusion_qknorm_rope__multi_shape",
         title="Fused QKNorm + RoPE (CUDA, in-place)",
         op_type="qknorm_rope_inplace",
         sglang_targets=[
@@ -78,7 +78,7 @@ FAMILIES: list[Family] = [
         completion_speedup="1.3x",
     ),
     Family(
-        slug="rms_norm_fn__diffusion_multi_shape",
+        slug="diffusion_rms_norm_fn__multi_shape",
         title="Flash-attn-style 1-pass LN/RMSN with optional residual",
         op_type="layer_or_rms_norm_fn",
         sglang_targets=[
@@ -121,7 +121,7 @@ FAMILIES: list[Family] = [
         completion_speedup="1.5x",
     ),
     Family(
-        slug="norm_infer__diffusion_multi_shape",
+        slug="diffusion_norm_infer__multi_shape",
         title="Inference-only LN/RMSN 2-pass kernel",
         op_type="layer_or_rms_norm_infer",
         sglang_targets=[
@@ -162,7 +162,7 @@ FAMILIES: list[Family] = [
         completion_speedup="1.3x",
     ),
     Family(
-        slug="group_norm_silu__diffusion_multi_shape",
+        slug="diffusion_group_norm_silu__multi_shape",
         title="Fused GroupNorm + SiLU for diffusion VAE",
         op_type="group_norm_silu",
         sglang_targets=[
@@ -207,7 +207,7 @@ FAMILIES: list[Family] = [
         completion_speedup="1.4x",
     ),
     Family(
-        slug="rotary_embedding__diffusion_multi_shape",
+        slug="diffusion_rotary_embedding__multi_shape",
         title="Standard and LTX-2 split rotary embeddings",
         op_type="rotary_embedding",
         sglang_targets=[
@@ -251,7 +251,7 @@ FAMILIES: list[Family] = [
         completion_speedup="1.4x",
     ),
     Family(
-        slug="fuse_scale_shift__diffusion_multi_shape",
+        slug="diffusion_fuse_scale_shift__multi_shape",
         title="Fused scale_shift + dual-modulation (Z-Image adaLN)",
         op_type="fuse_scale_shift",
         sglang_targets=[
@@ -295,7 +295,7 @@ FAMILIES: list[Family] = [
         completion_speedup="1.5x",
     ),
     Family(
-        slug="cutedsl_norm_tanh_mul_add__diffusion_multi_shape",
+        slug="diffusion_cutedsl_norm_tanh_mul_add__multi_shape",
         title="CuTe-DSL norm + tanh(scale) + shift (+ second-norm scale)",
         op_type="cutedsl_norm_tanh_mul_add",
         sglang_targets=[
@@ -335,7 +335,7 @@ FAMILIES: list[Family] = [
         completion_speedup="1.5x",
     ),
     Family(
-        slug="cutedsl_norm_scale_shift__diffusion_multi_shape",
+        slug="diffusion_cutedsl_norm_scale_shift__multi_shape",
         title="CuTe-DSL norm * (1+scale) + shift (+ residual + gate path)",
         op_type="cutedsl_norm_scale_shift",
         sglang_targets=[

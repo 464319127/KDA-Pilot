@@ -15,22 +15,22 @@ LAUNCH_DIR = REPO_ROOT / "scripts" / "launch_kernels"
 # Order matters: assigns k03, k04, ... starting after the existing two.
 TASKS = [
     # (kernel-folder-name,)
-    "b200_qknorm_rope__diffusion_multi_shape",
-    "h200_qknorm_rope__diffusion_multi_shape",
-    "b200_rms_norm_fn__diffusion_multi_shape",
-    "h200_rms_norm_fn__diffusion_multi_shape",
-    "b200_norm_infer__diffusion_multi_shape",
-    "h200_norm_infer__diffusion_multi_shape",
-    "b200_group_norm_silu__diffusion_multi_shape",
-    "h200_group_norm_silu__diffusion_multi_shape",
-    "b200_rotary_embedding__diffusion_multi_shape",
-    "h200_rotary_embedding__diffusion_multi_shape",
-    "b200_fuse_scale_shift__diffusion_multi_shape",
-    "h200_fuse_scale_shift__diffusion_multi_shape",
-    "b200_cutedsl_norm_tanh_mul_add__diffusion_multi_shape",
-    "h200_cutedsl_norm_tanh_mul_add__diffusion_multi_shape",
-    "b200_cutedsl_norm_scale_shift__diffusion_multi_shape",
-    "h200_cutedsl_norm_scale_shift__diffusion_multi_shape",
+    "b200_diffusion_qknorm_rope__multi_shape",
+    "h200_diffusion_qknorm_rope__multi_shape",
+    "b200_diffusion_rms_norm_fn__multi_shape",
+    "h200_diffusion_rms_norm_fn__multi_shape",
+    "b200_diffusion_norm_infer__multi_shape",
+    "h200_diffusion_norm_infer__multi_shape",
+    "b200_diffusion_group_norm_silu__multi_shape",
+    "h200_diffusion_group_norm_silu__multi_shape",
+    "b200_diffusion_rotary_embedding__multi_shape",
+    "h200_diffusion_rotary_embedding__multi_shape",
+    "b200_diffusion_fuse_scale_shift__multi_shape",
+    "h200_diffusion_fuse_scale_shift__multi_shape",
+    "b200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape",
+    "h200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape",
+    "b200_diffusion_cutedsl_norm_scale_shift__multi_shape",
+    "h200_diffusion_cutedsl_norm_scale_shift__multi_shape",
 ]
 
 LAUNCHER_TEMPLATE = """\

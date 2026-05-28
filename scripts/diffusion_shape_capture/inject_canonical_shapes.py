@@ -18,7 +18,7 @@ KERNELS_DIR = REPO_ROOT / "kernels"
 
 # task-family slug -> markdown block to inject
 CANONICAL_SECTIONS: dict[str, str] = {
-    "qknorm_rope__diffusion_multi_shape": (
+    "diffusion_qknorm_rope__multi_shape": (
         "## Canonical Regression Shapes (from SGLang test)\n"
         "\n"
         "Source: `python/sglang/jit_kernel/tests/diffusion/test_qknorm_rope.py`.\n"
@@ -39,7 +39,7 @@ CANONICAL_SECTIONS: dict[str, str] = {
         "The candidate kernel must support every `(batch_size, num_heads, head_dim, rope_dim, is_neox, position_dtype)`\n"
         "tuple above or fall back to the SGLang baseline for the unsupported tail.\n"
     ),
-    "rms_norm_fn__diffusion_multi_shape": (
+    "diffusion_rms_norm_fn__multi_shape": (
         "## Canonical Regression Shapes (from SGLang test)\n"
         "\n"
         "Source: `python/sglang/jit_kernel/tests/test_rmsnorm.py` (closest in-repo enumeration; "
@@ -57,7 +57,7 @@ CANONICAL_SECTIONS: dict[str, str] = {
         "These cover only the LLM-style hidden sizes. The diffusion-specific extras (residual / x1 / weight1 / bias1 / "
         "zero_centered_weight / out_dtype) must be exercised manually using the production shape table.\n"
     ),
-    "norm_infer__diffusion_multi_shape": (
+    "diffusion_norm_infer__multi_shape": (
         "## Canonical Regression Shapes (from SGLang test)\n"
         "\n"
         "Source: `python/sglang/jit_kernel/tests/diffusion/test_qwen_image_modulation.py`\n"
@@ -75,7 +75,7 @@ CANONICAL_SECTIONS: dict[str, str] = {
         "Cross-validate `triton_one_pass_rms_norm` on the same row counts (`M = B*S`) and on per-head tiles\n"
         "`(4096, 128)` / `(16384, 128)` (the live captures from Z-Image).\n"
     ),
-    "group_norm_silu__diffusion_multi_shape": (
+    "diffusion_group_norm_silu__multi_shape": (
         "## Canonical Regression Shapes (from SGLang test)\n"
         "\n"
         "Source: `python/sglang/jit_kernel/tests/diffusion/test_group_norm_silu.py`.\n"
@@ -94,7 +94,7 @@ CANONICAL_SECTIONS: dict[str, str] = {
         "Promotion candidates must clear both the regression grid above and the production VAE shapes in\n"
         "the workload table.\n"
     ),
-    "rotary_embedding__diffusion_multi_shape": (
+    "diffusion_rotary_embedding__multi_shape": (
         "## Canonical Regression Shapes (from SGLang test)\n"
         "\n"
         "Source: `python/sglang/jit_kernel/tests/test_rope.py` (standard `apply_rotary_embedding` enumeration).\n"
@@ -110,7 +110,7 @@ CANONICAL_SECTIONS: dict[str, str] = {
         "For the LTX-2 split-rotary variant (`apply_ltx2_split_rotary_emb`) there is no dedicated SGLang test;\n"
         "the empirical shapes captured from the `ltx2` benchmark preset are the regression contract.\n"
     ),
-    "fuse_scale_shift__diffusion_multi_shape": (
+    "diffusion_fuse_scale_shift__multi_shape": (
         "## Canonical Regression Shapes (from SGLang test)\n"
         "\n"
         "Source: `python/sglang/jit_kernel/tests/diffusion/test_qwen_image_modulation.py` (covers all three\n"
@@ -131,7 +131,7 @@ CANONICAL_SECTIONS: dict[str, str] = {
         "The simple `fuse_scale_shift_kernel` accepts both 2D `(B,C)` scale/shift and 4D `(B,F,1,C)` scale/shift\n"
         "(video frames). Cover both layouts during regression.\n"
     ),
-    "cutedsl_norm_tanh_mul_add__diffusion_multi_shape": (
+    "diffusion_cutedsl_norm_tanh_mul_add__multi_shape": (
         "## Canonical Regression Shapes (from SGLang test)\n"
         "\n"
         "Source: `python/sglang/jit_kernel/tests/diffusion/test_fused_norm_scale_shift.py`\n"
@@ -150,7 +150,7 @@ CANONICAL_SECTIONS: dict[str, str] = {
         "\n"
         "The second-norm-scale variant adds `(weight2, bias2, scale2)` over the same shape grid.\n"
     ),
-    "cutedsl_norm_scale_shift__diffusion_multi_shape": (
+    "diffusion_cutedsl_norm_scale_shift__multi_shape": (
         "## Canonical Regression Shapes (from SGLang test)\n"
         "\n"
         "Source: `python/sglang/jit_kernel/tests/diffusion/test_fused_norm_scale_shift.py`.\n"

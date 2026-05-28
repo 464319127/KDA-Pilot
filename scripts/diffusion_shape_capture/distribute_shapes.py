@@ -28,21 +28,21 @@ CAPTURE_FILES = [
 
 # kernel-name -> task family slug
 KERNEL_TO_FAMILY = {
-    "qknorm_rope.fused_inplace_qknorm_rope": "qknorm_rope__diffusion_multi_shape",
-    "norm.rms_norm_fn": "rms_norm_fn__diffusion_multi_shape",
-    "norm.norm_infer": "norm_infer__diffusion_multi_shape",
-    "rmsnorm_onepass.triton_one_pass_rms_norm": "norm_infer__diffusion_multi_shape",
-    "group_norm_silu.triton_group_norm_silu": "group_norm_silu__diffusion_multi_shape",
-    "group_norm_silu.apply_group_norm_silu": "group_norm_silu__diffusion_multi_shape",
-    "rotary.apply_rotary_embedding": "rotary_embedding__diffusion_multi_shape",
-    "ltx2_rotary.apply_ltx2_split_rotary_emb": "rotary_embedding__diffusion_multi_shape",
-    "scale_shift.fuse_scale_shift_kernel": "fuse_scale_shift__diffusion_multi_shape",
-    "scale_shift.fuse_layernorm_scale_shift_gate_select01_kernel": "fuse_scale_shift__diffusion_multi_shape",
-    "scale_shift.fuse_residual_layernorm_scale_shift_gate_select01_kernel": "fuse_scale_shift__diffusion_multi_shape",
-    "norm_tanh_mul_add_norm_scale.fused_norm_tanh_mul_add": "cutedsl_norm_tanh_mul_add__diffusion_multi_shape",
-    "norm_tanh_mul_add_norm_scale.fused_norm_tanh_mul_add_norm_scale": "cutedsl_norm_tanh_mul_add__diffusion_multi_shape",
-    "scale_residual_norm_scale_shift.fused_norm_scale_shift": "cutedsl_norm_scale_shift__diffusion_multi_shape",
-    "scale_residual_norm_scale_shift.fused_scale_residual_norm_scale_shift": "cutedsl_norm_scale_shift__diffusion_multi_shape",
+    "qknorm_rope.fused_inplace_qknorm_rope": "diffusion_qknorm_rope__multi_shape",
+    "norm.rms_norm_fn": "diffusion_rms_norm_fn__multi_shape",
+    "norm.norm_infer": "diffusion_norm_infer__multi_shape",
+    "rmsnorm_onepass.triton_one_pass_rms_norm": "diffusion_norm_infer__multi_shape",
+    "group_norm_silu.triton_group_norm_silu": "diffusion_group_norm_silu__multi_shape",
+    "group_norm_silu.apply_group_norm_silu": "diffusion_group_norm_silu__multi_shape",
+    "rotary.apply_rotary_embedding": "diffusion_rotary_embedding__multi_shape",
+    "ltx2_rotary.apply_ltx2_split_rotary_emb": "diffusion_rotary_embedding__multi_shape",
+    "scale_shift.fuse_scale_shift_kernel": "diffusion_fuse_scale_shift__multi_shape",
+    "scale_shift.fuse_layernorm_scale_shift_gate_select01_kernel": "diffusion_fuse_scale_shift__multi_shape",
+    "scale_shift.fuse_residual_layernorm_scale_shift_gate_select01_kernel": "diffusion_fuse_scale_shift__multi_shape",
+    "norm_tanh_mul_add_norm_scale.fused_norm_tanh_mul_add": "diffusion_cutedsl_norm_tanh_mul_add__multi_shape",
+    "norm_tanh_mul_add_norm_scale.fused_norm_tanh_mul_add_norm_scale": "diffusion_cutedsl_norm_tanh_mul_add__multi_shape",
+    "scale_residual_norm_scale_shift.fused_norm_scale_shift": "diffusion_cutedsl_norm_scale_shift__multi_shape",
+    "scale_residual_norm_scale_shift.fused_scale_residual_norm_scale_shift": "diffusion_cutedsl_norm_scale_shift__multi_shape",
 }
 
 

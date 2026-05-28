@@ -15,14 +15,14 @@ REPO_ROOT = Path(__file__).resolve().parent
 KERNELS_DIR = REPO_ROOT / "kernels"
 
 FAMILIES = [
-    "qknorm_rope__diffusion_multi_shape",
-    "rms_norm_fn__diffusion_multi_shape",
-    "norm_infer__diffusion_multi_shape",
-    "group_norm_silu__diffusion_multi_shape",
-    "rotary_embedding__diffusion_multi_shape",
-    "fuse_scale_shift__diffusion_multi_shape",
-    "cutedsl_norm_tanh_mul_add__diffusion_multi_shape",
-    "cutedsl_norm_scale_shift__diffusion_multi_shape",
+    "diffusion_qknorm_rope__multi_shape",
+    "diffusion_rms_norm_fn__multi_shape",
+    "diffusion_norm_infer__multi_shape",
+    "diffusion_group_norm_silu__multi_shape",
+    "diffusion_rotary_embedding__multi_shape",
+    "diffusion_fuse_scale_shift__multi_shape",
+    "diffusion_cutedsl_norm_tanh_mul_add__multi_shape",
+    "diffusion_cutedsl_norm_scale_shift__multi_shape",
 ]
 ARCHS = ["b200", "h200"]
 

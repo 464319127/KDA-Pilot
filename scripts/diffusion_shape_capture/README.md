@@ -1,7 +1,7 @@
 # SGLang Diffusion Kernel Shape Capture Tooling
 
 These scripts produce the shape ledgers that back every
-`kernels/*_diffusion_multi_shape/` task. They were used to populate
+`kernels/*_diffusion_*__multi_shape/` task. They were used to populate
 `kernels/diffusion_shapes_ledger.md`, the per-task
 `docs/captured_shapes_<arch>.{jsonl,md}` files, and the
 `kernels/diffusion_kernel_coverage.md` matrix.
@@ -18,7 +18,7 @@ list).
 | `kernel_shape_capture.py` | Monkey-patches every non-gemm/non-attention diffusion kernel entry point and writes one JSONL record per call to `$DIFFUSION_SHAPE_LOG`. |
 | `sitecustomize.py` | Auto-loads `kernel_shape_capture.py` when Python starts. Place its parent directory on `PYTHONPATH` to activate. |
 | `sweep_models.sh` | Drives `sglang generate` once per preset via the diffusion-benchmark skill's `bench_diffusion_denoise.py`, with shape capture active and a per-preset timeout. |
-| `generate_tasks.py` | Generates the 16 `kernels/<arch>_<family>__diffusion_multi_shape/` folders (prompt.md, interface.md, benchmark.py, README.md, src/register.py, tests/test_correctness.py, etc.). |
+| `generate_tasks.py` | Generates the 16 `kernels/<arch>_diffusion_<family>__multi_shape/` folders (prompt.md, interface.md, benchmark.py, README.md, src/register.py, tests/test_correctness.py, etc.). |
 | `generate_launchers.py` | Generates the matching `scripts/launch_kernels/kNN_<task>.sh` launchers. |
 | `aggregate_shapes.py` | Merges the per-host JSONL files into `/tmp/shapes_summary.{json,md}`. |
 | `distribute_shapes.py` | Copies captured shapes into each task's `docs/captured_shapes_<arch>.{jsonl,md}` and writes the cross-task `kernels/diffusion_shapes_ledger.md`. |

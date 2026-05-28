@@ -18,23 +18,23 @@ external/ncu-report-skill/    # Nsight Compute profiling workflow
 kernels/
   b200_int8_scaled_mm__m64_n2048_k2048_bias/
   b200_fa4_mha__bf16_head128_total32768/
-  {b200,h200}_qknorm_rope__diffusion_multi_shape/
-  {b200,h200}_rms_norm_fn__diffusion_multi_shape/
-  {b200,h200}_norm_infer__diffusion_multi_shape/
-  {b200,h200}_group_norm_silu__diffusion_multi_shape/
-  {b200,h200}_rotary_embedding__diffusion_multi_shape/
-  {b200,h200}_fuse_scale_shift__diffusion_multi_shape/
-  {b200,h200}_cutedsl_norm_tanh_mul_add__diffusion_multi_shape/
-  {b200,h200}_cutedsl_norm_scale_shift__diffusion_multi_shape/
+  {b200,h200}_diffusion_qknorm_rope__multi_shape/
+  {b200,h200}_diffusion_rms_norm_fn__multi_shape/
+  {b200,h200}_diffusion_norm_infer__multi_shape/
+  {b200,h200}_diffusion_group_norm_silu__multi_shape/
+  {b200,h200}_diffusion_rotary_embedding__multi_shape/
+  {b200,h200}_diffusion_fuse_scale_shift__multi_shape/
+  {b200,h200}_diffusion_cutedsl_norm_tanh_mul_add__multi_shape/
+  {b200,h200}_diffusion_cutedsl_norm_scale_shift__multi_shape/
 scripts/
   launch_kda_kernel_task.sh
   launch_kernels/
     k01_b200_int8_scaled_mm.sh
     k02_b200_fa4_mha.sh
-    k03_b200_qknorm_rope__diffusion_multi_shape.sh
-    k04_h200_qknorm_rope__diffusion_multi_shape.sh
+    k03_b200_diffusion_qknorm_rope__multi_shape.sh
+    k04_h200_diffusion_qknorm_rope__multi_shape.sh
     ...
-    k18_h200_cutedsl_norm_scale_shift__diffusion_multi_shape.sh
+    k18_h200_diffusion_cutedsl_norm_scale_shift__multi_shape.sh
 ```
 
 Each kernel folder owns its prompt, interface contract, benchmark scaffold,
@@ -91,22 +91,22 @@ shape-bucketed dispatchers, per-bucket configs, and per-bucket kernel variants
 
 | Kernel | Arch | Goal | Launcher |
 | --- | --- | --- | --- |
-| [`b200_qknorm_rope__diffusion_multi_shape`](kernels/b200_qknorm_rope__diffusion_multi_shape/prompt.md) | B200 | Fused in-place QKNorm + RoPE (CUDA) across all diffusion preset shapes. | `scripts/launch_kernels/k03_b200_qknorm_rope__diffusion_multi_shape.sh` |
-| [`h200_qknorm_rope__diffusion_multi_shape`](kernels/h200_qknorm_rope__diffusion_multi_shape/prompt.md) | H200 | Same as B200 variant, H200 target. | `scripts/launch_kernels/k04_h200_qknorm_rope__diffusion_multi_shape.sh` |
-| [`b200_rms_norm_fn__diffusion_multi_shape`](kernels/b200_rms_norm_fn__diffusion_multi_shape/prompt.md) | B200 | Flash-attn-style multi-mode LayerNorm/RMSNorm with optional residual / dual-branch. | `scripts/launch_kernels/k05_b200_rms_norm_fn__diffusion_multi_shape.sh` |
-| [`h200_rms_norm_fn__diffusion_multi_shape`](kernels/h200_rms_norm_fn__diffusion_multi_shape/prompt.md) | H200 | Same as B200 variant, H200 target. | `scripts/launch_kernels/k06_h200_rms_norm_fn__diffusion_multi_shape.sh` |
-| [`b200_norm_infer__diffusion_multi_shape`](kernels/b200_norm_infer__diffusion_multi_shape/prompt.md) | B200 | Inference-only LN/RMSN baseline (`norm_infer` and `triton_one_pass_rms_norm`). | `scripts/launch_kernels/k07_b200_norm_infer__diffusion_multi_shape.sh` |
-| [`h200_norm_infer__diffusion_multi_shape`](kernels/h200_norm_infer__diffusion_multi_shape/prompt.md) | H200 | Same as B200 variant, H200 target. | `scripts/launch_kernels/k08_h200_norm_infer__diffusion_multi_shape.sh` |
-| [`b200_group_norm_silu__diffusion_multi_shape`](kernels/b200_group_norm_silu__diffusion_multi_shape/prompt.md) | B200 | Fused GroupNorm + SiLU across image (2D/3D) and video (3D/5D) VAE inputs. | `scripts/launch_kernels/k09_b200_group_norm_silu__diffusion_multi_shape.sh` |
-| [`h200_group_norm_silu__diffusion_multi_shape`](kernels/h200_group_norm_silu__diffusion_multi_shape/prompt.md) | H200 | Same as B200 variant, H200 target. | `scripts/launch_kernels/k10_h200_group_norm_silu__diffusion_multi_shape.sh` |
-| [`b200_rotary_embedding__diffusion_multi_shape`](kernels/b200_rotary_embedding__diffusion_multi_shape/prompt.md) | B200 | Standard RoPE and LTX-2 split RoPE across all diffusion preset token counts. | `scripts/launch_kernels/k11_b200_rotary_embedding__diffusion_multi_shape.sh` |
-| [`h200_rotary_embedding__diffusion_multi_shape`](kernels/h200_rotary_embedding__diffusion_multi_shape/prompt.md) | H200 | Same as B200 variant, H200 target. | `scripts/launch_kernels/k12_h200_rotary_embedding__diffusion_multi_shape.sh` |
-| [`b200_fuse_scale_shift__diffusion_multi_shape`](kernels/b200_fuse_scale_shift__diffusion_multi_shape/prompt.md) | B200 | Triton fused scale-shift modulation (`fuse_scale_shift_kernel` + dual-modulation Z-Image variants). | `scripts/launch_kernels/k13_b200_fuse_scale_shift__diffusion_multi_shape.sh` |
-| [`h200_fuse_scale_shift__diffusion_multi_shape`](kernels/h200_fuse_scale_shift__diffusion_multi_shape/prompt.md) | H200 | Same as B200 variant, H200 target. | `scripts/launch_kernels/k14_h200_fuse_scale_shift__diffusion_multi_shape.sh` |
-| [`b200_cutedsl_norm_tanh_mul_add__diffusion_multi_shape`](kernels/b200_cutedsl_norm_tanh_mul_add__diffusion_multi_shape/prompt.md) | B200 | CuTe-DSL `fused_norm_tanh_mul_add` (Z-Image residual modulation) and the second-norm scale combined kernel. | `scripts/launch_kernels/k15_b200_cutedsl_norm_tanh_mul_add__diffusion_multi_shape.sh` |
-| [`h200_cutedsl_norm_tanh_mul_add__diffusion_multi_shape`](kernels/h200_cutedsl_norm_tanh_mul_add__diffusion_multi_shape/prompt.md) | H200 | Same as B200 variant, H200 target. | `scripts/launch_kernels/k16_h200_cutedsl_norm_tanh_mul_add__diffusion_multi_shape.sh` |
-| [`b200_cutedsl_norm_scale_shift__diffusion_multi_shape`](kernels/b200_cutedsl_norm_scale_shift__diffusion_multi_shape/prompt.md) | B200 | CuTe-DSL `fused_norm_scale_shift` (and `fused_scale_residual_norm_scale_shift`) across all diffusion presets. | `scripts/launch_kernels/k17_b200_cutedsl_norm_scale_shift__diffusion_multi_shape.sh` |
-| [`h200_cutedsl_norm_scale_shift__diffusion_multi_shape`](kernels/h200_cutedsl_norm_scale_shift__diffusion_multi_shape/prompt.md) | H200 | Same as B200 variant, H200 target. | `scripts/launch_kernels/k18_h200_cutedsl_norm_scale_shift__diffusion_multi_shape.sh` |
+| [`b200_diffusion_qknorm_rope__multi_shape`](kernels/b200_diffusion_qknorm_rope__multi_shape/prompt.md) | B200 | Fused in-place QKNorm + RoPE (CUDA) across all diffusion preset shapes. | `scripts/launch_kernels/k03_b200_diffusion_qknorm_rope__multi_shape.sh` |
+| [`h200_diffusion_qknorm_rope__multi_shape`](kernels/h200_diffusion_qknorm_rope__multi_shape/prompt.md) | H200 | Same as B200 variant, H200 target. | `scripts/launch_kernels/k04_h200_diffusion_qknorm_rope__multi_shape.sh` |
+| [`b200_diffusion_rms_norm_fn__multi_shape`](kernels/b200_diffusion_rms_norm_fn__multi_shape/prompt.md) | B200 | Flash-attn-style multi-mode LayerNorm/RMSNorm with optional residual / dual-branch. | `scripts/launch_kernels/k05_b200_diffusion_rms_norm_fn__multi_shape.sh` |
+| [`h200_diffusion_rms_norm_fn__multi_shape`](kernels/h200_diffusion_rms_norm_fn__multi_shape/prompt.md) | H200 | Same as B200 variant, H200 target. | `scripts/launch_kernels/k06_h200_diffusion_rms_norm_fn__multi_shape.sh` |
+| [`b200_diffusion_norm_infer__multi_shape`](kernels/b200_diffusion_norm_infer__multi_shape/prompt.md) | B200 | Inference-only LN/RMSN baseline (`norm_infer` and `triton_one_pass_rms_norm`). | `scripts/launch_kernels/k07_b200_diffusion_norm_infer__multi_shape.sh` |
+| [`h200_diffusion_norm_infer__multi_shape`](kernels/h200_diffusion_norm_infer__multi_shape/prompt.md) | H200 | Same as B200 variant, H200 target. | `scripts/launch_kernels/k08_h200_diffusion_norm_infer__multi_shape.sh` |
+| [`b200_diffusion_group_norm_silu__multi_shape`](kernels/b200_diffusion_group_norm_silu__multi_shape/prompt.md) | B200 | Fused GroupNorm + SiLU across image (2D/3D) and video (3D/5D) VAE inputs. | `scripts/launch_kernels/k09_b200_diffusion_group_norm_silu__multi_shape.sh` |
+| [`h200_diffusion_group_norm_silu__multi_shape`](kernels/h200_diffusion_group_norm_silu__multi_shape/prompt.md) | H200 | Same as B200 variant, H200 target. | `scripts/launch_kernels/k10_h200_diffusion_group_norm_silu__multi_shape.sh` |
+| [`b200_diffusion_rotary_embedding__multi_shape`](kernels/b200_diffusion_rotary_embedding__multi_shape/prompt.md) | B200 | Standard RoPE and LTX-2 split RoPE across all diffusion preset token counts. | `scripts/launch_kernels/k11_b200_diffusion_rotary_embedding__multi_shape.sh` |
+| [`h200_diffusion_rotary_embedding__multi_shape`](kernels/h200_diffusion_rotary_embedding__multi_shape/prompt.md) | H200 | Same as B200 variant, H200 target. | `scripts/launch_kernels/k12_h200_diffusion_rotary_embedding__multi_shape.sh` |
+| [`b200_diffusion_fuse_scale_shift__multi_shape`](kernels/b200_diffusion_fuse_scale_shift__multi_shape/prompt.md) | B200 | Triton fused scale-shift modulation (`fuse_scale_shift_kernel` + dual-modulation Z-Image variants). | `scripts/launch_kernels/k13_b200_diffusion_fuse_scale_shift__multi_shape.sh` |
+| [`h200_diffusion_fuse_scale_shift__multi_shape`](kernels/h200_diffusion_fuse_scale_shift__multi_shape/prompt.md) | H200 | Same as B200 variant, H200 target. | `scripts/launch_kernels/k14_h200_diffusion_fuse_scale_shift__multi_shape.sh` |
+| [`b200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape`](kernels/b200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape/prompt.md) | B200 | CuTe-DSL `fused_norm_tanh_mul_add` (Z-Image residual modulation) and the second-norm scale combined kernel. | `scripts/launch_kernels/k15_b200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape.sh` |
+| [`h200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape`](kernels/h200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape/prompt.md) | H200 | Same as B200 variant, H200 target. | `scripts/launch_kernels/k16_h200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape.sh` |
+| [`b200_diffusion_cutedsl_norm_scale_shift__multi_shape`](kernels/b200_diffusion_cutedsl_norm_scale_shift__multi_shape/prompt.md) | B200 | CuTe-DSL `fused_norm_scale_shift` (and `fused_scale_residual_norm_scale_shift`) across all diffusion presets. | `scripts/launch_kernels/k17_b200_diffusion_cutedsl_norm_scale_shift__multi_shape.sh` |
+| [`h200_diffusion_cutedsl_norm_scale_shift__multi_shape`](kernels/h200_diffusion_cutedsl_norm_scale_shift__multi_shape/prompt.md) | H200 | Same as B200 variant, H200 target. | `scripts/launch_kernels/k18_h200_diffusion_cutedsl_norm_scale_shift__multi_shape.sh` |
 
 ## Launch
 
