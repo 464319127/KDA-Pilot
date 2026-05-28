@@ -230,9 +230,18 @@ whether the SGLang baseline is CUDA, Triton, or CuTe-DSL.** Python
 is allowed for the wrapper, the dispatcher, build glue, harnesses,
 and benchmark scripts, but not as the primary kernel.
 
-Triton kernels and CuTe-DSL kernels in the SGLang baseline are
-useful porting references — read them, port their algorithm into
-native CUDA, and record the source lineage in `solutions.jsonl`.
+The SGLang baseline — whatever language it is written in — is a
+first-class **reference** for the CUDA candidate. Read its tile and
+block choices, vectorization width, fast paths, fusion patterns,
+numerical-stability tricks, dispatcher shape guards, and dtype
+handling; the CUDA candidate is free to port any of those ideas
+directly, replace them with a better algorithm, or mix them with
+ideas pulled from KernelWiki PRs, CUTLASS / CuTe SM100 examples,
+FlashAttention-4, DeepGEMM, FlashMLA, FlashInfer, or Hopper →
+Blackwell migration notes. The baseline is one reference among
+many — not a ceiling and not a required porting target. Record
+every source whose idea ended up in the candidate in
+`solutions.jsonl` with its file path / PR url / wiki page id.
 
 After promotion, the export tool copies the CUDA sources into
 `kda_kernels/diffusion/<family>/` so the shippable overlay stays
