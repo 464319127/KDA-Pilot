@@ -13,15 +13,15 @@ same data scoped to one kernel family.
 | h200 | hunyuanvideo | `[1, 128, 17, 256, 256]/float16C` | `<GroupNorm>` ; `<SiLU>` |
 | h200 | hunyuanvideo | `[1, 256, 9, 128, 128]/float16C` | `<GroupNorm>` ; `<SiLU>` |
 | h200 | hunyuanvideo | `[1, 512, 5, 24, 64]/float16C` | `<GroupNorm>` ; `<SiLU>` |
-| h200 | hunyuanvideo | `[1, 512, 5, 12, 10]/float16NC` | `<GroupNorm>` ; `<SiLU>` |
+| h200 | hunyuanvideo | `[1, 512, 5, 12, 10]/float16C` | `<GroupNorm>` ; `<SiLU>` |
 | h200 | hunyuanvideo | `[1, 256, 17, 256, 256]/float16C` | `<GroupNorm>` ; `<SiLU>` |
-| h200 | hunyuanvideo | `[1, 256, 9, 48, 128]/float16NC` | `<GroupNorm>` ; `<SiLU>` |
+| h200 | hunyuanvideo | `[1, 256, 9, 48, 128]/float16C` | `<GroupNorm>` ; `<SiLU>` |
 | h200 | hunyuanvideo | `[1, 512, 2, 64, 20]/float16C` | `<GroupNorm>` ; `<SiLU>` |
-| h200 | hunyuanvideo | `[1, 512, 2, 12, 32]/float16NC` | `<GroupNorm>` ; `<SiLU>` |
-| h200 | hunyuanvideo | `[1, 256, 9, 128, 40]/float16NC` | `<GroupNorm>` ; `<SiLU>` |
+| h200 | hunyuanvideo | `[1, 512, 2, 12, 32]/float16C` | `<GroupNorm>` ; `<SiLU>` |
+| h200 | hunyuanvideo | `[1, 256, 9, 128, 40]/float16C` | `<GroupNorm>` ; `<SiLU>` |
 | h200 | hunyuanvideo | `[1, 512, 9, 128, 128]/float16C` | `<GroupNorm>` ; `<SiLU>` |
 | h200 | hunyuanvideo | `[1, 256, 3, 128, 128]/float16C` | `<GroupNorm>` ; `<SiLU>` |
-| h200 | hunyuanvideo | `[1, 512, 2, 24, 64]/float16NC` | `<GroupNorm>` ; `<SiLU>` |
+| h200 | hunyuanvideo | `[1, 512, 2, 24, 64]/float16C` | `<GroupNorm>` ; `<SiLU>` |
 
 ## `group_norm_silu.triton_group_norm_silu`
 
@@ -31,15 +31,15 @@ same data scoped to one kernel family.
 | h200 | hunyuanvideo | `[1, 128, 17, 256, 256]/float16C` ; `[128]/float16C` ; `[128]/float16C` | num_groups=`32` ; eps=`1e-06` |
 | h200 | hunyuanvideo | `[1, 256, 9, 128, 128]/float16C` ; `[256]/float16C` ; `[256]/float16C` | num_groups=`32` ; eps=`1e-06` |
 | h200 | hunyuanvideo | `[1, 512, 5, 24, 64]/float16C` ; `[512]/float16C` ; `[512]/float16C` | num_groups=`32` ; eps=`1e-06` |
-| h200 | hunyuanvideo | `[1, 512, 5, 12, 10]/float16NC` ; `[512]/float16C` ; `[512]/float16C` | num_groups=`32` ; eps=`1e-06` |
+| h200 | hunyuanvideo | `[1, 512, 5, 12, 10]/float16C` ; `[512]/float16C` ; `[512]/float16C` | num_groups=`32` ; eps=`1e-06` |
 | h200 | hunyuanvideo | `[1, 256, 17, 256, 256]/float16C` ; `[256]/float16C` ; `[256]/float16C` | num_groups=`32` ; eps=`1e-06` |
-| h200 | hunyuanvideo | `[1, 256, 9, 48, 128]/float16NC` ; `[256]/float16C` ; `[256]/float16C` | num_groups=`32` ; eps=`1e-06` |
+| h200 | hunyuanvideo | `[1, 256, 9, 48, 128]/float16C` ; `[256]/float16C` ; `[256]/float16C` | num_groups=`32` ; eps=`1e-06` |
 | h200 | hunyuanvideo | `[1, 512, 2, 64, 20]/float16C` ; `[512]/float16C` ; `[512]/float16C` | num_groups=`32` ; eps=`1e-06` |
-| h200 | hunyuanvideo | `[1, 512, 2, 12, 32]/float16NC` ; `[512]/float16C` ; `[512]/float16C` | num_groups=`32` ; eps=`1e-06` |
-| h200 | hunyuanvideo | `[1, 256, 9, 128, 40]/float16NC` ; `[256]/float16C` ; `[256]/float16C` | num_groups=`32` ; eps=`1e-06` |
+| h200 | hunyuanvideo | `[1, 512, 2, 12, 32]/float16C` ; `[512]/float16C` ; `[512]/float16C` | num_groups=`32` ; eps=`1e-06` |
+| h200 | hunyuanvideo | `[1, 256, 9, 128, 40]/float16C` ; `[256]/float16C` ; `[256]/float16C` | num_groups=`32` ; eps=`1e-06` |
 | h200 | hunyuanvideo | `[1, 512, 9, 128, 128]/float16C` ; `[512]/float16C` ; `[512]/float16C` | num_groups=`32` ; eps=`1e-06` |
 | h200 | hunyuanvideo | `[1, 256, 3, 128, 128]/float16C` ; `[256]/float16C` ; `[256]/float16C` | num_groups=`32` ; eps=`1e-06` |
-| h200 | hunyuanvideo | `[1, 512, 2, 24, 64]/float16NC` ; `[512]/float16C` ; `[512]/float16C` | num_groups=`32` ; eps=`1e-06` |
+| h200 | hunyuanvideo | `[1, 512, 2, 24, 64]/float16C` ; `[512]/float16C` ; `[512]/float16C` | num_groups=`32` ; eps=`1e-06` |
 
 ## `ltx2_rotary.apply_ltx2_split_rotary_emb`
 
@@ -132,10 +132,10 @@ same data scoped to one kernel family.
 | h200 | qwen-edit | `[1, 189, 3072]/bfloat16C` ; `[1, 3072]/bfloat16C` ; `[1, 3072]/bfloat16C` | `None` ; `None` ; `layer` ; `1e-06` |
 | h200 | hunyuanvideo | `[1, 27030, 3072]/bfloat16C` ; `[1, 3072]/bfloat16C` ; `[1, 3072]/bfloat16C` | `None` ; `None` ; `layer` ; `1e-06` |
 | h200 | hunyuanvideo | `[1, 55, 3072]/bfloat16C` ; `[1, 3072]/bfloat16C` ; `[1, 3072]/bfloat16C` | `None` ; `None` ; `layer` ; `1e-06` |
-| h200 | wan-t2v | `[1, 37800, 5120]/bfloat16C` ; `[1, 1, 5120]/float32C` ; `[1, 1, 5120]/float32C` | `None` ; `None` ; `layer` ; `1e-06` |
-| h200 | wan-ti2v | `[1, 18144, 3072]/bfloat16C` ; `[1, 18144, 3072]/float32C` ; `[1, 18144, 3072]/float32C` | `None` ; `None` ; `layer` ; `1e-06` |
 | h200 | hunyuanvideo | `[1, 27085, 3072]/bfloat16C` ; `[1, 3072]/bfloat16C` ; `[1, 3072]/bfloat16C` | `None` ; `None` ; `layer` ; `1e-06` |
 | h200 | helios | `[1, 11040, 5120]/bfloat16C` ; `[1, 11040, 5120]/float32C` ; `[1, 11040, 5120]/float32C` | `None` ; `None` ; `layer` ; `1e-06` |
+| h200 | wan-t2v | `[1, 37800, 5120]/bfloat16C` ; `[1, 1, 5120]/float32C` ; `[1, 1, 5120]/float32C` | `None` ; `None` ; `layer` ; `1e-06` |
+| h200 | wan-ti2v | `[1, 18144, 3072]/bfloat16C` ; `[1, 18144, 3072]/float32C` ; `[1, 18144, 3072]/float32C` | `None` ; `None` ; `layer` ; `1e-06` |
 
 ## `scale_residual_norm_scale_shift.fused_scale_residual_norm_scale_shift`
 
@@ -187,7 +187,7 @@ same data scoped to one kernel family.
 | h200 | qwen-edit | `[1, 189, 3072]/bfloat16C` ; `[1, 1, 3072]/bfloat16C` ; `[1, 189, 3072]/bfloat16C` | scale_constant=`0` |
 | h200 | hunyuanvideo | `[1, 27030, 3072]/bfloat16C` ; `[1, 3072]/bfloat16C` ; `[1, 27030, 3072]/bfloat16C` | scale_constant=`0` |
 | h200 | hunyuanvideo | `[1, 55, 3072]/bfloat16C` ; `[1, 3072]/bfloat16C` ; `[1, 55, 3072]/bfloat16C` | scale_constant=`0` |
+| h200 | hunyuanvideo | `[1, 27085, 3072]/bfloat16C` ; `[1, 3072]/bfloat16C` ; `[1, 27085, 3072]/bfloat16C` | scale_constant=`0` |
 | h200 | wan-t2v | `[1, 37800, 5120]/bfloat16C` ; `[1, 1, 5120]/float32C` ; `[1, 37800, 5120]/bfloat16C` | scale_constant=`0` |
 | h200 | wan-ti2v | `[1, 18144, 3072]/bfloat16C` ; `[1, 18144, 3072]/float32NC` ; `[1, 18144, 3072]/bfloat16C` | scale_constant=`0` |
-| h200 | hunyuanvideo | `[1, 27085, 3072]/bfloat16C` ; `[1, 3072]/bfloat16C` ; `[1, 27085, 3072]/bfloat16C` | scale_constant=`0` |
 
