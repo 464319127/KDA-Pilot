@@ -220,6 +220,83 @@ modulation / RoPE / group-norm evidence can guide a design choice.
 Record reviewed source paths, commits or installed versions, and which
 ideas were kept or rejected in `docs/draft.md` and `solutions.jsonl`.
 
+## External Reference Skills
+
+Two repo-vendored skills live under `../../external/` (they are git
+submodules; if either folder is empty, run
+`git submodule update --init --recursive` from the repo root before
+starting RLCR).
+
+### KernelWiki (`../../external/KernelWiki/`)
+
+Searchable knowledge base of 2,179 merged PRs across CUTLASS, SGLang,
+vLLM, FlashInfer, PyTorch, Triton (Blackwell / SM100 + Hopper / SM90),
+plus 48 wiki pages, 7 competitions, and 20 blog summaries. Read
+`../../external/KernelWiki/SKILL.md` first for the full query syntax.
+
+Use it **before** locking in an implementation direction, especially
+when designing the first benchmark-targeting candidate or after one
+focused attempt comes back > 3× slower than the SGLang baseline.
+
+Targeted queries for this kernel family (fused scale-shift modulation including the Z-Image / Qwen-Image-Edit `select01` dual-modulation path):
+
+  - `python3 ../../external/KernelWiki/scripts/query.py "adaLN modulation fused scale shift gate"`
+  - `python3 ../../external/KernelWiki/scripts/query.py "DiT modulation kernel sm100"`
+  - `python3 ../../external/KernelWiki/scripts/query.py --tag modulation --type kernel`
+  - `python3 ../../external/KernelWiki/scripts/query.py --repo sglang --tag modulation --limit 20`
+
+Record any PR / wiki page that influenced a design decision in
+`docs/draft.md` and `solutions.jsonl` with its KernelWiki page id
+or upstream PR URL.
+
+### ncu-report-skill (`../../external/ncu-report-skill/`)
+
+Nsight Compute B200 / SM100 workflow. Read
+`../../external/ncu-report-skill/SKILL.md` first; the
+`reference/` subdirectory has the directory layout, harness guide,
+collection options, Python API, six analysis dimensions, diagnosis
+playbook, and report template.
+
+Use it **after** the candidate is correct on all configured shapes
+and either (a) the benchmark is within ~2× of the baseline and you
+need to identify the active hardware bound, or (b) an attempted
+optimization gave an unexpected result. The mandatory pattern in
+this repo:
+
+  1. Create `profile/<run_name>/{harness,reports,analysis}/` — one
+     dir per run, never reuse.
+  2. Build a standalone harness under `profile/<run_name>/harness/`.
+     Because this family is a Triton or CuTe-DSL kernel, the harness
+  should `python -c` into the wrapped SGLang entry point with the
+  exact captured shape from `docs/captured_shapes_<arch>.jsonl`. The
+  generated Triton SASS lives under the Triton cache (`~/.triton/cache/`)
+  and can be passed to ncu via `--app-replay-mode kernel`.
+  3. Run two profiles into `profile/<run_name>/reports/`:
+
+     ```bash
+     ncu --set full --target-processes all \
+       -o profile/<run_name>/reports/full \
+       <harness binary or python entrypoint>
+
+     ncu --set source --section SourceCounters \
+       -o profile/<run_name>/reports/source \
+       <harness binary or python entrypoint>
+     ```
+
+  4. Parse with the `ncu_report` Python module via the helpers in
+     `../../external/ncu-report-skill/helpers/`; write parsed CSVs
+     into `profile/<run_name>/analysis/`.
+  5. Walk the six analysis dimensions (compute / memory / occupancy
+     / latency-hiding / launch-overhead / tail-effect) listed in
+     `../../external/ncu-report-skill/reference/05-analysis-dimensions.md`.
+  6. Match the dominant signal to
+     `../../external/ncu-report-skill/reference/06-diagnosis-playbook.md`
+     and write `profile/<run_name>/REPORT.md` using
+     `reference/07-report-template.md`.
+
+Record the matched diagnosis, before/after metric, and the resulting
+design change in `solutions.jsonl` together with the report path.
+
 ## Optimization Exploration Policy
 
 Use the KDA-style exploration loop:
