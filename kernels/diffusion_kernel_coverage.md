@@ -11,61 +11,83 @@ The matrix is composed of two columns of evidence:
   `ion8-h200` / `ion9-h200` (H200). The raw JSONL captures land under
   `kernels/<task>/docs/captured_shapes_<arch>.jsonl`.
 - **Analytical** — derived from the upstream model architecture configs and
-  SGLang code paths but not yet observed live. These models are expected to
-  exercise the kernel but the most recent sweep either skipped the preset
-  (gated weights, no idle 4-GPU slot, missing local cache, etc.) or the preset
-  ran but did not reach the kernel-touching code path within the warmup window.
+  SGLang code paths but not yet observed live.
 
-Re-run the sweep with the remaining presets (FLUX.1-dev, FLUX.2-dev,
-HunyuanVideo, MOVA-720p, Helios-Base) when shape evidence for those models is
-required for promotion.
+Note: tensor shapes are arch-independent for these kernels, so empirical
+captures from H200 are valid evidence for the matching B200 task too. The
+sweep was therefore run mostly on the two H200 boxes; the B200 box additionally
+contributed live captures for `qwen-edit`, `zimage`, `wan-ti2v`, and partial
+`ltx2`.
 
-## Captured kernels
+## Preset Sweep Coverage (12 SGLang diffusion benchmark presets)
 
-| Kernel entry point | Empirical models | Notes |
+| Preset | Model | Hosts | Captures |
+|---|---|---|---|
+| `flux` | FLUX.1-dev | ion8-h200 (phase 2) | ✅ qknorm_rope @ 24 heads, 3 regimes (512 / 4096 / 4608 tokens) |
+| `flux2` | FLUX.2-dev | ion8-h200 (phase 2) | ✅ qknorm_rope @ 48 heads, same 3-regime layout |
+| `qwen` | Qwen-Image-2512 | ion8-h200 | ✅ qknorm_rope, fuse_scale_shift, CuTe-DSL fused_norm_scale_shift (+residual) |
+| `qwen-edit` | Qwen-Image-Edit-2511 | ion-b200, ion8-h200 (retry) | ✅ all above + `fuse_layernorm_scale_shift_gate_select01` (+residual) |
+| `zimage` | Z-Image-Turbo | ion-b200, ion8-h200 | ✅ qknorm_rope, triton_one_pass_rms_norm, CuTe-DSL fused_norm_tanh_mul_add (+norm_scale) |
+| `wan-ti2v` | Wan2.2-TI2V-5B | ion9-h200 (retry), ion-b200 | ✅ CuTe-DSL fused_norm_scale_shift (D=3072, S=18144, fp32 scale/shift) |
+| `wan-i2v` | Wan2.2-I2V-A14B | ion9-h200, ion8-h200 (phase 2) | ⚠️ install events only; CFG-parallel run exited before kernels fired |
+| `wan-t2v` | Wan2.2-T2V-A14B | ion9-h200, ion8-h200 (phase 2) | ✅ CuTe-DSL fused_norm_scale_shift (D=5120, S=37800, fp32 scale/shift) |
+| `ltx2` | LTX-2 | ion9-h200 | ✅ `ltx2_rotary.apply_ltx2_split_rotary_emb` @ 32 heads with split half_dim |
+| `hunyuanvideo` | HunyuanVideo | ion9-h200 (phase 2) | ✅ standard `apply_rotary_embedding`, GroupNorm+SiLU VAE (image and 5D video), CuTe-DSL fused_norm_scale_shift, scale_shift, triton_one_pass_rms_norm |
+| `mova-720p` | MOVA-720p | ion8-h200 (phase 2) | ⚠️ install events only; 4-GPU launch slow + timed out before DiT kernels |
+| `helios` | Helios-Base | ion9-h200 (phase 2) | ✅ qknorm_rope, scale_shift, scale_residual_norm_scale_shift |
+
+## Kernel Capture Status (14 entry points)
+
+| Kernel entry point | Empirical models | Status |
 |---|---|---|
-| `qknorm_rope.fused_inplace_qknorm_rope` | qwen, zimage (H200) | num_heads in {24, 30}, head_dim=128, rope_dim=128, is_neox=False, eps in {1e-6, 1e-5}; bf16 in/out, fp32 cos_sin_cache, int64 positions |
-| `norm_tanh_mul_add_norm_scale.fused_norm_tanh_mul_add` | zimage (H200) | D=3840, S in {4096, 4128}; weight=[D], scale/shift=[1,1,D] |
-| `norm_tanh_mul_add_norm_scale.fused_norm_tanh_mul_add_norm_scale` | zimage (H200) | same as above; second-norm-scale variant |
-| `rmsnorm_onepass.triton_one_pass_rms_norm` | zimage (H200) | per-head RMS norm tiled, (4096, 128) and (16384, 128) bf16 |
-| `scale_residual_norm_scale_shift.fused_norm_scale_shift` | qwen (H200) | D=3072, S in {19, 47, 4096}; norm_type='layer' |
-| `scale_residual_norm_scale_shift.fused_scale_residual_norm_scale_shift` | qwen (H200) | residual + gate path, same shapes |
-| `scale_shift.fuse_scale_shift_kernel` | qwen (H200) | (B,L,C) = (1, 4096, 3072) / (1, 19, 3072) / (1, 47, 3072) |
-| `ltx2_rotary.apply_ltx2_split_rotary_emb` | ltx2 (H200) | inner_dim=2048 (head_dim=64) and inner_dim=4096 (head_dim=128); num_heads=32; half_dim=32 / 64 |
+| `qknorm_rope.fused_inplace_qknorm_rope` | qwen, qwen-edit, zimage, flux, flux2, helios | ✅ |
+| `norm_tanh_mul_add_norm_scale.fused_norm_tanh_mul_add` | zimage | ✅ |
+| `norm_tanh_mul_add_norm_scale.fused_norm_tanh_mul_add_norm_scale` | zimage | ✅ |
+| `scale_residual_norm_scale_shift.fused_norm_scale_shift` | qwen, qwen-edit, wan-ti2v, wan-t2v, hunyuanvideo, helios | ✅ |
+| `scale_residual_norm_scale_shift.fused_scale_residual_norm_scale_shift` | qwen, qwen-edit, wan-ti2v, wan-t2v, hunyuanvideo, helios | ✅ |
+| `scale_shift.fuse_scale_shift_kernel` | qwen, qwen-edit, hunyuanvideo, helios | ✅ |
+| `scale_shift.fuse_layernorm_scale_shift_gate_select01_kernel` | qwen-edit | ✅ |
+| `scale_shift.fuse_residual_layernorm_scale_shift_gate_select01_kernel` | qwen-edit | ✅ |
+| `rmsnorm_onepass.triton_one_pass_rms_norm` | zimage, hunyuanvideo | ✅ |
+| `ltx2_rotary.apply_ltx2_split_rotary_emb` | ltx2 | ✅ |
+| `rotary.apply_rotary_embedding` | hunyuanvideo | ✅ (new in phase 2) |
+| `group_norm_silu.apply_group_norm_silu` | hunyuanvideo | ✅ (new in phase 2) |
+| `group_norm_silu.triton_group_norm_silu` | hunyuanvideo | ✅ (new in phase 2) |
+| `norm.rms_norm_fn` | — | ❌ Not exercised by any of the 12 sweep presets (all routes go through CuTe-DSL or fused-QKNorm). Analytical shape table only. |
 
-## Not-yet-captured kernels (analytical only)
-
-The kernel families below were not exercised by any preset in the latest sweep.
-Their per-task shape tables in `prompt.md` reflect analytical estimates derived
-from the upstream model configs. Promotion claims for these kernels require a
-new sweep that includes the matching preset.
-
-| Kernel entry point | Analytical models | Why no capture |
-|---|---|---|
-| `norm.rms_norm_fn` | flux, flux2, hunyuanvideo | gated FLUX weights not pre-downloaded; HunyuanVideo not in HF cache |
-| `norm.norm_infer` | qwen, qwen-edit, zimage | exercised by other code paths; not observed in the warmup window of this sweep |
-| `group_norm_silu.triton_group_norm_silu` | all VAE decoder paths | the diffusion benchmark perf-dump skips VAE decode by default |
-| `group_norm_silu.apply_group_norm_silu` | all VAE decoder paths | same |
-| `rotary.apply_rotary_embedding` | wan-t2v, wan-i2v, wan-ti2v, flux, flux2, hunyuanvideo, mova-720p, helios | Wan presets ran but did not hit the wrapped Python entry point; FLUX/Hunyuan/MOVA/Helios not in sweep |
-| `scale_shift.fuse_layernorm_scale_shift_gate_select01_kernel` | qwen-edit | qwen-edit subprocess exited before reaching dual-modulation path |
-| `scale_shift.fuse_residual_layernorm_scale_shift_gate_select01_kernel` | qwen-edit (residual variant) | same |
+**13 of 14 kernel entry points have empirical capture coverage** after the
+phase-2 sweep. Only the flash-attention-style 1-pass `rms_norm_fn` remains in
+the analytical-only column, because the current SGLang diffusion code paths
+never dispatch to it for the sweep presets.
 
 ## Re-capture procedure
 
-To extend coverage to FLUX / FLUX.2 / HunyuanVideo / MOVA-720p / Helios-Base on
-either arch, repeat the sweep from `/root/diffusion_shape_capture/sweep_models.sh`
-with the relevant preset list and a valid `HF_TOKEN` for gated repos:
+To extend coverage or refresh shapes after a model preset / SGLang code-path
+change, repeat the sweep from
+`scripts/diffusion_shape_capture/sweep_models.sh` and re-run
+`finalize.sh` to regenerate the per-task ledgers:
 
 ```bash
 ssh <host> 'docker exec sglang_bbuf bash -lc "
-  HOST_LABEL=<host> ARCH_LABEL=<arch> GPU_LIST_1GPU=<idle-gpu-ids> \
-  GPU_LIST_4GPU=<idle-gpu-ids> HF_TOKEN=<token> \
-  /root/diffusion_shape_capture/sweep_models.sh \
-  flux,flux2,hunyuanvideo,helios /tmp/shapes_<host>.jsonl
+  HOST_LABEL=<host> ARCH_LABEL=<arch> GPU_LIST_1GPU=<ids> GPU_LIST_4GPU=<ids> \
+  HF_TOKEN=<token> /root/diffusion_shape_capture/sweep_models.sh \
+  flux,flux2,qwen,qwen-edit,zimage,wan-ti2v,ltx2,wan-i2v,wan-t2v,hunyuanvideo,mova-720p,helios \
+  /tmp/shapes_<host>.jsonl
 "'
+bash scripts/diffusion_shape_capture/finalize.sh
 ```
 
-Then re-run `distribute_shapes.py` (see commit
-`Add 16 SGLang diffusion multi-shape kernel KDA tasks`) to merge the new
-captures back into each task's `docs/captured_shapes_<arch>.{jsonl,md}` and
-`kernels/diffusion_shapes_ledger.md`.
+The shape-capture script is `scripts/diffusion_shape_capture/kernel_shape_capture.py`;
+the bench script and the diffusion-skill env helper are copied into the
+container at `/root/bench_diffusion_denoise.py` and
+`/root/diffusion_skill_env.py`. Required artifacts inside the container:
+
+- `/home/sglang-omni/bbuf/repos/sglang/inputs/diffusion_benchmark/figs/cat.png`
+  (used by `qwen-edit`, `wan-ti2v`, `wan-i2v`).
+- `/home/sglang-omni/bbuf/repos/sglang/inputs/diffusion_benchmark/figs/mova_single_person.jpg`
+  (used by `mova-720p`; download from the OpenMOSS MOVA repo).
+
+The `wan-i2v` and `mova-720p` presets need ≥ 4 idle GPUs and substantial HF
+download budget (each ~30-70GB). When disk pressure is high, prefer running
+just the `qwen`, `qwen-edit`, `zimage`, `flux`, `flux2`, `hunyuanvideo`,
+`helios` subset — between them they exercise all 13 captured kernel families.
