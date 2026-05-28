@@ -4,6 +4,7 @@ Source: SGLang diffusion benchmark sweep captures from h200 (shapes are arch-ind
 
 | Model | Kernel | Tensor shapes (args[0..]) | Other args |
 |---|---|---|---|
+| hunyuanvideo | `rotary.apply_rotary_embedding` | `[1, 27030, 24, 128]/bfloat16C` ; `[27030, 64]/float32C` ; `[27030, 64]/float32C` | `False` |
 | ltx2 | `ltx2_rotary.apply_ltx2_split_rotary_emb` | `[2, 6144, 4096]/bfloat16C` ; `[2, 32, 6144, 64]/bfloat16NC` ; `[2, 32, 6144, 64]/bfloat16NC` | (none) |
 | ltx2 | `ltx2_rotary.apply_ltx2_split_rotary_emb` | `[2, 126, 2048]/bfloat16C` ; `[2, 32, 126, 32]/bfloat16NC` ; `[2, 32, 126, 32]/bfloat16NC` | (none) |
 | ltx2 | `ltx2_rotary.apply_ltx2_split_rotary_emb` | `[2, 6144, 2048]/bfloat16C` ; `[2, 32, 6144, 32]/bfloat16NC` ; `[2, 32, 6144, 32]/bfloat16NC` | (none) |
