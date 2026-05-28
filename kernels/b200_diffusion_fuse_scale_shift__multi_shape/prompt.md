@@ -388,6 +388,58 @@ before RLCR is active.
 9. Record every candidate in `solutions.jsonl` and every performance result
 in `benchmark.csv`.
 
+## Promotion: Export Into kda_kernels
+
+When the candidate is correct on every configured shape, beats the
+promotion bar, and the dispatcher decision table is recorded, run
+the export tool to promote the optimized wrapper into the
+shippable `kda_kernels/` overlay:
+
+```bash
+python3 scripts/export_kda_kernels/export.py b200_diffusion_fuse_scale_shift__multi_shape
+```
+
+That copies this task's `src/` into
+`kda_kernels/_impls/b200_diffusion_fuse_scale_shift__multi_shape/`, rewires the matching
+kda_kernels stub for `fuse_scale_shift_kernel`, `fuse_layernorm_scale_shift_gate_select01_kernel`, `fuse_residual_layernorm_scale_shift_gate_select01_kernel` to import from there, and flips
+`KDA_OPTIMIZED_<fn> = True` on each listed function.
+
+For the export to know which functions to promote, `src/register.py`
+must expose an `EXPORTS` dict alongside the existing `register()` /
+`optimized_wrapper()` entries:
+
+```python
+# kernels/b200_diffusion_fuse_scale_shift__multi_shape/src/register.py
+
+# ... optimized implementations of the wrapped functions live here ...
+
+EXPORTS = {
+        "fuse_scale_shift_kernel": fuse_scale_shift_kernel,
+        "fuse_layernorm_scale_shift_gate_select01_kernel": fuse_layernorm_scale_shift_gate_select01_kernel,
+        "fuse_residual_layernorm_scale_shift_gate_select01_kernel": fuse_residual_layernorm_scale_shift_gate_select01_kernel,
+}
+```
+
+Functions not present in `EXPORTS` keep their kda_kernels stub on
+the SGLang baseline. Partial promotion is safe; rerun export.py
+after each additional function is ready, or run
+`scripts/export_kda_kernels/export.py --revert b200_diffusion_fuse_scale_shift__multi_shape` to roll back.
+
+After export, end-to-end activation inside an sglang checkout is:
+
+```bash
+export PYTHONPATH=/path/to/kernel-pilot:$PYTHONPATH
+cd /path/to/sglang
+git apply /path/to/kernel-pilot/patches/sglang_kda_kernels.patch
+python3 -c 'import sglang; import kda_kernels; print(kda_kernels.status())'
+```
+
+and `kda_kernels.uninstall()` restores the SGLang baseline at runtime
+without touching the patch.
+
+See `kda_kernels/README.md`, `patches/README.md`, and
+`scripts/export_kda_kernels/README.md` for the full contract.
+
 ## Completion Bar
 
 The work is complete only when:

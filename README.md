@@ -74,6 +74,44 @@ prerequisites (the three local `ion-*` skills + `HF_TOKEN` + remote
 `cat.png`), launcher invocation pattern, Humanize gen-plan / start-rlcr-loop
 prep block, and per-task prompt cards.
 
+## Shipping Optimized Kernels (`kda_kernels/` + sglang patch)
+
+Once a KDA task lands a promoted candidate, run
+
+```bash
+python3 scripts/export_kda_kernels/export.py <task-slug>
+```
+
+to copy the task's `src/` into [`kda_kernels/_impls/<task-slug>/`](kda_kernels)
+and rewire the matching [`kda_kernels/diffusion/<file>.py`](kda_kernels) stub
+to import from it (flipping `KDA_OPTIMIZED_<fn> = True`). Activating every
+promoted kernel inside an sglang checkout is one command:
+
+```bash
+export PYTHONPATH=/path/to/kernel-pilot:$PYTHONPATH
+cd /path/to/sglang
+git apply /path/to/kernel-pilot/patches/sglang_kda_kernels.patch
+```
+
+The patch adds 16 lines at the end of `python/sglang/__init__.py` that try
+`import kda_kernels; kda_kernels.install()`. Functions still on the baseline
+(not yet promoted via `export.py`) are untouched, so partial promotion is
+safe. Inspect, undo at runtime, or revert the patch any time:
+
+```python
+import kda_kernels
+print(kda_kernels.status())     # currently-swapped sglang paths
+kda_kernels.uninstall()         # restore baseline without removing patch
+```
+
+See [`kda_kernels/README.md`](kda_kernels/README.md),
+[`patches/README.md`](patches/README.md), and
+[`scripts/export_kda_kernels/README.md`](scripts/export_kda_kernels/README.md)
+for the full contract (the `EXPORTS = {...}` rule each task's
+`src/register.py` follows, revert flow, per-function `KDA_TASK_<fn>` /
+`KDA_COMMIT_<fn>` / `KDA_DATE_<fn>` / `KDA_SPEEDUP_<fn>` stamps, and
+patch-regeneration when upstream sglang edits `__init__.py`).
+
 ## Kernel Tasks
 
 ### Reference Tasks (single fixed shape)
