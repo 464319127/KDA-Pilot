@@ -50,28 +50,38 @@
 
         ```text
         kda_kernels/
-          __init__.py            # exposes install / status / uninstall
-          _install.py            # the monkey-patch driver
-          _registry.py           # KERNEL_REGISTRY: sglang_path -> kda_path mapping
-          _impls/                # promoted task srcs land here, one subdir per task
+          __init__.py                       # exposes install / status / uninstall
+          _install.py                       # the monkey-patch driver
+          _registry.py                      # KERNEL_REGISTRY: sglang_path -> kda_path mapping
           diffusion/
-            qknorm_rope.py
-            group_norm_silu.py
-            triton/
-              norm.py             # rms_norm_fn + norm_infer
-              rmsnorm_onepass.py  # triton_one_pass_rms_norm
-              group_norm_silu.py
-              rotary.py
-              ltx2_rotary.py
-              scale_shift.py      # fuse_scale_shift_kernel + dual-modulation select01 variants
-            cutedsl/
-              norm_tanh_mul_add_norm_scale.py
-              scale_residual_norm_scale_shift.py
+            qknorm_rope/                    # one directory per kernel family
+              __init__.py                   # exposes the swap functions
+              # after promotion these land alongside:
+              # *.cu / *.cuh / *.cpp / *.h  — CUDA source copied from kernels/<task>/src/
+              # wrapper.py                  — Python JIT loader for the CUDA module
+              # KDA_STATUS.md               — task / commit / date / speedup stamps
+            rms_norm_fn/__init__.py
+            norm_infer/__init__.py          # owns norm_infer + triton_one_pass_rms_norm
+            group_norm_silu/__init__.py     # owns triton_group_norm_silu + apply_group_norm_silu
+            rotary_embedding/__init__.py    # owns apply_rotary_embedding + apply_ltx2_split_rotary_emb
+            fuse_scale_shift/__init__.py    # owns 3 fuse_*_scale_shift_* functions
+            cutedsl_norm_tanh_mul_add/__init__.py  # Z-Image residual modulation
+            cutedsl_norm_scale_shift/__init__.py   # Qwen / Wan / HunyuanVideo / Helios modulation
         ```
 
-        Each stub re-exports the sglang baseline and sets `KDA_OPTIMIZED_<fn>
-        = False`. `scripts/export_kda_kernels/export.py <task-slug>` flips the
-        flag and rewires the import after a KDA task's candidate is promoted.
+        Every kernel family is its own Python package. `__init__.py` either
+        re-exports the SGLang baseline (stub with `KDA_OPTIMIZED_<fn> = False`)
+        or imports the swap functions from `<family>/wrapper.py` after the
+        family has been promoted via
+        `scripts/export_kda_kernels/export.py <task-slug>`. CUDA sources for
+        each family live alongside the wrapper, so the shippable overlay is
+        self-contained per kernel.
+
+        All KDA-optimized kernels are native CUDA C++ (`.cu` / `.cuh` /
+        `.cpp` / `.h`); Triton and CuTe-DSL appear only as baselines or
+        porting references inside `kernels/<task>/src/`. The previous
+        `kda_kernels/diffusion/{triton,cutedsl}/` namespaces have been
+        collapsed.
 
         ## Swap table
 

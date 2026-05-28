@@ -220,6 +220,24 @@ modulation / RoPE / group-norm evidence can guide a design choice.
 Record reviewed source paths, commits or installed versions, and which
 ideas were kept or rejected in `docs/draft.md` and `solutions.jsonl`.
 
+## Implementation Language Policy
+
+**The optimized candidate must be a native CUDA kernel built from
+workspace-owned `.cu` / `.cuh` / `.cpp` / `.h` sources compiled with
+`nvcc` (via a CUDA extension build or torch JIT), regardless of
+whether the SGLang baseline is CUDA, Triton, or CuTe-DSL.** Python
+is allowed for the wrapper, the dispatcher, build glue, harnesses,
+and benchmark scripts, but not as the primary kernel.
+
+Triton kernels and CuTe-DSL kernels in the SGLang baseline are
+useful porting references — read them, port their algorithm into
+native CUDA, and record the source lineage in `solutions.jsonl`.
+
+After promotion, the export tool copies the CUDA sources into
+`kda_kernels/diffusion/<family>/` so the shippable overlay stays
+CUDA-only end-to-end. See the `## Promotion: Export Into
+kda_kernels` section below for the export contract.
+
 ## External Reference Skills
 
 Two repo-vendored skills live under `../../external/` (they are git
@@ -234,11 +252,16 @@ vLLM, FlashInfer, PyTorch, Triton (Blackwell / SM100 + Hopper / SM90),
 plus 48 wiki pages, 7 competitions, and 20 blog summaries. Read
 `../../external/KernelWiki/SKILL.md` first for the full query syntax.
 
-Use it **before** locking in an implementation direction, especially
-when designing the first benchmark-targeting candidate or after one
-focused attempt comes back > 3× slower than the SGLang baseline.
+Treat KernelWiki as a **reference the agent consults at its own
+discretion** — when designing the first candidate, when choosing
+between two implementation directions, after any focused attempt
+comes back slower than the SGLang baseline, when an ncu profile
+surfaces a stall the playbook can't fully explain, or any time a
+prior-art PR would unblock the next edit. The wiki is never
+mandatory; skip it when the candidate direction is obvious and the
+profiler evidence is clean.
 
-Targeted queries for this kernel family (fused scale-shift modulation including the Z-Image / Qwen-Image-Edit `select01` dual-modulation path):
+Suggested targeted queries for this kernel family (fused scale-shift modulation including the Z-Image / Qwen-Image-Edit `select01` dual-modulation path):
 
   - `python3 ../../external/KernelWiki/scripts/query.py "adaLN modulation fused scale shift gate"`
   - `python3 ../../external/KernelWiki/scripts/query.py "DiT modulation kernel sm100"`
@@ -257,20 +280,25 @@ Nsight Compute B200 / SM100 workflow. Read
 collection options, Python API, six analysis dimensions, diagnosis
 playbook, and report template.
 
-Use it **after** the candidate is correct on all configured shapes
-and either (a) the benchmark is within ~2× of the baseline and you
-need to identify the active hardware bound, or (b) an attempted
-optimization gave an unexpected result. The mandatory pattern in
-this repo:
+Profile **whenever profiler evidence would change the next edit** —
+that is, after any benchmark result you do not fully understand,
+whether the candidate got *faster* or *slower* than the baseline.
+A speedup that comes from an unexpected dimension is just as worth
+diagnosing as a regression: the active hardware bound from the
+winning candidate tells you the next direction, and the bound from
+a losing candidate tells you why the attempted edit didn't pay off.
+Skip ncu only when both the result and the cause are already
+obvious from code review or microbenchmark.
+
+The mandatory pattern in this repo when you do profile:
 
   1. Create `profile/<run_name>/{harness,reports,analysis}/` — one
      dir per run, never reuse.
   2. Build a standalone harness under `profile/<run_name>/harness/`.
-     Because this family is a Triton or CuTe-DSL kernel, the harness
-  should `python -c` into the wrapped SGLang entry point with the
-  exact captured shape from `docs/captured_shapes_<arch>.jsonl`. The
-  generated Triton SASS lives under the Triton cache (`~/.triton/cache/`)
-  and can be passed to ncu via `--app-replay-mode kernel`.
+     Build the harness from your `src/` `.cu` / `.cuh` sources with
+  `-lineinfo` so SASS maps back to source. Match the exact captured
+  shape from `docs/captured_shapes_<arch>.jsonl` for the slice you
+  are profiling.
   3. Run two profiles into `profile/<run_name>/reports/`:
 
      ```bash

@@ -57,45 +57,45 @@ FAMILY_TO_SWAPS: dict[str, list[tuple[str, str, str, str]]] = {
     ],
     "rms_norm_fn": [
         ("sglang.jit_kernel.diffusion.triton.norm", "rms_norm_fn",
-         "kda_kernels.diffusion.triton.norm", "rms_norm_fn"),
+         "kda_kernels.diffusion.rms_norm_fn", "rms_norm_fn"),
     ],
     "norm_infer": [
         ("sglang.jit_kernel.diffusion.triton.norm", "norm_infer",
-         "kda_kernels.diffusion.triton.norm", "norm_infer"),
+         "kda_kernels.diffusion.norm_infer", "norm_infer"),
         ("sglang.jit_kernel.diffusion.triton.rmsnorm_onepass", "triton_one_pass_rms_norm",
-         "kda_kernels.diffusion.triton.rmsnorm_onepass", "triton_one_pass_rms_norm"),
+         "kda_kernels.diffusion.norm_infer", "triton_one_pass_rms_norm"),
     ],
     "group_norm_silu": [
         ("sglang.jit_kernel.diffusion.triton.group_norm_silu", "triton_group_norm_silu",
-         "kda_kernels.diffusion.triton.group_norm_silu", "triton_group_norm_silu"),
+         "kda_kernels.diffusion.group_norm_silu", "triton_group_norm_silu"),
         ("sglang.jit_kernel.diffusion.group_norm_silu", "apply_group_norm_silu",
          "kda_kernels.diffusion.group_norm_silu", "apply_group_norm_silu"),
     ],
     "rotary_embedding": [
         ("sglang.jit_kernel.diffusion.triton.rotary", "apply_rotary_embedding",
-         "kda_kernels.diffusion.triton.rotary", "apply_rotary_embedding"),
+         "kda_kernels.diffusion.rotary_embedding", "apply_rotary_embedding"),
         ("sglang.jit_kernel.diffusion.triton.ltx2_rotary", "apply_ltx2_split_rotary_emb",
-         "kda_kernels.diffusion.triton.ltx2_rotary", "apply_ltx2_split_rotary_emb"),
+         "kda_kernels.diffusion.rotary_embedding", "apply_ltx2_split_rotary_emb"),
     ],
     "fuse_scale_shift": [
         ("sglang.jit_kernel.diffusion.triton.scale_shift", "fuse_scale_shift_kernel",
-         "kda_kernels.diffusion.triton.scale_shift", "fuse_scale_shift_kernel"),
+         "kda_kernels.diffusion.fuse_scale_shift", "fuse_scale_shift_kernel"),
         ("sglang.jit_kernel.diffusion.triton.scale_shift", "fuse_layernorm_scale_shift_gate_select01_kernel",
-         "kda_kernels.diffusion.triton.scale_shift", "fuse_layernorm_scale_shift_gate_select01_kernel"),
+         "kda_kernels.diffusion.fuse_scale_shift", "fuse_layernorm_scale_shift_gate_select01_kernel"),
         ("sglang.jit_kernel.diffusion.triton.scale_shift", "fuse_residual_layernorm_scale_shift_gate_select01_kernel",
-         "kda_kernels.diffusion.triton.scale_shift", "fuse_residual_layernorm_scale_shift_gate_select01_kernel"),
+         "kda_kernels.diffusion.fuse_scale_shift", "fuse_residual_layernorm_scale_shift_gate_select01_kernel"),
     ],
     "cutedsl_norm_tanh_mul_add": [
         ("sglang.jit_kernel.diffusion.cutedsl.norm_tanh_mul_add_norm_scale", "fused_norm_tanh_mul_add",
-         "kda_kernels.diffusion.cutedsl.norm_tanh_mul_add_norm_scale", "fused_norm_tanh_mul_add"),
+         "kda_kernels.diffusion.cutedsl_norm_tanh_mul_add", "fused_norm_tanh_mul_add"),
         ("sglang.jit_kernel.diffusion.cutedsl.norm_tanh_mul_add_norm_scale", "fused_norm_tanh_mul_add_norm_scale",
-         "kda_kernels.diffusion.cutedsl.norm_tanh_mul_add_norm_scale", "fused_norm_tanh_mul_add_norm_scale"),
+         "kda_kernels.diffusion.cutedsl_norm_tanh_mul_add", "fused_norm_tanh_mul_add_norm_scale"),
     ],
     "cutedsl_norm_scale_shift": [
         ("sglang.jit_kernel.diffusion.cutedsl.scale_residual_norm_scale_shift", "fused_norm_scale_shift",
-         "kda_kernels.diffusion.cutedsl.scale_residual_norm_scale_shift", "fused_norm_scale_shift"),
+         "kda_kernels.diffusion.cutedsl_norm_scale_shift", "fused_norm_scale_shift"),
         ("sglang.jit_kernel.diffusion.cutedsl.scale_residual_norm_scale_shift", "fused_scale_residual_norm_scale_shift",
-         "kda_kernels.diffusion.cutedsl.scale_residual_norm_scale_shift", "fused_scale_residual_norm_scale_shift"),
+         "kda_kernels.diffusion.cutedsl_norm_scale_shift", "fused_scale_residual_norm_scale_shift"),
     ],
 }
 
@@ -148,28 +148,31 @@ def read_exports(src_dir: Path) -> set[str]:
     return set()
 
 
-def copy_src(task_dir: Path, task_slug: str) -> Path:
-    dst = IMPLS / task_slug
-    if dst.exists():
-        shutil.rmtree(dst)
-    shutil.copytree(task_dir / "src", dst)
-    init = dst / "__init__.py"
-    if not init.exists():
-        init.write_text(f'"""Promoted source for KDA task {task_slug}."""\n')
-    return dst
+def copy_src_to_impls_legacy(task_dir: Path, task_slug: str) -> Path:
+    """Deprecated path that used to copy into kda_kernels/_impls/<slug>/.
+    Kept as a no-op shim so any external caller doesn't crash; the new
+    `copy_src(task_dir, family)` writes straight into the family package.
+    """
+    return KDA / "_impls" / task_slug
 
 
 def regenerate_stub(family: str, task_slug: str, exports: set[str]) -> list[Path]:
-    """Write the kda_kernels stubs for every entry of `family`.
+    """Write the kda_kernels family package __init__.py for `family`.
 
-    Functions present in `exports` get a `from kda_kernels._impls.<task>.register
-    import <fn>` line and `KDA_OPTIMIZED_<fn> = True`. Others fall back to
-    re-exporting the sglang baseline with `KDA_OPTIMIZED_<fn> = False`.
+    Functions in `exports` get an import line from the promoted impl
+    (`kda_kernels.diffusion.<family>.wrapper`) and `KDA_OPTIMIZED_<fn> = True`.
+    Others fall back to re-exporting the sglang baseline with
+    `KDA_OPTIMIZED_<fn> = False`.
+
+    The promoted impl directory `kda_kernels/diffusion/<family>/` receives a
+    copy of every file from `kernels/<task-slug>/src/` (CUDA `.cu`, `.cuh`,
+    `.cpp`, `.h`, the Python wrapper, build glue, etc.) so the family
+    package is self-contained at runtime.
     """
     written: list[Path] = []
-    per_kda_mod: dict[str, list[tuple[str, str, str]]] = defaultdict(list)
-    for sgl_mod, _sgl_fn, kda_mod, kda_fn in FAMILY_TO_SWAPS[family]:
-        per_kda_mod[kda_mod].append((sgl_mod, kda_fn, kda_fn))
+    # All entries of a family share one kda_module (the family package).
+    kda_mod = FAMILY_TO_SWAPS[family][0][2]
+    sgl_entries = [(sgl_mod, kda_fn) for sgl_mod, _sgl_fn, _km, kda_fn in FAMILY_TO_SWAPS[family]]
 
     commit = "unknown"
     try:
@@ -181,61 +184,145 @@ def regenerate_stub(family: str, task_slug: str, exports: set[str]) -> list[Path
     date = _dt.date.today().isoformat()
     speedup = last_speedup(KERNELS / task_slug)
 
-    for kda_mod, entries in per_kda_mod.items():
-        rel = kda_mod.replace(".", "/") + ".py"
-        path = REPO / rel
-        sgl_mod = entries[0][0]
-        lines: list[str] = [
-            f'"""kda_kernels mirror of `{sgl_mod}`.\n\n',
-            'Stub status: each function below is either re-exported from sglang\n',
-            '(KDA_OPTIMIZED_<fn>=False) or pulled from a promoted KDA impl\n',
-            '(KDA_OPTIMIZED_<fn>=True). See scripts/export_kda_kernels/export.py\n',
-            'for the swap rule.\n"""\n\n',
-        ]
-        imports: list[str] = []
-        flags: list[str] = []
-        stamps: list[str] = []
-        for _sgl, _fn, kda_fn in entries:
-            if kda_fn in exports:
-                imports.append(
-                    f"from kda_kernels._impls.{task_slug}.register import "
-                    f"{kda_fn}  # noqa: F401\n"
-                )
-                flags.append(f"KDA_OPTIMIZED_{kda_fn} = True\n")
-                stamps.append(
-                    f"KDA_TASK_{kda_fn} = {task_slug!r}\n"
-                    f"KDA_COMMIT_{kda_fn} = {commit!r}\n"
-                    f"KDA_DATE_{kda_fn} = {date!r}\n"
-                    f"KDA_SPEEDUP_{kda_fn} = {speedup!r}\n"
-                )
-            else:
-                imports.append(f"from {sgl_mod} import {kda_fn}  # noqa: F401\n")
-                flags.append(f"KDA_OPTIMIZED_{kda_fn} = False\n")
-        body = "".join(lines + imports + ["\n"] + flags + ["\n"] + stamps)
-        path.write_text(body, encoding="utf-8")
-        written.append(path)
+    rel = kda_mod.replace(".", "/") + "/__init__.py"
+    path = REPO / rel
+    family_dir = path.parent
+    family_dir.mkdir(parents=True, exist_ok=True)
+
+    lines: list[str] = [
+        f'"""kda_kernels.diffusion.{family} — CUDA-only KDA-optimized overlay.\n\n',
+        'This package contributes the following swap functions:\n\n',
+    ]
+    lines.extend(f"  - `{sgl_mod}:{fn}`\n" for sgl_mod, fn in sgl_entries)
+    lines.extend([
+        '\n',
+        'Stub status: each function is either re-exported from SGLang\n',
+        '(`KDA_OPTIMIZED_<fn> = False`) or pulled from a promoted KDA impl\n',
+        '(`KDA_OPTIMIZED_<fn> = True`). Promotion is driven by\n',
+        '`scripts/export_kda_kernels/export.py <task-slug>`.\n',
+        '"""\n\n',
+    ])
+
+    imports: list[str] = []
+    flags: list[str] = []
+    stamps: list[str] = []
+    for sgl_mod, kda_fn in sgl_entries:
+        if kda_fn in exports:
+            imports.append(
+                f"from kda_kernels.diffusion.{family}.wrapper import "
+                f"{kda_fn}  # noqa: F401\n"
+            )
+            flags.append(f"KDA_OPTIMIZED_{kda_fn} = True\n")
+            stamps.append(
+                f"KDA_TASK_{kda_fn} = {task_slug!r}\n"
+                f"KDA_COMMIT_{kda_fn} = {commit!r}\n"
+                f"KDA_DATE_{kda_fn} = {date!r}\n"
+                f"KDA_SPEEDUP_{kda_fn} = {speedup!r}\n"
+            )
+        else:
+            imports.append(f"from {sgl_mod} import {kda_fn}  # noqa: F401\n")
+            flags.append(f"KDA_OPTIMIZED_{kda_fn} = False\n")
+    body = "".join(lines + imports + ["\n"] + flags + (["\n"] + stamps if stamps else []))
+    path.write_text(body, encoding="utf-8")
+    written.append(path)
     return written
+
+
+def copy_src(task_dir: Path, family: str) -> Path:
+    """Copy task `src/` into `kda_kernels/diffusion/<family>/`.
+
+    The whole task src/ tree (CUDA sources, wrapper.py, headers, build
+    glue) lands directly inside the family package so the runtime
+    `from kda_kernels.diffusion.<family>.wrapper import <fn>` line
+    resolves without an extra hop. Existing files in the family
+    directory other than the auto-generated __init__.py and KDA_STATUS.md
+    are wiped first to keep promotions deterministic.
+    """
+    family_dir = KDA / "diffusion" / family
+    family_dir.mkdir(parents=True, exist_ok=True)
+    # Wipe everything except __init__.py (will be rewritten) and KDA_STATUS.md.
+    for entry in family_dir.iterdir():
+        if entry.name in ("__init__.py", "KDA_STATUS.md"):
+            continue
+        if entry.is_dir():
+            shutil.rmtree(entry)
+        else:
+            entry.unlink()
+    src_dir = task_dir / "src"
+    for entry in src_dir.iterdir():
+        target = family_dir / entry.name
+        if entry.is_dir():
+            shutil.copytree(entry, target)
+        else:
+            shutil.copy2(entry, target)
+    return family_dir
+
+
+def family_promoted(family: str) -> bool:
+    """True when the family package's __init__.py has any
+    `KDA_OPTIMIZED_<fn> = True` flag."""
+    init = KDA / "diffusion" / family / "__init__.py"
+    if not init.exists():
+        return False
+    return " = True" in init.read_text(encoding="utf-8")
 
 
 def cmd_list() -> int:
     for slug in sorted(
         p.name for p in KERNELS.iterdir() if p.is_dir() and "_diffusion_" in p.name
     ):
-        impl = IMPLS / slug
-        marker = " [exported]" if impl.exists() else ""
+        family = family_of(slug) if "_diffusion_" in slug and "__multi_shape" in slug else ""
+        marker = " [exported]" if family and family_promoted(family) else ""
         print(f"  {slug}{marker}")
     return 0
 
 
 def cmd_revert(task_slug: str) -> int:
     family = family_of(task_slug)
-    impl = IMPLS / task_slug
-    if impl.exists():
-        shutil.rmtree(impl)
-        print(f"removed kda_kernels/_impls/{task_slug}")
+    family_dir = KDA / "diffusion" / family
+    if family_dir.exists():
+        for entry in family_dir.iterdir():
+            if entry.name in ("__init__.py", "KDA_STATUS.md"):
+                continue
+            if entry.is_dir():
+                shutil.rmtree(entry)
+            else:
+                entry.unlink()
+        print(f"wiped CUDA sources under kda_kernels/diffusion/{family}/")
     regenerate_stub(family, task_slug, exports=set())
     print(f"reset kda_kernels stubs for family={family}")
     return 0
+
+
+def write_status_md(family_dir: Path, task_slug: str, exports: set[str]) -> None:
+    commit = "unknown"
+    try:
+        commit = subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], cwd=REPO, text=True
+        ).strip()
+    except subprocess.CalledProcessError:
+        pass
+    date = _dt.date.today().isoformat()
+    speedup = last_speedup(KERNELS / task_slug)
+    lines = [
+        f"# kda_kernels promotion status — {family_dir.name}\n",
+        "\n",
+        f"| Field | Value |\n",
+        f"|---|---|\n",
+        f"| Task slug | `{task_slug}` |\n",
+        f"| Commit (kernel-pilot) | `{commit}` |\n",
+        f"| Promotion date | {date} |\n",
+        f"| Reported geomean speedup | {speedup or '_(unset)_'} |\n",
+        f"| Promoted functions | {', '.join(sorted(exports)) or '_(none)_'} |\n",
+        "\n",
+        "## Files\n",
+        "\n",
+    ]
+    for entry in sorted(family_dir.iterdir()):
+        if entry.name in ("__init__.py", "KDA_STATUS.md", "__pycache__"):
+            continue
+        lines.append(f"- `{entry.name}`\n")
+    (family_dir / "KDA_STATUS.md").write_text("".join(lines), encoding="utf-8")
 
 
 def cmd_export(task_slug: str) -> int:
@@ -247,7 +334,7 @@ def cmd_export(task_slug: str) -> int:
     if not src_dir.exists():
         raise SystemExit(f"task {task_slug} has no src/")
     print(f"== exporting task={task_slug} family={family} ==")
-    copy_src(task_dir, task_slug)
+    family_dir = copy_src(task_dir, family)
     exports = read_exports(src_dir)
     if not exports:
         print(
@@ -256,8 +343,11 @@ def cmd_export(task_slug: str) -> int:
             file=sys.stderr,
         )
     written = regenerate_stub(family, task_slug, exports)
+    write_status_md(family_dir, task_slug, exports)
     for p in written:
         print(f"  updated {p.relative_to(REPO)}")
+    print(f"  copied src/ -> {family_dir.relative_to(REPO)}/")
+    print(f"  wrote {family_dir.relative_to(REPO)}/KDA_STATUS.md")
     return 0
 
 

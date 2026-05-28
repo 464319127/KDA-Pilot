@@ -1,9 +1,9 @@
-"""Inject a `## External Reference Skills` section into every diffusion task
-prompt so the optimizing agent has concrete KernelWiki query examples and a
-concrete ncu-report-skill workflow, scoped to that kernel family.
+"""Inject the `## External Reference Skills` section into every diffusion
+task prompt, plus a `## Implementation Language Policy` section that mandates
+native CUDA C++/.cu candidates regardless of the baseline language.
 
-The section lands immediately after `## Prior Art Research Scope` (where
-KernelWiki is mentioned generically) and replaces itself idempotently.
+KernelWiki and ncu-report-skill are described as **suggestions** the agent
+queries autonomously based on judgement, not as gated reflex actions.
 """
 
 from __future__ import annotations
@@ -15,9 +15,9 @@ KERNELS_DIR = REPO / "kernels"
 
 ANCHOR_END = "## Optimization Exploration Policy"
 SECTION_HEADER = "## External Reference Skills"
+LANG_HEADER = "## Implementation Language Policy"
 
-# Per-family KernelWiki query suggestions. Keys are the family slug
-# (after stripping `{arch}_diffusion_` and `__multi_shape`).
+# Per-family KernelWiki query suggestions.
 KW_QUERIES: dict[str, list[str]] = {
     "qknorm_rope": [
         'python3 ../../external/KernelWiki/scripts/query.py "fused RMS norm + RoPE inplace sm100"',
@@ -70,8 +70,6 @@ KW_QUERIES: dict[str, list[str]] = {
     ],
 }
 
-# Per-family one-liner reminder of what the family actually does, used in the
-# "what to look for" sentence inside the injected section.
 FAMILY_BLURB: dict[str, str] = {
     "qknorm_rope": "fused in-place RMS-norm + RoPE on (Q, K) for DiT joint attention blocks",
     "rms_norm_fn": "flash-attention-style 1-pass LayerNorm / RMSNorm with optional residual and dual-branch",
@@ -83,27 +81,38 @@ FAMILY_BLURB: dict[str, str] = {
     "cutedsl_norm_scale_shift": "fused `norm(x) * (1 + scale) + shift` and its residual+gate variant used by Qwen-Image / Wan / HunyuanVideo / Helios",
 }
 
-# Whether the candidate is a native CUDA kernel (qknorm_rope) or a Triton /
-# CuTe-DSL kernel — drives the ncu harness hint.
-def is_cuda_family(family: str) -> bool:
-    return family == "qknorm_rope"
+
+def render_lang_section() -> str:
+    return (
+        f"{LANG_HEADER}\n"
+        f"\n"
+        f"**The optimized candidate must be a native CUDA kernel built from\n"
+        f"workspace-owned `.cu` / `.cuh` / `.cpp` / `.h` sources compiled with\n"
+        f"`nvcc` (via a CUDA extension build or torch JIT), regardless of\n"
+        f"whether the SGLang baseline is CUDA, Triton, or CuTe-DSL.** Python\n"
+        f"is allowed for the wrapper, the dispatcher, build glue, harnesses,\n"
+        f"and benchmark scripts, but not as the primary kernel.\n"
+        f"\n"
+        f"Triton kernels and CuTe-DSL kernels in the SGLang baseline are\n"
+        f"useful porting references — read them, port their algorithm into\n"
+        f"native CUDA, and record the source lineage in `solutions.jsonl`.\n"
+        f"\n"
+        f"After promotion, the export tool copies the CUDA sources into\n"
+        f"`kda_kernels/diffusion/<family>/` so the shippable overlay stays\n"
+        f"CUDA-only end-to-end. See the `## Promotion: Export Into\n"
+        f"kda_kernels` section below for the export contract.\n"
+    )
 
 
-def render_section(family: str) -> str:
+def render_external_section(family: str) -> str:
     queries = KW_QUERIES[family]
     blurb = FAMILY_BLURB[family]
     bullets = "\n".join(f"  - `{q}`" for q in queries)
     harness_note = (
-        "Because this family is a native CUDA kernel, build the harness from\n"
-        "  your `src/` `.cu` / `.cuh` sources with `-lineinfo` so SASS maps back\n"
-        "  to source. Match `head_dim` / `rope_dim` / `num_heads` / `is_neox`\n"
-        "  exactly to the shape under investigation."
-        if is_cuda_family(family)
-        else "Because this family is a Triton or CuTe-DSL kernel, the harness\n"
-        "  should `python -c` into the wrapped SGLang entry point with the\n"
-        "  exact captured shape from `docs/captured_shapes_<arch>.jsonl`. The\n"
-        "  generated Triton SASS lives under the Triton cache (`~/.triton/cache/`)\n"
-        "  and can be passed to ncu via `--app-replay-mode kernel`."
+        "Build the harness from your `src/` `.cu` / `.cuh` sources with\n"
+        "  `-lineinfo` so SASS maps back to source. Match the exact captured\n"
+        "  shape from `docs/captured_shapes_<arch>.jsonl` for the slice you\n"
+        "  are profiling."
     )
     return (
         f"{SECTION_HEADER}\n"
@@ -120,11 +129,16 @@ def render_section(family: str) -> str:
         f"plus 48 wiki pages, 7 competitions, and 20 blog summaries. Read\n"
         f"`../../external/KernelWiki/SKILL.md` first for the full query syntax.\n"
         f"\n"
-        f"Use it **before** locking in an implementation direction, especially\n"
-        f"when designing the first benchmark-targeting candidate or after one\n"
-        f"focused attempt comes back > 3× slower than the SGLang baseline.\n"
+        f"Treat KernelWiki as a **reference the agent consults at its own\n"
+        f"discretion** — when designing the first candidate, when choosing\n"
+        f"between two implementation directions, after any focused attempt\n"
+        f"comes back slower than the SGLang baseline, when an ncu profile\n"
+        f"surfaces a stall the playbook can't fully explain, or any time a\n"
+        f"prior-art PR would unblock the next edit. The wiki is never\n"
+        f"mandatory; skip it when the candidate direction is obvious and the\n"
+        f"profiler evidence is clean.\n"
         f"\n"
-        f"Targeted queries for this kernel family ({blurb}):\n"
+        f"Suggested targeted queries for this kernel family ({blurb}):\n"
         f"\n"
         f"{bullets}\n"
         f"\n"
@@ -140,11 +154,17 @@ def render_section(family: str) -> str:
         f"collection options, Python API, six analysis dimensions, diagnosis\n"
         f"playbook, and report template.\n"
         f"\n"
-        f"Use it **after** the candidate is correct on all configured shapes\n"
-        f"and either (a) the benchmark is within ~2× of the baseline and you\n"
-        f"need to identify the active hardware bound, or (b) an attempted\n"
-        f"optimization gave an unexpected result. The mandatory pattern in\n"
-        f"this repo:\n"
+        f"Profile **whenever profiler evidence would change the next edit** —\n"
+        f"that is, after any benchmark result you do not fully understand,\n"
+        f"whether the candidate got *faster* or *slower* than the baseline.\n"
+        f"A speedup that comes from an unexpected dimension is just as worth\n"
+        f"diagnosing as a regression: the active hardware bound from the\n"
+        f"winning candidate tells you the next direction, and the bound from\n"
+        f"a losing candidate tells you why the attempted edit didn't pay off.\n"
+        f"Skip ncu only when both the result and the cause are already\n"
+        f"obvious from code review or microbenchmark.\n"
+        f"\n"
+        f"The mandatory pattern in this repo when you do profile:\n"
         f"\n"
         f"  1. Create `profile/<run_name>/{{harness,reports,analysis}}/` — one\n"
         f"     dir per run, never reuse.\n"
@@ -181,33 +201,58 @@ def render_section(family: str) -> str:
 
 def patch_one(prompt_path: Path, family: str) -> None:
     text = prompt_path.read_text(encoding="utf-8")
-    section = render_section(family)
 
+    # 1. Drop / replace any existing External Reference Skills section.
+    ext_section = render_external_section(family)
     if SECTION_HEADER in text:
         start = text.index(SECTION_HEADER)
         rest = text[start:]
         next_header_idx = rest.find("\n## ", len(SECTION_HEADER))
         if next_header_idx == -1:
-            new_text = text[:start] + section.rstrip() + "\n"
+            text = text[:start] + ext_section.rstrip() + "\n"
         else:
-            new_text = text[:start] + section.rstrip() + "\n\n" + rest[next_header_idx + 1 :]
+            text = text[:start] + ext_section.rstrip() + "\n\n" + rest[next_header_idx + 1 :]
     else:
         anchor_idx = text.find(ANCHOR_END)
         if anchor_idx == -1:
-            new_text = text.rstrip() + "\n\n" + section.rstrip() + "\n"
+            text = text.rstrip() + "\n\n" + ext_section.rstrip() + "\n"
         else:
-            new_text = (
+            text = (
                 text[:anchor_idx].rstrip()
                 + "\n\n"
-                + section.rstrip()
+                + ext_section.rstrip()
                 + "\n\n"
                 + text[anchor_idx:]
             )
-    prompt_path.write_text(new_text, encoding="utf-8")
+
+    # 2. Drop / replace any existing Implementation Language Policy section.
+    lang_section = render_lang_section()
+    if LANG_HEADER in text:
+        start = text.index(LANG_HEADER)
+        rest = text[start:]
+        next_header_idx = rest.find("\n## ", len(LANG_HEADER))
+        if next_header_idx == -1:
+            text = text[:start] + lang_section.rstrip() + "\n"
+        else:
+            text = text[:start] + lang_section.rstrip() + "\n\n" + rest[next_header_idx + 1 :]
+    else:
+        # Insert the language section just above External Reference Skills.
+        ext_idx = text.find(SECTION_HEADER)
+        if ext_idx == -1:
+            text = text.rstrip() + "\n\n" + lang_section.rstrip() + "\n"
+        else:
+            text = (
+                text[:ext_idx].rstrip()
+                + "\n\n"
+                + lang_section.rstrip()
+                + "\n\n"
+                + text[ext_idx:]
+            )
+
+    prompt_path.write_text(text, encoding="utf-8")
 
 
 def family_of(task_name: str) -> str:
-    # task_name looks like `b200_diffusion_qknorm_rope__multi_shape`
     if not task_name.startswith(("b200_diffusion_", "h200_diffusion_")):
         return ""
     stripped = task_name.split("_diffusion_", 1)[1]
@@ -225,7 +270,7 @@ def main() -> None:
         if not prompt.exists():
             continue
         patch_one(prompt, family)
-        print(f"patched {task_dir.name} (family={family})")
+        print(f"patched {task_dir.name}")
 
 
 if __name__ == "__main__":
