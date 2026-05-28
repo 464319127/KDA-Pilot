@@ -65,6 +65,15 @@ Code should expose commands such as:
 /humanize:start-rlcr-loop
 ```
 
+## Optimization Workflow
+
+Use [`docs/ghostty_claude_code_workflow.md`](docs/ghostty_claude_code_workflow.md)
+for the cold-terminal flow that opens four parallel Claude Code RLCR panes
+against the diffusion task queue, including the four-pane first wave,
+prerequisites (the three local `ion-*` skills + `HF_TOKEN` + remote
+`cat.png`), launcher invocation pattern, Humanize gen-plan / start-rlcr-loop
+prep block, and per-task prompt cards.
+
 ## Kernel Tasks
 
 ### Reference Tasks (single fixed shape)
