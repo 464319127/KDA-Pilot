@@ -79,12 +79,39 @@ For the production signature (`head_dim=128, rope_dim=128, is_neox=False, bf16`)
 - The candidate is a workspace-owned native CUDA kernel (clean-room, built via `torch.utils.cpp_extension`), not a dependency on SGLang-internal headers.
 - Fast path covers the production signature; everything else falls back to the SGLang baseline (`fused_inplace_qknorm_rope`), with the baseline reference bound at import time so the fallback never recurses after `kda_kernels.install()` swaps the symbol.
 
-### Evidence requirements (to finalize before promotion)
-- final wrapper signature(s) and per-shape dispatch table;
-- fallback cases;
-- dynamic BF16-noise tolerance methodology used in tests;
-- benchmark command and latency formula;
-- source lineage for ported helper code.
+### Final result (promoted, round 0)
+
+- **Final wrapper signature** (matches the recovered baseline exactly):
+  `fused_inplace_qknorm_rope(q, k, q_weight, k_weight, cos_sin_cache, positions, *, is_neox, eps=1e-6, head_dim=0, rope_dim=0) -> None` (in-place; `src/wrapper.py`).
+- **Promoted kernel**: candidate v3 = 2-heads-per-warp, 128-bit (`float4`) vectorized
+  fused RMSNorm(fp32)+RoPE, half-warp RMS reduction, coalesced `float2`/`float4`
+  cos/sin (`src/csrc/qknorm_rope_kernel.cu`, sha1 `021eb444`).
+- **Dispatch table**: single native CUDA path for the production signature (bf16,
+  contiguous, head_dim=128, rope_dim=128, is_neox=False, equal Q/K heads,
+  int32/int64 positions); all other tuples → SGLang baseline fallback. See
+  `docs/dispatch.md`.
+- **Fallback cases** (verified routing to baseline): head_dim 64/256, rope_dim <
+  head_dim, is_neox=True, non-bf16, non-contiguous, foreign-device, unequal Q/K
+  heads. int32 positions at the production signature run natively.
+- **Tolerance methodology**: candidate vs SGLang split oracle
+  (`fused_inplace_qknorm`(eps) + flashinfer RoPE) under hard ceiling `ATOL=8e-2,
+  RTOL=1e-2`, plus a dynamic fp32-anchored bound (candidate-vs-fp32 error ≤
+  `max(2e-3, 4× oracle bf16-vs-fp32 noise)`), with NaN/Inf checks. 21/21 pass.
+- **Benchmark command**: `CUDA_VISIBLE_DEVICES=<idle> KDA_RUN_CORRECTNESS=1
+  python benchmark.py` (CUDA-event batched per-call latency, in-place reset,
+  warmed modules); latency = median of per-batch `elapsed_ms*1000/INNER` (µs);
+  geomean = `exp(mean(ln(per-shape baseline_median/candidate_median)))`.
+- **Result**: geomean speedup over baseline **all 1.129×, large 1.181×, tiny
+  1.079×** on NVIDIA B200; correct on all 10 production shapes. Active bound:
+  latency (cold ~36–45% of HBM peak); see `profile/cand_qwen4096_v3/REPORT.md`.
+- **Source lineage**: algorithm ported clean-room from SGLang
+  `fused_qknorm_rope_warp` (`csrc/diffusion/qknorm_rope.cuh` @ 0b65588c1) via
+  torch cpp_extension; NCU rule engine drove the v2 coalescing fix; cold-cache
+  roofline drove the v3 MLP (128-bit/2-head) change. Recorded in `solutions.jsonl`.
+- **Promotion**: `EXPORTS={"fused_inplace_qknorm_rope": ...}` →
+  `scripts/export_kda_kernels/export.py b200_diffusion_qknorm_rope__multi_shape`;
+  install()/uninstall()/status() + post-install recursion-safe fallback verified
+  on B200 (`verify_promotion.py`).
 
 ## Bench / roofline notes
 - B200: 148 SMs, ~8 TB/s HBM3e. Dominant traffic per `(token, head)` = read+write of one head-vector = `2 * head_dim * sizeof(dtype)` (= 1024 B for bf16 head_dim=128 across q-read+q-write... per work it is 512 B; total `num_works * 512 B`). `cos_sin_cache` rows (`rope_dim*4` B/token) are L2-shared across heads; weights broadcast.

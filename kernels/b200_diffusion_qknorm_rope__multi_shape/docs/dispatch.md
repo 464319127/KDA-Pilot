@@ -13,13 +13,17 @@ Native CUDA fast path is taken iff ALL hold; otherwise → SGLang baseline:
 - cos_sin_cache float32 contiguous, last dim 128
 - positions 1-D int32 or int64, length == num_tokens
 
-## Per-bucket decision (round 0, candidate v2, B200 GPU 0, idle)
+## Per-bucket decision (round 0, candidate v3 = 2-heads-per-warp + 128-bit, B200 GPU 0, idle)
 
 | Bucket | Shapes (tokens) | Path | Baseline us | Cand us | Speedup | Promote? |
 |---|---|---|---|---|---|---|
-| large (image) | 4096 / 4128 / 7904 / 8424 | cuda | 30.9–79.6 | 32.9–86.2 | 0.91–0.94x | not yet (still behind; large shapes dominate model wall-clock) |
-| tiny | 19 / 32 / 47 / 189 / 195 | cuda | 7.6–7.6 | 6.4–6.4 | 1.18–1.20x | yes-leaning (launch-bound win) |
-| geomean | all 10 | — | — | — | all 1.049x / large 0.927x / tiny 1.187x | hold for v3 |
+| large (image) | 4096 / 4128 / 7904 / 8424 | cuda | 31.0–79.6 | 26.7–64.1 | 1.16–1.24× | **yes** (wins the wall-clock-dominant bucket) |
+| tiny | 19 / 32 / 47 / 189 / 195 | cuda | ~8.1–8.4 | ~7.5–7.9 | 1.07–1.10× | **yes** (launch-bound; native path lighter than tvm-ffi) |
+| geomean | all 10 | — | — | — | **all 1.129× / large 1.181× / tiny 1.079×** | **PROMOTE** |
+
+Single CUDA path (v3) for the whole production signature; no per-bucket kernel
+split is needed — the 2-heads-per-warp/128-bit kernel wins both buckets, so the
+tiny-shape policy is "use the same native path" (it also beats the baseline there).
 
 ## Fallback bucket (correctness-only; not optimization shapes)
 
@@ -31,10 +35,13 @@ Native CUDA fast path is taken iff ALL hold; otherwise → SGLang baseline:
 | non-bf16 / non-contiguous / CPU / unequal Q-K heads | fallback | correct vs oracle |
 | int32 positions @ production signature | cuda (native) | correct vs oracle |
 
-## Promotion stance (round 0)
+## Promotion stance (round 0): PROMOTE
 
-Hold. The candidate wins overall geomean (1.049x) and the launch-bound tiny
-shapes, and is at near-parity kernel GPU time with the baseline on large shapes
-(NCU: 60.1 vs 59.0 us), but is still ~6–9% behind on the large-token wall-clock,
-which dominates real diffusion runs. A v3 (128-bit vectorization) and a
-cold-cache roofline characterization are the gating work before promotion.
+Candidate v3 beats the SGLang baseline on **every** configured shape — geomean
+**1.129×** (large **1.181×**, tiny **1.079×**) — with correctness intact (21/21)
+and a roofline/NCU explanation (latency-bound kernel; 128-bit + 2-heads-per-warp
+lifted cold achieved DRAM BW ~30%→~40% of peak, NCU duration 60→50 µs). The
+candidate also removed an uncoalesced cos/sin gather the baseline still carries.
+Promoted via `scripts/export_kda_kernels/export.py b200_diffusion_qknorm_rope__multi_shape`
+(EXPORTS = `{"fused_inplace_qknorm_rope": ...}`), with install/uninstall/status
+and a post-install recursion-safe smoke verified.
