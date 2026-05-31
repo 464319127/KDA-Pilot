@@ -1,0 +1,22 @@
+    Memory Throughput                 %        34.79
+    DRAM Throughput                   %        16.03
+    Duration                         us        49.79
+    Compute (SM) Throughput           %        58.73
+    Memory Throughput                          Tbyte/s         1.06
+    OPT   Est. Speedup: 9.423%                                                                                          
+    OPT   Est. Speedup: 0.6364%                                                                                         
+          On average, each warp of this workload spends 6.8 cycles being stalled waiting for a scoreboard dependency on 
+          used data to shared memory. This stall type represents about 37.9% of the total average of 17.9 cycles        
+    INF   Check the Warp Stall Sampling (All Samples) table for the top stall locations in your source based on         
+          on each stall reason.                                                                                         
+    OPT   Est. Speedup: 9.487%                                                                                          
+    Grid Size                                                  1,184
+    Registers Per Thread             register/thread              32
+    Waves Per SM                                                   1
+    Block Limit Barriers                  block           32
+    Block Limit SM                        block           32
+    Block Limit Registers                 block            8
+    Block Limit Shared Mem                block           32
+    Block Limit Warps                     block            8
+    Achieved Occupancy                        %        76.79
+          The difference between calculated theoretical (100.0%) and measured achieved occupancy (76.8%) can be the     

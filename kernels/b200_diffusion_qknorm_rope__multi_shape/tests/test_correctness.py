@@ -367,7 +367,7 @@ def _run_candidate_case(case: dict[str, Any]) -> None:
         q_c, k_c = run_candidate(inp["q"].clone(), inp["k"].clone(), inp)
     except NotImplementedError:
         pytest.skip("optimized_wrapper not implemented yet (stub)")
-    # AC-3/AC-4: confirm the intended path actually ran, not inferred.
+    # Confirm the intended dispatch path actually ran, not inferred.
     expected_path = case["expect_path"]
     actual_path = _candidate_dispatch_path()
     assert actual_path == expected_path, (
@@ -394,7 +394,7 @@ def test_candidate_other(case: dict[str, Any]) -> None:
 
 
 def test_candidate_arange_positions() -> None:
-    """Production-like contiguous positions stress (AC-2.1)."""
+    """Production-like contiguous positions stress."""
     case = make_cases()[0]  # joyai_edit__7904
     inp = build_inputs(case, positions_mode="arange")
     ref32 = torch_reference_fp32(inp)
@@ -409,8 +409,9 @@ def test_candidate_arange_positions() -> None:
 
 
 def test_dispatch_gate() -> None:
-    """AC-4: the fast-path gate is airtight — only true production tuples pass;
-    malformed or foreign-device tuples are rejected (would route to fallback)."""
+    """The fast-path gate is airtight — only true production tuples pass;
+    malformed or foreign-device tuples are rejected (would route to fallback).
+    Covers the trusted-precondition note: detectable malformed caches fall back."""
     _load_register_module()  # puts src/ on sys.path
     import wrapper
 

@@ -59,16 +59,18 @@ def main() -> int:
         bytes_mb = bytes_moved / 1e6
         qw, kw, csc, pos = inp["q_weight"], inp["k_weight"], inp["cos_sin_cache"], inp["positions"]
         is_neox, eps, rope_dim = inp["is_neox"], inp["eps"], inp["rope_dim"]
-        qb, kb = inp["q"].clone(), inp["k"].clone()
+        q0, k0 = inp["q"], inp["k"]  # pristine, never mutated
+        qb, kb = q0.clone(), k0.clone()
         for label, fn in (("baseline", baseline_fn), ("candidate", candidate_fn)):
             def run():
                 fn(qb, kb, qw, kw, csc, pos, is_neox=is_neox, eps=eps, rope_dim=rope_dim)
             for _ in range(10):
-                run()
+                qb.copy_(q0); kb.copy_(k0); run()
             torch.cuda.synchronize()
             samples = []
             for _ in range(SAMPLES):
-                scratch.zero_()  # evict L2
+                qb.copy_(q0); kb.copy_(k0)  # pristine reset, then evict so the kernel reads cold
+                scratch.zero_()             # evict L2 (q/k written by the reset + scratch)
                 torch.cuda.synchronize()
                 start.record()
                 run()

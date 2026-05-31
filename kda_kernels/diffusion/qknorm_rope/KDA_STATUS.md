@@ -3,9 +3,9 @@
 | Field | Value |
 |---|---|
 | Task slug | `b200_diffusion_qknorm_rope__multi_shape` |
-| Commit (kernel-pilot) | `8e7e1e1fb734d978b2a27d3bce5efeff6ef296f4` |
+| Commit (kernel-pilot) | `68e921ceeca306093b55e776ffd0cb256e0e90ae` |
 | Promotion date | 2026-05-31 |
-| Reported geomean speedup | 1.0789x |
+| Reported geomean speedup | 1.1089x |
 | Promoted functions | fused_inplace_qknorm_rope |
 
 ## Files

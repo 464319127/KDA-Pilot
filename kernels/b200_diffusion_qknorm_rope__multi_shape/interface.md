@@ -93,6 +93,13 @@ For the production signature (`head_dim=128, rope_dim=128, is_neox=False, bf16`)
 - **Fallback cases** (verified routing to baseline): head_dim 64/256, rope_dim <
   head_dim, is_neox=True, non-bf16, non-contiguous, foreign-device, unequal Q/K
   heads. int32 positions at the production signature run natively.
+- **Trusted precondition** (matches the SGLang baseline, not re-validated on the
+  hot path): each `positions[i]` must be a valid row index into `cos_sin_cache`
+  (`< cos_sin_cache.size(0)`). The baseline also indexes `cos_sin_cache[pos]`
+  without a bounds check; adding a per-call device max-reduction would regress
+  this latency-bound kernel below the baseline. Cheaply-detectable cache
+  malformations (rank/dtype/last-dim/device/contiguity) are rejected by the gate
+  and fall back; the `test_dispatch_gate` negative test covers them.
 - **Tolerance methodology**: candidate vs SGLang split oracle
   (`fused_inplace_qknorm`(eps) + flashinfer RoPE) under hard ceiling `ATOL=8e-2,
   RTOL=1e-2`, plus a dynamic fp32-anchored bound (candidate-vs-fp32 error ≤
@@ -101,9 +108,10 @@ For the production signature (`head_dim=128, rope_dim=128, is_neox=False, bf16`)
   python benchmark.py` (CUDA-event batched per-call latency, in-place reset,
   warmed modules); latency = median of per-batch `elapsed_ms*1000/INNER` (µs);
   geomean = `exp(mean(ln(per-shape baseline_median/candidate_median)))`.
-- **Result**: geomean speedup over baseline **all 1.129×, large 1.181×, tiny
-  1.079×** on NVIDIA B200; correct on all 10 production shapes. Active bound:
-  latency (cold ~36–45% of HBM peak); see `profile/cand_qwen4096_v3/REPORT.md`.
+- **Result** (round-1 plan-compliant per-call benchmark): geomean speedup over
+  baseline **all 1.109×, large 1.155×, tiny 1.064×** on NVIDIA B200; correct on
+  all 10 production shapes. Active bound: latency (cold ~36–45% of HBM peak); see
+  `profile/cand_qwen4096_v3/REPORT.md`.
 - **Source lineage**: algorithm ported clean-room from SGLang
   `fused_qknorm_rope_warp` (`csrc/diffusion/qknorm_rope.cuh` @ 0b65588c1) via
   torch cpp_extension; NCU rule engine drove the v2 coalescing fix; cold-cache

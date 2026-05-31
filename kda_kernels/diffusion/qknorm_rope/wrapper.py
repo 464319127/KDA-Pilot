@@ -96,6 +96,13 @@ def _supported(
         return False
     if cos_sin_cache.dim() != 2:
         return False
+    # TRUSTED PRECONDITION (not checked here): every value in `positions` must be
+    # a valid row index into `cos_sin_cache` (i.e. < cos_sin_cache.size(0)). This
+    # matches the SGLang baseline, which also computes `cos_sin_cache[pos]` with no
+    # bounds check; verifying it would require a per-call device max-reduction +
+    # host sync that would regress this latency-bound kernel below the baseline.
+    # Malformed caches that ARE cheaply detectable (wrong rank/dtype/last-dim/
+    # device/contiguity) are rejected above and route to the baseline fallback.
     # All tensors must live on the same CUDA device as q (the kernel dereferences
     # them directly); otherwise route to the baseline rather than read bad memory.
     dev = q.device

@@ -25,6 +25,7 @@ import math
 import os
 import socket
 import statistics
+import subprocess
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -34,17 +35,33 @@ import torch
 
 KERNEL_DIR = Path(__file__).resolve().parent
 CSV_PATH = KERNEL_DIR / "benchmark.csv"
-SAMPLES = 50
-INNER = 100
-WARMUP_BATCHES = 10
+# One kernel invocation per CUDA-event sample, with a pristine Q/K reset before
+# each timed sample (the plan requires re-initializing the in-place inputs
+# between timed iterations); many samples keep the tiny-shape median stable.
+SAMPLES = 200
+WARMUP = 30
 
 CSV_FIELDS = [
     "timestamp", "host", "gpu_id", "gpu_name", "case", "bucket", "num_tokens",
     "num_heads", "head_dim", "rope_dim", "is_neox", "eps", "impl",
     "median_us", "mean_us", "std_us", "min_us", "p10_us", "p90_us",
     "dispatch_path", "speedup_vs_baseline", "sglang_version", "candidate_src",
-    "kp_commit", "command",
+    "kp_commit", "gpu_util_before", "gpu_mem_before_mb", "gpu_util_after",
+    "gpu_mem_after_mb", "command",
 ]
+
+
+def _gpu_state() -> tuple[str, str]:
+    """(utilization%, memory_used_MB) for the pinned physical GPU, via nvidia-smi."""
+    phys = os.environ.get("CUDA_VISIBLE_DEVICES", "0").split(",")[0] or "0"
+    try:
+        out = subprocess.check_output(
+            ["nvidia-smi", "--query-gpu=utilization.gpu,memory.used",
+             "--format=csv,noheader,nounits", "-i", phys], text=True).strip()
+        util, mem = (x.strip() for x in out.split(","))
+        return util, mem
+    except Exception:  # noqa: BLE001
+        return "?", "?"
 
 
 def _load_correctness_module():
@@ -64,24 +81,23 @@ def _percentile(ordered: list[float], p: float) -> float:
 
 
 def _time_impl(run: Callable[[], None], reset: Callable[[], None]) -> dict[str, float]:
-    """Per-call latency (us) via batched CUDA-event timing with per-sample reset."""
+    """Per-call latency (us): one kernel invocation per CUDA-event sample, with a
+    pristine in-place Q/K reset (excluded from the timed region) before each."""
     start = torch.cuda.Event(enable_timing=True)
     end = torch.cuda.Event(enable_timing=True)
-    for _ in range(WARMUP_BATCHES):
+    for _ in range(WARMUP):
         reset()
-        for _ in range(INNER):
-            run()
+        run()
     torch.cuda.synchronize()
     samples_us: list[float] = []
     for _ in range(SAMPLES):
         reset()
-        torch.cuda.synchronize()
+        torch.cuda.synchronize()  # ensure the reset copy is done before timing
         start.record()
-        for _ in range(INNER):
-            run()
+        run()
         end.record()
         torch.cuda.synchronize()
-        samples_us.append(start.elapsed_time(end) * 1000.0 / INNER)  # ms->us / batch
+        samples_us.append(start.elapsed_time(end) * 1000.0)  # ms -> us, single call
     ordered = sorted(samples_us)
     return {
         "median_us": statistics.median(ordered),
@@ -122,6 +138,7 @@ def main() -> int:
     command = "python " + " ".join(sys.argv)
     ts = datetime.now(timezone.utc).isoformat(timespec="seconds")
     candidate_src = _candidate_src_id()
+    util_before, mem_before = _gpu_state()  # GPU idleness before any timed work
 
     # Warm the CUDA extension once, and bind both callables once (binding inside
     # the timed loop would charge per-call Python import/exec overhead).
@@ -185,7 +202,8 @@ def main() -> int:
                        ("median_us", "mean_us", "std_us", "min_us", "p10_us", "p90_us")},
                     "dispatch_path": path, "speedup_vs_baseline": sp,
                     "sglang_version": sglang_version, "candidate_src": candidate_src,
-                    "kp_commit": kp_commit, "command": command,
+                    "kp_commit": kp_commit, "gpu_util_before": util_before,
+                    "gpu_mem_before_mb": mem_before, "command": command,
                 }
             )
         print(f"  {case['name']:22s} {case['bucket']:6s} {base_stats['median_us']:12.3f} "
@@ -197,7 +215,15 @@ def main() -> int:
     geo_all = geomean(speedups["all"])
     geo_large = geomean(speedups["large"])
     geo_tiny = geomean(speedups["tiny"])
+    util_after, mem_after = _gpu_state()  # GPU idleness after all timed work
+    print(f"# GPU idle before={util_before}%/{mem_before}MB after={util_after}%/{mem_after}MB")
     print(f"# GEOMEAN speedup  all={geo_all:.4f}x  large={geo_large:.4f}x  tiny={geo_tiny:.4f}x")
+
+    idle = {"gpu_util_before": util_before, "gpu_mem_before_mb": mem_before,
+            "gpu_util_after": util_after, "gpu_mem_after_mb": mem_after}
+    for r in rows:
+        r["gpu_util_after"] = util_after
+        r["gpu_mem_after_mb"] = mem_after
 
     write_header = not CSV_PATH.exists() or CSV_PATH.stat().st_size == 0
     with CSV_PATH.open("a", newline="") as f:
@@ -206,12 +232,15 @@ def main() -> int:
             w.writeheader()
         for r in rows:
             w.writerow(r)
-        for bucket, val in (("all", geo_all), ("large", geo_large), ("tiny", geo_tiny)):
+        # GEOMEAN_all written LAST so export.py's last_speedup() reports the
+        # all-shape headline speedup (not the tiny bucket).
+        for bucket, val in (("tiny", geo_tiny), ("large", geo_large), ("all", geo_all)):
             w.writerow({
                 "timestamp": ts, "host": host, "gpu_id": gpu_id, "gpu_name": gpu_name,
                 "case": f"GEOMEAN_{bucket}", "bucket": bucket, "impl": "geomean",
                 "speedup_vs_baseline": f"{val:.4f}x", "sglang_version": sglang_version,
-                "candidate_src": candidate_src, "kp_commit": kp_commit, "command": command,
+                "candidate_src": candidate_src, "kp_commit": kp_commit,
+                "command": command, **idle,
             })
     print(f"# wrote {len(rows)} rows + 3 geomean rows to {CSV_PATH}")
     return 0

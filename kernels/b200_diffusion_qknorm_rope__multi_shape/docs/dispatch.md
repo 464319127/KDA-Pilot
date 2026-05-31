@@ -15,11 +15,15 @@ Native CUDA fast path is taken iff ALL hold; otherwise → SGLang baseline:
 
 ## Per-bucket decision (round 0, candidate v3 = 2-heads-per-warp + 128-bit, B200 GPU 0, idle)
 
+Numbers below are the round-1 plan-compliant benchmark (one invocation per
+CUDA-event sample, pristine Q/K reset before each timed sample; GPU idle
+before=0%/4MB recorded in benchmark.csv).
+
 | Bucket | Shapes (tokens) | Path | Baseline us | Cand us | Speedup | Promote? |
 |---|---|---|---|---|---|---|
-| large (image) | 4096 / 4128 / 7904 / 8424 | cuda | 31.0–79.6 | 26.7–64.1 | 1.16–1.24× | **yes** (wins the wall-clock-dominant bucket) |
-| tiny | 19 / 32 / 47 / 189 / 195 | cuda | ~8.1–8.4 | ~7.5–7.9 | 1.07–1.10× | **yes** (launch-bound; native path lighter than tvm-ffi) |
-| geomean | all 10 | — | — | — | **all 1.129× / large 1.181× / tiny 1.079×** | **PROMOTE** |
+| large (image) | 4096 / 4128 / 7904 / 8424 | cuda | 40.2–89.6 | 35.7–72.5 | 1.12–1.24× | **yes** (wins the wall-clock-dominant bucket) |
+| tiny | 19 / 32 / 47 / 189 / 195 | cuda | ~14.0–14.3 | ~13.2–13.3 | 1.06–1.08× | **yes** (launch/dispatch-bound; native path lighter than tvm-ffi) |
+| geomean | all 10 | — | — | — | **all 1.109× / large 1.155× / tiny 1.064×** | **PROMOTE** |
 
 Single CUDA path (v3) for the whole production signature; no per-bucket kernel
 split is needed — the 2-heads-per-warp/128-bit kernel wins both buckets, so the
@@ -38,7 +42,7 @@ tiny-shape policy is "use the same native path" (it also beats the baseline ther
 ## Promotion stance (round 0): PROMOTE
 
 Candidate v3 beats the SGLang baseline on **every** configured shape — geomean
-**1.129×** (large **1.181×**, tiny **1.079×**) — with correctness intact (21/21)
+**1.109×** (large **1.155×**, tiny **1.064×**) — with correctness intact (21/21)
 and a roofline/NCU explanation (latency-bound kernel; 128-bit + 2-heads-per-warp
 lifted cold achieved DRAM BW ~30%→~40% of peak, NCU duration 60→50 µs). The
 candidate also removed an uncoalesced cos/sin gather the baseline still carries.
