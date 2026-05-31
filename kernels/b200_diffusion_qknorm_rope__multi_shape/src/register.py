@@ -1,22 +1,34 @@
-"""Registration stub for the b200_diffusion_qknorm_rope__multi_shape KDA task.
+"""Registration entrypoint for the b200_diffusion_qknorm_rope__multi_shape task.
 
-Agents should replace ``optimized_wrapper`` with the recovered
-benchmark-compatible candidate during implementation.
+``optimized_wrapper`` preserves the recovered SGLang callsite contract and
+routes the production signature to the workspace-owned native CUDA kernel,
+falling back to the SGLang baseline otherwise (see ``wrapper.py``).
+
+``EXPORTS`` is read by ``scripts/export_kda_kernels/export.py`` (keys only) to
+decide which functions to promote. The wrapper is imported lazily so this file
+``exec``s cleanly even where torch/sglang are absent (e.g. a local export run).
 """
 
 from __future__ import annotations
 
+import sys
+from pathlib import Path
 from typing import Any
 
+# Make ``wrapper`` importable when this file is loaded as a standalone module
+# (the KDA correctness/benchmark harness loads it by path).
+_SRC_DIR = str(Path(__file__).resolve().parent)
+if _SRC_DIR not in sys.path:
+    sys.path.insert(0, _SRC_DIR)
 
 KERNEL_SLUG = "b200_diffusion_qknorm_rope__multi_shape"
 OP_TYPE = "qknorm_rope_inplace"
 
 
 def optimized_wrapper(*args: Any, **kwargs: Any) -> Any:
-    raise NotImplementedError(
-        "Fill optimized_wrapper after recovering the SGLang baseline contract."
-    )
+    from wrapper import fused_inplace_qknorm_rope
+
+    return fused_inplace_qknorm_rope(*args, **kwargs)
 
 
 def register() -> dict[str, Any]:
@@ -27,3 +39,9 @@ def register() -> dict[str, Any]:
         "version": "dev",
         "source": __file__,
     }
+
+
+# Only the keys matter to the export tool; the value is the promoted callable.
+EXPORTS = {
+    "fused_inplace_qknorm_rope": optimized_wrapper,
+}
