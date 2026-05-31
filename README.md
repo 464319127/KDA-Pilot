@@ -180,7 +180,7 @@ Inside Claude Code, run the two commands printed by the launcher:
 
 ```text
 /humanize:gen-plan --input .humanize/kernel-agent/draft.md --output .humanize/kernel-agent/refined-plan.md --direct
-/humanize:start-rlcr-loop .humanize/kernel-agent/refined-plan.md --skip-quiz --claude-answer-codex --max 12 --codex-model gpt-5.5:high --codex-timeout 600 --base-branch <printed-review-base>
+/humanize:start-rlcr-loop .humanize/kernel-agent/refined-plan.md --skip-quiz --claude-answer-codex --max 12 --codex-model gpt-5.5:high --codex-timeout 5400 --base-branch <printed-review-base>
 ```
 
 ### Humanize / Codex Hook Caveat
@@ -194,7 +194,8 @@ review can re-enter the Humanize Stop hook and loop inside the reviewer.
 
 Avoid this before launching a large RLCR run:
 
-- Keep `--codex-timeout 600` unless a task has a specific reason to run longer.
+- Keep the official `--codex-timeout 5400` unless a task has a specific reason
+  to fail faster or run longer.
 - Use an updated Humanize runtime whose nested `codex exec` calls disable all
   known hook feature names: `--disable hooks --disable plugin_hooks --disable
   codex_hooks`.
