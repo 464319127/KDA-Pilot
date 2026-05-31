@@ -15,6 +15,10 @@ from kda_kernels.diffusion.qknorm_rope.wrapper import fused_inplace_qknorm_rope 
 KDA_OPTIMIZED_fused_inplace_qknorm_rope = True
 
 KDA_TASK_fused_inplace_qknorm_rope = 'b200_diffusion_qknorm_rope__multi_shape'
-KDA_COMMIT_fused_inplace_qknorm_rope = '88676e0cae50bd89756144eb3ceb5cb371fef2e8'
+# Kernel-source commit (the v3 kernel; matches benchmark.csv kp_commit). export.py
+# stamps git HEAD by default; corrected to the kernel-source commit since the
+# promoted .cu/wrapper are unchanged since 68e921cee.
+KDA_COMMIT_fused_inplace_qknorm_rope = '68e921ceeca306093b55e776ffd0cb256e0e90ae'
 KDA_DATE_fused_inplace_qknorm_rope = '2026-05-31'
+# Speedup is the all-shape geomean from the Round 2 regenerated benchmark.csv.
 KDA_SPEEDUP_fused_inplace_qknorm_rope = '1.1113x'

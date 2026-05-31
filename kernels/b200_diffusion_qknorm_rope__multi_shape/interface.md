@@ -79,7 +79,7 @@ For the production signature (`head_dim=128, rope_dim=128, is_neox=False, bf16`)
 - The candidate is a workspace-owned native CUDA kernel (clean-room, built via `torch.utils.cpp_extension`), not a dependency on SGLang-internal headers.
 - Fast path covers the production signature; everything else falls back to the SGLang baseline (`fused_inplace_qknorm_rope`), with the baseline reference bound at import time so the fallback never recurses after `kda_kernels.install()` swaps the symbol.
 
-### Final result (promoted, round 0)
+### Final result (promoted)
 
 - **Final wrapper signature** (matches the recovered baseline exactly):
   `fused_inplace_qknorm_rope(q, k, q_weight, k_weight, cos_sin_cache, positions, *, is_neox, eps=1e-6, head_dim=0, rope_dim=0) -> None` (in-place; `src/wrapper.py`).

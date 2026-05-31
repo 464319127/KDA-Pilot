@@ -84,8 +84,10 @@ further tiny-shape kernel optimization", per the profiling golden rule.)
   **1.133×** over baseline (joyai 1.212×, qwen 1.100×, qwen_edit 1.158×, zimage
   1.101×/1.096×).
 - **Tiny (19–195)**: launch/occupancy-bound (0.05 waves/SM, <2% SOL). v3 geomean
-  **1.091×** (native dispatch lighter than the tvm-ffi baseline; tiny absolute
-  latency includes per-sample reset+sync overhead paid equally by both impls).
+  **1.091×** (native dispatch lighter than the tvm-ffi baseline). Tiny per-call
+  latency (~24–26 µs) is dominated by launch/dispatch latency from an idle GPU,
+  not kernel compute (~7.8 µs per NCU); the per-sample reset + `synchronize()`
+  happen before `start.record()` and are excluded from the CUDA-event window.
 - **All 10**: geomean **1.111×**. Correct 21/21. (Single-call timing carries
   ~±0.02 run-to-run variance on the geomeans; the candidate wins every shape
   across runs — see `benchmark.csv`.)

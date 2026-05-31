@@ -13,7 +13,7 @@ Native CUDA fast path is taken iff ALL hold; otherwise → SGLang baseline:
 - cos_sin_cache float32 contiguous, last dim 128
 - positions 1-D int32 or int64, length == num_tokens
 
-## Per-bucket decision (round 0, candidate v3 = 2-heads-per-warp + 128-bit, B200 GPU 0, idle)
+## Per-bucket decision (candidate v3 = 2-heads-per-warp + 128-bit, B200 GPU 0, idle)
 
 Numbers below are the final benchmark: one kernel invocation per CUDA-event
 sample, with a pristine Q/K reset before each timed sample; GPU idle
@@ -25,10 +25,13 @@ before=0%/4MB and after-idle (settled to 0% util) recorded in benchmark.csv.
 | tiny | 19 / 32 / 47 / 189 / 195 | cuda | ~25.6–26.0 | ~23.5–23.8 | 1.08–1.11× | **yes** (launch/dispatch-bound; native path lighter than tvm-ffi) |
 | geomean | all 10 | — | — | — | **all 1.111× / large 1.133× / tiny 1.091×** | **PROMOTE** |
 
-Tiny-bucket absolute latencies include the per-sample reset+`synchronize()`
-overhead (paid equally by both impls), so the *speedup ratio* is the meaningful
-metric there. Single-call timing has ~±0.02 run-to-run variance on the geomeans;
-the candidate wins every shape across runs.
+Tiny-bucket absolute latencies (~24-26 µs) are dominated by launch/dispatch
+latency from an idle GPU, not kernel compute: the kernel itself is ~7.8 µs (NCU),
+and the per-sample reset + `synchronize()` happen BEFORE `start.record()` so they
+are EXCLUDED from the CUDA-event elapsed time. Both impls pay the same launch
+latency, so the *speedup ratio* is the meaningful metric there. Single-call timing
+has ~±0.02 run-to-run variance on the geomeans; the candidate wins every shape
+across runs.
 
 Single CUDA path (v3) for the whole production signature; no per-bucket kernel
 split is needed — the 2-heads-per-warp/128-bit kernel wins both buckets, so the
@@ -44,7 +47,7 @@ tiny-shape policy is "use the same native path" (it also beats the baseline ther
 | non-bf16 / non-contiguous / CPU / unequal Q-K heads | fallback | correct vs oracle |
 | int32 positions @ production signature | cuda (native) | correct vs oracle |
 
-## Promotion stance (round 0): PROMOTE
+## Promotion stance: PROMOTE
 
 Candidate v3 beats the SGLang baseline on **every** configured shape — geomean
 **1.111×** (large **1.133×**, tiny **1.091×**) — with correctness intact (21/21)
