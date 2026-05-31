@@ -78,14 +78,17 @@ further tiny-shape kernel optimization", per the profiling golden rule.)
    cos/sin float4 per lane). More bytes-in-flight per warp hides the latency:
    cold BW ~30%→~40% of peak, NCU duration 58.6(base)/60→**49.8** µs.
 
-## Per-bucket result (round-1 plan-compliant benchmark)
+## Per-bucket result (final per-call benchmark, pristine reset per sample)
 
 - **Large (4096–8424)**: latency-bound (cold ~36–45% of peak). v3 geomean
-  **1.155×** over baseline (joyai 1.236×, qwen 1.128×, qwen_edit 1.178×, zimage
-  1.120×/1.120×).
+  **1.133×** over baseline (joyai 1.212×, qwen 1.100×, qwen_edit 1.158×, zimage
+  1.101×/1.096×).
 - **Tiny (19–195)**: launch/occupancy-bound (0.05 waves/SM, <2% SOL). v3 geomean
-  **1.064×** (native dispatch lighter than the tvm-ffi baseline).
-- **All 10**: geomean **1.109×**. Correct 21/21.
+  **1.091×** (native dispatch lighter than the tvm-ffi baseline; tiny absolute
+  latency includes per-sample reset+sync overhead paid equally by both impls).
+- **All 10**: geomean **1.111×**. Correct 21/21. (Single-call timing carries
+  ~±0.02 run-to-run variance on the geomeans; the candidate wins every shape
+  across runs — see `benchmark.csv`.)
 
 ## Near-bound judgment
 

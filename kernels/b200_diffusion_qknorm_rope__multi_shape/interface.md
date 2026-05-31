@@ -105,13 +105,15 @@ For the production signature (`head_dim=128, rope_dim=128, is_neox=False, bf16`)
   RTOL=1e-2`, plus a dynamic fp32-anchored bound (candidate-vs-fp32 error ≤
   `max(2e-3, 4× oracle bf16-vs-fp32 noise)`), with NaN/Inf checks. 21/21 pass.
 - **Benchmark command**: `CUDA_VISIBLE_DEVICES=<idle> KDA_RUN_CORRECTNESS=1
-  python benchmark.py` (CUDA-event batched per-call latency, in-place reset,
-  warmed modules); latency = median of per-batch `elapsed_ms*1000/INNER` (µs);
-  geomean = `exp(mean(ln(per-shape baseline_median/candidate_median)))`.
-- **Result** (round-1 plan-compliant per-call benchmark): geomean speedup over
-  baseline **all 1.109×, large 1.155×, tiny 1.064×** on NVIDIA B200; correct on
-  all 10 production shapes. Active bound: latency (cold ~36–45% of HBM peak); see
-  `profile/cand_qwen4096_v3/REPORT.md`.
+  python benchmark.py` (CUDA-event timing of ONE kernel invocation per sample,
+  with a pristine in-place Q/K reset + sync before each sample's `start.record()`,
+  warmed modules; GPU util/mem recorded before and after settling to idle).
+  Per-call latency = median over the single-invocation samples (`elapsed_ms*1000`
+  µs); geomean = `exp(mean(ln(per-shape baseline_median/candidate_median)))`.
+- **Result** (per-call benchmark, pristine Q/K reset per timed sample): geomean
+  speedup over baseline **all 1.111×, large 1.133×, tiny 1.091×** on NVIDIA B200;
+  correct on all 10 production shapes. Active bound: latency (cold ~36–45% of HBM
+  peak); see `profile/cand_qwen4096_v3/REPORT.md`.
 - **Source lineage**: algorithm ported clean-room from SGLang
   `fused_qknorm_rope_warp` (`csrc/diffusion/qknorm_rope.cuh` @ 0b65588c1) via
   torch cpp_extension; NCU rule engine drove the v2 coalescing fix; cold-cache

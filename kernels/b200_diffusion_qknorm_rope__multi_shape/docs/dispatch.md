@@ -15,15 +15,20 @@ Native CUDA fast path is taken iff ALL hold; otherwise → SGLang baseline:
 
 ## Per-bucket decision (round 0, candidate v3 = 2-heads-per-warp + 128-bit, B200 GPU 0, idle)
 
-Numbers below are the round-1 plan-compliant benchmark (one invocation per
-CUDA-event sample, pristine Q/K reset before each timed sample; GPU idle
-before=0%/4MB recorded in benchmark.csv).
+Numbers below are the final benchmark: one kernel invocation per CUDA-event
+sample, with a pristine Q/K reset before each timed sample; GPU idle
+before=0%/4MB and after-idle (settled to 0% util) recorded in benchmark.csv.
 
 | Bucket | Shapes (tokens) | Path | Baseline us | Cand us | Speedup | Promote? |
 |---|---|---|---|---|---|---|
-| large (image) | 4096 / 4128 / 7904 / 8424 | cuda | 40.2–89.6 | 35.7–72.5 | 1.12–1.24× | **yes** (wins the wall-clock-dominant bucket) |
-| tiny | 19 / 32 / 47 / 189 / 195 | cuda | ~14.0–14.3 | ~13.2–13.3 | 1.06–1.08× | **yes** (launch/dispatch-bound; native path lighter than tvm-ffi) |
-| geomean | all 10 | — | — | — | **all 1.109× / large 1.155× / tiny 1.064×** | **PROMOTE** |
+| large (image) | 4096 / 4128 / 7904 / 8424 | cuda | 46.6–96.1 | 42.4–79.3 | 1.10–1.21× | **yes** (wins the wall-clock-dominant bucket) |
+| tiny | 19 / 32 / 47 / 189 / 195 | cuda | ~25.6–26.0 | ~23.5–23.8 | 1.08–1.11× | **yes** (launch/dispatch-bound; native path lighter than tvm-ffi) |
+| geomean | all 10 | — | — | — | **all 1.111× / large 1.133× / tiny 1.091×** | **PROMOTE** |
+
+Tiny-bucket absolute latencies include the per-sample reset+`synchronize()`
+overhead (paid equally by both impls), so the *speedup ratio* is the meaningful
+metric there. Single-call timing has ~±0.02 run-to-run variance on the geomeans;
+the candidate wins every shape across runs.
 
 Single CUDA path (v3) for the whole production signature; no per-bucket kernel
 split is needed — the 2-heads-per-warp/128-bit kernel wins both buckets, so the
@@ -42,7 +47,7 @@ tiny-shape policy is "use the same native path" (it also beats the baseline ther
 ## Promotion stance (round 0): PROMOTE
 
 Candidate v3 beats the SGLang baseline on **every** configured shape — geomean
-**1.109×** (large **1.155×**, tiny **1.064×**) — with correctness intact (21/21)
+**1.111×** (large **1.133×**, tiny **1.091×**) — with correctness intact (21/21)
 and a roofline/NCU explanation (latency-bound kernel; 128-bit + 2-heads-per-warp
 lifted cold achieved DRAM BW ~30%→~40% of peak, NCU duration 60→50 µs). The
 candidate also removed an uncoalesced cos/sin gather the baseline still carries.

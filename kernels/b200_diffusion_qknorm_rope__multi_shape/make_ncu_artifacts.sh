@@ -32,6 +32,23 @@ CMD
     > "profile/$run/analysis/sol_summary.txt"
   ncu --import "profile/$run/reports/full.ncu-rep" --csv --page raw 2>/dev/null > "profile/$run/analysis/full_metrics.csv" || true
   ncu --import "profile/$run/reports/source.ncu-rep" --page source 2>/dev/null | head -120 > "profile/$run/analysis/source_counters.txt" || true
+  # Per-run REPORT.md for every profiled run (preserve a hand-authored one if present).
+  if [ ! -f "profile/$run/REPORT.md" ]; then
+    {
+      echo "# NCU REPORT — $run (impl=$impl, case=$case), B200 sm_100"
+      echo
+      echo "Auto-generated. Raw: reports/{full,source}.ncu-rep; harness/; analysis/."
+      echo "Name the active limiter from the Speed-of-Light below + analysis/source_counters.txt."
+      echo
+      echo '## Speed-of-Light (analysis/sol_summary.txt)'
+      echo '```'
+      cat "profile/$run/analysis/sol_summary.txt"
+      echo '```'
+    } > "profile/$run/REPORT.md"
+    echo "  wrote auto REPORT.md"
+  else
+    echo "  kept existing REPORT.md"
+  fi
   echo "  done: $(ls -1 profile/$run/reports/ | tr '\n' ' ')"
 }
 

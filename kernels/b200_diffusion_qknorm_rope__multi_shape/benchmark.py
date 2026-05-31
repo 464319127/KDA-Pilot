@@ -2,12 +2,15 @@
 """Benchmark the fused in-place QK-Norm + RoPE candidate vs the SGLang baseline.
 
 Fair in-place timing on a verified-idle B200:
-  * CUDA-event timing of a batch of back-to-back launches (divided by the batch
-    size) for stable, launch-overhead-aware per-call latency on tiny shapes;
-  * the in-place Q/K work buffers are reset from a pristine copy before each
-    timed sample (RMSNorm+RoPE keeps values bounded, but reset keeps every
-    sample identical and NaN-free); the reset is excluded from the timed region;
-  * modules (CUDA extension + SGLang baseline JIT) are warmed before timing.
+  * CUDA-event timing of ONE kernel invocation per sample (no batching); the
+    per-call latency is the median over many such single-invocation samples;
+  * the in-place Q/K work buffers are reset from a pristine copy and synchronized
+    immediately before each timed sample's start.record() (the plan requires
+    re-initializing the inputs between timed iterations); the reset is excluded
+    from the timed region;
+  * modules (CUDA extension + SGLang baseline JIT) are warmed before timing;
+  * GPU utilization/memory are recorded before the run and after settling back to
+    idle, for provenance.
 
 Reports median / mean / std / min / p10 / p90 per shape and the geometric mean
 of per-shape median-latency speedups, and appends rows (with host / GPU id /
@@ -20,6 +23,7 @@ Run on ion-b200 inside sglang_bbuf with an idle GPU pinned, e.g.:
 from __future__ import annotations
 
 import csv
+import gc
 import importlib.util
 import math
 import os
@@ -27,6 +31,7 @@ import socket
 import statistics
 import subprocess
 import sys
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable
@@ -215,8 +220,26 @@ def main() -> int:
     geo_all = geomean(speedups["all"])
     geo_large = geomean(speedups["large"])
     geo_tiny = geomean(speedups["tiny"])
-    util_after, mem_after = _gpu_state()  # GPU idleness after all timed work
-    print(f"# GPU idle before={util_before}%/{mem_before}MB after={util_after}%/{mem_after}MB")
+    # Settle to a TRUE after-idle snapshot: drop the work buffers + allocator
+    # cache, then poll until GPU utilization returns to 0% (the immediate
+    # post-timing sample can still catch the just-finished kernel). mem_after then
+    # reflects only this process's resident CUDA context (sglang/flashinfer/the
+    # JIT extension), recorded as process-owned, not external contention.
+    torch.cuda.synchronize()
+    try:
+        del qb, kb, q0, k0, inp, run_baseline, run_candidate, reset
+    except NameError:
+        pass
+    gc.collect()
+    torch.cuda.empty_cache()
+    util_after, mem_after = _gpu_state()
+    for _ in range(60):  # up to ~30s for nvidia-smi utilization to settle to idle
+        if util_after == "0":
+            break
+        time.sleep(0.5)
+        util_after, mem_after = _gpu_state()
+    print(f"# GPU before={util_before}%/{mem_before}MB  after-idle={util_after}%"
+          f"  (mem_after={mem_after}MB is this process's CUDA context)")
     print(f"# GEOMEAN speedup  all={geo_all:.4f}x  large={geo_large:.4f}x  tiny={geo_tiny:.4f}x")
 
     idle = {"gpu_util_before": util_before, "gpu_mem_before_mb": mem_before,
