@@ -180,8 +180,28 @@ Inside Claude Code, run the two commands printed by the launcher:
 
 ```text
 /humanize:gen-plan --input .humanize/kernel-agent/draft.md --output .humanize/kernel-agent/refined-plan.md --direct
-/humanize:start-rlcr-loop .humanize/kernel-agent/refined-plan.md --skip-quiz --claude-answer-codex --max 12 --codex-model gpt-5.5:high --codex-timeout 5400 --base-branch <printed-review-base>
+/humanize:start-rlcr-loop .humanize/kernel-agent/refined-plan.md --skip-quiz --claude-answer-codex --max 12 --codex-model gpt-5.5:high --codex-timeout 600 --base-branch <printed-review-base>
 ```
+
+### Humanize / Codex Hook Caveat
+
+If Codex review appears stuck for a long time with a status like
+`running stop hook` while tokens keep increasing, check the local Humanize
+runtime before blaming the kernel task. Older Humanize hook scripts may launch
+nested Codex review with only `--disable codex_hooks`. Newer Codex builds use
+the `hooks` feature name, so that does not actually disable hooks; the nested
+review can re-enter the Humanize Stop hook and loop inside the reviewer.
+
+Avoid this before launching a large RLCR run:
+
+- Keep `--codex-timeout 600` unless a task has a specific reason to run longer.
+- Use an updated Humanize runtime whose nested `codex exec` calls disable all
+  known hook feature names: `--disable hooks --disable plugin_hooks --disable
+  codex_hooks`.
+- On macOS, ensure the Humanize portable timeout kills the whole child process
+  group, not only the direct `codex` parent. Otherwise timed-out reviewer
+  descendants can keep running.
+- If hook files were edited locally, re-trust the Codex hook when Codex asks.
 
 Useful overrides:
 
