@@ -228,32 +228,47 @@ modulation / RoPE / group-norm evidence can guide a design choice.
 Record reviewed source paths, commits or installed versions, and which
 ideas were kept or rejected in `docs/draft.md` and `solutions.jsonl`.
 
-## Implementation Language Policy
+## Implementation Language & Build Policy
 
 **The optimized candidate must be a native CUDA kernel built from
-workspace-owned `.cu` / `.cuh` / `.cpp` / `.h` sources compiled with
-`nvcc` (via a CUDA extension build or torch JIT), regardless of
-whether the SGLang baseline is CUDA, Triton, or CuTe-DSL.** Python
-is allowed for the wrapper, the dispatcher, build glue, harnesses,
-and benchmark scripts, but not as the primary kernel.
+workspace-owned `.cu` / `.cuh` sources, regardless of whether the SGLang
+baseline is CUDA, Triton, or CuTe-DSL.** Python is allowed for the wrapper,
+the dispatcher, build glue, harnesses, and benchmark scripts, but not as the
+primary kernel.
 
-The SGLang baseline — whatever language it is written in — is a
-first-class **reference** for the CUDA candidate. Read its tile and
-block choices, vectorization width, fast paths, fusion patterns,
-numerical-stability tricks, dispatcher shape guards, and dtype
-handling; the CUDA candidate is free to port any of those ideas
-directly, replace them with a better algorithm, or mix them with
-ideas pulled from KernelWiki PRs, CUTLASS / CuTe SM100 examples,
-FlashAttention-4, DeepGEMM, FlashMLA, FlashInfer, or Hopper →
-Blackwell migration notes. The baseline is one reference among
-many — not a ceiling and not a required porting target. Record
-every source whose idea ended up in the candidate in
-`solutions.jsonl` with its file path / PR url / wiki page id.
+**Build + export the kernel through SGLang's own `jit_kernel` / tvm-ffi
+stack — NOT `torch.utils.cpp_extension`.** Concretely:
 
-After promotion, the export tool copies the CUDA sources into
-`kda_kernels/diffusion/<family>/` so the shippable overlay stays
-CUDA-only end-to-end. See the `## Promotion: Export Into
-kda_kernels` section below for the export contract.
+- Expose the device code as a templated
+  `XxxKernel<...>::run(tvm::ffi::TensorView ..., float eps)` launcher in a
+  `.cuh`, validating inputs with `host::TensorMatcher` / `SymbolicSize` and
+  launching on the current stream with `host::LaunchKernel(...)`. Mirror an
+  existing kernel such as
+  `python/sglang/jit_kernel/csrc/diffusion/qknorm_rope.cuh`.
+- Drive it from Python with `sglang.jit_kernel.utils.load_jit` +
+  `make_cpp_args` + `cache_once`, preserving the public SGLang callable
+  name(s) and falling back to the SGLang baseline for unsupported signatures.
+
+**Compile flags MUST match the corresponding SGLang `jit_kernel` kernel's
+options. In particular, do NOT pass `--use_fast_math`** — SGLang's
+`jit_kernel` build does not use it, so adding it diverges from the baseline's
+numerics and is not a fair/consistent comparison. Add an extra `nvcc` flag
+only if the matching SGLang kernel also uses it.
+
+**PDL may be tried** (the SGLang baseline templates `enable_pdl` via
+`is_arch_support_pdl()`), but it is OPTIONAL: validate it on the real workload
+before keeping it. In the qknorm pilot, enabling PDL *hurt* isolated-launch
+latency, so do not assume it helps — keep it only if it wins on this task's
+actual benchmark.
+
+The SGLang baseline — whatever language it is written in — is a first-class
+**reference** for the CUDA candidate. Read its tile/block choices,
+vectorization width, fast paths, fusion patterns, numerical-stability tricks,
+dispatcher shape guards, and dtype handling; the candidate may port any of
+those, replace them with a better algorithm, or mix in ideas from KernelWiki
+PRs, CUTLASS / CuTe SM100 examples, FlashAttention-4, DeepGEMM, FlashMLA, or
+FlashInfer. The baseline is one reference among many — not a ceiling. Record
+every source whose idea ended up in the candidate in `solutions.jsonl`.
 
 ## External Reference Skills
 
@@ -433,57 +448,33 @@ command for every shape in the shape table.
 before RLCR is active.
 9. Record every candidate in `solutions.jsonl` and every performance result
 in `benchmark.csv`.
+10. After the RLCR loop fully finishes (correctness + benchmark landed), export the Python interface via SGLang `jit_kernel` / tvm-ffi and test in-SGLang drop-in replacement (see *Export & Replacement Test*). Do not export before the loop is done.
 
-## Promotion: Export Into kda_kernels
+## Export & Replacement Test (final step — after the RLCR loop finishes)
 
-When the candidate is correct on every configured shape, beats the
-promotion bar, and the dispatcher decision table is recorded, run
-the export tool to promote the optimized wrapper into the
-shippable `kda_kernels/` overlay:
+Run this ONLY after the RLCR loop is fully done: correctness passes on every
+configured shape and the benchmark evidence is recorded. Export is not part of
+the optimization rounds — it is the final packaging + sanity step.
 
-```bash
-python3 scripts/export_kda_kernels/export.py b200_diffusion_norm_infer__multi_shape
-```
+1. **Export the Python interface through SGLang `jit_kernel` / tvm-ffi.** Place
+   the candidate `.cuh` under `python/sglang/jit_kernel/csrc/...` and expose it
+   via `load_jit` / `make_cpp_args` / `cache_once`, preserving the exact public
+   SGLang callable name(s) listed in this task's **Kernel Information** section.
+   Compile flags match the SGLang baseline (no `--use_fast_math`; see the
+   Implementation Language & Build Policy).
 
-That copies this task's `src/` into
-`kda_kernels/_impls/b200_diffusion_norm_infer__multi_shape/`, rewires the matching
-kda_kernels stub for `norm_infer`, `triton_one_pass_rms_norm` to import from there, and flips
-`KDA_OPTIMIZED_<fn> = True` on each listed function.
+2. **Test that it drop-in replaces the kernel inside SGLang and runs.** In an
+   editable SGLang checkout, make the public entry point resolve to the
+   candidate, then:
+   - run the task's correctness oracle inside SGLang and confirm it passes;
+   - run a smoke benchmark inside SGLang and confirm parity-or-speedup vs the
+     original SGLang kernel on the production shapes;
+   - confirm unsupported signatures still fall back to the SGLang baseline.
 
-For the export to know which functions to promote, `src/register.py`
-must expose an `EXPORTS` dict alongside the existing `register()` /
-`optimized_wrapper()` entries:
-
-```python
-# kernels/b200_diffusion_norm_infer__multi_shape/src/register.py
-
-# ... optimized implementations of the wrapped functions live here ...
-
-EXPORTS = {
-        "norm_infer": norm_infer,
-        "triton_one_pass_rms_norm": triton_one_pass_rms_norm,
-}
-```
-
-Functions not present in `EXPORTS` keep their kda_kernels stub on
-the SGLang baseline. Partial promotion is safe; rerun export.py
-after each additional function is ready, or run
-`scripts/export_kda_kernels/export.py --revert b200_diffusion_norm_infer__multi_shape` to roll back.
-
-After export, end-to-end activation inside an sglang checkout is:
-
-```bash
-export PYTHONPATH=/path/to/kernel-pilot:$PYTHONPATH
-cd /path/to/sglang
-git apply /path/to/kernel-pilot/patches/sglang_kda_kernels.patch
-python3 -c 'import sglang; import kda_kernels; print(kda_kernels.status())'
-```
-
-and `kda_kernels.uninstall()` restores the SGLang baseline at runtime
-without touching the patch.
-
-See `kda_kernels/README.md`, `patches/README.md`, and
-`scripts/export_kda_kernels/README.md` for the full contract.
+Record the SGLang files touched, the preserved entry points, the template args
+/ wrapper names passed to `load_jit`, and the in-SGLang correctness + benchmark
+results in `docs/sglang_jit_export.md` and `solutions.jsonl`. See
+`docs/sglang_jit_kernel_export.md` for the full export contract.
 
 ## Completion Bar
 
