@@ -1,0 +1,16 @@
+{
+  "arch": "b200",
+  "capability": [
+    10,
+    0
+  ],
+  "commit": "fb74277933d3d04d6fe48d9f2b4650a52467ab09",
+  "date": "2026-06-01",
+  "exports": [
+    "apply_ltx2_split_rotary_emb",
+    "apply_rotary_embedding"
+  ],
+  "family": "rotary_embedding",
+  "speedup": "1.3676x",
+  "task_slug": "b200_diffusion_rotary_embedding__multi_shape"
+}

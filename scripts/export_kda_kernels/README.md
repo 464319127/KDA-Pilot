@@ -11,12 +11,23 @@ python3 scripts/export_kda_kernels/export.py b200_diffusion_qknorm_rope__multi_s
 ```
 
 This copies the task's `src/` into
-`kda_kernels/_impls/b200_diffusion_qknorm_rope__multi_shape/`, rewires
-the matching kda_kernels stub
-(`kda_kernels/diffusion/qknorm_rope.py`) to import from that impl,
-and flips `KDA_OPTIMIZED_<fn> = True`. The corresponding
+`kda_kernels/diffusion/qknorm_rope/_impls/b200/`, rewires the matching
+kda_kernels family package (`kda_kernels/diffusion/qknorm_rope/`) to import
+from the generated architecture dispatcher, and flips
+`KDA_OPTIMIZED_<fn> = True`. The corresponding `KDA_ARCHES_<fn>`,
 `KDA_TASK_<fn>`, `KDA_COMMIT_<fn>`, `KDA_DATE_<fn>`, and
 `KDA_SPEEDUP_<fn>` stamps are recorded.
+
+Export the H200 mirror when it is ready:
+
+```bash
+python3 scripts/export_kda_kernels/export.py h200_diffusion_qknorm_rope__multi_shape
+```
+
+Both arch implementations remain under the same family. At runtime the
+dispatcher selects B200 for CUDA capability `(10, 0)`, H200 for `(9, 0)`, and
+falls back to the captured SGLang baseline when no promoted implementation
+matches the current device or call signature.
 
 ## List all tasks and their export state
 
@@ -24,7 +35,8 @@ and flips `KDA_OPTIMIZED_<fn> = True`. The corresponding
 python3 scripts/export_kda_kernels/export.py --list
 ```
 
-Shows `[exported]` next to tasks that already have an impl copy.
+Shows `[exported]` next to tasks that already have an impl copy for that task's
+own arch. A B200 export does not mark the H200 mirror exported.
 
 ## Verify the package + the patch
 
@@ -43,8 +55,10 @@ entry skipped due to an exception (as opposed to the expected
 python3 scripts/export_kda_kernels/export.py --revert b200_diffusion_qknorm_rope__multi_shape
 ```
 
-Removes the impl directory and rewrites the affected kda_kernels
-stub back to the baseline-re-export shape with
+Removes only that arch's impl directory and rewrites the affected
+kda_kernels family. If another arch is still exported for the same function,
+`KDA_OPTIMIZED_<fn>` stays `True` and the dispatcher keeps serving that arch;
+otherwise the function falls back to the baseline-re-export shape with
 `KDA_OPTIMIZED_<fn> = False`.
 
 ## Task `src/register.py` contract

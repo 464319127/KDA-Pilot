@@ -81,10 +81,14 @@ Once a KDA task lands a promoted candidate, run
 python3 scripts/export_kda_kernels/export.py <task-slug>
 ```
 
-to copy the task's `src/` into [`kda_kernels/_impls/<task-slug>/`](kda_kernels)
-and rewire the matching [`kda_kernels/diffusion/<file>.py`](kda_kernels) stub
-to import from it (flipping `KDA_OPTIMIZED_<fn> = True`). Activating every
-promoted kernel inside an sglang checkout is one command:
+to copy the task's `src/` into
+`kda_kernels/diffusion/<family>/_impls/<arch>/` and rewire the matching
+[`kda_kernels/diffusion/<family>/`](kda_kernels) package to route through an
+architecture-aware dispatcher (flipping `KDA_OPTIMIZED_<fn> = True`). Exporting
+both the B200 and H200 task slugs for the same family keeps both
+implementations; runtime dispatch selects B200 for CUDA capability `(10, 0)` and
+H200 for `(9, 0)`. Activating every promoted kernel inside an sglang checkout
+is one command:
 
 ```bash
 export PYTHONPATH=/path/to/kernel-pilot:$PYTHONPATH
@@ -108,8 +112,9 @@ See [`kda_kernels/README.md`](kda_kernels/README.md),
 [`scripts/export_kda_kernels/README.md`](scripts/export_kda_kernels/README.md)
 for the full contract (the `EXPORTS = {...}` rule each task's
 `src/register.py` follows, revert flow, per-function `KDA_TASK_<fn>` /
-`KDA_COMMIT_<fn>` / `KDA_DATE_<fn>` / `KDA_SPEEDUP_<fn>` stamps, and
-patch-regeneration when upstream sglang edits `__init__.py`).
+`KDA_COMMIT_<fn>` / `KDA_DATE_<fn>` / `KDA_SPEEDUP_<fn>` stamps,
+`KDA_ARCHES_<fn>` architecture coverage, and patch-regeneration when upstream
+sglang edits `__init__.py`).
 
 ## Kernel Tasks
 

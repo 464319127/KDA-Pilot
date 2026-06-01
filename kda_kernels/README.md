@@ -55,11 +55,15 @@
           _registry.py                      # KERNEL_REGISTRY: sglang_path -> kda_path mapping
           diffusion/
             qknorm_rope/                    # one directory per kernel family
-              __init__.py                   # exposes the swap functions
+              __init__.py                   # exposes the swap functions + metadata
+              _dispatcher.py                # chooses arch impl from CUDA capability
               # after promotion these land alongside:
-              # *.cu / *.cuh / *.cpp / *.h  — CUDA source copied from kernels/<task>/src/
-              # wrapper.py                  — Python JIT loader for the CUDA module
-              # KDA_STATUS.md               — task / commit / date / speedup stamps
+              # _impls/b200/                — B200 task src/ copy
+              # _impls/h200/                — H200 task src/ copy
+              #   *.cu / *.cuh / *.cpp / .h — CUDA source copied from kernels/<task>/src/
+              #   wrapper.py                — Python JIT loader for the CUDA module
+              #   KDA_EXPORTS.json          — arch/task/export metadata
+              #   KDA_STATUS.md             — task / commit / date / speedup stamps
             norm_infer/__init__.py          # owns norm_infer + triton_one_pass_rms_norm
             group_norm_silu/__init__.py     # owns triton_group_norm_silu + apply_group_norm_silu
             rotary_embedding/__init__.py    # owns apply_rotary_embedding + apply_ltx2_split_rotary_emb
@@ -70,11 +74,17 @@
 
         Every kernel family is its own Python package. `__init__.py` either
         re-exports the SGLang baseline (stub with `KDA_OPTIMIZED_<fn> = False`)
-        or imports the swap functions from `<family>/wrapper.py` after the
-        family has been promoted via
-        `scripts/export_kda_kernels/export.py <task-slug>`. CUDA sources for
-        each family live alongside the wrapper, so the shippable overlay is
-        self-contained per kernel.
+        or imports the swap functions from the generated
+        `<family>/_dispatcher.py` after one or more architecture variants have
+        been promoted via `scripts/export_kda_kernels/export.py <task-slug>`.
+        CUDA sources for each architecture live under
+        `<family>/_impls/{b200,h200}/`, so B200 and H200 kernels for the same
+        family can coexist in one shippable overlay.
+
+        The dispatcher selects B200 for CUDA capability `(10, 0)` and H200 for
+        `(9, 0)`. If the current device has no promoted implementation, or if
+        the arch wrapper rejects the call signature, execution falls back to the
+        SGLang baseline captured before monkey-patching.
 
         All KDA-optimized kernels are native CUDA C++ (`.cu` / `.cuh` /
         `.cpp` / `.h`); Triton and CuTe-DSL appear only as baselines or
@@ -116,9 +126,13 @@
         `kda_kernels.__version__` follows the kernel-pilot tag. Each promoted
         function's module also carries:
 
-        - `KDA_TASK`: which kernel-pilot task produced it
-        - `KDA_COMMIT`: kernel-pilot commit sha at promotion time
-        - `KDA_SPEEDUP`: claimed geomean speedup at promotion time
-        - `KDA_DATE`: ISO date of promotion
+        - `KDA_TASK_<fn>`: which kernel-pilot task produced it
+        - `KDA_COMMIT_<fn>`: kernel-pilot commit sha at promotion time
+        - `KDA_SPEEDUP_<fn>`: claimed geomean speedup at promotion time
+        - `KDA_DATE_<fn>`: ISO date of promotion
+        - `KDA_ARCHES_<fn>`: tuple of promoted architecture variants
 
-        These show up in `kda_kernels.install()`'s log messages.
+        For single-arch exports the metadata values remain strings. When both
+        B200 and H200 are exported for the same function, `KDA_TASK_<fn>`,
+        `KDA_COMMIT_<fn>`, `KDA_SPEEDUP_<fn>`, and `KDA_DATE_<fn>` become
+        per-arch dicts.

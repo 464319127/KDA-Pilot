@@ -23,7 +23,10 @@ def install(force: bool = False, strict: bool = False) -> list[tuple[str, str, s
        If False, the function is left untouched (the kda stub still
        re-exports the sglang baseline anyway, so calling install() with
        nothing exported is harmless).
-    3. If True, replaces the attribute on the sglang module with the
+    3. If the module exposes `_preload_kda_impls`, imports promoted arch
+       wrappers before monkey-patching so their baseline fallbacks capture the
+       original SGLang functions.
+    4. If True, replaces the attribute on the sglang module with the
        kda_kernels version. The original is saved so `uninstall()` can
        restore it.
 
@@ -53,6 +56,9 @@ def install(force: bool = False, strict: bool = False) -> list[tuple[str, str, s
             if not flag:
                 results.append((sglang_path, kda_path, "skipped: not optimized"))
                 continue
+            preload = getattr(kda_module, "_preload_kda_impls", None)
+            if callable(preload):
+                preload(strict=strict)
             sgl_module = importlib.import_module(sgl_mod)
             original = getattr(sgl_module, sgl_name)
             replacement = getattr(kda_module, kda_name)
