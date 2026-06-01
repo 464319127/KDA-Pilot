@@ -145,9 +145,9 @@ First-wave launcher scripts (B200 high-impact quartet):
 | Priority | Script |
 |---:|---|
 | K3 | `./scripts/launch_kernels/k03_b200_diffusion_qknorm_rope__multi_shape.sh` |
-| K17 | `./scripts/launch_kernels/k17_b200_diffusion_cutedsl_norm_scale_shift__multi_shape.sh` |
-| K13 | `./scripts/launch_kernels/k13_b200_diffusion_fuse_scale_shift__multi_shape.sh` |
-| K15 | `./scripts/launch_kernels/k15_b200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape.sh` |
+| K17 | `./scripts/launch_kernels/k15_b200_diffusion_cutedsl_norm_scale_shift__multi_shape.sh` |
+| K13 | `./scripts/launch_kernels/k11_b200_diffusion_fuse_scale_shift__multi_shape.sh` |
+| K15 | `./scripts/launch_kernels/k13_b200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape.sh` |
 
 Full launcher list:
 
@@ -157,18 +157,18 @@ Full launcher list:
 | `k02_b200_fa4_mha.sh` | reference task (single shape) |
 | `k03_b200_diffusion_qknorm_rope__multi_shape.sh` | B200 fused QKNorm + RoPE |
 | `k04_h200_diffusion_qknorm_rope__multi_shape.sh` | H200 fused QKNorm + RoPE |
-| `k07_b200_diffusion_norm_infer__multi_shape.sh` | B200 inference-only LN/RMSN + one-pass RMSN |
-| `k08_h200_diffusion_norm_infer__multi_shape.sh` | H200 inference-only LN/RMSN + one-pass RMSN |
-| `k09_b200_diffusion_group_norm_silu__multi_shape.sh` | B200 VAE GroupNorm + SiLU |
-| `k10_h200_diffusion_group_norm_silu__multi_shape.sh` | H200 VAE GroupNorm + SiLU |
-| `k11_b200_diffusion_rotary_embedding__multi_shape.sh` | B200 standard RoPE + LTX-2 split RoPE |
-| `k12_h200_diffusion_rotary_embedding__multi_shape.sh` | H200 standard RoPE + LTX-2 split RoPE |
-| `k13_b200_diffusion_fuse_scale_shift__multi_shape.sh` | B200 Triton fused scale-shift (+ select01) |
-| `k14_h200_diffusion_fuse_scale_shift__multi_shape.sh` | H200 Triton fused scale-shift (+ select01) |
-| `k15_b200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape.sh` | B200 CuTe-DSL norm + tanh + mul + add (+ norm2-scale) |
-| `k16_h200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape.sh` | H200 CuTe-DSL norm + tanh + mul + add (+ norm2-scale) |
-| `k17_b200_diffusion_cutedsl_norm_scale_shift__multi_shape.sh` | B200 CuTe-DSL norm * (1+scale) + shift (+ residual + gate) |
-| `k18_h200_diffusion_cutedsl_norm_scale_shift__multi_shape.sh` | H200 CuTe-DSL norm * (1+scale) + shift (+ residual + gate) |
+| `k05_b200_diffusion_norm_infer__multi_shape.sh` | B200 inference-only LN/RMSN + one-pass RMSN |
+| `k06_h200_diffusion_norm_infer__multi_shape.sh` | H200 inference-only LN/RMSN + one-pass RMSN |
+| `k07_b200_diffusion_group_norm_silu__multi_shape.sh` | B200 VAE GroupNorm + SiLU |
+| `k08_h200_diffusion_group_norm_silu__multi_shape.sh` | H200 VAE GroupNorm + SiLU |
+| `k09_b200_diffusion_rotary_embedding__multi_shape.sh` | B200 standard RoPE + LTX-2 split RoPE |
+| `k10_h200_diffusion_rotary_embedding__multi_shape.sh` | H200 standard RoPE + LTX-2 split RoPE |
+| `k11_b200_diffusion_fuse_scale_shift__multi_shape.sh` | B200 Triton fused scale-shift (+ select01) |
+| `k12_h200_diffusion_fuse_scale_shift__multi_shape.sh` | H200 Triton fused scale-shift (+ select01) |
+| `k13_b200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape.sh` | B200 CuTe-DSL norm + tanh + mul + add (+ norm2-scale) |
+| `k14_h200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape.sh` | H200 CuTe-DSL norm + tanh + mul + add (+ norm2-scale) |
+| `k15_b200_diffusion_cutedsl_norm_scale_shift__multi_shape.sh` | B200 CuTe-DSL norm * (1+scale) + shift (+ residual + gate) |
+| `k16_h200_diffusion_cutedsl_norm_scale_shift__multi_shape.sh` | H200 CuTe-DSL norm * (1+scale) + shift (+ residual + gate) |
 
 For an ad-hoc task folder, use:
 
@@ -296,7 +296,7 @@ quick chooser.
 
 - Folder: `kernels/{b200,h200}_diffusion_cutedsl_norm_scale_shift__multi_shape/`
 - Prompt: [`b200 prompt.md`](../kernels/b200_diffusion_cutedsl_norm_scale_shift__multi_shape/prompt.md) · [`h200 prompt.md`](../kernels/h200_diffusion_cutedsl_norm_scale_shift__multi_shape/prompt.md)
-- Launcher: `./scripts/launch_kernels/k17_b200_diffusion_cutedsl_norm_scale_shift__multi_shape.sh` · `./scripts/launch_kernels/k18_h200_diffusion_cutedsl_norm_scale_shift__multi_shape.sh`
+- Launcher: `./scripts/launch_kernels/k15_b200_diffusion_cutedsl_norm_scale_shift__multi_shape.sh` · `./scripts/launch_kernels/k16_h200_diffusion_cutedsl_norm_scale_shift__multi_shape.sh`
 - Wrapped baseline: `sglang.jit_kernel.diffusion.cutedsl.scale_residual_norm_scale_shift:fused_norm_scale_shift` + `fused_scale_residual_norm_scale_shift`.
 - Why second: fires on **qwen, qwen-edit, wan-ti2v, wan-t2v, hunyuanvideo, helios** (6 presets); D in {3072, 5120}; live shapes include `(1, 4096, 3072)`, `(1, 18144, 3072)` (Wan-TI2V), `(1, 37800, 5120)` (Wan-T2V, FP32 scale/shift), `(1, 11040, 5120)` (Helios). D constraint: `D % 256 == 0` and `D <= 8192`.
 
@@ -304,7 +304,7 @@ quick chooser.
 
 - Folder: `kernels/{b200,h200}_diffusion_fuse_scale_shift__multi_shape/`
 - Prompt: [`b200 prompt.md`](../kernels/b200_diffusion_fuse_scale_shift__multi_shape/prompt.md) · [`h200 prompt.md`](../kernels/h200_diffusion_fuse_scale_shift__multi_shape/prompt.md)
-- Launcher: `./scripts/launch_kernels/k13_b200_diffusion_fuse_scale_shift__multi_shape.sh` · `./scripts/launch_kernels/k14_h200_diffusion_fuse_scale_shift__multi_shape.sh`
+- Launcher: `./scripts/launch_kernels/k11_b200_diffusion_fuse_scale_shift__multi_shape.sh` · `./scripts/launch_kernels/k12_h200_diffusion_fuse_scale_shift__multi_shape.sh`
 - Wrapped baseline: `sglang.jit_kernel.diffusion.triton.scale_shift:fuse_scale_shift_kernel`, plus the `fuse_layernorm_scale_shift_gate_select01_kernel` and `fuse_residual_layernorm_scale_shift_gate_select01_kernel` Qwen-Image-Edit variants.
 - Why third: every DiT block calls this; live captures from qwen, qwen-edit, hunyuanvideo, helios. Covers `(B,C)`, `(1,C)`, `(B,F,1,C)` scale/shift layouts.
 
@@ -312,7 +312,7 @@ quick chooser.
 
 - Folder: `kernels/{b200,h200}_diffusion_cutedsl_norm_tanh_mul_add__multi_shape/`
 - Prompt: [`b200 prompt.md`](../kernels/b200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape/prompt.md) · [`h200 prompt.md`](../kernels/h200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape/prompt.md)
-- Launcher: `./scripts/launch_kernels/k15_b200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape.sh` · `./scripts/launch_kernels/k16_h200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape.sh`
+- Launcher: `./scripts/launch_kernels/k13_b200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape.sh` · `./scripts/launch_kernels/k14_h200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape.sh`
 - Wrapped baseline: `sglang.jit_kernel.diffusion.cutedsl.norm_tanh_mul_add_norm_scale:fused_norm_tanh_mul_add` + `fused_norm_tanh_mul_add_norm_scale`.
 - Why fourth: Z-Image residual modulation is the primary callsite. Captured shapes use **D=3840** (Z-Image-Turbo specific) and S in {4096, 4128}. Same `D % 256 == 0` and `D <= 8192` constraint as K17/K18.
 
