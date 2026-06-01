@@ -82,7 +82,7 @@ ghostty +validate-config
 `kernels/` has two reference tasks (`b200_int8_scaled_mm__*`,
 `b200_fa4_mha__*`) plus 16 diffusion multi-shape tasks named
 `{arch}_diffusion_{family}__multi_shape/`. The diffusion bucket is the active
-optimization queue; the reference tasks remain as worked examples.
+optimization queue; the reference tasks remain as worked examples. Throughout this doc, each **K**-number is the launcher file number under `scripts/launch_kernels/` (K1–K16).
 
 The 16 diffusion tasks split by hardware target (B200 / H200). Tensor shapes
 are arch-independent, so each task can be picked up on the matching arch
@@ -92,30 +92,30 @@ without re-capturing shapes — the per-task
 prompt the agent picks. Start with the high-impact diffusion families first,
 because they each cover many sweep presets and live on the DiT critical path.
 
-With four Ghostty panes, launch K3-K6 first (the B200 quartet of the four
+With four Ghostty panes, launch K3, K11, K13, K15 first (the B200 quartet of the four
 highest-impact diffusion families); start the H200 variants in the first pane
 that becomes free or in a second tab if you want to run both arches in
 parallel.
 
-| Priority | Suggested pane | Folder | Why this wave |
+| Launcher # | Suggested pane | Folder | Why this wave |
 |---:|---|---|---|
 | K3 | Top-left | `kernels/b200_diffusion_qknorm_rope__multi_shape` | Fused QKNorm + RoPE (CUDA) — fires on **qwen, qwen-edit, zimage, flux, flux2, helios** (6 of 12 presets); native CUDA implementation, biggest leverage on attention setup latency. |
-| K4 | Top-right | `kernels/b200_diffusion_cutedsl_norm_scale_shift__multi_shape` | CuTe-DSL norm-scale-shift (+ residual variant) — fires on **qwen, qwen-edit, wan-ti2v, wan-t2v, hunyuanvideo, helios** (6 presets); Z-Image / Qwen-Image / Wan modulation. |
-| K5 | Bottom-left | `kernels/b200_diffusion_fuse_scale_shift__multi_shape` | Triton fused scale-shift modulation including dual-modulation `select01` variants — fires on qwen, qwen-edit, hunyuanvideo, helios; adaLN-Zero analog used by every DiT block. |
-| K6 | Bottom-right | `kernels/b200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape` | CuTe-DSL `fused_norm_tanh_mul_add` (+ second-norm-scale variant) — Z-Image residual modulation primary; the only family that ships D=3840 / 4128 token-count shapes. |
+| K15 | Top-right | `kernels/b200_diffusion_cutedsl_norm_scale_shift__multi_shape` | CuTe-DSL norm-scale-shift (+ residual variant) — fires on **qwen, qwen-edit, wan-ti2v, wan-t2v, hunyuanvideo, helios** (6 presets); Z-Image / Qwen-Image / Wan modulation. |
+| K11 | Bottom-left | `kernels/b200_diffusion_fuse_scale_shift__multi_shape` | Triton fused scale-shift modulation including dual-modulation `select01` variants — fires on qwen, qwen-edit, hunyuanvideo, helios; adaLN-Zero analog used by every DiT block. |
+| K13 | Bottom-right | `kernels/b200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape` | CuTe-DSL `fused_norm_tanh_mul_add` (+ second-norm-scale variant) — Z-Image residual modulation primary; the only family that ships D=3840 / 4128 token-count shapes. |
 
 After this first wave, queue the second wave (H200 mirrors of the same four
-families, plus the remaining four families in either arch):
+families, plus the remaining three families in either arch):
 
-| Priority | Folder |
+| Launcher # | Folder |
 |---:|---|
-| K4 (H200) | `kernels/h200_diffusion_qknorm_rope__multi_shape` |
-| K17→K18 (H200 norm-scale-shift) | `kernels/h200_diffusion_cutedsl_norm_scale_shift__multi_shape` |
-| K13→K14 (H200 fuse-scale-shift) | `kernels/h200_diffusion_fuse_scale_shift__multi_shape` |
-| K15→K16 (H200 cutedsl tanh) | `kernels/h200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape` |
-| K11 / K12 | `*_diffusion_rotary_embedding__multi_shape` — standard RoPE (hunyuanvideo) + LTX-2 split RoPE. |
-| K7 / K8 | `*_diffusion_norm_infer__multi_shape` — 2-pass LN/RMSN baseline + one-pass per-head RMSN. |
-| K9 / K10 | `*_diffusion_group_norm_silu__multi_shape` — VAE GroupNorm + SiLU (hunyuanvideo 5D shapes). |
+| K4 | `kernels/h200_diffusion_qknorm_rope__multi_shape` (H200 QKNorm + RoPE) |
+| K16 | `kernels/h200_diffusion_cutedsl_norm_scale_shift__multi_shape` (H200 norm-scale-shift) |
+| K12 | `kernels/h200_diffusion_fuse_scale_shift__multi_shape` (H200 fuse-scale-shift) |
+| K14 | `kernels/h200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape` (H200 cutedsl tanh) |
+| K9 / K10 | `*_diffusion_rotary_embedding__multi_shape` — standard RoPE (hunyuanvideo) + LTX-2 split RoPE. |
+| K5 / K6 | `*_diffusion_norm_infer__multi_shape` — 2-pass LN/RMSN baseline + one-pass per-head RMSN. |
+| K7 / K8 | `*_diffusion_group_norm_silu__multi_shape` — VAE GroupNorm + SiLU (hunyuanvideo 5D shapes). |
 
 ### Task Completion Log
 
@@ -123,7 +123,7 @@ families, plus the remaining four families in either arch):
 |---|---|---|---|
 | **K3** `kernels/b200_diffusion_qknorm_rope__multi_shape` | _pending_ | _to be filled_ | _to be filled_ |
 | **K4** `kernels/h200_diffusion_qknorm_rope__multi_shape` | _pending_ | _to be filled_ | _to be filled_ |
-| **K7-K18** all other diffusion tasks | _pending_ | _to be filled_ | _to be filled_ |
+| **K5–K16** all other diffusion tasks | _pending_ | _to be filled_ | _to be filled_ |
 
 Closed-row template (from the upstream kernel-design-agent-with-sglang-omini workflow): record outcome (`IMPROVEMENT | NO-GO`), measured speedup or geomean, host + GPU id, base/candidate commits, and Claude Code `/usage` cost.
 
@@ -142,12 +142,12 @@ cd /Users/bbuf/工作目录/Common/kernel-pilot
 
 First-wave launcher scripts (B200 high-impact quartet):
 
-| Priority | Script |
+| Launcher # | Script |
 |---:|---|
 | K3 | `./scripts/launch_kernels/k03_b200_diffusion_qknorm_rope__multi_shape.sh` |
-| K17 | `./scripts/launch_kernels/k15_b200_diffusion_cutedsl_norm_scale_shift__multi_shape.sh` |
-| K13 | `./scripts/launch_kernels/k11_b200_diffusion_fuse_scale_shift__multi_shape.sh` |
-| K15 | `./scripts/launch_kernels/k13_b200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape.sh` |
+| K15 | `./scripts/launch_kernels/k15_b200_diffusion_cutedsl_norm_scale_shift__multi_shape.sh` |
+| K11 | `./scripts/launch_kernels/k11_b200_diffusion_fuse_scale_shift__multi_shape.sh` |
+| K13 | `./scripts/launch_kernels/k13_b200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape.sh` |
 
 Full launcher list:
 
@@ -282,7 +282,7 @@ correctness/baseline/promotion requirements.
 Each diffusion task card lists the wrapped SGLang entry points, the captured
 preset shapes, the canonical SGLang test grid that must still pass, and the
 remote host. The full text lives in the linked `prompt.md`; this card is a
-quick chooser.
+quick chooser. Cards are ordered by optimization priority; each **K**-number is the launcher file number under `scripts/launch_kernels/`.
 
 ### K3 / K4. Fused QKNorm + RoPE (CUDA)
 
@@ -292,7 +292,7 @@ quick chooser.
 - Wrapped baseline: `sglang.jit_kernel.diffusion.qknorm_rope:fused_inplace_qknorm_rope` (native CUDA, templated by `head_dim`, `rope_dim`, `is_neox`, `dtype`).
 - Why first: fires on **qwen, qwen-edit, zimage, flux, flux2, helios** (6 of 12 sweep presets), `num_heads` in {24, 30, 48}; `head_dim=128`, `rope_dim=128` (Qwen/Z-Image/FLUX joint) or `rope_dim=96` (LTX-style). Native CUDA candidate must also be CUDA.
 
-### K17 / K18. CuTe-DSL norm-scale-shift (+ residual)
+### K15 / K16. CuTe-DSL norm-scale-shift (+ residual)
 
 - Folder: `kernels/{b200,h200}_diffusion_cutedsl_norm_scale_shift__multi_shape/`
 - Prompt: [`b200 prompt.md`](../kernels/b200_diffusion_cutedsl_norm_scale_shift__multi_shape/prompt.md) · [`h200 prompt.md`](../kernels/h200_diffusion_cutedsl_norm_scale_shift__multi_shape/prompt.md)
@@ -300,7 +300,7 @@ quick chooser.
 - Wrapped baseline: `sglang.jit_kernel.diffusion.cutedsl.scale_residual_norm_scale_shift:fused_norm_scale_shift` + `fused_scale_residual_norm_scale_shift`.
 - Why second: fires on **qwen, qwen-edit, wan-ti2v, wan-t2v, hunyuanvideo, helios** (6 presets); D in {3072, 5120}; live shapes include `(1, 4096, 3072)`, `(1, 18144, 3072)` (Wan-TI2V), `(1, 37800, 5120)` (Wan-T2V, FP32 scale/shift), `(1, 11040, 5120)` (Helios). D constraint: `D % 256 == 0` and `D <= 8192`.
 
-### K13 / K14. Triton fused scale-shift + dual-modulation select01
+### K11 / K12. Triton fused scale-shift + dual-modulation select01
 
 - Folder: `kernels/{b200,h200}_diffusion_fuse_scale_shift__multi_shape/`
 - Prompt: [`b200 prompt.md`](../kernels/b200_diffusion_fuse_scale_shift__multi_shape/prompt.md) · [`h200 prompt.md`](../kernels/h200_diffusion_fuse_scale_shift__multi_shape/prompt.md)
@@ -308,26 +308,26 @@ quick chooser.
 - Wrapped baseline: `sglang.jit_kernel.diffusion.triton.scale_shift:fuse_scale_shift_kernel`, plus the `fuse_layernorm_scale_shift_gate_select01_kernel` and `fuse_residual_layernorm_scale_shift_gate_select01_kernel` Qwen-Image-Edit variants.
 - Why third: every DiT block calls this; live captures from qwen, qwen-edit, hunyuanvideo, helios. Covers `(B,C)`, `(1,C)`, `(B,F,1,C)` scale/shift layouts.
 
-### K15 / K16. CuTe-DSL norm + tanh + mul + add (Z-Image residual)
+### K13 / K14. CuTe-DSL norm + tanh + mul + add (Z-Image residual)
 
 - Folder: `kernels/{b200,h200}_diffusion_cutedsl_norm_tanh_mul_add__multi_shape/`
 - Prompt: [`b200 prompt.md`](../kernels/b200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape/prompt.md) · [`h200 prompt.md`](../kernels/h200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape/prompt.md)
 - Launcher: `./scripts/launch_kernels/k13_b200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape.sh` · `./scripts/launch_kernels/k14_h200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape.sh`
 - Wrapped baseline: `sglang.jit_kernel.diffusion.cutedsl.norm_tanh_mul_add_norm_scale:fused_norm_tanh_mul_add` + `fused_norm_tanh_mul_add_norm_scale`.
-- Why fourth: Z-Image residual modulation is the primary callsite. Captured shapes use **D=3840** (Z-Image-Turbo specific) and S in {4096, 4128}. Same `D % 256 == 0` and `D <= 8192` constraint as K17/K18.
+- Why fourth: Z-Image residual modulation is the primary callsite. Captured shapes use **D=3840** (Z-Image-Turbo specific) and S in {4096, 4128}. Same `D % 256 == 0` and `D <= 8192` constraint as K15/K16.
 
-### K11 / K12. Standard RoPE + LTX-2 split RoPE
+### K9 / K10. Standard RoPE + LTX-2 split RoPE
 
 - Folder: `kernels/{b200,h200}_diffusion_rotary_embedding__multi_shape/`
 - Wrapped baseline: `sglang.jit_kernel.diffusion.triton.rotary:apply_rotary_embedding` (HunyuanVideo standard RoPE) and `sglang.jit_kernel.diffusion.triton.ltx2_rotary:apply_ltx2_split_rotary_emb` (LTX-2 split rotary with non-contiguous cos/sin).
 - Live captures: hunyuanvideo (1, 27030, 24, 128) bf16 + (27030, 64) cos/sin fp32; ltx2 (1/2, S, inner_dim) with `num_heads=32`, `half_dim` in {32, 64}.
 
-### K7 / K8. Norm infer + one-pass RMSN
+### K5 / K6. Norm infer + one-pass RMSN
 
 - Folder: `kernels/{b200,h200}_diffusion_norm_infer__multi_shape/`
 - Wrapped baseline: `sglang.jit_kernel.diffusion.triton.norm:norm_infer` (helios 2-pass LayerNorm at `(8640, 5120)` fp32) + `sglang.jit_kernel.diffusion.triton.rmsnorm_onepass:triton_one_pass_rms_norm` (zimage / hunyuanvideo per-head RMSNorm tiles, including the dramatic `(648720, 128)` HunyuanVideo joint regime).
 
-### K9 / K10. VAE GroupNorm + SiLU
+### K7 / K8. VAE GroupNorm + SiLU
 
 - Folder: `kernels/{b200,h200}_diffusion_group_norm_silu__multi_shape/`
 - Wrapped baseline: `sglang.jit_kernel.diffusion.triton.group_norm_silu:triton_group_norm_silu` + `sglang.jit_kernel.diffusion.group_norm_silu:apply_group_norm_silu`.
