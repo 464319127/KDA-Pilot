@@ -1,5 +1,11 @@
 # SGLang `jit_kernel` export — `b200_diffusion_norm_infer__multi_shape`
 
+> **HISTORICAL — round-1 record.** Everything from here down to the
+> "Round-2 export refresh" section describes the round-1 export (its routing
+> table predates the large-S promotion, and its `SGLANG_DIFFNORM_CUDA*` env
+> vars were round-1-only). The current shipped integration, routing, and
+> validation evidence are in the **Round-2 export refresh** section below.
+
 How the promoted candidate kernels are wired into SGLang's public diffusion-norm
 entry points through the `jit_kernel` / tvm-ffi stack, and the in-SGLang
 validation evidence (AC-G).
@@ -146,3 +152,76 @@ pass). Unsupported shapes always fall back regardless of strict.
 - The worktree (`/home/sglang-omni/bbuf/worktrees/sglang-export-k05`) is
   disposable; remove with `git worktree remove --force` (command above). The
   authoritative candidate sources stay in this kernel folder.
+
+---
+
+# Round-2 export refresh (2026-06-04) — tiled large-S RMS included
+
+Round-2 changed the shipping device code (tiled multi-row RMS kernel added to
+the `.cuh`) and the routing (large-S allowlisted to the tile kernel), so the
+in-SGLang drop-in arbiter was re-run per the same isolation method (fresh
+worktree `sglang-export-k05-r2` off the active `edb1b3f8f`, PYTHONPATH
+shadowing verified via `sglang.__file__`; torn down after validation, shared
+checkout untouched).
+
+## Files placed/edited in the worktree (reproducible from `export/`)
+
+| File | Change |
+|---|---|
+| `python/sglang/jit_kernel/csrc/diffusion/diffusion_norm_infer.cuh` | **new** — round-2 `.cuh` (adds `RmsNormTiledKernel<128,32,bf16>`; copied verbatim from `src/norm_cuda/diffusion_norm_infer.cuh`). |
+| `python/sglang/jit_kernel/diffusion/cuda_norm_infer.py` | **new** — in-tree driver (copy of `export/cuda_norm_infer.py`): `@cache_once` `load_jit` builders, ported support predicates (incl. the 16-byte alignment gate for the tiled route), `maybe_*` entries, and the `SGLANG_DIFFUSION_NORM_CUDA=0` kill switch. |
+| `python/sglang/jit_kernel/diffusion/triton/norm.py` | **edit** (`export/apply_worktree_edits.py`) — public `norm_infer` tries `maybe_norm_infer_cuda(...)` first (no custom op on this hot path; public contract byte-compatible). |
+| `python/sglang/jit_kernel/diffusion/triton/rmsnorm_onepass.py` | **edit** — the CUDA path goes INSIDE the registered custom-op body `_triton_one_pass_rms_norm_cuda` (registration preserved for EVERY shape on BOTH sides of any A/B; stricter than the round-1 public-level insertion). |
+
+Both public signatures preserved exactly. Wrapper/template names: header-only
+`load_jit` markers `diffusion_norm_infer_{ln,rms,rms_tiled}` + `v3` +
+`make_cpp_args(...)`; wrappers `("norm_infer_ln", "LayerNormInferKernel<...>::run")`,
+`("rms_onepass", "RmsNormOnepassKernel<...>::run")`,
+`("rms_tiled", "RmsNormTiledKernel<...>::run")`. No `--use_fast_math`.
+
+## Validation results (GPU 1, idle before/after; host loaded on other GPUs)
+
+- **Oracle**: `test_qwen_image_modulation.py` **288/288** under the worktree (re-passed on the v4 re-run).
+- **Output parity** through the public ops (CUDA vs Triton device paths): 6/6.
+- **SYMMETRIC shipping A/B** — both sides run the identical, unchanged public
+  callable; only the device path differs (kill switch toggled per iteration;
+  interleaved; median of 100 after 25 warmup). Symmetry is per entry point:
+  - `triton_one_pass_rms_norm`: custom-op-BODY symmetric — the CUDA branch sits
+    inside the registered `_triton_one_pass_rms_norm_cuda` body, so the
+    `@register_custom_op` registration is exercised identically on both sides
+    for every shape.
+  - `norm_infer`: public-FUNCTION symmetric — the copied active baseline shows
+    the wrapped public `norm_infer` carries NO custom-op registration on its
+    hot path (the `diffusion_layer_norm_fwd_impl_cuda` registration belongs to
+    the separate `_layer_norm_fwd` helper, which this entry point does not
+    call); both sides therefore run the same plain public function, and there
+    is no registration to preserve or bypass. (Empirical confirmation: the
+    pinned-lane parity measured the LN host-layer delta at ~1.00×.)
+
+| shape | wall | kernel-event |
+|---|---|---|
+| helios `[8640,5120]` fp32 LN | 1.2146× | 1.2479× |
+| rms `[1320,128]` | 1.6726× | 1.6937× |
+| rms `[4096,128]` | 1.6660× | 1.6880× |
+| rms `[16384,128]` | 1.6612× | 1.6824× |
+| rms `[648720,128]` | **1.0913×** | **1.1082×** |
+| rms `[650040,128]` | **1.0881×** | **1.1061×** |
+| **geomean** | **1.3722×** | **1.3946×** |
+
+(Numbers above are the v4 arbiter re-run — the kernel's segmented reduction
+gained half-warp shuffle masks after the initial round-2 run, so the arbiter
+was re-executed with the fixed `.cuh`; the superseded first-run numbers
+(geomean 1.3724×/1.3942×) are retained in `solutions.jsonl::cand-0012`.)
+
+- **Fallback**: fp16 LN, D=256 RMS, rank-3 RMS all served through the public
+  ops (Triton path) with the CUDA paths enabled.
+- **Device-vs-host decomposition**: the host layer is IDENTICAL on both sides
+  by construction (same registered op), so the deltas above are pure device.
+  Cross-checks agree: the pinned-lane device-only A/B gave 1.10–1.16× on the
+  huge shapes and the separately measured custom-op tax (1.05–1.06× there) is
+  paid equally by both sides here — no host-layer effect is claimed as a kernel
+  win.
+
+Validation script: `export/run_export_validation.py` (PASS). Worktree removed
+after validation (`git worktree remove --force`); shared checkout verified
+clean.
