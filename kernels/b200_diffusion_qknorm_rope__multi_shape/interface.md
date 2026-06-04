@@ -6,6 +6,24 @@
 - Wrapped SGLang entry point:
   - `sglang.jit_kernel.diffusion.qknorm_rope:fused_inplace_qknorm_rope`
 
+> **Continuation round (2026-06-04) — ACTIVE.** This round re-baselines on the SGLang
+> `jit_kernel`/tvm-ffi stack (per `../../docs/tvm_ffi_benchmark_status.md`, the task is
+> "Blocked" until the candidate is ported into the SGLang checkout). The promotion arbiter is
+> the **in-tree drop-in** (candidate `.cuh` under SGLang's own
+> `csrc/diffusion/qknorm_rope.cuh`, `register_custom_op` byte-unchanged) measured via
+> `profile/in_sglang/validate_in_tree.py`; `benchmark.py --integrated` (the `kda_kernels`
+> overlay) is retired and kept only as a negative control. All performance numbers below this
+> banner are the **prior-round record** — fresh same-commit numbers land in `benchmark.csv`
+> during this round. Active-round context: `docs/draft.md` (top section).
+>
+> **r9 outcome: ARBITER PASS.** In-SGLang in-tree drop-in at `0b65588c1`: device geomean
+> **1.0970x** (large 1.141–1.271x, small ≥0.973 within the 3% materiality gate,
+> run1-confirmed), correctness 10/10 ×4 runs, torch.compile fullgraph smoke PASS both sides,
+> SGLang's own full grid 1248 passed in the candidate worktree. Loop-lane device-fair
+> 1.0648–1.0691x; PDL kept at arch default (A/B sub-materiality). Evidence:
+> `benchmark.csv` (`GEOMEAN_intree_r9`), `docs/sglang_jit_export.md` (r9 section),
+> `profile/r9_staged_b200/REPORT.md`, `profile/in_sglang/r9/`.
+
 ## Recovered Callsite Contract
 
 ```python
@@ -47,10 +65,10 @@ src/wrapper.py    # implementation (gate, load_jit build, dispatch, recursion-sa
 `src/register.py` is a thin, import-light forwarder: `optimized_wrapper(*args, **kwargs)`
 lazily imports the implementation from `src/wrapper.py`, `register()` returns
 `{name, op_type, callable, version, source}`, and `EXPORTS =
-{"fused_inplace_qknorm_rope": optimized_wrapper}` is read (keys only) by
-`scripts/export_kda_kernels/export.py`. `Path(__file__)` is `try/except NameError`-guarded so
-`read_exports()` can `exec` the file in a bare namespace. (This mirrors the promoted h200
-PR #19 tvm-ffi layout.)
+{"fused_inplace_qknorm_rope": optimized_wrapper}` names the task's public callables per the
+interface contract (historically consumed by `scripts/export_kda_kernels/export.py` for the
+retired overlay). `Path(__file__)` is `try/except NameError`-guarded so the file can be
+`exec`ed in a bare namespace. (This mirrors the promoted h200 PR #19 tvm-ffi layout.)
 
 `src/wrapper.py` holds the real op. For the exact captured-large production signature it
 builds and calls the workspace-owned `src/qknorm_rope_candidate.cuh`
@@ -106,12 +124,14 @@ here is a diagnostic, not the production result.)**
 - CUDA-event timing (no CUDA graph); inputs built once per case; report
   median/mean/std/min/p10/p90 per shape; primary metric = equal-weight geomean of
   per-shape median-latency speedups over the baseline across the 10 production rows.
-- The PRODUCTION claim is the LITERAL install path: `benchmark.py --integrated` runs
-  `kda_kernels.install()` (after `export.py`) and times the original baseline custom-op vs
-  the INSTALLED public symbol, interleaved. The plain isolated mode and `--device-fair` are
-  diagnostics (the isolated candidate path bypasses the baseline's `register_custom_op`, a
-  known asymmetry). On this workload the literal install path is the arbiter, and it shows a
-  net regression (see Performance below).
+- The PRODUCTION claim comes from the IN-TREE drop-in lane
+  (`profile/in_sglang/validate_in_tree.py`): the candidate `.cuh` replaces SGLang's own
+  `csrc/diffusion/qknorm_rope.cuh` in an isolated worktree so both sides go through the
+  identical `register_custom_op` public op, interleaved/warm. The plain isolated mode and
+  `--device-fair` are diagnostics (the isolated candidate path bypasses the baseline's
+  `register_custom_op`, a known asymmetry). `benchmark.py --integrated` (the retired
+  `kda_kernels.install()` overlay lane) is a negative control only — in the prior round it
+  showed a net regression and it drops `register_custom_op` (see Performance below).
 
 ## Frozen Baseline (Round 3 refreeze, symmetric timing, NVIDIA B200)
 

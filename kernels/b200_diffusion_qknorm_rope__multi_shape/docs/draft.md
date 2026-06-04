@@ -1,6 +1,70 @@
 # Design notes: b200_diffusion_qknorm_rope__multi_shape
 
-> **FINAL OUTCOME:** ships via an **in-tree `.cuh` placement** in SGLang (keeps SGLang's own
+## Continuation round (2026-06-04) — jit_kernel/tvm-ffi re-baseline [ACTIVE CONTEXT]
+
+> This section is the active state. Everything below it (including the prior
+> "FINAL OUTCOME" block) is the preserved record of earlier rounds.
+
+- **Why this round exists:** `../../docs/tvm_ffi_benchmark_status.md` (2026-06-01) lists this
+  task as *"Blocked: no optimized tvm-ffi candidate is present in the SGLang checkout"*, and the
+  export rules switched to SGLang `jit_kernel`/tvm-ffi (repo commit `35bc2c6b4`). The governing
+  plan for this round lives at `.humanize/kernel-agent/refined-plan.md` (untracked by design).
+- **Evidence classification:** all `benchmark.csv` rows dated ≤ 2026-06-02 (including
+  `GEOMEAN_install` 0.9301x and `GEOMEAN_intree` 1.1182x) and all `solutions.jsonl` entries up to
+  and including `in_tree_torch_compile_safe` are **HISTORICAL** — admissible as prior-art context
+  and methodology references only, never as this round's baseline numbers. Every fresh claim
+  needs current-SGLang-commit + idle-GPU metadata on its row.
+- **Lineage:** the first new `solutions.jsonl` entry of this round parents
+  `in_tree_torch_compile_safe`.
+- **Repo-docs check (this worktree):** ABSENT — `../../docs/standalone_diffusion_benchmark.md`,
+  `../../docs/diffusion_kernel_rules.md`, `../../docs/diffusion_correctness_contract.md`.
+  OPERATIVE — `../../docs/sglang_jit_kernel_export.md` (export contract) and
+  `../../docs/tvm_ffi_benchmark_status.md` (the Blocked status this round clears).
+- **Skills read this round:** `../../external/KernelWiki/SKILL.md` @ `faed56ce` (query.py /
+  get_page.py / grep_wiki.py; cite page ids; knowledge cutoff 2026-04-27);
+  `../../external/ncu-report-skill/SKILL.md` @ `d1887948` (one `profile/<run>/` dir per run;
+  `-lineinfo` standalone harness mandatory for TVM-FFI/JIT kernels; `--set full` +
+  `--set source --section SourceCounters`; sm_100 metric-name caveats in `reference/08`);
+  the local `ion-b200` skill owns host/container/GPU-selection conventions.
+- **Baseline target (verified in the local SGLang checkout @ `0689ba84b8`):**
+  `python/sglang/jit_kernel/csrc/diffusion/qknorm_rope.cuh` carries only the
+  warp-per-(token,head) kernel (`fused_qknorm_rope_warp`) — the prior staged win was
+  validation-only and is NOT upstream. The public op `fused_inplace_qknorm_rope` is
+  `@register_custom_op(mutates_args=["q", "k"])`; jit build flags are
+  `-std=c++20 -O3 --expt-relaxed-constexpr` (no `--use_fast_math`). The remote container's
+  SGLang commit is recorded at baseline freeze and is the binding one for benchmarks.
+- **Round decisions (from the plan):** DEC-1 — geomean is an outcome metric; promotion gates on
+  in-SGLang parity-or-speedup with no material per-shape regression. DEC-2 — revalidate the
+  staged kernel first; bounded, NCU-justified exploration only.
+
+### r9 exploration record (ranked directions → outcome)
+
+Fresh NCU (`profile/r9_staged_b200/REPORT.md`): large bucket memory-latency-bound at full
+occupancy (DRAM 15.8% peak; 49% of pcsamp on the q/k load-consumption line; staging barriers
+7.5%); small bucket host-bound (unchanged). Ranked candidate directions before any edit:
+
+1. **staged2 — two-token-per-CTA** (highest rank: directly attacks the barrier share and
+   doubles independent load streams) → implemented, correctness 10/10, device-fair
+   **1.0658x vs staged's same-session 1.0691x → REJECTED** (parity-to-worse; inter-CTA
+   overlap already hides intra-CTA barriers at waves = 1.0). `solutions.jsonl:
+   cand_staged2_r9`, benchmark.csv `*__devfair_staged2`. The probe kernel lived at git
+   `355f3bf2a` and was removed from the shipped source after rejection, restoring the
+   arbiter-validated bytes (sha `874b1bfa`).
+2. **cp.async/TMA cos/sin staging** (not attempted): the staged row is 512 B/token — far too
+   small for async-copy latency amortization, and the cost it would hide (7.5% barrier share)
+   is already hidden by inter-CTA overlap; adds sync complexity to the shipped kernel.
+3. **Block-size 128 / `__launch_bounds__` retune** (not attempted): `occupancy_limit_warps`
+   binds (64 warps/SM either way) — scheduler-neutral by the occupancy table.
+4. **PDL off** (measured via `--pdl-ab`): geomean 1.0035x, mixed per-row signs → neutral;
+   keep arch-default PDL ON (matches SGLang jit_kernel convention).
+
+Exploration closed per DEC-2: the staged anchor is the operating point; remaining gap to the
+~26 µs bandwidth floor is latency-hiding capacity at fixed parallelism, not recoverable by
+intra-CTA restructuring (probe evidence) — matches TRT-LLM fused DiT QKNorm+RoPE designs
+(KernelWiki `pr-TensorRT-LLM-13052`, `pr-TensorRT-LLM-11869`, plus `pr-sglang-15141` on the
+LLM side) and the sibling H200 row-norm finding (13 variants lost at the shipping layer).
+
+> **FINAL OUTCOME (prior rounds):** ships via an **in-tree `.cuh` placement** in SGLang (keeps SGLang's own
 > `register_custom_op` → **torch.compile-safe**), device geomean ~1.07–1.12x (large 1.10–1.33x,
 > small parity), correctness 10/10 — see `docs/sglang_jit_export.md`. The `kda_kernels` overlay is
 > NOT promoted (it drops `register_custom_op`, not torch.compile-safe). The historical sections
