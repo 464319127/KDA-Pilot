@@ -5,10 +5,13 @@ __pycache__/
 *.py[cod]
 *.egg-info/
 
-# Raw Nsight Compute reports stay local-only evidence (PR staging hygiene):
-# parsed analysis + REPORT.md are committed instead.
-*.ncu-rep
-*.ncu.log
-# Kernel-task profiler artifacts stay local (raw NCU reports, traces, harness builds)
-kernels/*/profile/
-kernels/*/ncu/
+# GPU profiling and intermediate optimization artifacts.
+**/profile/
+**/profiles/
+**/ncu/
+**/ncu_reports/
+**/*.ncu-rep
+**/*.nsys-rep
+**/*.qdrep
+**/*.cubin
+**/*.fatbin

@@ -11,7 +11,8 @@ worktree, and launches Claude Code with CLAUDE_PROJECT_DIR set to the kernel
 directory so official Humanize hooks stay local to that task's .humanize state.
 
 Environment overrides:
-  KDA_BASE_BRANCH       Base branch/ref for the worktree (default: main)
+  KDA_BASE_BRANCH       Base branch/ref for the worktree
+                        (default: current checkout branch, or HEAD if detached)
   KDA_WORKTREE_BASE     Parent directory for generated worktrees
                         (default: ../kernel-pilot-worktrees next to this repo)
   KDA_RUN_ID            Run suffix (default: timestamp-pid)
@@ -54,7 +55,14 @@ shift
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-BASE_BRANCH="${KDA_BASE_BRANCH:-main}"
+if [[ -n "${KDA_BASE_BRANCH:-}" ]]; then
+  BASE_BRANCH="$KDA_BASE_BRANCH"
+else
+  BASE_BRANCH="$(
+    git -C "$REPO_ROOT" symbolic-ref --quiet --short HEAD ||
+      git -C "$REPO_ROOT" rev-parse --verify HEAD
+  )"
+fi
 DEFAULT_WORKTREE_BASE="$(cd "$REPO_ROOT/.." && pwd)/kernel-pilot-worktrees"
 WORKTREE_BASE="${KDA_WORKTREE_BASE:-$DEFAULT_WORKTREE_BASE}"
 RUN_ID="${KDA_RUN_ID:-$(date +%Y%m%d-%H%M%S)-$$}"
@@ -72,6 +80,21 @@ WORKTREE_ROOT="${KDA_WORKTREE_ROOT:-${WORKTREE_BASE}/${TASK_LABEL}-${RUN_ID}}"
 CLAUDE_BIN="${CLAUDE_BIN:-claude}"
 CLAUDE_MODEL="${CLAUDE_MODEL:-opus}"
 CLAUDE_EFFORT="${CLAUDE_EFFORT:-max}"
+
+case "$TASK_SLUG" in
+  b200_*)
+    TARGET_GPU_LABEL="B200"
+    REMOTE_HOST_HINT="ion-b200"
+    ;;
+  h200_*)
+    TARGET_GPU_LABEL="H200"
+    REMOTE_HOST_HINT="ion8-h200 or ion9-h200"
+    ;;
+  *)
+    TARGET_GPU_LABEL="target"
+    REMOTE_HOST_HINT="the task prompt's target host"
+    ;;
+esac
 
 if [[ "$TASK_DIR" = /* || "$TASK_DIR" == *".."* ]]; then
   echo "error: task dir must be repo-relative and must not contain '..': $TASK_DIR" >&2
@@ -152,24 +175,33 @@ EOF
       cat <<EOF
 \`\`\`
 
-## Mandatory Humanize/KDA Constraints
+## Mandatory Humanize/KernelPilot Constraints
 
 - Use this current kernel folder as the optimization workspace.
 - Keep \`.humanize*\` untracked.
 - Use official Humanize commands installed in the agent environment. Do not use
   any vendored or repository-local Humanize implementation from KernelPilot.
+- Read \`../../docs/standalone_diffusion_benchmark.md\` if it exists for this
+  task. Its local-baseline and A/B benchmark rules are mandatory for diffusion
+  kernels.
+- Read \`../../docs/diffusion_kernel_rules.md\` and
+  \`../../docs/diffusion_correctness_contract.md\` if they exist for this task.
+  Their compile-flag, registration, correctness-grid, profiling, and completion
+  rules are mandatory for diffusion kernels.
 - Read \`${WORKTREE_ROOT}/external/KernelWiki/SKILL.md\` and
   \`${WORKTREE_ROOT}/external/ncu-report-skill/SKILL.md\` before implementation.
 - Use KernelWiki for upstream design ideas and ncu-report-skill for
   evidence-backed kernel diagnosis when profiling would change the next edit.
+- In every RLCR iteration, refresh the context from the source prompt,
+  diffusion rules, current benchmark/profile evidence, KernelWiki, and
+  ncu-report-skill before choosing the next edit, profiling command, benchmark
+  command, or no-go conclusion.
 - Recover K/R/W from the source prompt before implementation:
   - K: kernel semantics and callsite contract
   - R: correctness oracle and baseline path
   - W: workload shape set and benchmark methodology
 - Do not implement kernels, run long benchmarks, or collect NCU evidence before
   RLCR is active.
-- Create a task-owned remote workspace under the path specified by the prompt
-  and export it as \`REMOTE_KDA_DIR\` before remote builds or profiling.
 - Check GPU state before and after every benchmark/profile run, and treat
   performance data as valid only when the selected card is idle.
 - Do not fabricate benchmark, NCU, correctness, topology, source-lineage, or
@@ -177,8 +209,21 @@ EOF
 - Keep all candidate code, benchmark logs, profile artifacts, NCU reports, and
   final notes inside this kernel folder unless the user explicitly asks for a
   wider integration patch.
-- Record every candidate in \`solutions.jsonl\` and every performance result in
-  \`benchmark.csv\`.
+- Keep raw profiler/NCU/build/scratch artifacts local for evidence, but do not
+  stage them for the final PR. The PR should contain only kernel-related code,
+  benchmark/correctness harnesses, small provenance notes, and per-shape
+  baseline-vs-candidate performance results.
+- Keep copied upstream baseline code under \`baseline/\`, candidate code under
+  \`solution/\`, benchmark/correctness harnesses under \`bench/\`, and
+  provenance/results under \`docs/\`.
+- For diffusion kernels, resolve the latest upstream SGLang \`main\` commit at
+  baseline-recovery time and copy the relevant kernel source from that exact
+  commit. Record the SGLang repository URL, branch, resolved commit SHA,
+  resolution time, and copied files in \`docs/baseline_source.md\`.
+- For diffusion kernels, do not import, patch, monkey-patch, or install into an
+  SGLang checkout during correctness or benchmark runtime. Copy the SGLang
+  implementation into \`baseline/\` and expose it through the same low-overhead
+  local entry ABI used by the candidate.
 - Always ask before destructive operations, global machine/container changes,
   deleting another task's artifacts, changing shared production checkouts in
   place, or relaxing correctness/baseline/promotion requirements.
@@ -188,15 +233,19 @@ EOF
 The plan should minimize user-choice prompts during RLCR. Bake these defaults
 into the plan unless the source prompt explicitly says otherwise:
 
-- Remote B200 validation is a normal part of the loop. After local scaffold,
-  correctness, and implementation checks are committed, proceed to the remote
-  GPU phase autonomously.
-- Before GPU work, inspect the remote GPU state and select a B200 GPU with no
-  active compute processes and no meaningful memory occupancy. Export that id
-  as \`REMOTE_GPU_ID\` and use it consistently for baseline, candidate,
-  benchmark, profiler, and NCU commands in the current run.
-- If no idle B200 GPU is available, wait or retry briefly. Ask before changing
-  the benchmark environment or running measurements on a busy GPU.
+- Remote ${TARGET_GPU_LABEL} validation is a normal part of the loop. After
+  local scaffold, correctness, and implementation checks are committed, proceed
+  to the remote GPU phase autonomously.
+- Use the matching remote host (${REMOTE_HOST_HINT}) unless the source prompt
+  provides a stricter host choice.
+- Before GPU work, inspect the remote GPU state and select a
+  ${TARGET_GPU_LABEL} GPU with no active compute processes and no meaningful
+  memory occupancy. Export that id as \`REMOTE_GPU_ID\` and use it consistently
+  for baseline, candidate, benchmark, profiler, and NCU commands in the current
+  run.
+- If no idle ${TARGET_GPU_LABEL} GPU is available, wait or retry briefly. Ask
+  before changing the benchmark environment or running measurements on a busy
+  GPU.
 - Treat minimal, reversible, task-owned setup work as approved: creating remote
   workspaces, checking out commits, building inside the task workspace,
   installing local editable packages there, collecting profiler traces, and
@@ -211,16 +260,30 @@ into the plan unless the source prompt explicitly says otherwise:
 
 ## Expected Plan Shape
 
-- Recover the baseline and exact callsite.
-- Fill \`tests/test_correctness.py\` before optimization.
-- Establish the benchmark command and immutable baseline numbers.
+- Recover the baseline source, exact callsite, and workload shape set.
+- Resolve upstream SGLang \`main\` to its latest commit, copy the matching
+  baseline source into \`baseline/\`, and record upstream URL, branch, commit,
+  resolution time, copied files, and local edits in
+  \`docs/baseline_source.md\`.
+- Define matching baseline and candidate entry points using the same ABI,
+  argument order, stream behavior, output allocation policy, and build path.
+- Fill \`bench/correctness.py\` before optimization.
+- Establish \`bench/benchmark.py\`, frozen workloads, and immutable baseline
+  numbers.
 - Rank candidate directions by expected benefit and risk.
 - Implement bounded optimization attempts under RLCR.
+- At the start of every RLCR iteration, record the refreshed KernelWiki and
+  ncu-report-skill context that affects the next edit or explain why no new
+  query/profile is needed for that iteration.
 - Include a remote phase that records selected host/GPU id/model, before/after
   GPU idleness, exact commands, benchmark artifacts, and NCU artifacts.
 - Use NCU/profile evidence for non-obvious bottlenecks.
-- Update \`interface.md\`, \`benchmark.csv\`, and \`solutions.jsonl\` before final
-  completion.
+- Update \`docs/results.md\` and keep raw benchmark/profiler artifacts in this
+  kernel folder before final completion.
+- Before committing or opening a PR, inspect the staged diff and exclude raw
+  NCU reports, Nsight traces, profiler directories, temporary harness binaries,
+  build outputs, scratch logs, failed experiment dumps, and large intermediate
+  benchmark files.
 EOF
     } > "$DRAFT_FILE"
   fi
