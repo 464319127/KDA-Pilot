@@ -314,16 +314,18 @@ def _giant_chunk_for(spatial: int) -> int:
 
 
 # Self-cleaning arrival counters for the giant stats kernel's fused finalize
-# (the last CTA of each row resets its slot to zero), cached per device.
-# Stream-ordering note: the cache assumes giant calls on a device are
-# stream-ordered (the production entry launches on the current stream, as do
-# all harness paths). Concurrent giant calls on DIFFERENT streams of one
-# device would race on these counters and would need per-stream buffers.
+# (the last CTA of each row resets its slot to zero), cached per
+# (device, stream): calls on one stream are ordered, so a stream-private
+# buffer preserves the self-clean invariant, while concurrent calls on other
+# streams of the same device get their own buffers and can never count each
+# other's CTAs. The zeros-initialization launches on the same (current)
+# stream the kernels run on, so first use is ordered too.
 _row_counters: dict = {}
 
 
 def _row_counter(num_rows: int, device: torch.device) -> torch.Tensor:
-    key = (device.type, device.index)
+    stream = torch.cuda.current_stream(device)
+    key = (device.type, device.index, stream.cuda_stream)
     buf = _row_counters.get(key)
     if buf is None or buf.numel() < num_rows:
         buf = torch.zeros(max(num_rows, 64), dtype=torch.int32, device=device)
@@ -344,6 +346,17 @@ def _fast_path_ok(x: torch.Tensor, weight: torch.Tensor, bias: torch.Tensor) -> 
 
 def _run(x3: torch.Tensor, weight: torch.Tensor, bias: torch.Tensor, num_groups: int,
          eps: float, y3: torch.Tensor) -> None:
+    # The FFI launchers run on the CURRENT device's stream
+    # (at::cuda::getCurrentCUDAStream() on the C++ side); pin the device
+    # context to the input's device so multi-GPU processes cannot launch on
+    # the wrong card (mirrors the copied baseline's own device-context
+    # behavior). Single-device callers see no behavior change.
+    with torch.cuda.device(x3.device):
+        _run_on_current_device(x3, weight, bias, num_groups, eps, y3)
+
+
+def _run_on_current_device(x3: torch.Tensor, weight: torch.Tensor, bias: torch.Tensor,
+                           num_groups: int, eps: float, y3: torch.Tensor) -> None:
     small, large, giant, clean_giant = _kernels()
     channels = x3.shape[1]
     spatial = x3.shape[2]
@@ -415,6 +428,8 @@ def group_norm_silu_candidate_into(
     regime runs solution-owned CUDA kernels."""
     if out.shape != x.shape or out.dtype != x.dtype:
         raise ValueError("out must match x in shape and dtype")
+    if not (weight.device == x.device and bias.device == x.device and out.device == x.device):
+        raise ValueError("x/weight/bias/out must live on the same CUDA device")
     if (
         _fast_path_ok(x, weight, bias)
         and out.is_contiguous()
