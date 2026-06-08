@@ -60,13 +60,13 @@ overheads, so they are closer to what a user sees from the public kernel path.
 
 | Kernel | KernelWiki / reference | Key techniques |
 | --- | --- | --- |
-| `qknorm_rope` | TensorRT-LLM DiT QKNorm+RoPE; SGLang fused QKNorm/RoPE | Shared RoPE staging, Q/K reuse, staged path only for large rows |
-| `norm_infer` | Memory-bound pattern; vectorized loads; vLLM SM100 RMSNorm | Warp-row RMS, tiled persistent RMS, 8B/16B vector paths |
-| `rotary_embedding` | SGLang LTX2 split RoPE; vLLM FlashInfer RoPE routing | 128-bit vector I/O, cos/sin hoisting, LTX2 block matching |
-| `cutedsl_norm_tanh_mul_add` | Memory-bound pattern; vectorized loads; register budgeting | Hoisted row-invariant math, launch-bounds tuning, exact `tanhf` |
-| `cutedsl_norm_scale_shift` | SGLang CuTe-DSL norm/scale/shift fusion | Operand-class dispatch, 16B/32B vectors, two-pass variance |
-| `fuse_scale_shift` | SGLang fused scale/shift family; cache-policy notes | Rowgrid/flatvec/exact-C paths, cache hints, one-pass reduction |
-| `group_norm_silu` | SGLang GroupNorm+SiLU; memory-bound pattern | Split-group stats, generation counters, channels-last transpose |
+| `qknorm_rope` | **TensorRT-LLM PR-13052/11869 DiT QKNorm+RoPE; SGLang PR-15141/19059/21440/21654 fused QKNorm/RoPE; memory-bound pattern** | Shared RoPE staging, Q/K reuse, staged path only for large rows |
+| `norm_infer` | **KernelWiki memory-bound/vectorized-loads/register-budgeting; vLLM PR-31828 SM100 RMSNorm opt-in path** | Warp-row RMS, tiled persistent RMS, 8B/16B vector paths |
+| `rotary_embedding` | **SGLang PR-24411 LTX2 split RoPE; vLLM PR-21126/30729 FlashInfer RoPE routing; vectorized-loads** | 128-bit vector I/O, cos/sin hoisting, LTX2 block matching |
+| `cutedsl_norm_tanh_mul_add` | **KernelWiki memory-bound/vectorized-loads/register-budgeting; NCU long-scoreboard and launch-bounds evidence** | Hoisted row-invariant math, launch-bounds tuning, exact `tanhf` |
+| `cutedsl_norm_scale_shift` | **SGLang PR-14717 CuTe-DSL norm/scale/shift fusion; vectorized-loads; register-budgeting** | Operand-class dispatch, 16B/32B vectors, two-pass variance |
+| `fuse_scale_shift` | **SGLang PR-14717 fused norm/scale/shift family; vectorized-loads; cache-policy; memory-bound pattern** | Rowgrid/flatvec/exact-C paths, cache hints, one-pass reduction |
+| `group_norm_silu` | **SGLang PR-22814/23148/23938 GroupNorm+SiLU; memory-bound pattern; vectorized-loads** | Split-group stats, generation counters, channels-last transpose |
 
 The companion write-up records the benchmark interpretation, kernel-specific
 optimization paths, KernelWiki/reference links, and AKO4X comparison:
