@@ -3,4 +3,4 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 KDA_LAUNCHER_NAME="${KDA_LAUNCHER_NAME:-$(basename "$0")}"
 export KDA_LAUNCHER_NAME
-exec "$SCRIPT_DIR/../launch_kda_kernel_task.sh" "kernels/b200_diffusion_qknorm_rope__multi_shape" "$@"
+exec "$SCRIPT_DIR/../launch_kda_kernel_task.sh" "diffusion/kernels/b200_int8_scaled_mm__m64_n2048_k2048_bias" "$@"
