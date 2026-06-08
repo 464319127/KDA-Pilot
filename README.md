@@ -56,6 +56,18 @@ overheads, so they are closer to what a user sees from the public kernel path.
 | `fuse_scale_shift` | 2.7499x | small broadcast rows 7.365-7.891x |
 | `group_norm_silu` | 2.3118x | small/mid C rows 1.369-4.982x; NC rows up to 3.648x |
 
+## KernelWiki-Guided Highlights
+
+| Kernel | KernelWiki / reference | Key techniques |
+| --- | --- | --- |
+| `qknorm_rope` | TensorRT-LLM DiT QKNorm+RoPE; SGLang fused QKNorm/RoPE | Shared RoPE staging, Q/K reuse, staged path only for large rows |
+| `norm_infer` | Memory-bound pattern; vectorized loads; vLLM SM100 RMSNorm | Warp-row RMS, tiled persistent RMS, 8B/16B vector paths |
+| `rotary_embedding` | SGLang LTX2 split RoPE; vLLM FlashInfer RoPE routing | 128-bit vector I/O, cos/sin hoisting, LTX2 block matching |
+| `cutedsl_norm_tanh_mul_add` | Memory-bound pattern; vectorized loads; register budgeting | Hoisted row-invariant math, launch-bounds tuning, exact `tanhf` |
+| `cutedsl_norm_scale_shift` | SGLang CuTe-DSL norm/scale/shift fusion | Operand-class dispatch, 16B/32B vectors, two-pass variance |
+| `fuse_scale_shift` | SGLang fused scale/shift family; cache-policy notes | Rowgrid/flatvec/exact-C paths, cache hints, one-pass reduction |
+| `group_norm_silu` | SGLang GroupNorm+SiLU; memory-bound pattern | Split-group stats, generation counters, channels-last transpose |
+
 The companion write-up records the benchmark interpretation, kernel-specific
 optimization paths, KernelWiki/reference links, and AKO4X comparison:
 [KDA-Pilot optimizing SGLang Diffusion Kernel](https://github.com/BBuf/how-to-optim-algorithm-in-cuda/blob/main/large-language-model/sglang/KDA-Pilot%20%E4%BC%98%E5%8C%96%20SGLang%20Diffusion%20Kernel%20%E6%95%88%E6%9E%9C%E4%B8%8E%E7%BB%8F%E9%AA%8C.md).
