@@ -131,7 +131,7 @@ Active bound per bucket (normv5): LN at HBM bound (79.8% ≈ baseline); huge-RMS
 
 ## 8. Continuation round (PR #25 re-validation, RLCR 2026-06-04_18-46-16)
 
-Trigger: kernel-pilot commit `cc17c1149` tightened the prompt AFTER the normv5
+Trigger: KDA-Pilot commit `cc17c1149` tightened the prompt AFTER the normv5
 promotion (PR #18). New mandatory rules: symmetric shipping-integration
 benchmark, registration preservation, device-vs-host decomposition. The prior
 **1.4223x geomean is HISTORICAL OVERLAY EVIDENCE** (measured through the

@@ -16,7 +16,7 @@ Each task must end with two local implementations:
 Before copying baseline code, resolve the latest commit on upstream SGLang
 `main` and use the diffusion kernel source from that exact commit. Do not use a
 stale pinned SGLang commit, a local production checkout with unknown drift, or
-copied kernel code from a previous KernelPilot task. Record the SGLang
+copied kernel code from a previous KDA-Pilot task. Record the SGLang
 repository URL, branch (`main`), resolved commit SHA, resolution time, and copied
 file list in `docs/baseline_source.md`.
 

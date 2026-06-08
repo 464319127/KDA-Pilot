@@ -8,7 +8,7 @@ signature.
 > **Historical note**: the previously promoted decision table (normv5, geomean
 > **1.4223x**) was measured through the `kda_kernels.install()` overlay
 > (plain-callable monkey-patch) and is **historical overlay evidence — not
-> admissible** under the shipping-integration rules added by kernel-pilot
+> admissible** under the shipping-integration rules added by KDA-Pilot
 > commit `cc17c1149` (symmetric topology, registration preservation,
 > device-vs-host decomposition). It is superseded by the symmetric numbers
 > below. Lineage: `solutions.jsonl` ids `continuation_pr25_audit` → `tilev1`.

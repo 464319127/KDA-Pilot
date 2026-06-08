@@ -213,7 +213,7 @@ def _provenance(correctness) -> str:
             gpu_model = ""
     fields = {
         "candidate": os.environ.get("KDA_CANDIDATE", "native_cuda"),
-        "kernel_pilot_commit": os.environ.get("KDA_KP_COMMIT", ""),
+        "kda_pilot_commit": os.environ.get("KDA_KP_COMMIT", ""),
         "src_hash": os.environ.get("KDA_SRC_HASH", ""),
         "sglang_commit": os.environ.get("KDA_SGLANG_COMMIT", ""),
         "oracle_equiv": os.environ.get("KDA_ORACLE_EQUIV", ""),

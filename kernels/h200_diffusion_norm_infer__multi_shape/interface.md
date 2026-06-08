@@ -111,7 +111,7 @@ SGLang baseline:
 
 > Historical: the normv5 round's **geomean 1.4223x** below was measured through
 > the `kda_kernels.install()` overlay (plain-callable monkey-patch) and is NOT
-> admissible under the shipping-integration rules added by kernel-pilot commit
+> admissible under the shipping-integration rules added by KDA-Pilot commit
 > `cc17c1149`.
 >
 > **PR-facing result (vs sglang MAIN `8933ec8772`, per the baseline=main

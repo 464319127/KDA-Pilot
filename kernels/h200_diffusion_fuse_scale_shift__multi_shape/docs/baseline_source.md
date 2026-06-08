@@ -28,7 +28,7 @@ No other lines were changed; the Triton kernels and CUDA-path wrapper logic are 
 
 ## Why Vendored
 
-The kernel-pilot diffusion rules forbid importing or patching a live SGLang checkout during correctness/benchmark runtime (and the `sglang.jit_kernel.diffusion` import chain eagerly pulls `multimodal_gen`, which needs the heavy `[diffusion]` extra). The baseline therefore runs from this immutable local copy, exposed through the same thin local entry ABI as the candidate. `sglang.jit_kernel.utils.load_jit` is still used — strictly as the build utility for the candidate `.cuh` (absolute `cuda_files` path; zero writes into the checkout).
+The KDA-Pilot diffusion rules forbid importing or patching a live SGLang checkout during correctness/benchmark runtime (and the `sglang.jit_kernel.diffusion` import chain eagerly pulls `multimodal_gen`, which needs the heavy `[diffusion]` extra). The baseline therefore runs from this immutable local copy, exposed through the same thin local entry ABI as the candidate. `sglang.jit_kernel.utils.load_jit` is still used — strictly as the build utility for the candidate `.cuh` (absolute `cuda_files` path; zero writes into the checkout).
 
 ## Notable Baseline Behaviors (recovered contract, relevant to A/B fairness)
 

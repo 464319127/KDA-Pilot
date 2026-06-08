@@ -1,6 +1,6 @@
-# KernelPilot
+# KDA-Pilot
 
-KernelPilot is now a lightweight prompt repository for standalone GPU-kernel
+KDA-Pilot is now a lightweight prompt repository for standalone GPU-kernel
 optimization tasks. The diffusion tasks target SGLang diffusion operators, but
 the optimization and benchmark workspace does not patch, import, or monkey-patch
 SGLang at runtime.

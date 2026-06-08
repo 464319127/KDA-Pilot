@@ -1,7 +1,7 @@
 # Continuation Draft — h200_diffusion_rotary_embedding__multi_shape (round 2 of the KDA loop)
 
 Status: continuation from promoted candidate `native_cuda_v2_vectorized` (ledger `s4`,
-kernel-pilot `fe769ccb6`/`be7bb20f1` lineage, promoted to `kda_kernels` in PR #20).
+KDA-Pilot `fe769ccb6`/`be7bb20f1` lineage, promoted to `kda_kernels` in PR #20).
 This draft is written BEFORE any kernel source edit in this round, per the workspace rule.
 
 ## Context refresh (what changed since s4)

@@ -4,7 +4,7 @@
 > normv5 overlay export (`kda_kernels.install()` monkey-patch) and its
 > `1.4223x` claim. That number was measured through a plain-callable overlay
 > that bypassed the production custom-op layer — **historical overlay
-> evidence, superseded** (kernel-pilot rule change `cc17c1149`). The promotion
+> evidence, superseded** (KDA-Pilot rule change `cc17c1149`). The promotion
 > arbiter is now the in-SGLang dispatch-symmetric A/B below.
 
 ## PR-facing benchmark — vs sglang MAIN (`8933ec8772`)
@@ -120,7 +120,7 @@ OFF), all fallback/compile probes pass, and the workspace regression suite is
   648720x128 1.14x; **VALIDATE_OK exit 0**.
 - Stamped metadata: `KDA_EXPORTS.json` / `KDA_STATUS.md` report the arbiter
   geomean `1.4458x`. Commit lineage convention (unchanged from prior rounds):
-  the `commit` stamp is the **export-source commit** — kernel-pilot git HEAD
+  the `commit` stamp is the **export-source commit** — KDA-Pilot git HEAD
   when the export tool ran; the continuation sources land in the SUCCESSOR
   commit, so the stamp marks the generation point (kernel files are the
   byte-anchor), and `git show <commit>` is not expected to reproduce the

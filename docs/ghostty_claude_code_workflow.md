@@ -16,7 +16,7 @@ through a matching local ABI.
 Start from a committed branch that contains the current task skeletons:
 
 ```bash
-cd /Users/bbuf/工作目录/Common/kernel-pilot
+cd /Users/bbuf/工作目录/Common/KDA-Pilot
 git status
 git log --oneline -3
 ```
@@ -101,7 +101,7 @@ it is not an optimization priority.
 Run scripts from the repository root:
 
 ```bash
-cd /Users/bbuf/工作目录/Common/kernel-pilot
+cd /Users/bbuf/工作目录/Common/KDA-Pilot
 ./scripts/launch_kernels/k03_b200_diffusion_qknorm_rope__multi_shape.sh
 ```
 
@@ -131,7 +131,7 @@ Useful launcher overrides:
 
 ```bash
 KDA_BASE_BRANCH=<ref>   # optional; defaults to the current checkout branch
-KDA_WORKTREE_BASE=/path/to/kernel-pilot-worktrees
+KDA_WORKTREE_BASE=/path/to/KDA-Pilot-worktrees
 KDA_RUN_ID=my-run
 KDA_BRANCH_PREFIX=kda
 KDA_NO_CLAUDE=1

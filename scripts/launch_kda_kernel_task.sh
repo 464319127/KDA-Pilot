@@ -14,7 +14,7 @@ Environment overrides:
   KDA_BASE_BRANCH       Base branch/ref for the worktree
                         (default: current checkout branch, or HEAD if detached)
   KDA_WORKTREE_BASE     Parent directory for generated worktrees
-                        (default: ../kernel-pilot-worktrees next to this repo)
+                        (default: ../KDA-Pilot-worktrees next to this repo)
   KDA_RUN_ID            Run suffix (default: timestamp-pid)
   KDA_BRANCH            Exact branch name to create
   KDA_BRANCH_PREFIX     Branch prefix when KDA_BRANCH is unset (default: kda)
@@ -26,7 +26,7 @@ Environment overrides:
   CLAUDE_BIN            Claude executable (default: claude)
   CLAUDE_MODEL          Claude model flag value (default: opus)
   CLAUDE_EFFORT         Claude effort flag value (default: max)
-  KDA_BASH_BIN          Bash used for KernelPilot launch + spawned Claude hooks.
+  KDA_BASH_BIN          Bash used for KDA-Pilot launch + spawned Claude hooks.
                         Must survive empty-array expansion under set -u
                         (default: first usable bash from PATH, Homebrew paths).
   KDA_LAUNCHER_NAME     Friendly launcher/task-card name, normally set by
@@ -66,7 +66,7 @@ else
       git -C "$REPO_ROOT" rev-parse --verify HEAD
   )"
 fi
-DEFAULT_WORKTREE_BASE="$(cd "$REPO_ROOT/.." && pwd)/kernel-pilot-worktrees"
+DEFAULT_WORKTREE_BASE="$(cd "$REPO_ROOT/.." && pwd)/KDA-Pilot-worktrees"
 WORKTREE_BASE="${KDA_WORKTREE_BASE:-$DEFAULT_WORKTREE_BASE}"
 RUN_ID="${KDA_RUN_ID:-$(date +%Y%m%d-%H%M%S)-$$}"
 TASK_SLUG="${TASK_DIR##*/}"
@@ -122,7 +122,7 @@ find_kda_bash() {
 
 KDA_SELECTED_BASH="$(find_kda_bash || true)"
 if [[ -z "$KDA_SELECTED_BASH" ]]; then
-  echo "error: KernelPilot requires a modern bash for Humanize hooks; /bin/bash 3.2 is not supported" >&2
+  echo "error: KDA-Pilot requires a modern bash for Humanize hooks; /bin/bash 3.2 is not supported" >&2
   echo "hint: install Homebrew bash and/or set KDA_BASH_BIN=/opt/homebrew/bin/bash" >&2
   exit 127
 fi
@@ -131,7 +131,7 @@ KDA_LAUNCH_PATH="$KDA_SELECTED_BASH_DIR:$PATH"
 
 if ! bash_is_kda_safe "$BASH"; then
   if [[ "${KDA_BASH_REEXECED:-}" == "1" ]]; then
-    echo "error: failed to re-exec KernelPilot with safe bash: $KDA_SELECTED_BASH" >&2
+    echo "error: failed to re-exec KDA-Pilot with safe bash: $KDA_SELECTED_BASH" >&2
     exit 127
   fi
   export KDA_BASH_REEXECED=1
@@ -180,7 +180,7 @@ fi
 
 mkdir -p "$WORKTREE_BASE"
 
-echo "== KernelPilot KDA task launcher =="
+echo "== KDA-Pilot KDA task launcher =="
 echo "repo:      $REPO_ROOT"
 echo "launcher:  $LAUNCHER_NAME"
 echo "label:     $TASK_LABEL"
@@ -220,12 +220,12 @@ EOF
       cat <<EOF
 \`\`\`
 
-## Mandatory Humanize/KernelPilot Constraints
+## Mandatory Humanize/KDA-Pilot Constraints
 
 - Use this current kernel folder as the optimization workspace.
 - Keep \`.humanize*\` untracked.
 - Use official Humanize commands installed in the agent environment. Do not use
-  any vendored or repository-local Humanize implementation from KernelPilot.
+  any vendored or repository-local Humanize implementation from KDA-Pilot.
 - Read \`../../docs/standalone_diffusion_benchmark.md\` if it exists for this
   task. Its local-baseline and A/B benchmark rules are mandatory for diffusion
   kernels.
