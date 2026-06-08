@@ -34,6 +34,9 @@ Environment overrides:
   KDA_TASK_LABEL        Override the friendly label used for branch/worktree names
   KDA_BOOTSTRAP_DRAFT=0 Skip automatic .humanize/kernel-agent/draft.md creation
   KDA_NO_CLAUDE=1       Create the worktree and print commands without launching Claude
+  IS_SANDBOX            Forwarded to the spawned Claude process (default: 1).
+                        Required for Claude/Codex sessions that may run under a
+                        root user inside Docker.
   HUMANIZE_CODEX_BYPASS_SANDBOX
                         Forwarded to the spawned Claude process (default: true).
                         Lets Codex inside the RLCR loop skip its per-call sandbox /
@@ -358,6 +361,7 @@ exec env \
   SHELL="$KDA_SELECTED_BASH" \
   KDA_BASH_BIN="$KDA_SELECTED_BASH" \
   CLAUDE_PROJECT_DIR="$PWD" \
+  IS_SANDBOX="${IS_SANDBOX:-1}" \
   HUMANIZE_CODEX_BYPASS_SANDBOX="${HUMANIZE_CODEX_BYPASS_SANDBOX:-true}" \
   "$CLAUDE_BIN" \
   --permission-mode bypassPermissions \

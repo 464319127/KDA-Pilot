@@ -140,6 +140,8 @@ CLAUDE_MODEL=opus
 CLAUDE_EFFORT=max
 KDA_BASH_BIN=/opt/homebrew/bin/bash                 # modern bash for launch + hooks;
                                                    # /bin/bash 3.2 is rejected
+IS_SANDBOX=1                                      # default; forwarded into Claude's env
+                                                  # for root-owned Docker sessions.
 HUMANIZE_CODEX_BYPASS_SANDBOX=true                # default; forwarded into Claude's env
                                                   # so Codex in the RLCR loop skips its
                                                   # per-call sandbox/approval prompts.
