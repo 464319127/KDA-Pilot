@@ -24,7 +24,7 @@ git log --oneline -3
 Check the launcher scripts:
 
 ```bash
-bash -n scripts/launch_kda_kernel_task.sh scripts/launch_kernels/*.sh
+bash -n diffusion/scripts/launch_kda_kernel_task.sh diffusion/scripts/launch_kernels/*.sh
 ```
 
 If the task needs remote GPU validation, use the matching Claude/Codex remote
@@ -88,12 +88,12 @@ There is no priority split in this document. Pick any unclaimed diffusion task
 whose target GPU is available. With four panes, a practical pattern is:
 
 1. Open four panes in one Ghostty tab.
-2. Launch one `scripts/launch_kernels/kXX_*.sh` script in each pane.
+2. Launch one `diffusion/scripts/launch_kernels/kXX_*.sh` script in each pane.
 3. When a pane finishes or blocks on unavailable hardware, start another
    unclaimed task.
 4. Keep B200 tasks on B200 and H200 tasks on H200.
 
-The `K` number is only the launcher file number under `scripts/launch_kernels/`;
+The `K` number is only the launcher file number under `diffusion/scripts/launch_kernels/`;
 it is not an optimization priority.
 
 ## Launch Command
@@ -102,20 +102,20 @@ Run scripts from the repository root:
 
 ```bash
 cd /Users/bbuf/工作目录/Common/KDA-Pilot
-./scripts/launch_kernels/k03_b200_diffusion_qknorm_rope__multi_shape.sh
+./diffusion/scripts/launch_kernels/k03_b200_diffusion_qknorm_rope__multi_shape.sh
 ```
 
 For an ad-hoc task folder:
 
 ```bash
-./scripts/launch_kda_kernel_task.sh kernels/<task-folder>
+./diffusion/scripts/launch_kda_kernel_task.sh diffusion/kernels/<task-folder>
 ```
 
 Set `KDA_NO_CLAUDE=1` to create the task worktree and print commands without
 starting Claude:
 
 ```bash
-KDA_NO_CLAUDE=1 ./scripts/launch_kernels/k03_b200_diffusion_qknorm_rope__multi_shape.sh
+KDA_NO_CLAUDE=1 ./diffusion/scripts/launch_kernels/k03_b200_diffusion_qknorm_rope__multi_shape.sh
 ```
 
 The launcher creates:
@@ -163,7 +163,7 @@ manual review comment blocks such as `CMT:` / `ENDCMT`, `<cmt>` / `</cmt>`, or
 Start RLCR with the review-base branch printed by the launcher:
 
 ```text
-/humanize:start-rlcr-loop kernels/<kernel-folder>/.humanize/kernel-agent/refined-plan.md --skip-quiz --claude-answer-codex --max 12 --codex-model gpt-5.5:high --codex-timeout 5400 --base-branch <printed-kda-base-branch>
+/humanize:start-rlcr-loop diffusion/kernels/<kernel-folder>/.humanize/kernel-agent/refined-plan.md --skip-quiz --claude-answer-codex --max 12 --codex-model gpt-5.5:high --codex-timeout 5400 --base-branch <printed-kda-base-branch>
 ```
 
 After RLCR starts, continue from the generated
@@ -218,22 +218,22 @@ diffusion rows are listed in launcher-number order only.
 
 | Launcher | Folder |
 |---|---|
-| `k01_b200_int8_scaled_mm.sh` | `kernels/b200_int8_scaled_mm__m64_n2048_k2048_bias` |
-| `k02_b200_fa4_mha.sh` | `kernels/b200_fa4_mha__bf16_head128_total32768` |
-| `k03_b200_diffusion_qknorm_rope__multi_shape.sh` | `kernels/b200_diffusion_qknorm_rope__multi_shape` |
-| `k04_h200_diffusion_qknorm_rope__multi_shape.sh` | `kernels/h200_diffusion_qknorm_rope__multi_shape` |
-| `k05_b200_diffusion_norm_infer__multi_shape.sh` | `kernels/b200_diffusion_norm_infer__multi_shape` |
-| `k06_h200_diffusion_norm_infer__multi_shape.sh` | `kernels/h200_diffusion_norm_infer__multi_shape` |
-| `k07_b200_diffusion_group_norm_silu__multi_shape.sh` | `kernels/b200_diffusion_group_norm_silu__multi_shape` |
-| `k08_h200_diffusion_group_norm_silu__multi_shape.sh` | `kernels/h200_diffusion_group_norm_silu__multi_shape` |
-| `k09_b200_diffusion_rotary_embedding__multi_shape.sh` | `kernels/b200_diffusion_rotary_embedding__multi_shape` |
-| `k10_h200_diffusion_rotary_embedding__multi_shape.sh` | `kernels/h200_diffusion_rotary_embedding__multi_shape` |
-| `k11_b200_diffusion_fuse_scale_shift__multi_shape.sh` | `kernels/b200_diffusion_fuse_scale_shift__multi_shape` |
-| `k12_h200_diffusion_fuse_scale_shift__multi_shape.sh` | `kernels/h200_diffusion_fuse_scale_shift__multi_shape` |
-| `k13_b200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape.sh` | `kernels/b200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape` |
-| `k14_h200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape.sh` | `kernels/h200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape` |
-| `k15_b200_diffusion_cutedsl_norm_scale_shift__multi_shape.sh` | `kernels/b200_diffusion_cutedsl_norm_scale_shift__multi_shape` |
-| `k16_h200_diffusion_cutedsl_norm_scale_shift__multi_shape.sh` | `kernels/h200_diffusion_cutedsl_norm_scale_shift__multi_shape` |
+| `k01_b200_int8_scaled_mm.sh` | `diffusion/kernels/b200_int8_scaled_mm__m64_n2048_k2048_bias` |
+| `k02_b200_fa4_mha.sh` | `diffusion/kernels/b200_fa4_mha__bf16_head128_total32768` |
+| `k03_b200_diffusion_qknorm_rope__multi_shape.sh` | `diffusion/kernels/b200_diffusion_qknorm_rope__multi_shape` |
+| `k04_h200_diffusion_qknorm_rope__multi_shape.sh` | `diffusion/kernels/h200_diffusion_qknorm_rope__multi_shape` |
+| `k05_b200_diffusion_norm_infer__multi_shape.sh` | `diffusion/kernels/b200_diffusion_norm_infer__multi_shape` |
+| `k06_h200_diffusion_norm_infer__multi_shape.sh` | `diffusion/kernels/h200_diffusion_norm_infer__multi_shape` |
+| `k07_b200_diffusion_group_norm_silu__multi_shape.sh` | `diffusion/kernels/b200_diffusion_group_norm_silu__multi_shape` |
+| `k08_h200_diffusion_group_norm_silu__multi_shape.sh` | `diffusion/kernels/h200_diffusion_group_norm_silu__multi_shape` |
+| `k09_b200_diffusion_rotary_embedding__multi_shape.sh` | `diffusion/kernels/b200_diffusion_rotary_embedding__multi_shape` |
+| `k10_h200_diffusion_rotary_embedding__multi_shape.sh` | `diffusion/kernels/h200_diffusion_rotary_embedding__multi_shape` |
+| `k11_b200_diffusion_fuse_scale_shift__multi_shape.sh` | `diffusion/kernels/b200_diffusion_fuse_scale_shift__multi_shape` |
+| `k12_h200_diffusion_fuse_scale_shift__multi_shape.sh` | `diffusion/kernels/h200_diffusion_fuse_scale_shift__multi_shape` |
+| `k13_b200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape.sh` | `diffusion/kernels/b200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape` |
+| `k14_h200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape.sh` | `diffusion/kernels/h200_diffusion_cutedsl_norm_tanh_mul_add__multi_shape` |
+| `k15_b200_diffusion_cutedsl_norm_scale_shift__multi_shape.sh` | `diffusion/kernels/b200_diffusion_cutedsl_norm_scale_shift__multi_shape` |
+| `k16_h200_diffusion_cutedsl_norm_scale_shift__multi_shape.sh` | `diffusion/kernels/h200_diffusion_cutedsl_norm_scale_shift__multi_shape` |
 
 ## Diffusion Task Cards
 

@@ -57,7 +57,7 @@ TASK_DIR="${1%/}"
 shift
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR" && git rev-parse --show-toplevel)"
 if [[ -n "${KDA_BASE_BRANCH:-}" ]]; then
   BASE_BRANCH="$KDA_BASE_BRANCH"
 else
