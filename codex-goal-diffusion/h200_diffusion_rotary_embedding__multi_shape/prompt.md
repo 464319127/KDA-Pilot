@@ -9,7 +9,7 @@
 允许并要求读取（只读任务定义和公共规则）：
 
 - 上面的源任务 `prompt.md`，把它作为唯一任务真源。
-- `codex-goal-diffusion/README.md` 和 launcher 脚本约定，尤其是后续 Goal 的 cwd、`my/plan.md`、`baseline/`、`solution/`、`bench/`、`docs/` 产物布局。
+- `codex-goal-diffusion/README.md` 和 launcher 脚本约定，尤其是后续 Goal 的 cwd、`baseline/`、`solution/`、`bench/`、`docs/` 产物布局。
 - 源 prompt 明确点名的共享 docs、rules、contracts，例如 `diffusion/docs/` 下的公共 benchmark、correctness、kernel rules 和 shape coverage 文档，用来抽取任务约束、workload、oracle、benchmark 方法学和完成条件。
 - 源 prompt 明确点名的静态接口/spec 文件，但只能在它显然不是运行记录、benchmark 结果、优化日志或 candidate 产物时读取；否则把它列为后续 Goal 需要自行恢复或确认的输入。
 - OpenAI 官方 Codex Goal cookbook：`https://github.com/openai/openai-cookbook/blob/main/examples/codex/using_goals_in_codex.ipynb`。
@@ -28,7 +28,7 @@
 
 最终 `plan.md` 必须是 Codex Goal 可执行契约，至少包含：
 
-- Goal 最终状态：后续 `/goal follow the instruction in my/plan.md` 成功时应留下哪些文件、结果和证据。
+- Goal 最终状态：后续 `/goal follow the instruction in plan.md` 成功时应留下哪些文件、结果和证据。
 - 源任务摘要：target GPU、目标 entry points/API、operation semantics、shape/workload coverage、baseline 类型和候选实现边界。
 - Acceptance Criteria，使用 `AC-` 编号，覆盖 baseline 恢复、本地 ABI、workload/oracle、correctness、benchmark、prior-art、profiling evidence、结果报告和停止条件。
 - Path Boundaries：允许读/复制/改写的路径、禁止读取的 KDA 过程/结果路径、禁止污染的路径、任务目录内产物边界，以及是否允许上游集成。

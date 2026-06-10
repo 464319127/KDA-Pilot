@@ -10,14 +10,13 @@ Launch a Codex Goal run from codex-goal-diffusion/<task>/ so all generated
 artifacts stay inside the Codex Goal task folder.
 
 The launcher prepares:
-  <task>/my/plan.md    Copy of <task>/plan.md used by the default prompt
   <task>/baseline/
   <task>/solution/
   <task>/bench/
   <task>/docs/
 
 Default prompt:
-  /goal follow the instruction in my/plan.md
+  /goal follow the instruction in plan.md
 
 Environment overrides:
   CODEX_BIN             Codex executable (default: codex)
@@ -29,8 +28,6 @@ Environment overrides:
   CODEX_GOAL_SANDBOX    Optional sandbox value passed as --sandbox
   CODEX_GOAL_APPROVAL_NEVER=1
                         Add --ask-for-approval never
-  CODEX_GOAL_REFRESH_PLAN=1
-                        Overwrite my/plan.md when it differs from plan.md
   CODEX_GOAL_BOOTSTRAP_TASK_DIRS=0
                         Do not pre-create baseline/solution/bench/docs
   CODEX_GOAL_NO_CODEX=1 Prepare the task and print the codex command only
@@ -104,27 +101,13 @@ esac
 
 TASK_SLUG="${TASK_DIR##*/}"
 PLAN_FILE="$TASK_DIR/plan.md"
-MY_DIR="$TASK_DIR/my"
-MY_PLAN="$MY_DIR/plan.md"
 
 if [[ ! -f "$PLAN_FILE" ]]; then
   echo "error: missing plan.md in task directory: $PLAN_FILE" >&2
   exit 2
 fi
 
-mkdir -p "$MY_DIR"
-PLAN_STATUS="already current"
-if [[ ! -f "$MY_PLAN" ]]; then
-  cp "$PLAN_FILE" "$MY_PLAN"
-  PLAN_STATUS="created"
-elif cmp -s "$PLAN_FILE" "$MY_PLAN"; then
-  PLAN_STATUS="already current"
-elif is_truthy "${CODEX_GOAL_REFRESH_PLAN:-0}"; then
-  cp "$PLAN_FILE" "$MY_PLAN"
-  PLAN_STATUS="refreshed"
-else
-  PLAN_STATUS="kept existing copy; differs from plan.md (set CODEX_GOAL_REFRESH_PLAN=1 to overwrite)"
-fi
+PLAN_STATUS="ready"
 
 if ! is_truthy "${CODEX_GOAL_BOOTSTRAP_TASK_DIRS:-1}"; then
   TASK_DIR_STATUS="skipped"
@@ -134,7 +117,7 @@ else
 fi
 
 CODEX_BIN="${CODEX_BIN:-codex}"
-PROMPT="${CODEX_GOAL_PROMPT:-/goal follow the instruction in my/plan.md}"
+PROMPT="${CODEX_GOAL_PROMPT:-/goal follow the instruction in plan.md}"
 CODEX_ARGS=(--cd "$TASK_DIR")
 
 if [[ -n "${CODEX_MODEL:-}" ]]; then
@@ -163,7 +146,7 @@ echo "== Codex Goal task =="
 echo "goal root: $GOAL_ROOT"
 echo "task:      $TASK_SLUG"
 echo "cwd:       $TASK_DIR"
-echo "plan:      $MY_PLAN ($PLAN_STATUS)"
+echo "plan:      $PLAN_FILE ($PLAN_STATUS)"
 echo "outputs:   $TASK_DIR/{baseline,solution,bench,docs} ($TASK_DIR_STATUS)"
 echo "prompt:    $PROMPT"
 echo
