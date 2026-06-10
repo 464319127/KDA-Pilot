@@ -71,8 +71,8 @@ Paste each printed command into a separate terminal window.
 Useful environment overrides:
 
 ```bash
-KDA_NO_CODEX=1 scripts/launch_tasks/k15_b200_diffusion_cutedsl_norm_scale_shift__multi_shape.sh
-KDA_REFRESH_PLAN=1 scripts/launch_tasks/k15_b200_diffusion_cutedsl_norm_scale_shift__multi_shape.sh
+CODEX_GOAL_NO_CODEX=1 scripts/launch_tasks/k15_b200_diffusion_cutedsl_norm_scale_shift__multi_shape.sh
+CODEX_GOAL_REFRESH_PLAN=1 scripts/launch_tasks/k15_b200_diffusion_cutedsl_norm_scale_shift__multi_shape.sh
 CODEX_MODEL=gpt-5.5 scripts/launch_tasks/k15_b200_diffusion_cutedsl_norm_scale_shift__multi_shape.sh
-KDA_CODEX_BYPASS=1 scripts/launch_tasks/k15_b200_diffusion_cutedsl_norm_scale_shift__multi_shape.sh
+CODEX_GOAL_BYPASS=1 scripts/launch_tasks/k15_b200_diffusion_cutedsl_norm_scale_shift__multi_shape.sh
 ```
