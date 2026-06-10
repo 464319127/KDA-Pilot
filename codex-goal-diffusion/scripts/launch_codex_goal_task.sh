@@ -20,11 +20,12 @@ Default prompt:
 
 Environment overrides:
   CODEX_BIN             Codex executable (default: codex)
+  CODEX_GOAL_YOLO=0     Disable default --yolo launch mode
   CODEX_MODEL           Optional model passed as --model
   CODEX_PROFILE         Optional profile passed as --profile
   CODEX_GOAL_PROMPT     Override the default prompt
   CODEX_GOAL_SEARCH=1   Add --search
-  CODEX_GOAL_BYPASS=1   Add --dangerously-bypass-approvals-and-sandbox
+  CODEX_GOAL_BYPASS=1   Add legacy --dangerously-bypass-approvals-and-sandbox
   CODEX_GOAL_SANDBOX    Optional sandbox value passed as --sandbox
   CODEX_GOAL_APPROVAL_NEVER=1
                         Add --ask-for-approval never
@@ -118,7 +119,13 @@ fi
 
 CODEX_BIN="${CODEX_BIN:-codex}"
 PROMPT="${CODEX_GOAL_PROMPT:-/goal follow the instruction in plan.md}"
-CODEX_ARGS=(--cd "$TASK_DIR")
+CODEX_ARGS=()
+
+if is_truthy "${CODEX_GOAL_YOLO:-1}"; then
+  CODEX_ARGS+=(--yolo)
+fi
+
+CODEX_ARGS+=(--cd "$TASK_DIR")
 
 if [[ -n "${CODEX_MODEL:-}" ]]; then
   CODEX_ARGS+=(--model "$CODEX_MODEL")

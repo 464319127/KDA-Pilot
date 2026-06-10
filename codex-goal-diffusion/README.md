@@ -47,7 +47,7 @@ Or use the numbered wrappers:
 scripts/launch_tasks/k15_b200_diffusion_cutedsl_norm_scale_shift__multi_shape.sh
 ```
 
-The launcher starts Codex with this prompt:
+The launcher starts Codex in `--yolo` mode with this prompt:
 
 ```text
 /goal follow the instruction in plan.md
@@ -72,5 +72,5 @@ Useful environment overrides:
 ```bash
 CODEX_GOAL_NO_CODEX=1 scripts/launch_tasks/k15_b200_diffusion_cutedsl_norm_scale_shift__multi_shape.sh
 CODEX_MODEL=gpt-5.5 scripts/launch_tasks/k15_b200_diffusion_cutedsl_norm_scale_shift__multi_shape.sh
-CODEX_GOAL_BYPASS=1 scripts/launch_tasks/k15_b200_diffusion_cutedsl_norm_scale_shift__multi_shape.sh
+CODEX_GOAL_YOLO=0 scripts/launch_tasks/k15_b200_diffusion_cutedsl_norm_scale_shift__multi_shape.sh
 ```
