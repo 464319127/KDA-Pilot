@@ -19,6 +19,10 @@ codex-goal-diffusion/<task>/
 The task prompts now use the `brainstorming` skill from
 `obra/superpowers/skills/brainstorming` for design exploration, then humanize
 `gen-plan` to write the final Codex Goal plan.
+All task prompts also point to
+[`PLAN_GENERATION_SUPPLEMENT.md`](PLAN_GENERATION_SUPPLEMENT.md), which keeps
+the comparison greenfield while requiring the public `diffusion/docs/` rules,
+shape coverage, and shape-dispatch planning to be folded into generated plans.
 
 Open a fresh Codex window for a task and paste:
 

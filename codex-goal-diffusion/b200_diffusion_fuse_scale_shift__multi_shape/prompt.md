@@ -8,8 +8,9 @@
 
 允许并要求读取（只读任务定义和公共规则）：
 
-- 上面的源任务 `prompt.md`，把它作为唯一任务真源。
+- 上面的源任务 `prompt.md`，把它作为任务入口、目标 entry points 和任务边界的真源；公共 `diffusion/docs/` 文档按补充约束也是 plan 的规则真源。
 - `codex-goal-diffusion/README.md` 和 launcher 脚本约定，尤其是后续 Goal 的 cwd、`baseline/`、`solution/`、`bench/`、`docs/` 产物布局。
+- `codex-goal-diffusion/PLAN_GENERATION_SUPPLEMENT.md`，这是所有 Codex Goal plan 生成 prompt 的公共补充约束；它对公共 `diffusion/docs/` 的读取要求和 shape-dispatch 计划要求优先于本 prompt 中更宽泛或更弱的表述。
 - 源 prompt 明确点名的共享 docs、rules、contracts，例如 `diffusion/docs/` 下的公共 benchmark、correctness、kernel rules 和 shape coverage 文档，用来抽取任务约束、workload、oracle、benchmark 方法学和完成条件。
 - 源 prompt 明确点名的静态接口/spec 文件，但只能在它显然不是运行记录、benchmark 结果、优化日志或 candidate 产物时读取；否则把它列为后续 Goal 需要自行恢复或确认的输入。
 - OpenAI 官方 Codex Goal cookbook：`https://github.com/openai/openai-cookbook/blob/main/examples/codex/using_goals_in_codex.ipynb`。
