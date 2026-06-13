@@ -104,3 +104,70 @@ Keep the greenfield success standard:
 Do not add KDA promoted speedups as thresholds. The point of this supplement is
 to preserve public prompt knowledge, especially shape coverage and dispatch
 permission, while keeping the optimization search independent.
+
+## Search Rigor and Stopping Discipline
+
+(This section OVERRIDES any weaker stopping or acceptance wording in this file
+or in any task prompt. It constrains HOW rigorously the future Goal must search
+and WHEN it is allowed to stop. It must not be read as prescribing any
+particular implementation language, kernel technique, memory layout, or
+optimization lever — those remain for the Goal to discover from first
+principles, profiling, and public prior art.)
+
+### Profiling Gate
+
+- As soon as a correct candidate exists, the Goal MUST collect profiler and/or
+  Nsight Compute evidence on representative production buckets BEFORE any
+  promote, reject, or stop decision.
+- Each profiling finding must be bound to a concrete next action: a further edit,
+  a rejection with a stated reason, or a hardware-bound proof for that bucket.
+- "The candidate passed, so no profiling was taken" is an explicit failure of
+  this gate. Profiling collected only as decoration, with no decision tied to it,
+  also fails.
+
+### No Bucket Abandonment
+
+- The Goal may NOT leave a required production bucket at baseline-equivalent
+  performance by labeling it "parity within noise", "out of scope", or "not the
+  bottleneck of my hypothesis".
+- For every required production bucket, the final result must show EITHER (a) a
+  measured improvement over the recovered baseline, OR (b) per-bucket roofline
+  evidence — bytes moved, useful work, achieved vs peak bandwidth and/or FLOP/s,
+  and the named active bound — proving that bucket already sits at its hardware
+  limit. Only a bucket proven at its bound may be routed to a fallback.
+- A headline geomean that hides unexplained per-bucket regressions or unprofiled
+  buckets is not an acceptable result.
+
+### Iteration Depth
+
+- The bounded optimization loop must run multiple distinct candidate iterations,
+  not a single attempt promoted on first correctness. Each iteration is logged in
+  the task-local search DAG / solutions ledger with: hypothesis, the change made,
+  correctness result, benchmark result, profiling evidence, and the
+  promote/reject reason.
+- The loop continues while any profiled production bucket still shows headroom
+  against its roofline bound and a defensible next hypothesis remains.
+
+### Stopping Conditions (replaces softer completion standards)
+
+- Stop with SUCCESS only when: correctness passes on all required production and
+  regression rows; the production geomean improves over the recovered
+  same-environment baseline; and every required production bucket satisfies the
+  "No Bucket Abandonment" rule above (improved, or proven at its hardware bound).
+- Stop with NO-GO only after ALL of: the baseline is recovered; at least one
+  correct candidate has been built; profiling/NCU evidence has been collected on
+  EVERY required production bucket; and a named hardware bound shows no remaining
+  headroom on every bucket. A NO-GO is NEVER permitted while any required
+  production bucket is still unprofiled, or while no real optimization iteration
+  beyond baseline recovery has been attempted.
+
+### Neutral Timing Policy
+
+- The timed region must be defined once and applied IDENTICALLY to baseline and
+  candidate: the same inputs, the same output-passing policy, the same CUDA
+  stream, and the same set of operations included in / excluded from timing.
+- The plan must state explicitly and symmetrically whether the production host
+  call path (any Python / framework / dispatch wrapper of the named entry point)
+  is inside or outside the timed region, and apply that one choice to both sides.
+  The plan must NOT recommend, hint at, or pre-judge any specific way of changing
+  that cost — it only fixes the measurement so the comparison is fair.

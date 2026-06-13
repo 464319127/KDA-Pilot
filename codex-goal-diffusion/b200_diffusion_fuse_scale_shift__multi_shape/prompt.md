@@ -21,7 +21,7 @@
 - 不要读取或使用任何已有 `baseline/`、`solution/`、`bench/`、task-local `docs/`、`src/`、`tests/`、`profile/`、`ncu/`、`benchmark.csv`、`solutions.jsonl`、logs、captured tensors、profiler traces、NCU reports、draft/result summaries。
 - 不要把既有 KDA run 的性能数字、结论、candidate 设计、失败路径或成功路径写入新 Goal；后续 Goal 必须从空白任务目录自行恢复 baseline、建立 harness、运行 correctness/benchmark/profile，并生成自己的证据。
 
-不要编造尚未测得的性能数字；如果源 prompt 没有绝对性能阈值，计划应以“正确性通过 + 相对同环境 baseline 提升 + 证据充分”为完成标准。
+不要编造尚未测得的性能数字。完成标准与停止条件以 `PLAN_GENERATION_SUPPLEMENT.md` 的 “Search Rigor and Stopping Discipline” 一节为准（Profiling Gate、No Bucket Abandonment、Iteration Depth、SUCCESS/NO-GO Stopping Conditions、Neutral Timing Policy）。生成的 `plan.md` 必须把该节转写为带 `AC-` 编号的硬性验收与停止条件；不得使用更弱的“正确性通过 + 提升 + 证据充分”作为完成标准，也不得在任一 production bucket 未经 profiling 时判 no-go。该节只约束搜索严格度与停止条件，不规定实现语言或具体优化手段。
 
 请先使用已安装的 `brainstorming` skill 做设计梳理，但不要为了问问题而问问题：先探索上述上下文；如果源 prompt、README 和 docs 已经足够定义范围，就只提出必要的 2-3 个方案、给出推荐方案，并请求设计确认。只有存在会改变计划边界的真实歧义时才向我提一个简短阻塞问题。
 
