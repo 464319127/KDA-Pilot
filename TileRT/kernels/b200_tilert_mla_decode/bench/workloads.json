@@ -1,0 +1,4 @@
+[
+ {"id":"decode_kv2048","function":"mla_decode","shapes":{"S":1,"H":20,"qk_nope":128,"qk_rope":64,"v_head":128,"kv_len":2048,"dtype":"bfloat16"},"rtol":0.02,"source":{"op":"tilert::pure_mla_layer","tilert_us":35.2,"flashinfer_us":25.5}},
+ {"id":"decode_kv2048_mtp4","function":"mla_decode","shapes":{"S":4,"H":20,"qk_nope":128,"qk_rope":64,"v_head":128,"kv_len":2048,"dtype":"bfloat16"},"rtol":0.02}
+]
