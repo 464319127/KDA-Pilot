@@ -1,0 +1,19 @@
+[task]
+slug = "b200_tilert_fused_moe"
+arch = "b200"
+target_gpu = "NVIDIA B200"
+family = "fused_moe"
+tilert_op = "tilert::fused_moe / expert_select_up_gate_silu + expert_down_allreduce"
+tilert_kernel = "FusedMoeExecutorImpl<DefaultSchedule, 4, 36864, 1, 1, .>"
+[build]
+language = "cuda"
+baseline_entry_point = "baseline/fused_moe.py::fused_moe_baseline"
+candidate_entry_point = "solution/kernel.cu::fused_moe_candidate"
+[reference]
+tilert_latency_us = 22.4   # profiler avg per call; 36.5% of total decode CUDA time
+decode_share_pct = 36.5
+note = "FP4 experts (MXFP4); the make-or-break lever. deep_gemm m_grouped_fp8_fp4_gemm_nt_masked / fp8_fp4_mega_moe"
+[benchmark]
+warmup_runs = 10
+iterations = 200
+num_trials = 7
