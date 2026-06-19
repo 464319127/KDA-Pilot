@@ -1,0 +1,3 @@
+[
+ {"id":"decode_s1","function":"fused_moe","shapes":{"N":1,"D":7168,"moe_inter":2048,"n_routed":256,"n_act":8,"n_group":8,"topk_group":4,"dtype":"bfloat16","experts_dtype":"fp4"},"rtol":0.05,"source":{"op":"tilert::fused_moe","tilert_us":22.4}}
+]

@@ -1,0 +1,5 @@
+[
+ {"id":"decode_s1","production":true,"function":"head_proj","shapes":{"seq":1,"K":7168,"V":16160,"dtype":"bfloat16"},"atol":0.05,"rtol":0.02,"source":{"op":"tilert::head_proj_op","arch":"b200","tilert_us":39.2,"tilert_hbm_pct":78.4}},
+ {"id":"decode_s2","production":true,"function":"head_proj","shapes":{"seq":2,"K":7168,"V":16160,"dtype":"bfloat16"},"atol":0.05,"rtol":0.02,"source":{"op":"tilert::head_proj_op","arch":"b200"}},
+ {"id":"decode_s4","production":true,"function":"head_proj","shapes":{"seq":4,"K":7168,"V":16160,"dtype":"bfloat16"},"atol":0.05,"rtol":0.02,"source":{"op":"tilert::head_proj_op","arch":"b200"}}
+]
