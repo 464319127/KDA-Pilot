@@ -142,6 +142,38 @@ KDA_BASH_BIN=/opt/homebrew/bin/bash
 macOS `/bin/bash` 3.2 is rejected by the launcher because nested Humanize/Codex
 hooks rely on modern Bash behavior.
 
+## How I Drive The Agents
+
+These campaigns are run with coding agents in full-autonomy mode. For
+reproducibility, here is exactly how I launch them on a prepared task worktree.
+
+**Claude Code** — the same combo the diffusion launcher uses (Opus 4.8 + max
+effort + auto/bypass-permission mode, i.e. the "Effort (Max)" + "Auto mode"
+toggles in the Claude Code UI):
+
+```bash
+claude --permission-mode bypassPermissions --model opus --effort max
+```
+
+`diffusion/scripts/launch_kda_kernel_task.sh` invokes exactly this (defaults
+`CLAUDE_MODEL=opus`, `CLAUDE_EFFORT=max`, `--permission-mode bypassPermissions`),
+so launching a task and running Claude by hand are equivalent. To iterate a
+long-running goal across model switches, resume the session:
+
+```bash
+claude --resume <session-uuid>
+```
+
+**Codex** — full-access, no approval prompts:
+
+```bash
+codex --yolo --sandbox danger-full-access --ask-for-approval never
+```
+
+Both run unsandboxed / auto-approve because each task lives in an isolated
+prepared worktree with its own benchmark + correctness gates; an agent's wins
+only count when the correctness contract and run logs agree.
+
 ## Current Campaigns
 
 - **Diffusion kernels:** qk norm + RoPE, norm inference, rotary embedding,
