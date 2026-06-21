@@ -1,4 +1,4 @@
-# b200_tilert_sparse_select_mla
+# b200_tilert_sparse_select_mla (8%)
 Target GPU: NVIDIA B200 (sm_100).
 
 ## Problem

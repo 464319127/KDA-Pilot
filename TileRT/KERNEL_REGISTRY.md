@@ -7,6 +7,18 @@ table** of the shipped `libtilert_dsv32.so` (`tilert_re/dsv32.kernels.demangled.
 cross-checked against the op source modules in
 `tilert_re/tilert/models/deepseek_v3_2/ops/*.py` and `TileRT_讨论材料.md` §3/§13/§16/§20/§22.
 
+## Folder-name `(NN%)` suffix = decode-time share
+
+Kernel task folders whose **measured no-MTP decode CUDA share is > 1%** carry that
+share in the folder name (rounded, from the §16 torch-profiler breakdown):
+`b200_tilert_mla_decode(53%)` (PureMlaDsv32, 52.8%), `b200_tilert_fused_moe(37%)`
+(FusedMoe, 36.5%), `b200_tilert_sparse_select_mla(8%)` (SparseSelectMlaDsv32, 7.6%).
+These three ≈ **98% of decode** — MLA(53%)+MoE(37%)+DSA-indexer-MLA(8%). Every other
+folder is individually < 1% of decode (RMSNorm\* ≈ 1.1% **aggregate** across all norm
+kernels; DownAllreduce/Top1Allreduce ≈ 1.7% **aggregate**; HeadProj < 1%) and is left
+un-suffixed. The three > 1% folders also have one-click KDA launchers under
+`scripts/launch_kernels/` (see `scripts/README.md`).
+
 ## How to read the variant columns
 
 Each TileRT kernel is `…<Name>ExecutorImpl<DefaultSchedule, kPipeStages=4, kSmemBytes,
@@ -32,8 +44,8 @@ shapes TileRT can actually dispatch at runtime. These are the shapes a KDA task'
 |---|---|---|---|
 | `b200_tilert_head_proj_gemm` | HeadProj | most complete (baseline+adapter+correctness+ref doc), workloads seq{1,2,4} | + seq{3} note, real-op oracle, ≥3× ncu, blog features |
 | `b200_tilert_rmsnorm_quant` | RMSNormQuant | baseline+workloads{1,2,4}; no adapter/correctness/oracle/ref | + oracle+correctness, full seq set, ≥3× ncu |
-| `b200_tilert_mla_decode` | PureMlaDsv32 | baseline+workloads{1,4}; latency = single profiler avg (35.2µs) | + S2, oracle, ≥3× isolated ncu |
-| `b200_tilert_fused_moe` | FusedMoe | baseline+workloads{1}; latency = single profiler avg (22.4µs) | + S2/S4 + fp4/fp8 CT, oracle, ≥3× ncu |
+| `b200_tilert_mla_decode(53%)` | PureMlaDsv32 | baseline+workloads{1,4}; latency = single profiler avg (35.2µs) | + S2, oracle, ≥3× isolated ncu |
+| `b200_tilert_fused_moe(37%)` | FusedMoe | baseline+workloads{1}; latency = single profiler avg (22.4µs) | + S2/S4 + fp4/fp8 CT, oracle, ≥3× ncu |
 
 All four are **starting points only** and are re-verified + completed in this pass.
 

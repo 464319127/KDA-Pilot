@@ -1,4 +1,4 @@
-# b200_tilert_mla_decode
+# b200_tilert_mla_decode (53%)
 Target GPU: NVIDIA B200 (sm_100).
 ## Problem — THE #1 decode cost (52.8% of TileRT decode CUDA time)
 MLA (Multi-head Latent Attention) decode, matching TileRT `PureMlaDsv32`. DeepSeek-V3.2
