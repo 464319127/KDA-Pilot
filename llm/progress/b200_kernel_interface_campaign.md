@@ -1,6 +1,6 @@
 # B200 LLM Kernel Interface Campaign
 
-Last updated: 2026-06-21T16:01:39Z.
+Last updated: 2026-06-21T16:03:15Z.
 
 Source baseline:
 
@@ -21,7 +21,7 @@ Source baseline:
 | Gemma4 | `gemma4` | completed; local validation passed; weight cache cleaned | `docs/autoregressive/Google/Gemma4.md`; page covers E2B/E4B/31B/26B-A4B variants. The B200 command generator uses TP1/mem 0.9 for 26B-A4B; successful run used lower mem fraction for MoE workspace headroom. | `google/gemma-4-26B-A4B-it` | #59 |
 | GPT-OSS | `gpt_oss` | completed; local validation passed; weight cache cleaned | `docs/autoregressive/OpenAI/GPT-OSS.md` | `openai/gpt-oss-120b` | #63 |
 | Kimi-K2.7-Code | `kimi_k2_7_code` | completed; local validation passed; weight cache cleaned | Live docs page `docs/autoregressive/Moonshotai/Kimi-K2.7-Code.md`; absent from cloned cookbook `7b5bd9c`. The live page lists H200/B300/GB300/AMD configs but no explicit B200 option; successful B200 capture used the documented H200/B300 TP8 native INT4 command shape with Triton attention fallback. | `moonshotai/Kimi-K2.7-Code` | #69 |
-| Kimi-K2.6 | `kimi_k2_6` | completed; local validation passed; weight cache cleaned | Live docs page `docs/autoregressive/Moonshotai/Kimi-K2.6.md`; the live page lists H200/B300/GB300/AMD configs but no explicit B200 option. | `moonshotai/Kimi-K2.6`; Blackwell NVFP4 variant `nvidia/Kimi-K2.6-NVFP4` also accessible | pending |
+| Kimi-K2.6 | `kimi_k2_6` | completed; local validation passed; weight cache cleaned | Live docs page `docs/autoregressive/Moonshotai/Kimi-K2.6.md`; the live page lists H200/B300/GB300/AMD configs but no explicit B200 option. | `moonshotai/Kimi-K2.6`; Blackwell NVFP4 variant `nvidia/Kimi-K2.6-NVFP4` also accessible | #70 |
 | MiniMax-M3 | `minimax_m3` | pending GPU launch; HF metadata accessible | Live docs page `docs/autoregressive/MiniMax/MiniMax-M3.md`; absent from cloned cookbook `7b5bd9c`. | `MiniMaxAI/MiniMax-M3` | pending |
 | Nemotron3-Ultra | `nemotron3_ultra` | failed on current B200 env; partial weight cache cleaned | Live docs page `docs/autoregressive/NVIDIA/Nemotron3-Ultra.md`; absent from cloned cookbook `7b5bd9c`. | `nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-NVFP4` | pending |
 | Ernie4.5 | `ernie_45` | completed; local validation passed; weight cache cleaned | `docs/autoregressive/Ernie/Ernie4.5.md`; live page defaults to AMD but the 21B-A3B command is plain TP1 and is runnable on the current B200 free GPU subset. | `baidu/ERNIE-4.5-21B-A3B-PT` | #61 |
@@ -48,6 +48,7 @@ Source baseline:
 - Hunyuan3-Preview B200 kernel interface tasks: PR #66, merged.
 - Ring-2.6-1T B200 kernel interface tasks: PR #67, merged.
 - Kimi-K2.7-Code B200 kernel interface tasks: PR #69.
+- Kimi-K2.6 B200 kernel interface tasks: PR #70.
 
 ## Current Notes
 
