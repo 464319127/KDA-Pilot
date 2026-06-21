@@ -22,7 +22,7 @@ Source baseline:
 | GPT-OSS | `gpt_oss` | completed; local validation passed; weight cache cleaned | `docs/autoregressive/OpenAI/GPT-OSS.md` | `openai/gpt-oss-120b` | #63 |
 | Kimi-K2.7-Code | `kimi_k2_7_code` | completed; local validation passed; weight cache cleaned | Live docs page `docs/autoregressive/Moonshotai/Kimi-K2.7-Code.md`; absent from cloned cookbook `7b5bd9c`. The live page lists H200/B300/GB300/AMD configs but no explicit B200 option; successful B200 capture used the documented H200/B300 TP8 native INT4 command shape with Triton attention fallback. | `moonshotai/Kimi-K2.7-Code` | #69 |
 | Kimi-K2.6 | `kimi_k2_6` | completed; local validation passed; weight cache cleaned | Live docs page `docs/autoregressive/Moonshotai/Kimi-K2.6.md`; the live page lists H200/B300/GB300/AMD configs but no explicit B200 option. | `moonshotai/Kimi-K2.6`; Blackwell NVFP4 variant `nvidia/Kimi-K2.6-NVFP4` also accessible | #70 |
-| MiniMax-M3 | `minimax_m3` | completed; local validation passed; weight cache cleaned | Live docs page `docs/autoregressive/MiniMax/MiniMax-M3.md`; absent from cloned cookbook `7b5bd9c`. The B200 verified path uses the MXFP8 checkpoint and the dedicated MiniMax image. | `MiniMaxAI/MiniMax-M3-MXFP8` | pending |
+| MiniMax-M3 | `minimax_m3` | completed; local validation passed; weight cache cleaned | Live docs page `docs/autoregressive/MiniMax/MiniMax-M3.md`; absent from cloned cookbook `7b5bd9c`. The B200 verified path uses the MXFP8 checkpoint and the dedicated MiniMax image. | `MiniMaxAI/MiniMax-M3-MXFP8` | #71 |
 | Nemotron3-Ultra | `nemotron3_ultra` | failed on current B200 env; partial weight cache cleaned | Live docs page `docs/autoregressive/NVIDIA/Nemotron3-Ultra.md`; absent from cloned cookbook `7b5bd9c`. | `nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-NVFP4` | pending |
 | Ernie4.5 | `ernie_45` | completed; local validation passed; weight cache cleaned | `docs/autoregressive/Ernie/Ernie4.5.md`; live page defaults to AMD but the 21B-A3B command is plain TP1 and is runnable on the current B200 free GPU subset. | `baidu/ERNIE-4.5-21B-A3B-PT` | #61 |
 | Step-3.7-Flash | `step_37_flash` | failed on current B200 env; weight cache cleaned | Live docs page `docs/autoregressive/StepFun/Step-3.7-Flash.md`; B200/B300 supports BF16/FP8/NVFP4. | `stepfun-ai/Step-3.7-Flash-NVFP4` | pending |
@@ -49,6 +49,7 @@ Source baseline:
 - Ring-2.6-1T B200 kernel interface tasks: PR #67, merged.
 - Kimi-K2.7-Code B200 kernel interface tasks: PR #69.
 - Kimi-K2.6 B200 kernel interface tasks: PR #70.
+- MiniMax-M3 B200 kernel interface tasks: PR #71.
 
 ## Current Notes
 
