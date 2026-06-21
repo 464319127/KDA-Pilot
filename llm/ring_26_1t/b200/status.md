@@ -1,0 +1,25 @@
+- 2026-06-21 13:53:53 UTC: capture_label - server_start
+- 2026-06-21 13:53:53 UTC: server_start - CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7; PYTHONPATH=/data/bbuf/repos/sglang-main/python:; command=python3 -m sglang.launch_server --model-path inclusionAI/Ring-2.6-1T --host 0.0.0.0 --port 31009 --tp-size 8 --mem-fraction-static 0.8 --cuda-graph-backend-decode disabled --cuda-graph-backend-prefill disabled --chunked-prefill-size 32768 --max-running-requests 80 --trust-remote-code --model-loader-extra-config {"enable_multithread_load":"true","num_threads":64} --tool-call-parser glm --reasoning-parser deepseek-r1
+- 2026-06-21 13:56:42 UTC: server_ready - pid=208746, port=31009
+- 2026-06-21 13:56:42 UTC: capture_label - random_low
+- 2026-06-21 13:56:42 UTC: benchmark - random_low: dataset=random, prompts=1, concurrency=1, output_len=8, warmup=0
+- 2026-06-21 13:57:00 UTC: benchmark_done - random_low
+- 2026-06-21 13:57:00 UTC: capture_label - random_mid
+- 2026-06-21 13:57:00 UTC: benchmark - random_mid: dataset=random, prompts=32, concurrency=32, output_len=8, warmup=0
+- 2026-06-21 13:57:26 UTC: benchmark_done - random_mid
+- 2026-06-21 13:57:26 UTC: capture_label - random_high
+- 2026-06-21 13:57:26 UTC: benchmark - random_high: dataset=random, prompts=80, concurrency=80, output_len=8, warmup=0
+- 2026-06-21 13:57:57 UTC: benchmark_done - random_high
+- 2026-06-21 13:57:57 UTC: capture_label - sharegpt_low
+- 2026-06-21 13:57:57 UTC: benchmark - sharegpt_low: dataset=sharegpt, prompts=1, concurrency=1, output_len=8, warmup=0
+- 2026-06-21 13:58:20 UTC: benchmark_done - sharegpt_low
+- 2026-06-21 13:58:20 UTC: capture_label - sharegpt_mid
+- 2026-06-21 13:58:20 UTC: benchmark - sharegpt_mid: dataset=sharegpt, prompts=32, concurrency=32, output_len=8, warmup=0
+- 2026-06-21 13:58:45 UTC: benchmark_done - sharegpt_mid
+- 2026-06-21 13:58:45 UTC: capture_label - sharegpt_high
+- 2026-06-21 13:58:45 UTC: benchmark - sharegpt_high: dataset=sharegpt, prompts=80, concurrency=80, output_len=8, warmup=0
+- 2026-06-21 13:59:19 UTC: benchmark_done - sharegpt_high
+- 2026-06-21 13:59:19 UTC: capture_label - shutdown
+- 2026-06-21 13:59:19 UTC: capture_matrix_done - six workload kernel-interface capture complete
+- 2026-06-21 14:01:06 UTC: weights_cleanup_skipped - clean_weights=0; weight_cache=/root/.cache/huggingface/hub/models--inclusionAI--Ring-2.6-1T; reason=after completed inclusionAI/Ring-2.6-1T kernel-interface capture run
+- 2026-06-21 14:01:06 UTC: completed - inclusionAI/Ring-2.6-1T kernel-interface tasks generated
