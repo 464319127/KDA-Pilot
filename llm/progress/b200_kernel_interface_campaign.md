@@ -1,6 +1,6 @@
 # B200 LLM Kernel Interface Campaign
 
-Last updated: 2026-06-21T18:28:00Z.
+Last updated: 2026-06-21T18:33:00Z.
 
 Source baseline:
 
@@ -15,7 +15,7 @@ Source baseline:
 | Requested model | Slug | Status | Cookbook/source mapping | Selected model path | PR |
 |---|---|---|---|---|---|
 | Qwen3.6 | `qwen_36` | completed; local validation passed | `docs/autoregressive/Qwen/Qwen3.6.md` | `Qwen/Qwen3.6-35B-A3B-FP8` | #55 |
-| DeepSeek-V4 | `deepseek_v4` | completed; local validation passed; weight cache cleaned | Present on live docs at `docs.sglang.io/cookbook/autoregressive/DeepSeek/DeepSeek-V4`; absent from cloned cookbook `7b5bd9c`. | `deepseek-ai/DeepSeek-V4-Flash` as single-node B200 primary | pending |
+| DeepSeek-V4 | `deepseek_v4` | completed; local validation passed; weight cache cleaned | Present on live docs at `docs.sglang.io/cookbook/autoregressive/DeepSeek/DeepSeek-V4`; absent from cloned cookbook `7b5bd9c`. | `deepseek-ai/DeepSeek-V4-Flash` as single-node B200 primary | #73 |
 | DeepSeek-V3_2 | `deepseek_v3_2` | completed; local validation passed; weight cache cleaned | `docs/autoregressive/DeepSeek/DeepSeek-V3_2.md` B200 section | `nvidia/DeepSeek-V3.2-NVFP4` | #58 |
 | Llama4 | `llama4` | incomplete; HF gated files require authenticated access; partial cache cleaned | `docs/autoregressive/Llama/Llama4.md`; page covers Scout and Maverick variants. Cookbook B200 launch uses TP8, but GPUA83E GPUs 0-3 are currently stuck at 100% util / 0 MiB with no visible compute process and cannot be reset. | `meta-llama/Llama-4-Scout-17B-16E-Instruct` attempted as 4-GPU Scout fallback | pending |
 | Gemma4 | `gemma4` | completed; local validation passed; weight cache cleaned | `docs/autoregressive/Google/Gemma4.md`; page covers E2B/E4B/31B/26B-A4B variants. The B200 command generator uses TP1/mem 0.9 for 26B-A4B; successful run used lower mem fraction for MoE workspace headroom. | `google/gemma-4-26B-A4B-it` | #59 |
@@ -38,6 +38,7 @@ Source baseline:
 - GLM-5.2 reference implementation: PR #53, merged.
 - Workload coverage wording fix: PR #54, merged.
 - Qwen3.6 B200 kernel interface tasks: PR #55, merged.
+- DeepSeek-V4 B200 kernel interface tasks: PR #73.
 - DeepSeek-V3_2 B200 kernel interface tasks: PR #58, merged.
 - Gemma4 B200 kernel interface tasks: PR #59, merged.
 - Ernie4.5 B200 kernel interface tasks: PR #61, merged.
