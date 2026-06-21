@@ -1,0 +1,31 @@
+[task]
+slug = "b200_tilert_fused_moe"
+arch = "b200"
+target_gpu = "NVIDIA B200"
+family = "fused_moe"
+tilert_op = "tilert::fused_moe / expert_select_up_gate_silu + expert_down_allreduce"
+tilert_kernel = "FusedMoeExecutorImpl<DefaultSchedule, 4, 36864, 1, 1, .>"
+[build]
+language = "cuda"
+baseline_entry_point = "baseline/fused_moe.py::fused_moe_baseline"
+candidate_entry_point = "solution/kernel.cu::fused_moe_candidate"
+[reference]
+# Unified standard = ISOLATED single-kernel ncu (never in-graph). FusedMoe is the ONE
+# exception that cannot be launched standalone (the real kernel needs the full 256-expert
+# FP4 weight pack + chained router scores; see ../../harness/ORACLE_RESULTS.md), so there
+# is no isolated TileRT number for it yet. Compare the candidate (isolated) against the
+# isolatable constituent kernels as the floor: rmsnorm_expert_proj 8.22us +
+# rmsnorm_up_gate_silu 12.13us (isolated ncu medians, s1) + expert_down. The 22.4us below
+# is the in-graph per-call (36.5% of decode), kept as engine-level reference only — NOT a
+# like-for-like isolated target. Producing an isolated FusedMoe ncu number needs a
+# standalone 256-expert FP4-pack harness (deferred ABI work).
+tilert_latency_us_isolated = "n/a (not standalone-launchable; floor = expert_proj 8.22 + up_gate_silu 12.13 isolated)"
+ingraph_latency_us = 22.4   # in-graph per-call; engine-level reference, NOT the KDA isolated target
+measurement = "in_graph_profiler_only (no isolated single-kernel number exists)"
+measured = true
+decode_share_pct = 36.5
+note = "FP4 experts (MXFP4); the make-or-break lever. deep_gemm m_grouped_fp8_fp4_gemm_nt_masked / fp8_fp4_mega_moe"
+[benchmark]
+warmup_runs = 10
+iterations = 200
+num_trials = 7

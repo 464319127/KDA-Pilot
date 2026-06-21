@@ -1,4 +1,4 @@
-# b200_tilert_fused_moe
+# b200_tilert_fused_moe (37%)
 Target GPU: NVIDIA B200 (sm_100).
 ## Problem — THE #2 decode cost (36.5%), the make-or-break lever
 DeepSeek-V3.2 MoE decode, matching TileRT `FusedMoe`. sigmoid + noaux_tc group-limited

@@ -155,6 +155,9 @@ MEASURED = {
     "projq_wqb":          {1: (5.92, 2.97), 2: (6.21, 2.84), 4: (7.84, 2.26)},
     "projo_wkvb":         {1: (6.14, 2.88), 2: (6.59, 2.74), 4: (7.90, 2.35)},
     "mla_decode":         {1: (11.68, 2.72), 2: (12.45, 2.56), 4: (12.48, 2.59)},
+    # sparse_select_mla = SAME flash_sparse_mla kernel as PureMla (GPU0 16-head variant,
+    # slightly less work) -> use PureMla's isolated median; not separately swept.
+    "sparse_select_mla":  {1: (11.68, 2.72), 2: (12.45, 2.56), 4: (12.48, 2.59)},
     "flash_sparse_mla":   {1: (11.68, 2.72), 2: (12.45, 2.56), 3: (12.29, 2.61), 4: (12.48, 2.59)},
     "rotate":             {1: (7.23, 0.05), 2: (7.23, 0.08), 4: (6.85, 0.15)},
     "qkv_rope":           {1: (6.66, 0.02), 2: (6.82, 0.03), 4: (6.82, 0.04)},
@@ -165,7 +168,10 @@ MEASURED = {
     "rmsnorm_up_gate_silu": {1: (12.13, 35.79), 2: (14.72, 29.54), 4: (20.58, 21.13)},
 }
 
-# in-graph profiler targets (us) for ops not isolatable as a single launch (§16)
+# Unified standard = ISOLATED single-kernel (MEASURED above). The numbers here are
+# in-graph per-call (§16) kept as ENGINE-LEVEL REFERENCE ONLY, never the KDA target.
+# sparse_select_mla moved to MEASURED (same kernel as PureMla). fused_moe has no isolated
+# number (not standalone-launchable); its floor = expert_proj + up_gate_silu isolated.
 INGRAPH = {
     "fused_moe": 22.4, "sparse_index": 35.4, "sparse_select_mla": 35.4,
     "down_allreduce": 8.2, "expert_down_allreduce": 9.0, "unproj_o_allreduce": 11.0,

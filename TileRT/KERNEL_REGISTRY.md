@@ -7,6 +7,47 @@ table** of the shipped `libtilert_dsv32.so` (`tilert_re/dsv32.kernels.demangled.
 cross-checked against the op source modules in
 `tilert_re/tilert/models/deepseek_v3_2/ops/*.py` and `TileRT_讨论材料.md` §3/§13/§16/§20/§22.
 
+## Folder-name `(NN%)` suffix = decode-time share
+
+Kernel task folders whose **measured no-MTP decode CUDA share is > 1%** carry that
+share in the folder name (rounded, from the §16 torch-profiler breakdown):
+`b200_tilert_mla_decode(53%)` (PureMlaDsv32, 52.8%), `b200_tilert_fused_moe(37%)`
+(FusedMoe, 36.5%), `b200_tilert_sparse_select_mla(8%)` (SparseSelectMlaDsv32, 7.6%).
+These three ≈ **98% of decode** — MLA(53%)+MoE(37%)+DSA-indexer-MLA(8%). Every other
+folder is individually < 1% of decode (RMSNorm\* ≈ 1.1% **aggregate** across all norm
+kernels; DownAllreduce/Top1Allreduce ≈ 1.7% **aggregate**; HeadProj < 1%) and is left
+un-suffixed. The three > 1% folders also have one-click KDA launchers under
+`scripts/launch_kernels/` (see `scripts/README.md`).
+
+## Open-source baseline comparison (checked — none beat TileRT)
+
+**Unified standard: compare ISOLATED single-kernel performance — never in-graph.** Every
+KDA target and every candidate is the **≥3× ncu isolated median** of one kernel launch.
+In-graph per-call numbers (§16) fold in CUDA-graph dependent waits and are NOT comparable
+to a standalone open-source microbench, so they are engine-level reference only, never the
+target. On the isolated basis **no open-source impl beats TileRT**, so all three > 1%
+folders keep their KDA task + launcher.
+
+| kernel | TileRT isolated (KDA target) | best open-source (isolated) | verdict |
+|---|---|---|---|
+| PureMlaDsv32 (`mla_decode`) | **11.68µs** | flashinfer BatchMLAPagedAttention = 25.5µs | TileRT ~2× faster → optimize |
+| SparseSelectMla (`sparse_select_mla`) | **11.68µs** (same flash_sparse_mla kernel as PureMla, 16 vs 20 heads) | flashinfer MLA = 25.5µs | TileRT ~2× faster → optimize |
+| FusedMoe (`fused_moe`) | **n/a** — not standalone-launchable; floor = isolated constituents (expert_proj 8.22 + up_gate_silu 12.13µs) | deep_gemm bf16 grouped = 157µs | TileRT far faster → optimize |
+
+(in-graph per-call, engine reference only: PureMla 35.2µs, SparseSelectMla 35.4µs,
+FusedMoe 22.4µs.) FusedMoe is the one kernel without an isolated TileRT number — the real
+kernel needs the full 256-expert FP4 weight pack + chained router, so it can't be launched
+standalone; getting an isolated number needs a dedicated FP4-pack harness (deferred).
+
+**Caveat on the flashinfer "faster" claim:** §17 and the old `mla_decode` prompt
+compared flashinfer's *isolated* 25.5µs against TileRT's *in-graph* 35.2µs
+(apples-to-oranges). The in-graph number folds in dependent waits inside the CUDA graph;
+a flashinfer-based engine pays the same. Isolated-vs-isolated, TileRT's PureMla is
+11.68µs — flashinfer is ~2× **slower**. Corrected in `kernels/b200_tilert_mla_decode(53%)/prompt.md`.
+
+Other (sub-1%) kernels: RMSNorm\*/quant ≈ par with TileLang (§17); HeadProj 39.2µs @
+78% HBM is unreached by general GEMM/GEMV kernels (TileLang 58%/34% HBM). None beaten.
+
 ## How to read the variant columns
 
 Each TileRT kernel is `…<Name>ExecutorImpl<DefaultSchedule, kPipeStages=4, kSmemBytes,
@@ -32,8 +73,8 @@ shapes TileRT can actually dispatch at runtime. These are the shapes a KDA task'
 |---|---|---|---|
 | `b200_tilert_head_proj_gemm` | HeadProj | most complete (baseline+adapter+correctness+ref doc), workloads seq{1,2,4} | + seq{3} note, real-op oracle, ≥3× ncu, blog features |
 | `b200_tilert_rmsnorm_quant` | RMSNormQuant | baseline+workloads{1,2,4}; no adapter/correctness/oracle/ref | + oracle+correctness, full seq set, ≥3× ncu |
-| `b200_tilert_mla_decode` | PureMlaDsv32 | baseline+workloads{1,4}; latency = single profiler avg (35.2µs) | + S2, oracle, ≥3× isolated ncu |
-| `b200_tilert_fused_moe` | FusedMoe | baseline+workloads{1}; latency = single profiler avg (22.4µs) | + S2/S4 + fp4/fp8 CT, oracle, ≥3× ncu |
+| `b200_tilert_mla_decode(53%)` | PureMlaDsv32 | baseline+workloads{1,4}; latency = single profiler avg (35.2µs) | + S2, oracle, ≥3× isolated ncu |
+| `b200_tilert_fused_moe(37%)` | FusedMoe | baseline+workloads{1}; latency = single profiler avg (22.4µs) | + S2/S4 + fp4/fp8 CT, oracle, ≥3× ncu |
 
 All four are **starting points only** and are re-verified + completed in this pass.
 
