@@ -19,6 +19,29 @@ kernels; DownAllreduce/Top1Allreduce ≈ 1.7% **aggregate**; HeadProj < 1%) and 
 un-suffixed. The three > 1% folders also have one-click KDA launchers under
 `scripts/launch_kernels/` (see `scripts/README.md`).
 
+## Open-source baseline comparison (checked — none beat TileRT)
+
+For each high-cost kernel we checked whether an existing open-source kernel already
+beats TileRT. The comparison must be **isolated-vs-isolated**: the KDA reference is the
+**≥3× ncu isolated median** and a candidate is measured the same way. On that fair
+basis **no open-source impl beats TileRT**, so all three > 1% folders keep their KDA
+task + launcher.
+
+| kernel | TileRT isolated (KDA target) | best open-source (isolated) | verdict |
+|---|---|---|---|
+| PureMlaDsv32 (`mla_decode`) | **11.68µs** (35.2µs in-graph) | flashinfer BatchMLAPagedAttention = 25.5µs | TileRT ~2× faster → optimize |
+| FusedMoe (`fused_moe`) | **22.4µs** (FP4, in-graph) | deep_gemm bf16 grouped = 157µs | TileRT ~7× faster → optimize |
+| SparseSelectMla (`sparse_select_mla`) | ~12µs (35.4µs in-graph) | flashinfer MLA = 25.5µs | TileRT ~2× faster → optimize |
+
+**Caveat on the flashinfer "faster" claim:** §17 and the old `mla_decode` prompt
+compared flashinfer's *isolated* 25.5µs against TileRT's *in-graph* 35.2µs
+(apples-to-oranges). The in-graph number folds in dependent waits inside the CUDA graph;
+a flashinfer-based engine pays the same. Isolated-vs-isolated, TileRT's PureMla is
+11.68µs — flashinfer is ~2× **slower**. Corrected in `kernels/b200_tilert_mla_decode(53%)/prompt.md`.
+
+Other (sub-1%) kernels: RMSNorm\*/quant ≈ par with TileLang (§17); HeadProj 39.2µs @
+78% HBM is unreached by general GEMM/GEMV kernels (TileLang 58%/34% HBM). None beaten.
+
 ## How to read the variant columns
 
 Each TileRT kernel is `…<Name>ExecutorImpl<DefaultSchedule, kPipeStages=4, kSmemBytes,

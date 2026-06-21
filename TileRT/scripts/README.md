@@ -40,6 +40,13 @@ KDA effort pays off:
 | `b200_tilert_fused_moe.sh` | FusedMoe (MoE, FP4 experts) | 36.5% |
 | `b200_tilert_sparse_select_mla.sh` | SparseSelectMlaDsv32 (GPU0 DSA-indexer MLA) | 7.6% |
 
+All three were also checked against the best open-source kernels (flashinfer MLA,
+deep_gemm MoE) and **none is beaten** on a fair isolated-vs-isolated comparison — so all
+three keep a launcher (see *Open-source baseline comparison* in `../KERNEL_REGISTRY.md`).
+In particular, flashinfer MLA (25.5µs isolated) is **~2× slower** than TileRT's PureMla
+(11.68µs isolated); the "flashinfer beats TileRT" impression came from comparing it to
+TileRT's *in-graph* 35.2µs, which is not a like-for-like number.
+
 Every other kernel is individually < 1% of decode (see `../KERNEL_REGISTRY.md`);
 launch it directly with `launch_kda_kernel_task.sh` if needed.
 
