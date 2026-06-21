@@ -21,17 +21,23 @@ un-suffixed. The three > 1% folders also have one-click KDA launchers under
 
 ## Open-source baseline comparison (checked — none beat TileRT)
 
-For each high-cost kernel we checked whether an existing open-source kernel already
-beats TileRT. The comparison must be **isolated-vs-isolated**: the KDA reference is the
-**≥3× ncu isolated median** and a candidate is measured the same way. On that fair
-basis **no open-source impl beats TileRT**, so all three > 1% folders keep their KDA
-task + launcher.
+**Unified standard: compare ISOLATED single-kernel performance — never in-graph.** Every
+KDA target and every candidate is the **≥3× ncu isolated median** of one kernel launch.
+In-graph per-call numbers (§16) fold in CUDA-graph dependent waits and are NOT comparable
+to a standalone open-source microbench, so they are engine-level reference only, never the
+target. On the isolated basis **no open-source impl beats TileRT**, so all three > 1%
+folders keep their KDA task + launcher.
 
 | kernel | TileRT isolated (KDA target) | best open-source (isolated) | verdict |
 |---|---|---|---|
-| PureMlaDsv32 (`mla_decode`) | **11.68µs** (35.2µs in-graph) | flashinfer BatchMLAPagedAttention = 25.5µs | TileRT ~2× faster → optimize |
-| FusedMoe (`fused_moe`) | **22.4µs** (FP4, in-graph) | deep_gemm bf16 grouped = 157µs | TileRT ~7× faster → optimize |
-| SparseSelectMla (`sparse_select_mla`) | ~12µs (35.4µs in-graph) | flashinfer MLA = 25.5µs | TileRT ~2× faster → optimize |
+| PureMlaDsv32 (`mla_decode`) | **11.68µs** | flashinfer BatchMLAPagedAttention = 25.5µs | TileRT ~2× faster → optimize |
+| SparseSelectMla (`sparse_select_mla`) | **11.68µs** (same flash_sparse_mla kernel as PureMla, 16 vs 20 heads) | flashinfer MLA = 25.5µs | TileRT ~2× faster → optimize |
+| FusedMoe (`fused_moe`) | **n/a** — not standalone-launchable; floor = isolated constituents (expert_proj 8.22 + up_gate_silu 12.13µs) | deep_gemm bf16 grouped = 157µs | TileRT far faster → optimize |
+
+(in-graph per-call, engine reference only: PureMla 35.2µs, SparseSelectMla 35.4µs,
+FusedMoe 22.4µs.) FusedMoe is the one kernel without an isolated TileRT number — the real
+kernel needs the full 256-expert FP4 weight pack + chained router, so it can't be launched
+standalone; getting an isolated number needs a dedicated FP4-pack harness (deferred).
 
 **Caveat on the flashinfer "faster" claim:** §17 and the old `mla_decode` prompt
 compared flashinfer's *isolated* 25.5µs against TileRT's *in-graph* 35.2µs

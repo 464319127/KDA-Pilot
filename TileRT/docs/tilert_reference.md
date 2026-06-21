@@ -10,9 +10,13 @@ Method: `benchmark_method.md`. Correctness of each op (golden vs real kernel) in
 > the whole decode as one CUDA graph, so an op's *in-graph* per-call time (from the torch
 > profiler, §16) can differ — e.g. PureMlaDsv32 is **35.2 µs in-graph** (52.8% of decode)
 > but **~12 µs isolated** here (the isolated launch is just the attention compute over
-> kv_len=2048; the in-graph cost folds in dependent waits/overlap). The KDA target for an
-> *isolated* candidate kernel is the isolated median below; the engine-level budget is the
-> in-graph number. Both are recorded per task.
+> kv_len=2048; the in-graph cost folds in dependent waits/overlap).
+>
+> **Unified standard: kernels are compared ISOLATED single-launch, never in-graph.** The
+> KDA target for a candidate kernel is the isolated median below, and a candidate is
+> measured the same way. In-graph per-call numbers are engine-level reference only — an
+> in-graph TileRT number is not comparable to a standalone candidate/open-source
+> microbench (both pay the dependent-wait overhead in a real graph).
 
 | op | TileRT kernel | seq | median µs | disp% | HBM% |
 |---|---|---:|---:|---:|---:|
@@ -33,12 +37,13 @@ Method: `benchmark_method.md`. Correctness of each op (golden vs real kernel) in
 | rmsnorm_projq_wqi | RmsnormProjQWqiHMMA | 1 / 2 / 4 | 8.42 / 8.86 / 9.44 | ≤8.0 | ~18 |
 | rmsnorm_up_gate_silu | RMSNormUpGateSiLUDSv32 | 1 / 2 / 4 | 12.13 / 14.72 / 20.58 | ≤4.6 | 36 / 30 / 21 |
 
-## In-graph targets for ops not isolatable here
-| op | in-graph (profiler, §16) | note |
-|---|---|---|
-| FusedMoe | 22.4 µs (36.5% decode) | full 256-expert FP4 pack — not a standalone 1-call op; compute core covered by rmsnorm_up_gate_silu + rmsnorm_expert_proj |
-| SparseSelectMla / SparseIndex | 35.4 µs (7.6% decode) | DSA indexer (GPU0) |
-| comm (down/expert_down/unproj_o/eh_proj/padded allreduce, bcast/recv) | 8–11 µs | flag-based NVLink allreduce; needs 8-GPU peer setup |
+## Isolated standard — special cases
+| op | isolated target | in-graph (ref only) | note |
+|---|---|---|---|
+| **SparseSelectMla** (`sparse_select_mla`) | **≈ 11.68 µs** | 35.4 µs | SAME flash_sparse_mla kernel as PureMla (GPU0 self-MLA, 16 heads vs worker's 20 → slightly less work); not separately swept — use PureMla's isolated median |
+| FusedMoe (`fused_moe`) | **n/a** (floor = expert_proj 8.22 + up_gate_silu 12.13) | 22.4 µs (36.5% decode) | full 256-expert FP4 pack — not a standalone 1-call kernel; no isolated number until a dedicated FP4-pack harness exists |
+| SparseIndex (`sparse_index`) | (isolatable via oracle) | 35.4 µs | DSA index scoring (GPU0, tcgen05) — distinct op from SparseSelectMla |
+| comm (down/expert_down/unproj_o/eh_proj/padded allreduce, bcast/recv) | not isolatable | 8–11 µs | flag-based NVLink allreduce; needs 8-GPU peer setup |
 
 ## Validation
 - `head_proj` s1 = 39.42 µs / 77.6% HBM here vs the prior single-run 39.2 µs / 78.4% —
