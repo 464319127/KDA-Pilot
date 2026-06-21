@@ -1,6 +1,6 @@
 # B200 LLM Kernel Interface Campaign
 
-Last updated: 2026-06-21T07:34:58Z.
+Last updated: 2026-06-21T08:22:49Z.
 
 Source baseline:
 
@@ -24,7 +24,7 @@ Source baseline:
 | Kimi-K2.6 | `kimi_k2_6` | pending GPU launch; HF metadata accessible | Live docs page `docs/autoregressive/Moonshotai/Kimi-K2.6.md`; the live page lists H200/B300/GB300/AMD configs but no explicit B200 option. | `moonshotai/Kimi-K2.6`; Blackwell NVFP4 variant `nvidia/Kimi-K2.6-NVFP4` also accessible | pending |
 | MiniMax-M3 | `minimax_m3` | pending GPU launch; HF metadata accessible | Live docs page `docs/autoregressive/MiniMax/MiniMax-M3.md`; absent from cloned cookbook `7b5bd9c`. | `MiniMaxAI/MiniMax-M3` | pending |
 | Nemotron3-Ultra | `nemotron3_ultra` | pending GPU launch; HF metadata accessible | Live docs page `docs/autoregressive/NVIDIA/Nemotron3-Ultra.md`; absent from cloned cookbook `7b5bd9c`. | `nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-NVFP4` | pending |
-| Ernie4.5 | `ernie_45` | pending | `docs/autoregressive/Ernie/Ernie4.5.md` | `baidu/ERNIE-4.5-21B-A3B-PT` | pending |
+| Ernie4.5 | `ernie_45` | completed; local validation passed; weight cache cleaned | `docs/autoregressive/Ernie/Ernie4.5.md`; live page defaults to AMD but the 21B-A3B command is plain TP1 and is runnable on the current B200 free GPU subset. | `baidu/ERNIE-4.5-21B-A3B-PT` | pending |
 | Step-3.7-Flash | `step_37_flash` | pending launch validation | Not present in cloned cookbook `7b5bd9c`; HF model exists. | `stepfun-ai/Step-3.7-Flash` | pending |
 | Ring-2.6-1T | `ring_26_1t` | pending launch validation | Not present in cloned cookbook `7b5bd9c`; HF model exists and is the successor of Ring-2.5-1T cookbook page. | `inclusionAI/Ring-2.6-1T` | pending |
 | Intern-S2-Preview | `intern_s2_preview` | pending launch validation | Not present in cloned cookbook `7b5bd9c`; HF model and deployment guide exist. | `internlm/Intern-S2-Preview-FP8` | pending |
@@ -57,3 +57,4 @@ Source baseline:
 - Kimi-K2.6 live cookbook page is present and uses `moonshotai/Kimi-K2.6` for the base checkpoint; it also documents Blackwell NVFP4 as `nvidia/Kimi-K2.6-NVFP4`. The page lists H200/B300/GB300/AMD configs but no explicit B200 option. HF metadata access succeeded unauthenticated for both model paths. No GPU launch was attempted while PID 267586 holds all 8 GPUs.
 - MiniMax-M3 live cookbook page is present and HF metadata access succeeded unauthenticated for `MiniMaxAI/MiniMax-M3`. No GPU launch was attempted while PID 267586 holds all 8 GPUs.
 - Nemotron3-Ultra live cookbook page is present and includes verified B200 configs: BF16 TP8 and NVFP4 TP4/TP8. HF metadata access succeeded unauthenticated for both `nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-NVFP4` and `nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-BF16`. No GPU launch was attempted while PID 267586 holds all 8 GPUs.
+- Ernie4.5 live cookbook page exposes `baidu/ERNIE-4.5-21B-A3B-PT` with TP1 and `baidu/ERNIE-4.5-300B-A47B-PT` with TP8/DP/EP. HF metadata access succeeded unauthenticated for both model paths. The first 21B-A3B TP1 capture attempt on GPUA83E GPU1 was aborted and cleaned after the resident `engine_server.py` reclaimed memory on all GPUs. The successful retry used the separate GPUC5A6 assignment, `CUDA_VISIBLE_DEVICES=0`, `PORT=31000`, `TP_SIZE=1`, `MEM_FRACTION_STATIC=0.75`, and `--disable-cuda-graph --disable-piecewise-cuda-graph` for compatibility with that older SGLang checkout. It completed all six workload labels and generated 11 kernel interface tasks from 22,658 runtime Python-interface records. Local validation found no zero-call tasks, no empty shape briefs, and no out-of-matrix workload labels. The 41G `baidu/ERNIE-4.5-21B-A3B-PT` HF cache and lock were removed after task generation.
