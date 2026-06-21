@@ -1,6 +1,6 @@
 # B200 LLM Kernel Interface Campaign
 
-Last updated: 2026-06-21T12:59:55Z.
+Last updated: 2026-06-21T13:03:04Z.
 
 Source baseline:
 
@@ -30,7 +30,7 @@ Source baseline:
 | Intern-S2-Preview | `intern_s2_preview` | completed; local validation passed; weight cache cleaned | Not present in cloned cookbook `7b5bd9c`; HF model and deployment guide exist. | `internlm/Intern-S2-Preview-FP8` | #64 |
 | Ministral-3 | `ministral_3` | completed; local validation passed; weight cache cleaned | `docs/autoregressive/Mistral/Ministral-3.md` | `mistralai/Ministral-3-14B-Instruct-2512` | #62 |
 | MiMo-V2.5 | `mimo_v25` | completed; local validation passed; weight cache cleaned | Live docs page `docs/autoregressive/Xiaomi/MiMo-V2.5.md`; base B200 generator emits TP4 with MiMo parsers. | `XiaomiMiMo/MiMo-V2.5` | #65 |
-| Hunyuan3-Preview | `hunyuan3_preview` | completed; local validation passed; weight cache cleaned | Live cookbook page `docs/autoregressive/Tencent/Hunyuan3-Preview.md`; Triton attention fallback used on B200 because TRT-LLM MHA has FlashInfer ABI mismatch in this environment. | `tencent/Hy3-preview` | pending PR |
+| Hunyuan3-Preview | `hunyuan3_preview` | completed; local validation passed; weight cache cleaned | Live cookbook page `docs/autoregressive/Tencent/Hunyuan3-Preview.md`; Triton attention fallback used on B200 because TRT-LLM MHA has FlashInfer ABI mismatch in this environment. | `tencent/Hy3-preview` | #66 |
 | Chroma1.0 | `chroma_10` | special deployment | `docs/autoregressive/FlashLabs/Chroma1.0.md`; hybrid Chroma-SGLang API server, not direct `sglang serve`. | `FlashLabs/Chroma-4B` plus Chroma-SGLang code | pending |
 
 ## Completed PRs
@@ -45,7 +45,7 @@ Source baseline:
 - GPT-OSS B200 kernel interface tasks: PR #63, merged.
 - Intern-S2-Preview B200 kernel interface tasks: PR #64, merged.
 - MiMo-V2.5 B200 kernel interface tasks: PR #65, merged.
-- Hunyuan3-Preview B200 kernel interface tasks: pending PR.
+- Hunyuan3-Preview B200 kernel interface tasks: PR #66, merged.
 
 ## Current Notes
 
