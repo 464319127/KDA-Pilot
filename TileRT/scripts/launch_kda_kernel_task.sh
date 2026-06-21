@@ -295,9 +295,13 @@ source prompt says otherwise:
   local scaffold, correctness, and implementation checks are committed, proceed
   to the remote GPU phase autonomously.
 - Use the matching remote host (${REMOTE_HOST_HINT}).
-- Before GPU work, inspect remote GPU state and pick a ${TARGET_GPU_LABEL} with
-  no active compute and no meaningful memory use. Export it as \`REMOTE_GPU_ID\`
-  and reuse it for baseline, candidate, benchmark, profiler, and NCU commands.
+- **This task is pinned to GPU ${KDA_REMOTE_GPU:-auto}.** When a numeric id is set,
+  prefix EVERY benchmark/profiler/ncu/correctness command with
+  \`CUDA_VISIBLE_DEVICES=${KDA_REMOTE_GPU:-0}\` and use ONLY that GPU — do NOT pick
+  another (other kernel tasks run concurrently, each pinned to its own GPU; sharing
+  a card corrupts measurements). If it says 'auto', inspect remote GPU state and
+  pick an idle ${TARGET_GPU_LABEL}. Export the id as \`REMOTE_GPU_ID\` and reuse it
+  for baseline, candidate, benchmark, profiler, and NCU commands.
 - Treat minimal, reversible, task-owned setup as approved: remote workspaces,
   checkouts, in-workspace builds, local editable installs, profiler traces,
   benchmark/NCU artifacts.
