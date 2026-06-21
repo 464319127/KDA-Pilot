@@ -246,11 +246,19 @@ EOF
   warpgroup HMMA, mbarrier handshake), no-GMEM intermediates, native fp8/fp4
   warpgroup MMA, DSA top-2048 sparse KV gather, flag-based NVLink allreduce fused
   into the op.
-- Target GPU = ${TARGET_GPU_LABEL} (sm_100). Read
-  \`${WORKTREE_ROOT}/external/KernelWiki/SKILL.md\` and
-  \`${WORKTREE_ROOT}/external/ncu-report-skill/SKILL.md\` before implementation;
-  use KernelWiki for upstream design ideas and ncu-report-skill for
-  evidence-backed diagnosis when profiling would change the next edit.
+- Target GPU = ${TARGET_GPU_LABEL} (sm_100). Read these external skills before
+  implementation:
+  - \`${WORKTREE_ROOT}/external/KernelWiki/SKILL.md\` — upstream design ideas.
+  - \`${WORKTREE_ROOT}/external/ncu-report-skill/SKILL.md\` — evidence-backed ncu
+    diagnosis when profiling would change the next edit.
+  - \`${WORKTREE_ROOT}/external/warp-specialization-report-skill/SKILL.md\` —
+    **directly applicable here**: TileRT kernels are warp-specialized (persistent
+    grid, Prefetcher/Consumer warps, mbarrier double-buffer). Use it to stamp
+    \`clock()\` at the kernel's sync points and reconstruct a per-warp **pipeline
+    timeline** — it exposes stalls, cross-warp data dependencies, and
+    compute/memory (HMMA vs TMA) overlap that standard profilers miss. This is the
+    tool for tuning the L1 tile-overlap lever and for telling apart real compute
+    cost from dependent-wait/stall time.
 - Do not use macOS \`/bin/bash\` or any Bash 3.x runtime for local Humanize,
   hook, launcher, or helper scripts. The launcher exports \`KDA_BASH_BIN\` and
   prepends its directory to \`PATH\`; preserve that environment.
@@ -261,6 +269,16 @@ EOF
 - Check GPU state before and after every benchmark/profile run; treat numbers as
   valid only when the selected card is idle. Never fabricate benchmark, NCU,
   correctness, topology, or GPU-id evidence.
+- Recover K/R/W from the source prompt before implementation:
+  - K: kernel semantics + callsite contract
+  - R: correctness oracle (golden_forward / \`../../harness/tilert_oracle.py\`) + baseline path
+  - W: the (kSeqLen, KeComputeType) workload set + the isolated ≥3× ncu methodology
+- In every RLCR iteration, refresh context from the source prompt, KERNEL_REGISTRY
+  + design levers, current benchmark/profile evidence, KernelWiki, ncu-report-skill,
+  and warp-specialization-report-skill before choosing the next edit, profile,
+  benchmark, or no-go.
+- Do not implement kernels, run long benchmarks, or collect NCU evidence before
+  RLCR is active.
 - Keep candidate code under \`solution/\`, harnesses under \`bench/\`, and
   provenance/results under \`docs/\`. Keep raw NCU/Nsight/build/scratch artifacts
   local for evidence but exclude them from the final PR.
@@ -283,22 +301,39 @@ source prompt says otherwise:
 - Treat minimal, reversible, task-owned setup as approved: remote workspaces,
   checkouts, in-workspace builds, local editable installs, profiler traces,
   benchmark/NCU artifacts.
-- A no-go needs correctness, baseline numbers, candidate attempts, benchmark or
-  NCU evidence, and a named active bound or blocker.
+- If no idle ${TARGET_GPU_LABEL} is available, wait or retry briefly. Ask before
+  changing the benchmark environment or running measurements on a busy GPU.
+- If the dependency stack cannot run the baseline or load the real \`tilert\` op,
+  create a task-owned remote workspace and pin/rebuild deps (tilert wheel + sglang
+  container) there. Ask only if the rebuild repeatedly fails or a destructive
+  change outside the task workspace would be required.
+- Do not finalize an evidence-backed no-go just because the first candidate did
+  not win. A no-go needs correctness, baseline numbers, candidate attempts,
+  benchmark or NCU evidence, and a named active bound or blocker.
 
 ## Expected Plan Shape
 
 - Recover the kernel semantics + callsite contract, the baseline path, and the
   shape/CT set from \`prompt.md\` + \`../../KERNEL_REGISTRY.md\`.
+- Define matching baseline and candidate entry points using the same ABI,
+  argument order, stream behavior, output allocation, and build path
+  (\`bench/adapter.py\`).
 - Fill \`bench/correctness.py\` against \`baseline/\` before optimization;
   freeze \`bench/workloads.json\` and the immutable TileRT reference latency.
 - Rank candidate directions by expected benefit/risk using the design levers.
-- Implement bounded optimization attempts under RLCR; refresh KernelWiki +
-  ncu-report-skill context each iteration or note why no new query is needed.
+- Implement bounded optimization attempts under RLCR; refresh KernelWiki,
+  ncu-report-skill, and warp-specialization-report-skill context each iteration or
+  note why no new query is needed.
+- Use NCU/profile evidence (ncu-report-skill) for non-obvious bottlenecks, and the
+  warp-specialization-report-skill per-warp pipeline timeline to diagnose
+  Prefetcher/Consumer stalls and compute/memory overlap before changing the tiling
+  or pipeline structure.
 - Include a remote phase recording host/GPU id/model, before/after idleness,
   exact commands, and benchmark/NCU artifacts.
 - Update \`docs/results.md\` with per-shape baseline-vs-candidate numbers before
-  completion; exclude raw profiler dumps from the PR.
+  completion. Before committing or opening a PR, inspect the staged diff and
+  exclude raw NCU reports, Nsight traces, profiler directories, build outputs,
+  scratch logs, and failed-experiment dumps.
 EOF
     } > "$DRAFT_FILE"
   fi

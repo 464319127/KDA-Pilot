@@ -6,3 +6,7 @@
 	path = external/ncu-report-skill
 	url = git@github.com:DongyunZou/ncu-report-skill.git
 	branch = main
+[submodule "external/warp-specialization-report-skill"]
+	path = external/warp-specialization-report-skill
+	url = git@github.com:DongyunZou/warp-specialization-report-skill.git
+	branch = main
