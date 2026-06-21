@@ -1,0 +1,26 @@
+- 2026-06-21 11:11:56 UTC: capture_label - server_start
+- 2026-06-21 11:11:56 UTC: server_start - CUDA_VISIBLE_DEVICES=0,1,2,3; PYTHONPATH=/data/bbuf/repos/sglang-main/python:; command=python3 -m sglang.launch_server --model-path XiaomiMiMo/MiMo-V2.5 --host 0.0.0.0 --port 31006 --tp-size 4 --mem-fraction-static 0.45 --cuda-graph-backend-decode disabled --cuda-graph-backend-prefill disabled --chunked-prefill-size 16384 --max-running-requests 80 --trust-remote-code --reasoning-parser mimo --tool-call-parser mimo --attention-backend triton --mm-attention-backend fa4 --swa-full-tokens-ratio 0.1 --enable-memory-saver --disable-flashinfer-autotune --enforce-disable-flashinfer-allreduce-fusion
+- 2026-06-21 11:14:06 UTC: server_ready - pid=159353, port=31006
+- 2026-06-21 11:14:07 UTC: capture_label - random_low
+- 2026-06-21 11:14:07 UTC: benchmark - random_low: dataset=random, prompts=1, concurrency=1, output_len=8, warmup=0
+- 2026-06-21 11:14:20 UTC: benchmark_done - random_low
+- 2026-06-21 11:14:21 UTC: capture_label - random_mid
+- 2026-06-21 11:14:21 UTC: benchmark - random_mid: dataset=random, prompts=32, concurrency=32, output_len=8, warmup=0
+- 2026-06-21 11:14:41 UTC: benchmark_done - random_mid
+- 2026-06-21 11:14:41 UTC: capture_label - random_high
+- 2026-06-21 11:14:41 UTC: benchmark - random_high: dataset=random, prompts=80, concurrency=80, output_len=8, warmup=0
+- 2026-06-21 11:15:04 UTC: benchmark_done - random_high
+- 2026-06-21 11:15:04 UTC: capture_label - sharegpt_low
+- 2026-06-21 11:15:04 UTC: benchmark - sharegpt_low: dataset=sharegpt, prompts=1, concurrency=1, output_len=8, warmup=0
+- 2026-06-21 11:15:23 UTC: benchmark_done - sharegpt_low
+- 2026-06-21 11:15:23 UTC: capture_label - sharegpt_mid
+- 2026-06-21 11:15:23 UTC: benchmark - sharegpt_mid: dataset=sharegpt, prompts=32, concurrency=32, output_len=8, warmup=0
+- 2026-06-21 11:15:45 UTC: benchmark_done - sharegpt_mid
+- 2026-06-21 11:15:45 UTC: capture_label - sharegpt_high
+- 2026-06-21 11:15:45 UTC: benchmark - sharegpt_high: dataset=sharegpt, prompts=80, concurrency=80, output_len=8, warmup=0
+- 2026-06-21 11:16:12 UTC: benchmark_done - sharegpt_high
+- 2026-06-21 11:16:12 UTC: capture_label - shutdown
+- 2026-06-21 11:16:12 UTC: capture_matrix_done - six workload kernel-interface capture complete
+- 2026-06-21 11:16:35 UTC: weights_cleanup_skipped - clean_weights=0; weight_cache=/root/.cache/huggingface/hub/models--XiaomiMiMo--MiMo-V2.5; reason=after completed XiaomiMiMo/MiMo-V2.5 kernel-interface capture run
+- 2026-06-21 11:16:35 UTC: completed - XiaomiMiMo/MiMo-V2.5 kernel-interface tasks generated
+- 2026-06-21 11:37:45 UTC: manual_cleanup_confirmed - remote HF cache and lock for XiaomiMiMo/MiMo-V2.5 are absent after manual cleanup
