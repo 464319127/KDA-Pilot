@@ -1,0 +1,8 @@
+{
+  "detail": "MiniMaxAI/MiniMax-M3-MXFP8 kernel-interface tasks generated; HF cache manually removed after artifact pull",
+  "model": "MiniMaxAI/MiniMax-M3-MXFP8",
+  "model_slug": "minimax_m3",
+  "run_dir": "/data/bbuf/kda-pilot/llm/minimax_m3/b200",
+  "stage": "completed",
+  "updated_at": "2026-06-21 16:38:26 UTC"
+}
