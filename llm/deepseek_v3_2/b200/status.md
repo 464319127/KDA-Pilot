@@ -1,0 +1,26 @@
+- 2026-06-21 06:31:53 UTC: capture_label - server_start
+- 2026-06-21 06:31:53 UTC: server_start - CUDA_VISIBLE_DEVICES=4,5,6,7; PYTHONPATH=/data/bbuf/repos/sglang-main/python:; command=python3 -m sglang.launch_server --model-path nvidia/DeepSeek-V3.2-NVFP4 --host 0.0.0.0 --port 30000 --tp-size 4 --mem-fraction-static 0.8 --cuda-graph-backend-decode disabled --cuda-graph-backend-prefill disabled --chunked-prefill-size 32768 --max-running-requests 80 --quantization modelopt_fp4 --moe-runner-backend flashinfer_cutlass --dsa-prefill-backend flashmla_kv --dsa-decode-backend flashmla_kv --tool-call-parser deepseekv32 --reasoning-parser deepseek-v3 --enforce-disable-flashinfer-allreduce-fusion --disable-flashinfer-autotune
+- 2026-06-21 06:34:04 UTC: server_ready - pid=58842, port=30000
+- 2026-06-21 06:34:04 UTC: capture_label - random_low
+- 2026-06-21 06:34:04 UTC: benchmark - random_low: dataset=random, prompts=1, concurrency=1, output_len=8, warmup=0
+- 2026-06-21 06:34:22 UTC: benchmark_done - random_low
+- 2026-06-21 06:34:22 UTC: capture_label - random_mid
+- 2026-06-21 06:34:22 UTC: benchmark - random_mid: dataset=random, prompts=32, concurrency=32, output_len=8, warmup=0
+- 2026-06-21 06:35:05 UTC: benchmark_done - random_mid
+- 2026-06-21 06:35:05 UTC: capture_label - random_high
+- 2026-06-21 06:35:05 UTC: benchmark - random_high: dataset=random, prompts=80, concurrency=80, output_len=8, warmup=0
+- 2026-06-21 06:35:40 UTC: benchmark_done - random_high
+- 2026-06-21 06:35:40 UTC: capture_label - sharegpt_low
+- 2026-06-21 06:35:40 UTC: benchmark - sharegpt_low: dataset=sharegpt, prompts=1, concurrency=1, output_len=8, warmup=0
+- 2026-06-21 06:36:10 UTC: benchmark_done - sharegpt_low
+- 2026-06-21 06:36:11 UTC: capture_label - sharegpt_mid
+- 2026-06-21 06:36:11 UTC: benchmark - sharegpt_mid: dataset=sharegpt, prompts=32, concurrency=32, output_len=8, warmup=0
+- 2026-06-21 06:36:44 UTC: benchmark_done - sharegpt_mid
+- 2026-06-21 06:36:44 UTC: capture_label - sharegpt_high
+- 2026-06-21 06:36:44 UTC: benchmark - sharegpt_high: dataset=sharegpt, prompts=80, concurrency=80, output_len=8, warmup=0
+- 2026-06-21 06:37:28 UTC: benchmark_done - sharegpt_high
+- 2026-06-21 06:37:28 UTC: capture_label - shutdown
+- 2026-06-21 06:37:28 UTC: capture_matrix_done - six workload kernel-interface capture complete
+- 2026-06-21 06:38:01 UTC: weights_cleanup_skipped - clean_weights=0; weight_cache=/root/.cache/huggingface/hub/models--nvidia--DeepSeek-V3.2-NVFP4; reason=after completed nvidia/DeepSeek-V3.2-NVFP4 kernel-interface capture run
+- 2026-06-21 06:38:01 UTC: completed - nvidia/DeepSeek-V3.2-NVFP4 kernel-interface tasks generated
+- 2026-06-21 06:39:58 UTC: manual_weights_cleanup - /root/.cache/huggingface/hub/models--nvidia--DeepSeek-V3.2-NVFP4 removed after artifact pull
