@@ -1,6 +1,6 @@
 # B200 LLM Kernel Interface Campaign
 
-Last updated: 2026-06-21T15:31:19Z.
+Last updated: 2026-06-21T15:36:31Z.
 
 Source baseline:
 
@@ -20,7 +20,7 @@ Source baseline:
 | Llama4 | `llama4` | incomplete; HF gated files require authenticated access; partial cache cleaned | `docs/autoregressive/Llama/Llama4.md`; page covers Scout and Maverick variants. Cookbook B200 launch uses TP8, but GPUA83E GPUs 0-3 are currently stuck at 100% util / 0 MiB with no visible compute process and cannot be reset. | `meta-llama/Llama-4-Scout-17B-16E-Instruct` attempted as 4-GPU Scout fallback | pending |
 | Gemma4 | `gemma4` | completed; local validation passed; weight cache cleaned | `docs/autoregressive/Google/Gemma4.md`; page covers E2B/E4B/31B/26B-A4B variants. The B200 command generator uses TP1/mem 0.9 for 26B-A4B; successful run used lower mem fraction for MoE workspace headroom. | `google/gemma-4-26B-A4B-it` | #59 |
 | GPT-OSS | `gpt_oss` | completed; local validation passed; weight cache cleaned | `docs/autoregressive/OpenAI/GPT-OSS.md` | `openai/gpt-oss-120b` | #63 |
-| Kimi-K2.7-Code | `kimi_k2_7_code` | completed; local validation passed; weight cache cleaned | Live docs page `docs/autoregressive/Moonshotai/Kimi-K2.7-Code.md`; absent from cloned cookbook `7b5bd9c`. The live page lists H200/B300/GB300/AMD configs but no explicit B200 option; successful B200 capture used the documented H200/B300 TP8 native INT4 command shape with Triton attention fallback. | `moonshotai/Kimi-K2.7-Code` | pending |
+| Kimi-K2.7-Code | `kimi_k2_7_code` | completed; local validation passed; weight cache cleaned | Live docs page `docs/autoregressive/Moonshotai/Kimi-K2.7-Code.md`; absent from cloned cookbook `7b5bd9c`. The live page lists H200/B300/GB300/AMD configs but no explicit B200 option; successful B200 capture used the documented H200/B300 TP8 native INT4 command shape with Triton attention fallback. | `moonshotai/Kimi-K2.7-Code` | #69 |
 | Kimi-K2.6 | `kimi_k2_6` | pending GPU launch; HF metadata accessible | Live docs page `docs/autoregressive/Moonshotai/Kimi-K2.6.md`; the live page lists H200/B300/GB300/AMD configs but no explicit B200 option. | `moonshotai/Kimi-K2.6`; Blackwell NVFP4 variant `nvidia/Kimi-K2.6-NVFP4` also accessible | pending |
 | MiniMax-M3 | `minimax_m3` | pending GPU launch; HF metadata accessible | Live docs page `docs/autoregressive/MiniMax/MiniMax-M3.md`; absent from cloned cookbook `7b5bd9c`. | `MiniMaxAI/MiniMax-M3` | pending |
 | Nemotron3-Ultra | `nemotron3_ultra` | failed on current B200 env; partial weight cache cleaned | Live docs page `docs/autoregressive/NVIDIA/Nemotron3-Ultra.md`; absent from cloned cookbook `7b5bd9c`. | `nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-NVFP4` | pending |
@@ -47,6 +47,7 @@ Source baseline:
 - MiMo-V2.5 B200 kernel interface tasks: PR #65, merged.
 - Hunyuan3-Preview B200 kernel interface tasks: PR #66, merged.
 - Ring-2.6-1T B200 kernel interface tasks: PR #67, merged.
+- Kimi-K2.7-Code B200 kernel interface tasks: PR #69.
 
 ## Current Notes
 
