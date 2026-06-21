@@ -1,0 +1,4031 @@
+{
+  "capture_files": [
+    "/data/bbuf/kda-pilot-llm-interface/llm/ministral_3/b200/capture/kernel_api_19094.log"
+  ],
+  "category": "attention",
+  "evidence_policy": "runtime capture at SGLang kernel Python interface; args/kwargs are direct call parameters, not profiler CPU-op context",
+  "function": "srt.layers.attention.base_attn_backend.AttentionBackend.forward",
+  "hardware": "b200",
+  "labels": [
+    "random_low",
+    "random_mid",
+    "random_high",
+    "sharegpt_low",
+    "sharegpt_mid",
+    "sharegpt_high"
+  ],
+  "model": "mistralai/Ministral-3-14B-Instruct-2512",
+  "model_slug": "ministral_3",
+  "shape_briefs": [
+    "arg[0]: shape=[1, 4096], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[0]: shape=[12, 4096], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[0]: shape=[14685, 4096], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[0]: shape=[15, 4096], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[0]: shape=[1542, 4096], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[0]: shape=[15525, 4096], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[0]: shape=[16, 4096], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[0]: shape=[18, 4096], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[0]: shape=[19, 4096], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[0]: shape=[24, 4096], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[0]: shape=[27, 4096], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[0]: shape=[32, 4096], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[0]: shape=[34, 4096], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[0]: shape=[38, 4096], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[0]: shape=[44, 4096], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[0]: shape=[53, 4096], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[0]: shape=[5632, 4096], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[0]: shape=[61, 4096], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[0]: shape=[7, 4096], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[0]: shape=[70, 4096], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[0]: shape=[72, 4096], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[0]: shape=[80, 4096], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[0]: shape=[8938, 4096], dtype=bfloat16, device=cuda:0, contiguous=True",
+    "arg[0]: shape=[9106, 4096], dtype=bfloat16, device=cuda:0, contiguous=True"
+  ],
+  "task_id": "srt_layers_attention_base_attn_backend_attention_backend_forward",
+  "total_call_count": 2287,
+  "variant_count": 58,
+  "variants": [
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(1, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(1, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=Tensor(\n      shape=(1, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=1, input_ids=tensor([1032], device='cuda:0'), req_pool_indices=tensor([3], device='cuda:0'), seq_lens=tensor([39], device='cuda:0', dtype=\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=1, input_ids=tensor([1032], device='cuda:0'), req_pool_indices=tensor([3], device='cuda:0'), seq_lens=tensor([39], device='cuda:0', dtype=",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_low",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(1, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(1, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=Tensor(\n      shape=(1, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=1, input_ids=tensor([1049], device='cuda:0'), req_pool_indices=tensor([3], device='cuda:0'), seq_lens=tensor([40], device='cuda:0', dtype=\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=1, input_ids=tensor([1049], device='cuda:0'), req_pool_indices=tensor([3], device='cuda:0'), seq_lens=tensor([40], device='cuda:0', dtype=",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_low",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(1, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(1, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=Tensor(\n      shape=(1, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=1, input_ids=tensor([1052], device='cuda:0'), req_pool_indices=tensor([3], device='cuda:0'), seq_lens=tensor([42], device='cuda:0', dtype=\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=1, input_ids=tensor([1052], device='cuda:0'), req_pool_indices=tensor([3], device='cuda:0'), seq_lens=tensor([42], device='cuda:0', dtype=",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_low",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(1, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(1, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=Tensor(\n      shape=(1, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=1, input_ids=tensor([1057], device='cuda:0'), req_pool_indices=tensor([3], device='cuda:0'), seq_lens=tensor([41], device='cuda:0', dtype=\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=1, input_ids=tensor([1057], device='cuda:0'), req_pool_indices=tensor([3], device='cuda:0'), seq_lens=tensor([41], device='cuda:0', dtype=",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_low",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(1, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(1, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=Tensor(\n      shape=(1, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=1, input_ids=tensor([1110], device='cuda:0'), req_pool_indices=tensor([2], device='cuda:0'), seq_lens=tensor([2], device='cuda:0', dtype=t\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=1, input_ids=tensor([1110], device='cuda:0'), req_pool_indices=tensor([2], device='cuda:0'), seq_lens=tensor([2], device='cuda:0', dtype=t",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_low",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(38, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(38, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[2]=Tensor(\n      shape=(38, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.EXTEND: 1>, batch_size=1, input_ids=tensor([18746,  1261,  1032,  1049,  1057,  1052,  1048,  1115,  6816,  6947,\n         2314,  1278,  5132, 52165,  1307,  314\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.EXTEND: 1>, batch_size=1, input_ids=tensor([18746,  1261,  1032,  1049,  1057,  1052,  1048,  1115,  6816,  6947,",
+            "2314,  1278,  5132, 52165,  1307,  314",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                38,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                38,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                38,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_low",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(1, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(1, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=Tensor(\n      shape=(1, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.EXTEND: 1>, batch_size=1, input_ids=tensor([0], device='cuda:0'), req_pool_indices=tensor([2], device='cuda:0'), seq_lens=tensor([1], device='cuda:0'), out_cache\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.EXTEND: 1>, batch_size=1, input_ids=tensor([0], device='cuda:0'), req_pool_indices=tensor([2], device='cuda:0'), seq_lens=tensor([1], device='cuda:0'), out_cache",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 7,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_low",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(12, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(12, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[2]=Tensor(\n      shape=(12, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=12, input_ids=tensor([ 6816, 41727,  1294,  1261,  1605,  2143, 14175,  8385, 70310, 15153,\n         1061,  1307], device='cuda:0'), req_p\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=12, input_ids=tensor([ 6816, 41727,  1294,  1261,  1605,  2143, 14175,  8385, 70310, 15153,",
+            "1061,  1307], device='cuda:0'), req_p",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                12,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                12,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                12,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(15, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(15, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[2]=Tensor(\n      shape=(15, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=15, input_ids=tensor([ 1115,  2000, 19351, 16143,  3120, 19322,  1454,  5965, 73211, 38155,\n         1454, 13140, 29312,  1265,  2782], de\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=15, input_ids=tensor([ 1115,  2000, 19351, 16143,  3120, 19322,  1454,  5965, 73211, 38155,",
+            "1454, 13140, 29312,  1265,  2782], de",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                15,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                15,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                15,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(1542, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(1542, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[2]=Tensor(\n      shape=(1542, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.EXTEND: 1>, batch_size=3, input_ids=tensor([  2968, 120187,   1395,  ...,   2782,   1307,  22963], device='cuda:0'), req_pool_indices=tensor([33, 34, 35], device\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.EXTEND: 1>, batch_size=3, input_ids=tensor([  2968, 120187,   1395,  ...,   2782,   1307,  22963], device='cuda:0'), req_pool_indices=tensor([33, 34, 35], device",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                1542,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                1542,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                1542,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(15525, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(15525, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[2]=Tensor(\n      shape=(15525, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.EXTEND: 1>, batch_size=28, input_ids=tensor([19429,  1653,  3306,  ...,  2634,  1975, 29896], device='cuda:0'), req_pool_indices=tensor([ 5,  6,  7,  8,  9, 10,\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.EXTEND: 1>, batch_size=28, input_ids=tensor([19429,  1653,  3306,  ...,  2634,  1975, 29896], device='cuda:0'), req_pool_indices=tensor([ 5,  6,  7,  8,  9, 10,",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                15525,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                15525,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                15525,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(16, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(16, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[2]=Tensor(\n      shape=(16, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=16, input_ids=tensor([ 1048,  1307,  1261,  1046, 27629,  9605, 26612,  1278,  3760,  1321,\n         1102,  7389,  1934,  7458,  3605,  69\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=16, input_ids=tensor([ 1048,  1307,  1261,  1046, 27629,  9605, 26612,  1278,  3760,  1321,",
+            "1102,  7389,  1934,  7458,  3605,  69",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                16,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                16,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                16,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(18, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(18, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[2]=Tensor(\n      shape=(18, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=18, input_ids=tensor([ 1052,  6302,  1639, 12743,  1034,  4015,  1505,  5475,  3310, 16773,\n         1051, 11658,  1431,  2165, 13683,  10\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=18, input_ids=tensor([ 1052,  6302,  1639, 12743,  1034,  4015,  1505,  5475,  3310, 16773,",
+            "1051, 11658,  1431,  2165, 13683,  10",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                18,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                18,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                18,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(19, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(19, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[2]=Tensor(\n      shape=(19, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=19, input_ids=tensor([ 1057, 88696,  7418, 62720, 51220, 12856, 17159,  7223, 11108,  9150,\n         1106, 17866,  1049,  1044,  2214, 134\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=19, input_ids=tensor([ 1057, 88696,  7418, 62720, 51220, 12856, 17159,  7223, 11108,  9150,",
+            "1106, 17866,  1049,  1044,  2214, 134",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                19,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                19,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                19,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(27, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(27, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[2]=Tensor(\n      shape=(27, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=27, input_ids=tensor([  1032,  54221,  50481,   1584,  68392,  54406,   1278,   2505,   1034,\n        127689,   9730,   1061,  46506,   25\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=27, input_ids=tensor([  1032,  54221,  50481,   1584,  68392,  54406,   1278,   2505,   1034,",
+            "127689,   9730,   1061,  46506,   25",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                27,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                27,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                27,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(27, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(27, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[2]=Tensor(\n      shape=(27, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=27, input_ids=tensor([ 1049,  2564,  1321,  2095,  1636, 21953,  1429, 16871,  1307,  1042,\n         2034,  1730, 11906, 17898,  1053,  27\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=27, input_ids=tensor([ 1049,  2564,  1321,  2095,  1636, 21953,  1429, 16871,  1307,  1042,",
+            "2034,  1730, 11906, 17898,  1053,  27",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                27,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                27,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                27,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(38, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(38, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[2]=Tensor(\n      shape=(38, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.EXTEND: 1>, batch_size=1, input_ids=tensor([18746,  1261,  1032,  1049,  1057,  1052,  1048,  1115,  6816,  6947,\n         2314,  1278,  5132, 52165,  1307,  314\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.EXTEND: 1>, batch_size=1, input_ids=tensor([18746,  1261,  1032,  1049,  1057,  1052,  1048,  1115,  6816,  6947,",
+            "2314,  1278,  5132, 52165,  1307,  314",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                38,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                38,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                38,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(7, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(7, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[2]=Tensor(\n      shape=(7, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=7, input_ids=tensor([ 6947, 51714,  1799, 28061,  1044,  1485,  1049], device='cuda:0'), req_pool_indices=tensor([ 4,  5,  8, 15, 16, 28,\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=7, input_ids=tensor([ 6947, 51714,  1799, 28061,  1044,  1485,  1049], device='cuda:0'), req_pool_indices=tensor([ 4,  5,  8, 15, 16, 28,",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                7,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                7,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                7,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_mid",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(14685, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(14685, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[2]=Tensor(\n      shape=(14685, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.EXTEND: 1>, batch_size=60, input_ids=tensor([ 1125, 17405,  3455,  ...,  1454,  2317, 93861], device='cuda:0'), req_pool_indices=tensor([37, 38, 39, 40, 41, 42,\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.EXTEND: 1>, batch_size=60, input_ids=tensor([ 1125, 17405,  3455,  ...,  1454,  2317, 93861], device='cuda:0'), req_pool_indices=tensor([37, 38, 39, 40, 41, 42,",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                14685,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                14685,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                14685,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(16, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(16, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[2]=Tensor(\n      shape=(16, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=16, input_ids=tensor([ 51714, 120049,   1799,  28061,  46506,   1321,  35010,  17655,   1622,\n          7326,   1362,  12589,   1294,  105\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=16, input_ids=tensor([ 51714, 120049,   1799,  28061,  46506,   1321,  35010,  17655,   1622,",
+            "7326,   1362,  12589,   1294,  105",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                16,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                16,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                16,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(24, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(24, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[2]=Tensor(\n      shape=(24, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=24, input_ids=tensor([41727, 55859,  1294, 38230,  2143, 14175, 33850,  1261, 29288,  7846,\n        15636, 15153,  2409,  5578,  1741,  10\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=24, input_ids=tensor([41727, 55859,  1294, 38230,  2143, 14175, 33850,  1261, 29288,  7846,",
+            "15636, 15153,  2409,  5578,  1741,  10",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                24,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                24,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                24,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(34, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(34, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[2]=Tensor(\n      shape=(34, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=34, input_ids=tensor([ 2000,  1321, 19351, 19322,  1454,  5965, 73211, 38155,  6139,  9664,\n         1317, 27491, 36161, 29312,  1046,  12\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=34, input_ids=tensor([ 2000,  1321, 19351, 19322,  1454,  5965, 73211, 38155,  6139,  9664,",
+            "1317, 27491, 36161, 29312,  1046,  12",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                34,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                34,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                34,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(38, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(38, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[2]=Tensor(\n      shape=(38, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.EXTEND: 1>, batch_size=1, input_ids=tensor([18746,  1261,  1032,  1049,  1057,  1052,  1048,  1115,  6816,  6947,\n         2314,  1278,  5132, 52165,  1307,  314\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.EXTEND: 1>, batch_size=1, input_ids=tensor([18746,  1261,  1032,  1049,  1057,  1052,  1048,  1115,  6816,  6947,",
+            "2314,  1278,  5132, 52165,  1307,  314",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                38,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                38,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                38,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(44, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(44, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[2]=Tensor(\n      shape=(44, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=44, input_ids=tensor([ 1307, 17993,  1261,  9605, 26612,  1278,  3760,  1321, 69103,  1044,\n         4525,  5125, 11985,  1438,  7458, 321\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=44, input_ids=tensor([ 1307, 17993,  1261,  9605, 26612,  1278,  3760,  1321, 69103,  1044,",
+            "4525,  5125, 11985,  1438,  7458, 321",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                44,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                44,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                44,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(53, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(53, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[2]=Tensor(\n      shape=(53, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=53, input_ids=tensor([  6302,   1394,   1639,   4015, 105765,   1505,   5475,   3310,  16773,\n          1057,   3450,   5048,  24714,   10\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=53, input_ids=tensor([  6302,   1394,   1639,   4015, 105765,   1505,   5475,   3310,  16773,",
+            "1057,   3450,   5048,  24714,   10",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                53,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                53,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                53,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(61, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(61, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[2]=Tensor(\n      shape=(61, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=61, input_ids=tensor([ 88696,   1278,  11676,   7418,  62720,  12856,  66341,  17159,   7223,\n         11108,   9150,   1048,   1358,   16\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=61, input_ids=tensor([ 88696,   1278,  11676,   7418,  62720,  12856,  66341,  17159,   7223,",
+            "11108,   9150,   1048,   1358,   16",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                61,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                61,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                61,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(70, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(70, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[2]=Tensor(\n      shape=(70, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=70, input_ids=tensor([ 1049,  2564,  1321,  2095,  1636, 21953,  2210, 16871,  1307,  1042,\n         2034,  1730, 11906, 17898,  1053,  27\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=70, input_ids=tensor([ 1049,  2564,  1321,  2095,  1636, 21953,  2210, 16871,  1307,  1042,",
+            "2034,  1730, 11906, 17898,  1053,  27",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                70,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                70,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                70,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(72, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(72, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[2]=Tensor(\n      shape=(72, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=72, input_ids=tensor([  1032,  54221,  50481,   1584,  68392,  54406,   2892,   2505,   1034,\n        127689,   9730,   1061,  46506,   25\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=72, input_ids=tensor([  1032,  54221,  50481,   1584,  68392,  54406,   2892,   2505,   1034,",
+            "127689,   9730,   1061,  46506,   25",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                72,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                72,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                72,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(8938, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(8938, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[2]=Tensor(\n      shape=(8938, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.EXTEND: 1>, batch_size=19, input_ids=tensor([12483,  1636,  4128,  ...,  6732, 19625,  1046], device='cuda:0'), req_pool_indices=tensor([29, 27, 34, 22, 12, 17,\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.EXTEND: 1>, batch_size=19, input_ids=tensor([12483,  1636,  4128,  ...,  6732, 19625,  1046], device='cuda:0'), req_pool_indices=tensor([29, 27, 34, 22, 12, 17,",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                8938,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                8938,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                8938,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "random_high",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(1, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(1, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=Tensor(\n      shape=(1, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=1, input_ids=tensor([1032], device='cuda:0'), req_pool_indices=tensor([43], device='cuda:0'), seq_lens=tensor([21], device='cuda:0', dtype\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=1, input_ids=tensor([1032], device='cuda:0'), req_pool_indices=tensor([43], device='cuda:0'), seq_lens=tensor([21], device='cuda:0', dtype",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_low",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(1, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(1, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=Tensor(\n      shape=(1, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=1, input_ids=tensor([1048], device='cuda:0'), req_pool_indices=tensor([43], device='cuda:0'), seq_lens=tensor([25], device='cuda:0', dtype\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=1, input_ids=tensor([1048], device='cuda:0'), req_pool_indices=tensor([43], device='cuda:0'), seq_lens=tensor([25], device='cuda:0', dtype",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_low",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(1, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(1, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=Tensor(\n      shape=(1, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=1, input_ids=tensor([1049], device='cuda:0'), req_pool_indices=tensor([43], device='cuda:0'), seq_lens=tensor([22], device='cuda:0', dtype\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=1, input_ids=tensor([1049], device='cuda:0'), req_pool_indices=tensor([43], device='cuda:0'), seq_lens=tensor([22], device='cuda:0', dtype",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_low",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(1, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(1, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=Tensor(\n      shape=(1, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=1, input_ids=tensor([1052], device='cuda:0'), req_pool_indices=tensor([43], device='cuda:0'), seq_lens=tensor([24], device='cuda:0', dtype\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=1, input_ids=tensor([1052], device='cuda:0'), req_pool_indices=tensor([43], device='cuda:0'), seq_lens=tensor([24], device='cuda:0', dtype",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_low",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(1, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(1, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=Tensor(\n      shape=(1, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=1, input_ids=tensor([1057], device='cuda:0'), req_pool_indices=tensor([43], device='cuda:0'), seq_lens=tensor([23], device='cuda:0', dtype\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=1, input_ids=tensor([1057], device='cuda:0'), req_pool_indices=tensor([43], device='cuda:0'), seq_lens=tensor([23], device='cuda:0', dtype",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_low",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(1, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(1, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=Tensor(\n      shape=(1, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=1, input_ids=tensor([1115], device='cuda:0'), req_pool_indices=tensor([43], device='cuda:0'), seq_lens=tensor([26], device='cuda:0', dtype\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=1, input_ids=tensor([1115], device='cuda:0'), req_pool_indices=tensor([43], device='cuda:0'), seq_lens=tensor([26], device='cuda:0', dtype",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_low",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(1, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(1, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=Tensor(\n      shape=(1, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=1, input_ids=tensor([1278], device='cuda:0'), req_pool_indices=tensor([43], device='cuda:0'), seq_lens=tensor([20], device='cuda:0', dtype\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=1, input_ids=tensor([1278], device='cuda:0'), req_pool_indices=tensor([43], device='cuda:0'), seq_lens=tensor([20], device='cuda:0', dtype",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_low",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(1, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(1, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[2]=Tensor(\n      shape=(1, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=1, input_ids=tensor([1294], device='cuda:0'), req_pool_indices=tensor([43], device='cuda:0'), seq_lens=tensor([19], device='cuda:0', dtype\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=1, input_ids=tensor([1294], device='cuda:0'), req_pool_indices=tensor([43], device='cuda:0'), seq_lens=tensor([19], device='cuda:0', dtype",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                1,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_low",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(18, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(18, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[2]=Tensor(\n      shape=(18, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.EXTEND: 1>, batch_size=1, input_ids=tensor([18746,  1261,  1032,  1049,  1057,  1052,  1048,  1115,  6816,  6947,\n         2314,  1278,  5132, 52165,  1307,  314\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.EXTEND: 1>, batch_size=1, input_ids=tensor([18746,  1261,  1032,  1049,  1057,  1052,  1048,  1115,  6816,  6947,",
+            "2314,  1278,  5132, 52165,  1307,  314",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                18,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                18,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                18,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_low",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(18, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(18, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[2]=Tensor(\n      shape=(18, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.EXTEND: 1>, batch_size=1, input_ids=tensor([18746,  1261,  1032,  1049,  1057,  1052,  1048,  1115,  6816,  6947,\n         2314,  1278,  5132, 52165,  1307,  314\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.EXTEND: 1>, batch_size=1, input_ids=tensor([18746,  1261,  1032,  1049,  1057,  1052,  1048,  1115,  6816,  6947,",
+            "2314,  1278,  5132, 52165,  1307,  314",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                18,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                18,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                18,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_mid",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(32, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(32, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[2]=Tensor(\n      shape=(32, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=32, input_ids=tensor([  1032,   1278,   2210,   1058,   2414,   4019,   1395,  26555,   1519,\n          1429,   2311,   2190,   1681, 1014\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=32, input_ids=tensor([  1032,   1278,   2210,   1058,   2414,   4019,   1395,  26555,   1519,",
+            "1429,   2311,   2190,   1681, 1014",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                32,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                32,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                32,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_mid",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(32, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(32, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[2]=Tensor(\n      shape=(32, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=32, input_ids=tensor([ 1048,  2634,  7137,  1286,  8421,  1261,  8148,  1319,  7030,  1402,\n         1317,  1405,  1278,  1010,  1048,  10\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=32, input_ids=tensor([ 1048,  2634,  7137,  1286,  8421,  1261,  8148,  1319,  7030,  1402,",
+            "1317,  1405,  1278,  1010,  1048,  10",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                32,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                32,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                32,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_mid",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(32, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(32, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[2]=Tensor(\n      shape=(32, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=32, input_ids=tensor([ 1049,  2158,  1278, 38683,  1317,  3795,  1278,  1338,  1934,  3570,\n         1058,  1261,  1261,  1010,  1261,  10\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=32, input_ids=tensor([ 1049,  2158,  1278, 38683,  1317,  3795,  1278,  1338,  1934,  3570,",
+            "1058,  1261,  1261,  1010,  1261,  10",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                32,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                32,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                32,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_mid",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(32, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(32, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[2]=Tensor(\n      shape=(32, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=32, input_ids=tensor([ 1052, 15231,  1317, 31117,  1261,  4525,  1066,  3450,  1261,  1710,\n         2534, 24871,  1307, 12558,  1049,  21\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=32, input_ids=tensor([ 1052, 15231,  1317, 31117,  1261,  4525,  1066,  3450,  1261,  1710,",
+            "2534, 24871,  1307, 12558,  1049,  21",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                32,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                32,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                32,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_mid",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(32, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(32, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[2]=Tensor(\n      shape=(32, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=32, input_ids=tensor([ 1057,  1925,  3244,  1010,  1402,  1362,  1603,  1358,  2151,  1034,\n         3213,  1603, 44433, 40364,  1603, 246\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=32, input_ids=tensor([ 1057,  1925,  3244,  1010,  1402,  1362,  1603,  1358,  2151,  1034,",
+            "3213,  1603, 44433, 40364,  1603, 246",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                32,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                32,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                32,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_mid",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(32, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(32, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[2]=Tensor(\n      shape=(32, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=32, input_ids=tensor([ 1115,  2311,  6091,  1058,  8240,  7398,  1075,  1048, 14364,  5250,\n        12438, 36829, 16611, 92844, 42738, 222\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=32, input_ids=tensor([ 1115,  2311,  6091,  1058,  8240,  7398,  1075,  1048, 14364,  5250,",
+            "12438, 36829, 16611, 92844, 42738, 222",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                32,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                32,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                32,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_mid",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(32, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(32, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[2]=Tensor(\n      shape=(32, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=32, input_ids=tensor([ 1278,  1395,  1710, 11719,  2933,  1438, 11745,  1278,  1087,  9276,\n         2731, 11745, 11745, 65480, 11745,  27\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=32, input_ids=tensor([ 1278,  1395,  1710, 11719,  2933,  1438, 11745,  1278,  1087,  9276,",
+            "2731, 11745, 11745, 65480, 11745,  27",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                32,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                32,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                32,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_mid",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(32, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(32, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[2]=Tensor(\n      shape=(32, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=32, input_ids=tensor([ 1294, 12211,  3213,  1010,  1362,  1338,     2,  1408,  1267,  1531,\n         1010,     2,     2,  1010,     2,  16\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=32, input_ids=tensor([ 1294, 12211,  3213,  1010,  1362,  1338,     2,  1408,  1267,  1531,",
+            "1010,     2,     2,  1010,     2,  16",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                32,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                32,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                32,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_mid",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(5632, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(5632, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[2]=Tensor(\n      shape=(5632, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.EXTEND: 1>, batch_size=31, input_ids=tensor([19429,  1653,  3306,  ...,  5048,  1593,  7146], device='cuda:0'), req_pool_indices=tensor([58, 72, 73, 80,  1, 23,\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.EXTEND: 1>, batch_size=31, input_ids=tensor([19429,  1653,  3306,  ...,  5048,  1593,  7146], device='cuda:0'), req_pool_indices=tensor([58, 72, 73, 80,  1, 23,",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                5632,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                5632,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                5632,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_mid",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(18, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(18, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[2]=Tensor(\n      shape=(18, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.EXTEND: 1>, batch_size=1, input_ids=tensor([18746,  1261,  1032,  1049,  1057,  1052,  1048,  1115,  6816,  6947,\n         2314,  1278,  5132, 52165,  1307,  314\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.EXTEND: 1>, batch_size=1, input_ids=tensor([18746,  1261,  1032,  1049,  1057,  1052,  1048,  1115,  6816,  6947,",
+            "2314,  1278,  5132, 52165,  1307,  314",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                18,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                18,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                18,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(80, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(80, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[2]=Tensor(\n      shape=(80, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=80, input_ids=tensor([  1032,   1278,   2210,   1058,   2414,   4019,   1395,  26555,   1519,\n          1429,   2311,   2190,   1681, 1014\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=80, input_ids=tensor([  1032,   1278,   2210,   1058,   2414,   4019,   1395,  26555,   1519,",
+            "1429,   2311,   2190,   1681, 1014",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                80,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                80,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                80,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(80, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(80, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[2]=Tensor(\n      shape=(80, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=80, input_ids=tensor([  1057,   1925,   3244,   1010,   1402,   1362,   1603,   1358,   2151,\n          1034,   3213,   1603,  44433,  403\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=80, input_ids=tensor([  1057,   1925,   3244,   1010,   1402,   1362,   1603,   1358,   2151,",
+            "1034,   3213,   1603,  44433,  403",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                80,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                80,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                80,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(80, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(80, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[2]=Tensor(\n      shape=(80, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=80, input_ids=tensor([  1278,   1395,   1710,  11719,   2933,   1438,  11745,   1278,   1087,\n          9276,   2731,  11745,  11745,  654\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=80, input_ids=tensor([  1278,   1395,   1710,  11719,   2933,   1438,  11745,   1278,   1087,",
+            "9276,   2731,  11745,  11745,  654",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                80,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                80,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                80,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(80, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(80, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[2]=Tensor(\n      shape=(80, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=80, input_ids=tensor([ 1048,  2634,  7137,  1286,  8421,  1261,  8148,  1319,  7030,  1402,\n         1317,  1405,  1278,  1010,  1048,  10\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=80, input_ids=tensor([ 1048,  2634,  7137,  1286,  8421,  1261,  8148,  1319,  7030,  1402,",
+            "1317,  1405,  1278,  1010,  1048,  10",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                80,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                80,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                80,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(80, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(80, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[2]=Tensor(\n      shape=(80, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=80, input_ids=tensor([ 1049,  2158,  1278, 38683,  1317,  3795,  1278,  1338,  1934,  3570,\n         1058,  1261,  1261,  1010,  1261,  10\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=80, input_ids=tensor([ 1049,  2158,  1278, 38683,  1317,  3795,  1278,  1338,  1934,  3570,",
+            "1058,  1261,  1261,  1010,  1261,  10",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                80,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                80,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                80,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(80, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(80, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[2]=Tensor(\n      shape=(80, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=80, input_ids=tensor([ 1052, 15231,  1317, 31117,  1261,  4525,  1066,  3450,  1261,  1710,\n         2534, 24871,  1307, 12558,  1049,  21\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=80, input_ids=tensor([ 1052, 15231,  1317, 31117,  1261,  4525,  1066,  3450,  1261,  1710,",
+            "2534, 24871,  1307, 12558,  1049,  21",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                80,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                80,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                80,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(80, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(80, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[2]=Tensor(\n      shape=(80, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=80, input_ids=tensor([ 1115,  2311,  6091,  1058,  8240,  7398,  1075,  1048, 14364,  5250,\n        12438, 36829, 16611, 92844, 42738, 222\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=80, input_ids=tensor([ 1115,  2311,  6091,  1058,  8240,  7398,  1075,  1048, 14364,  5250,",
+            "12438, 36829, 16611, 92844, 42738, 222",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                80,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                80,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                80,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(80, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(80, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[2]=Tensor(\n      shape=(80, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=80, input_ids=tensor([ 1294, 12211,  3213,  1010,  1362,  1338,     2,  1408,  1267,  1531,\n         1010,     2,     2,  1010,     2,  16\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.DECODE: 2>, batch_size=80, input_ids=tensor([ 1294, 12211,  3213,  1010,  1362,  1338,     2,  1408,  1267,  1531,",
+            "1010,     2,     2,  1010,     2,  16",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                80,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                80,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                80,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    },
+    {
+      "args": [
+        {
+          "kind": "api_arguments",
+          "raw": "Positional input arguments:\n  arg[0]=Tensor(\n      shape=(9106, 4096)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=True\n    )\n  arg[1]=Tensor(\n      shape=(9106, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[2]=Tensor(\n      shape=(9106, 8, 128)\n      dtype=torch.bfloat16\n      device=cuda:0\n      requires_grad=False\n      is_contiguous=False\n    )\n  arg[3]=RadixAttention(\n      repr=RadixAttention()\n    )\n  arg[4]=ForwardBatch(\n      repr=ForwardBatch(forward_mode=<ForwardMode.EXTEND: 1>, batch_size=79, input_ids=tensor([19429,  1653,  3306,  ...,  1584, 75793,  1046], device='cuda:0'), req_pool_indices=tensor([30, 27, 51, 68, 21,  6,\n    )\n  arg[5]=True",
+          "scalars": [
+            "arg[3]=RadixAttention(",
+            "repr=RadixAttention()",
+            "arg[4]=ForwardBatch(",
+            "repr=ForwardBatch(forward_mode=<ForwardMode.EXTEND: 1>, batch_size=79, input_ids=tensor([19429,  1653,  3306,  ...,  1584, 75793,  1046], device='cuda:0'), req_pool_indices=tensor([30, 27, 51, 68, 21,  6,",
+            "arg[5]=True"
+          ],
+          "tensors": [
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": true,
+              "kind": "tensor",
+              "name": "arg[0]",
+              "requires_grad": false,
+              "shape": [
+                9106,
+                4096
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[1]",
+              "requires_grad": false,
+              "shape": [
+                9106,
+                8,
+                128
+              ]
+            },
+            {
+              "device": "cuda:0",
+              "dtype": "bfloat16",
+              "is_contiguous": false,
+              "kind": "tensor",
+              "name": "arg[2]",
+              "requires_grad": false,
+              "shape": [
+                9106,
+                8,
+                128
+              ]
+            }
+          ]
+        }
+      ],
+      "call_count": 40,
+      "exception": null,
+      "kind": "sglang_kernel_api_log",
+      "kwargs": {},
+      "label": "sharegpt_high",
+      "pid": 19094,
+      "result": {
+        "kind": "api_result",
+        "raw": "",
+        "scalars": [],
+        "tensors": []
+      },
+      "stack": []
+    }
+  ]
+}

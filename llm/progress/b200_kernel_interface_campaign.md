@@ -1,6 +1,6 @@
 # B200 LLM Kernel Interface Campaign
 
-Last updated: 2026-06-21T08:22:49Z.
+Last updated: 2026-06-21T09:02:24Z.
 
 Source baseline:
 
@@ -28,7 +28,7 @@ Source baseline:
 | Step-3.7-Flash | `step_37_flash` | pending launch validation | Not present in cloned cookbook `7b5bd9c`; HF model exists. | `stepfun-ai/Step-3.7-Flash` | pending |
 | Ring-2.6-1T | `ring_26_1t` | pending launch validation | Not present in cloned cookbook `7b5bd9c`; HF model exists and is the successor of Ring-2.5-1T cookbook page. | `inclusionAI/Ring-2.6-1T` | pending |
 | Intern-S2-Preview | `intern_s2_preview` | pending launch validation | Not present in cloned cookbook `7b5bd9c`; HF model and deployment guide exist. | `internlm/Intern-S2-Preview-FP8` | pending |
-| Ministral-3 | `ministral_3` | pending | `docs/autoregressive/Mistral/Ministral-3.md` | `mistralai/Ministral-3-14B-Instruct-2512` | pending |
+| Ministral-3 | `ministral_3` | completed; local validation passed; weight cache cleaned | `docs/autoregressive/Mistral/Ministral-3.md` | `mistralai/Ministral-3-14B-Instruct-2512` | pending |
 | MiMo-V2.5 | `mimo_v25` | pending launch validation | Not present in cloned cookbook `7b5bd9c`; HF model exists and follows MiMo-V2-Flash family. | `XiaomiMiMo/MiMo-V2.5` | pending |
 | Hunyuan3-Preview | `hunyuan3_preview` | pending via SGLang docs | Not present in cookbook `7b5bd9c`; SGLang docs page `docs/basic_usage/hy3_preview.md`. | `tencent/Hy3-preview` | pending |
 | Chroma1.0 | `chroma_10` | special deployment | `docs/autoregressive/FlashLabs/Chroma1.0.md`; hybrid Chroma-SGLang API server, not direct `sglang serve`. | `FlashLabs/Chroma-4B` plus Chroma-SGLang code | pending |
@@ -58,3 +58,4 @@ Source baseline:
 - MiniMax-M3 live cookbook page is present and HF metadata access succeeded unauthenticated for `MiniMaxAI/MiniMax-M3`. No GPU launch was attempted while PID 267586 holds all 8 GPUs.
 - Nemotron3-Ultra live cookbook page is present and includes verified B200 configs: BF16 TP8 and NVFP4 TP4/TP8. HF metadata access succeeded unauthenticated for both `nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-NVFP4` and `nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-BF16`. No GPU launch was attempted while PID 267586 holds all 8 GPUs.
 - Ernie4.5 live cookbook page exposes `baidu/ERNIE-4.5-21B-A3B-PT` with TP1 and `baidu/ERNIE-4.5-300B-A47B-PT` with TP8/DP/EP. HF metadata access succeeded unauthenticated for both model paths. The first 21B-A3B TP1 capture attempt on GPUA83E GPU1 was aborted and cleaned after the resident `engine_server.py` reclaimed memory on all GPUs. The successful retry used the separate GPUC5A6 assignment, `CUDA_VISIBLE_DEVICES=0`, `PORT=31000`, `TP_SIZE=1`, `MEM_FRACTION_STATIC=0.75`, and `--disable-cuda-graph --disable-piecewise-cuda-graph` for compatibility with that older SGLang checkout. It completed all six workload labels and generated 11 kernel interface tasks from 22,658 runtime Python-interface records. Local validation found no zero-call tasks, no empty shape briefs, and no out-of-matrix workload labels. The 41G `baidu/ERNIE-4.5-21B-A3B-PT` HF cache and lock were removed after task generation.
+- Ministral-3 successful capture used `mistralai/Ministral-3-14B-Instruct-2512`, GPUC5A6 GPU 1, `--tp-size 1`, `--mem-fraction-static 0.75`, `--disable-cuda-graph`, `--disable-piecewise-cuda-graph`, `--trust-remote-code`, `--tool-call-parser mistral`, `--context-length 32768`, and `--quantization fp8`. The GPUC5A6 SGLang checkout needed a temporary scratch-copy runtime fix for old `Ministral3Attention` and `Ministral3DecoderLayer` positional `super().__init__` calls that shifted `quant_config` into string/prefix argument slots. With that scratch fix, the run completed all six workload labels and generated 8 kernel interface tasks from 32,076 runtime Python-interface records, 461 variants, and 32,076 calls. Local validation found no zero-call tasks, no empty shape briefs, no out-of-matrix workload labels, and no foreign model names. The 30G `mistralai/Ministral-3-14B-Instruct-2512` HF cache, lock, and temporary SGLang scratch copy were removed after pulling artifacts.

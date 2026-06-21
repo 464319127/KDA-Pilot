@@ -1,0 +1,8 @@
+{
+  "detail": "mistralai/Ministral-3-14B-Instruct-2512 kernel-interface tasks generated",
+  "model": "mistralai/Ministral-3-14B-Instruct-2512",
+  "model_slug": "ministral_3",
+  "run_dir": "/data/bbuf/kda-pilot-llm-interface/llm/ministral_3/b200",
+  "stage": "completed",
+  "updated_at": "2026-06-21 09:00:42 UTC"
+}
