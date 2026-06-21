@@ -1,6 +1,6 @@
 # B200 LLM Kernel Interface Campaign
 
-Last updated: 2026-06-21T14:05:33Z.
+Last updated: 2026-06-21T14:14:05Z.
 
 Source baseline:
 
@@ -26,7 +26,7 @@ Source baseline:
 | Nemotron3-Ultra | `nemotron3_ultra` | failed on current B200 env; partial weight cache cleaned | Live docs page `docs/autoregressive/NVIDIA/Nemotron3-Ultra.md`; absent from cloned cookbook `7b5bd9c`. | `nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-NVFP4` | pending |
 | Ernie4.5 | `ernie_45` | completed; local validation passed; weight cache cleaned | `docs/autoregressive/Ernie/Ernie4.5.md`; live page defaults to AMD but the 21B-A3B command is plain TP1 and is runnable on the current B200 free GPU subset. | `baidu/ERNIE-4.5-21B-A3B-PT` | #61 |
 | Step-3.7-Flash | `step_37_flash` | failed on current B200 env; weight cache cleaned | Live docs page `docs/autoregressive/StepFun/Step-3.7-Flash.md`; B200/B300 supports BF16/FP8/NVFP4. | `stepfun-ai/Step-3.7-Flash-NVFP4` | pending |
-| Ring-2.6-1T | `ring_26_1t` | completed; local validation passed; weight cache cleaned | Live cookbook page `docs/autoregressive/InclusionAI/Ring-2.6-1T.md`; B200 x8 command uses TP8, mem 0.8, multithread weight loading, glm tool parser, and deepseek-r1 reasoning parser. | `inclusionAI/Ring-2.6-1T` | pending |
+| Ring-2.6-1T | `ring_26_1t` | completed; local validation passed; weight cache cleaned | Live cookbook page `docs/autoregressive/InclusionAI/Ring-2.6-1T.md`; B200 x8 command uses TP8, mem 0.8, multithread weight loading, glm tool parser, and deepseek-r1 reasoning parser. | `inclusionAI/Ring-2.6-1T` | #67 |
 | Intern-S2-Preview | `intern_s2_preview` | completed; local validation passed; weight cache cleaned | Not present in cloned cookbook `7b5bd9c`; HF model and deployment guide exist. | `internlm/Intern-S2-Preview-FP8` | #64 |
 | Ministral-3 | `ministral_3` | completed; local validation passed; weight cache cleaned | `docs/autoregressive/Mistral/Ministral-3.md` | `mistralai/Ministral-3-14B-Instruct-2512` | #62 |
 | MiMo-V2.5 | `mimo_v25` | completed; local validation passed; weight cache cleaned | Live docs page `docs/autoregressive/Xiaomi/MiMo-V2.5.md`; base B200 generator emits TP4 with MiMo parsers. | `XiaomiMiMo/MiMo-V2.5` | #65 |
@@ -46,6 +46,7 @@ Source baseline:
 - Intern-S2-Preview B200 kernel interface tasks: PR #64, merged.
 - MiMo-V2.5 B200 kernel interface tasks: PR #65, merged.
 - Hunyuan3-Preview B200 kernel interface tasks: PR #66, merged.
+- Ring-2.6-1T B200 kernel interface tasks: PR #67, merged.
 
 ## Current Notes
 
