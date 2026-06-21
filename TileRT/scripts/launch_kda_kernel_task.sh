@@ -246,11 +246,19 @@ EOF
   warpgroup HMMA, mbarrier handshake), no-GMEM intermediates, native fp8/fp4
   warpgroup MMA, DSA top-2048 sparse KV gather, flag-based NVLink allreduce fused
   into the op.
-- Target GPU = ${TARGET_GPU_LABEL} (sm_100). Read
-  \`${WORKTREE_ROOT}/external/KernelWiki/SKILL.md\` and
-  \`${WORKTREE_ROOT}/external/ncu-report-skill/SKILL.md\` before implementation;
-  use KernelWiki for upstream design ideas and ncu-report-skill for
-  evidence-backed diagnosis when profiling would change the next edit.
+- Target GPU = ${TARGET_GPU_LABEL} (sm_100). Read these external skills before
+  implementation:
+  - \`${WORKTREE_ROOT}/external/KernelWiki/SKILL.md\` — upstream design ideas.
+  - \`${WORKTREE_ROOT}/external/ncu-report-skill/SKILL.md\` — evidence-backed ncu
+    diagnosis when profiling would change the next edit.
+  - \`${WORKTREE_ROOT}/external/warp-specialization-report-skill/SKILL.md\` —
+    **directly applicable here**: TileRT kernels are warp-specialized (persistent
+    grid, Prefetcher/Consumer warps, mbarrier double-buffer). Use it to stamp
+    \`clock()\` at the kernel's sync points and reconstruct a per-warp **pipeline
+    timeline** — it exposes stalls, cross-warp data dependencies, and
+    compute/memory (HMMA vs TMA) overlap that standard profilers miss. This is the
+    tool for tuning the L1 tile-overlap lever and for telling apart real compute
+    cost from dependent-wait/stall time.
 - Do not use macOS \`/bin/bash\` or any Bash 3.x runtime for local Humanize,
   hook, launcher, or helper scripts. The launcher exports \`KDA_BASH_BIN\` and
   prepends its directory to \`PATH\`; preserve that environment.
@@ -266,8 +274,9 @@ EOF
   - R: correctness oracle (golden_forward / \`../../harness/tilert_oracle.py\`) + baseline path
   - W: the (kSeqLen, KeComputeType) workload set + the isolated ≥3× ncu methodology
 - In every RLCR iteration, refresh context from the source prompt, KERNEL_REGISTRY
-  + design levers, current benchmark/profile evidence, KernelWiki, and
-  ncu-report-skill before choosing the next edit, profile, benchmark, or no-go.
+  + design levers, current benchmark/profile evidence, KernelWiki, ncu-report-skill,
+  and warp-specialization-report-skill before choosing the next edit, profile,
+  benchmark, or no-go.
 - Do not implement kernels, run long benchmarks, or collect NCU evidence before
   RLCR is active.
 - Keep candidate code under \`solution/\`, harnesses under \`bench/\`, and
@@ -312,9 +321,13 @@ source prompt says otherwise:
 - Fill \`bench/correctness.py\` against \`baseline/\` before optimization;
   freeze \`bench/workloads.json\` and the immutable TileRT reference latency.
 - Rank candidate directions by expected benefit/risk using the design levers.
-- Implement bounded optimization attempts under RLCR; refresh KernelWiki +
-  ncu-report-skill context each iteration or note why no new query is needed.
-- Use NCU/profile evidence (ncu-report-skill) for non-obvious bottlenecks.
+- Implement bounded optimization attempts under RLCR; refresh KernelWiki,
+  ncu-report-skill, and warp-specialization-report-skill context each iteration or
+  note why no new query is needed.
+- Use NCU/profile evidence (ncu-report-skill) for non-obvious bottlenecks, and the
+  warp-specialization-report-skill per-warp pipeline timeline to diagnose
+  Prefetcher/Consumer stalls and compute/memory overlap before changing the tiling
+  or pipeline structure.
 - Include a remote phase recording host/GPU id/model, before/after idleness,
   exact commands, and benchmark/NCU artifacts.
 - Update \`docs/results.md\` with per-shape baseline-vs-candidate numbers before
