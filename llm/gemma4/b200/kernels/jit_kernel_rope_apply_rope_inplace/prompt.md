@@ -21,11 +21,7 @@ CPU-op context shapes.
 - Captured variants: `62`
 - Evidence policy: runtime interface capture of args/kwargs/result, not torch-profiler CPU-op shape context.
 
-## Executed Workload Matrix
-
-The capture run executed all workload labels below for this model.
-A specific interface may still be absent from a workload when the
-serving path does not call it for that dataset/concurrency level.
+## Workload Coverage
 
 - `random_low`
 - `random_mid`
@@ -33,19 +29,6 @@ serving path does not call it for that dataset/concurrency level.
 - `sharegpt_low`
 - `sharegpt_mid`
 - `sharegpt_high`
-
-## Observed Workloads For This Interface
-
-- `random_low`
-- `random_mid`
-- `random_high`
-- `sharegpt_low`
-- `sharegpt_mid`
-- `sharegpt_high`
-
-## Not Observed For This Interface
-
-- none
 
 ## Shape Summary
 
