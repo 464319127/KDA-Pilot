@@ -108,6 +108,17 @@ case "/$TASK_DIR/" in
     ;;
 esac
 
+# Optional pinned GPU. Per-kernel wrappers set KDA_GPU_ID to a round-robin id so
+# kernels spread across GPUs 0-7; unset means the task auto-selects an idle GPU.
+GPU_PIN_DESC=""
+if [[ -n "${KDA_GPU_ID:-}" ]]; then
+  if [[ ! "$KDA_GPU_ID" =~ ^[0-9]+$ ]]; then
+    echo "error: KDA_GPU_ID must be a non-negative integer GPU id: $KDA_GPU_ID" >&2
+    exit 2
+  fi
+  GPU_PIN_DESC=" id=$KDA_GPU_ID"
+fi
+
 bash_is_kda_safe() {
   local candidate="$1"
   [[ -n "$candidate" && -x "$candidate" ]] || return 1
@@ -194,7 +205,7 @@ echo "repo:      $REPO_ROOT"
 echo "launcher:  $LAUNCHER_NAME"
 echo "label:     $TASK_LABEL"
 echo "task:      $TASK_DIR"
-echo "gpu:       $TARGET_GPU_LABEL ($REMOTE_HOST_HINT)"
+echo "gpu:       $TARGET_GPU_LABEL$GPU_PIN_DESC ($REMOTE_HOST_HINT)"
 echo "base:      $BASE_BRANCH"
 echo "review:    $REVIEW_BASE"
 echo "branch:    $BRANCH"
@@ -206,6 +217,14 @@ git -C "$REPO_ROOT" branch "$REVIEW_BASE" "$BASE_BRANCH"
 git -C "$REPO_ROOT" worktree add -b "$BRANCH" "$WORKTREE_ROOT" "$BASE_BRANCH"
 
 cd "$WORKTREE_ROOT/$TASK_DIR"
+
+if [[ -n "${KDA_GPU_ID:-}" ]]; then
+  GPU_SELECTION_POLICY="- This task is pinned to ${TARGET_GPU_LABEL} GPU id ${KDA_GPU_ID} (the launchers assign the kernels across GPUs 0-7 in a round robin). Export REMOTE_GPU_ID=${KDA_GPU_ID} and use exactly that GPU for baseline, candidate, benchmark, profiler, and NCU commands in this run.
+- Before measuring, verify GPU ${KDA_GPU_ID} is idle (no active compute processes, no meaningful memory occupancy). If it is busy, wait or retry briefly; ask before measuring on a different GPU or changing the benchmark environment."
+else
+  GPU_SELECTION_POLICY="- Before GPU work, inspect the remote GPU state and select a ${TARGET_GPU_LABEL} GPU with no active compute processes and no meaningful memory occupancy. Export that id as REMOTE_GPU_ID and use it consistently for baseline, candidate, benchmark, profiler, and NCU commands in the current run.
+- If no idle ${TARGET_GPU_LABEL} GPU is available, wait or retry briefly. Ask before changing the benchmark environment or running measurements on a busy GPU."
+fi
 
 if [[ "${KDA_BOOTSTRAP_DRAFT:-1}" != "0" ]]; then
   mkdir -p .humanize/kernel-agent
@@ -317,14 +336,7 @@ into the plan unless the source prompt explicitly says otherwise:
   to the remote GPU phase autonomously.
 - Use the matching remote host (${REMOTE_HOST_HINT}) unless the source prompt
   provides a stricter host choice.
-- Before GPU work, inspect the remote GPU state and select a
-  ${TARGET_GPU_LABEL} GPU with no active compute processes and no meaningful
-  memory occupancy. Export that id as \`REMOTE_GPU_ID\` and use it consistently
-  for baseline, candidate, benchmark, profiler, and NCU commands in the current
-  run.
-- If no idle ${TARGET_GPU_LABEL} GPU is available, wait or retry briefly. Ask
-  before changing the benchmark environment or running measurements on a busy
-  GPU.
+${GPU_SELECTION_POLICY}
 - Treat minimal, reversible, task-owned setup work as approved: creating remote
   workspaces, checking out commits, building inside the task workspace,
   installing local editable packages there, collecting profiler traces, and

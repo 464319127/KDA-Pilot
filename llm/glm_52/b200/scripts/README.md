@@ -30,6 +30,23 @@ Inside Claude Code the launcher prints the two commands to run:
 /humanize:start-rlcr-loop .humanize/kernel-agent/refined-plan.md --skip-quiz --claude-answer-codex --max 12 ... --base-branch <review-base>
 ```
 
+## GPU assignment (round-robin 0-7)
+
+Each wrapper pins its task to a B200 GPU, cycling `(N-1) % 8` so the 16 kernels
+spread across the 8 cards (two kernels per GPU):
+
+```
+k01->0  k02->1  k03->2  k04->3  k05->4  k06->5  k07->6  k08->7
+k09->0  k10->1  k11->2  k12->3  k13->4  k14->5  k15->6  k16->7
+```
+
+The wrapper exports `KDA_GPU_ID`; the launcher pins the task to that GPU and
+tells the agent to `export REMOTE_GPU_ID=<id>` and use exactly that card for all
+baseline/candidate/benchmark/profiler/NCU commands (after verifying it is idle).
+Override per run with `KDA_GPU_ID=<id> .../kNN_*.sh`; launching
+`launch_kda_kernel_task.sh` directly without `KDA_GPU_ID` falls back to
+auto-selecting an idle GPU.
+
 ## Extra rules baked into every task draft
 
 `launch_kda_kernel_task.sh` injects these into each kernel's gen-plan draft (on
