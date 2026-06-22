@@ -215,6 +215,11 @@ echo
 
 git -C "$REPO_ROOT" branch "$REVIEW_BASE" "$BASE_BRANCH"
 git -C "$REPO_ROOT" worktree add -b "$BRANCH" "$WORKTREE_ROOT" "$BASE_BRANCH"
+# Linked worktrees do not auto-checkout submodules. The external/ skill
+# submodules are required by the task draft; objects are cached in the main
+# repo's .git/modules, so this is offline + fast. Non-fatal on failure.
+git -C "$WORKTREE_ROOT" submodule update --init --recursive \
+  || echo "warning: submodule init failed; run 'git submodule update --init --recursive' in the worktree" >&2
 
 cd "$WORKTREE_ROOT/$TASK_DIR"
 
@@ -282,7 +287,10 @@ EOF
 - Read \`${WORKTREE_ROOT}/external/KernelWiki/SKILL.md\`,
   \`${WORKTREE_ROOT}/external/ncu-report-skill/SKILL.md\`, and
   \`${WORKTREE_ROOT}/external/warp-specialization-report-skill/SKILL.md\`
-  before implementation.
+  before implementation. The launcher auto-runs
+  git submodule update --init --recursive in this worktree so these are
+  checked out; if any SKILL.md is missing, re-run that command from the
+  worktree root.
 - Use KernelWiki for upstream design ideas and ncu-report-skill for
   evidence-backed kernel diagnosis when profiling would change the next edit.
 - IMPLEMENTATION LANGUAGE (CUDA only): iterate and implement the candidate in
