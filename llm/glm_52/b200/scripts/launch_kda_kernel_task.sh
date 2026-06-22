@@ -258,6 +258,23 @@ EOF
   any vendored or repository-local Humanize implementation from KDA-Pilot.
 - Read the local \`prompt.md\` and \`config.toml\` for the exact kernel
   interface, captured shapes, build/benchmark policy, and correctness contract.
+- MANDATORY before implementation: read
+  \`${WORKTREE_ROOT}/llm/docs/standalone_llm_benchmark.md\`,
+  \`${WORKTREE_ROOT}/llm/docs/llm_kernel_optimization_rules.md\`, and
+  \`${WORKTREE_ROOT}/llm/docs/llm_correctness_contract.md\`. Their benchmark
+  timing/fairness rules, baseline-pairing and compile-flag symmetry, ABI rules,
+  per-category correctness oracle + dtype tolerances (incl. fp8/quant,
+  integer/top-k/tree exact-match, non-contiguous inputs, and in-place
+  semantics), provenance fields, and completion bar are mandatory.
+- Build the task folder contract from \`standalone_llm_benchmark.md\`: copy
+  \`${WORKTREE_ROOT}/llm/docs/standalone_llm_benchmark_template.py\` to
+  \`bench/benchmark.py\` (do not invent a different timing harness), and create
+  \`bench/workloads.json\` (frozen, deduplicated from the captured variants in
+  \`prompt.md\`/\`docs/evidence.json\`, with production vs regression rows and
+  headline tagging), \`bench/adapter.py\`, \`bench/correctness.py\`,
+  \`baseline/\`, \`solution/\`, and the \`docs/\` artifacts
+  (\`baseline_source.md\`, \`benchmark_method.md\`, \`results.md\`,
+  \`run_log.md\`, and \`dispatch.md\` when specialized).
 - Do not use macOS \`/bin/bash\` or any Bash 3.x runtime for local Humanize,
   hook, launcher, or helper scripts. The launcher exports \`KDA_BASH_BIN\` and
   prepends its directory to \`PATH\`; preserve that environment so

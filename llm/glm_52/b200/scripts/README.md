@@ -70,6 +70,19 @@ top of the kernel's own `prompt.md`), so every launched task carries them:
    regimes and dispatch at runtime by input shape/dtype/contiguity, with a
    cheap dispatch path and a baseline fallback for any uncovered shape.
 
+## Task contract docs (mandatory reading, injected into every draft)
+
+Shared under `llm/docs/` and required by the launcher before any implementation:
+
+- `standalone_llm_benchmark.md` — timing methodology, ABI/compile-flag fairness,
+  frozen `workloads.json`, geomean headline, provenance.
+- `standalone_llm_benchmark_template.py` — the required `bench/benchmark.py`
+  starting point.
+- `llm_kernel_optimization_rules.md` — baseline pairing, CUDA-only, remote-GPU
+  rule, shape specialization, PR scope, completion bar.
+- `llm_correctness_contract.md` — per-category oracle + dtype tolerances,
+  including fp8/quant, integer/top-k/tree exact-match, non-contiguous, in-place.
+
 ## Kernels with launchers (16 compute kernels)
 
 | # | launcher | kernel task dir |
