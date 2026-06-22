@@ -52,13 +52,20 @@ auto-selecting an idle GPU.
 `launch_kda_kernel_task.sh` injects these into each kernel's gen-plan draft (on
 top of the kernel's own `prompt.md`), so every launched task carries them:
 
-1. **warp-specialization-report-skill** — when a candidate is a warp-specialized
-   CuTe-DSL / CUDA C++ kernel, profile it with
+1. **CUDA only** — iterate and implement the candidate in native CUDA. The
+   promoted candidate must be a CUDA kernel built from workspace-owned C++/CUDA
+   source (`.cu`/`.cuh`/`.cpp`/`.h`, nvcc or equivalent extension build; CUTLASS
+   / CuTe C++ templates allowed). **No** Triton, TileLang, CuTe-DSL (Python
+   `cute.compile`), `torch.compile`, or other DSL / prebuilt op as the candidate
+   execution path — those may only be studied/ported into workspace CUDA. Python
+   is for harnesses/bindings/benchmark/dispatch glue only.
+2. **warp-specialization-report-skill** — when a candidate is a warp-specialized
+   CUDA C++ kernel (CUTLASS/CuTe), profile it with
    `external/warp-specialization-report-skill` as a predict → stamp `clock()`
    timeline → reconcile loop (find stalls, confirm producer/consumer deps,
    verify warp overlap). Not applicable to Triton kernels (use ncu-report-skill
    there).
-2. **Per-shape kernel dispatch** — the captured interface spans many shapes;
+3. **Per-shape kernel dispatch** — the captured interface spans many shapes;
    write more than one specialized kernel when one config can't win across all
    regimes and dispatch at runtime by input shape/dtype/contiguity, with a
    cheap dispatch path and a baseline fallback for any uncovered shape.

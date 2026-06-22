@@ -268,9 +268,23 @@ EOF
   before implementation.
 - Use KernelWiki for upstream design ideas and ncu-report-skill for
   evidence-backed kernel diagnosis when profiling would change the next edit.
+- IMPLEMENTATION LANGUAGE (CUDA only): iterate and implement the candidate in
+  native CUDA. The final candidate that is benchmarked and promoted must be a
+  CUDA kernel built from workspace-owned C++/CUDA source (\`.cu\`, \`.cuh\`,
+  \`.cpp\`, \`.h\`) compiled with nvcc or an equivalent CUDA extension build
+  (CUTLASS / CuTe C++ templates are allowed because they are CUDA C++). Do NOT
+  use Triton, TileLang, CuTe-DSL (Python \`cute.compile\`), \`torch.compile\`, or
+  any other DSL / prebuilt op as the candidate execution path. The upstream
+  SGLang kernel and such DSL sources may be studied or ported into
+  workspace-owned C++/CUDA, but the promoted candidate must be the native CUDA
+  implementation. Python is allowed only for harnesses, bindings, benchmark
+  scripts, and dispatch glue, never as the primary kernel implementation. If the
+  recovered SGLang baseline is itself Triton/Python, keep it unchanged as the
+  baseline oracle and write the candidate as a new native CUDA kernel.
 - WARP-SPECIALIZATION PROFILING (mandatory when applicable): whenever a
-  candidate is a warp-specialized CuTe-DSL or CUDA C++ kernel (producer/consumer
-  warp roles coordinated by mbarrier / named-barrier / pipeline objects), use
+  candidate is a warp-specialized CUDA C++ kernel (e.g. CUTLASS/CuTe templates,
+  with producer/consumer warp roles coordinated by mbarrier / named-barrier /
+  pipeline objects), use
   the \`warp-specialization-report-skill\` to profile it as a closed loop
   (predict feeds-and-speeds -> stamp clock() timeline -> reconcile): locate
   per-warp stalls, confirm the producer/consumer data dependencies, and verify
