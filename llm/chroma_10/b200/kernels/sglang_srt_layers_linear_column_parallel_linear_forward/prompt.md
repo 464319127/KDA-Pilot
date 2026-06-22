@@ -21,25 +21,11 @@ CPU-op context shapes.
 - Captured variants: `6`
 - Evidence policy: runtime interface capture of args/kwargs/result, not torch-profiler CPU-op shape context.
 
-## Executed Workload Matrix
-
-The capture run executed all workload labels below for this model.
-A specific interface may still be absent from a workload when the
-serving path does not call it for that dataset/concurrency level.
+## Workload Coverage
 
 - `chroma_audio_low`
 - `chroma_audio_mid`
 - `chroma_audio_high`
-
-## Observed Workloads For This Interface
-
-- `chroma_audio_low`
-- `chroma_audio_mid`
-- `chroma_audio_high`
-
-## Not Observed For This Interface
-
-- none
 
 ## Shape Summary
 
