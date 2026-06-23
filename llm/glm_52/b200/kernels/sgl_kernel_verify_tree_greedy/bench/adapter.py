@@ -6,9 +6,10 @@ Implements the API documented in benchmark.py:
   call_candidate(workload, inputs, outputs) -> None
   compare_outputs(workload, baseline_outputs, candidate_outputs, tolerance) -> dict
 
-Baseline and candidate are exposed by ONE shared torch CUDA extension
-(`verify_tree_greedy_ext.cu`) with the identical outputs-last signature, built with
-the same flags — see ../docs/benchmark_method.md. Outputs are exact integer/structural
+Baseline and candidate are exposed by ONE shared TVM-FFI module
+(`verify_tree_greedy_ffi.cu`, built with `tvm_ffi.cpp.load`) via
+`TVM_FFI_DLL_EXPORT_TYPED_FUNC` with the identical outputs-last `TensorView` signature
+and the same flags — see ../docs/benchmark_method.md. Outputs are exact integer/structural
 tensors, so `compare_outputs` uses exact equality (atol/rtol do not apply).
 """
 
@@ -38,25 +39,37 @@ _OUTPUT_ORDER = ("predicts", "accept_index", "accept_token_num")
 _POISON = -17  # matches benchmark.py _poison_outputs for integer tensors
 
 _ext = None
+_stream_ctx = None
 _ext_lock = threading.Lock()
 
 
 def _get_ext():
-    """Build (once) and return the shared baseline+candidate CUDA extension."""
-    global _ext
+    """Build (once) and return the shared baseline+candidate TVM-FFI module handles.
+
+    Both entry points are exported from one module via TVM_FFI_DLL_EXPORT_TYPED_FUNC.
+    The TVM-FFI env stream is bound (process-wide) to PyTorch's current CUDA stream so the
+    kernels launch on the same stream the benchmark's CUDA events are recorded on.
+    """
+    global _ext, _stream_ctx
     if _ext is None:
         with _ext_lock:
             if _ext is None:
-                from torch.utils.cpp_extension import load
+                import tvm_ffi
+                from tvm_ffi import cpp
 
-                _ext = load(
-                    name="verify_tree_greedy_ext",
-                    sources=[str(_HERE / "verify_tree_greedy_ext.cu")],
+                module = cpp.load(
+                    "verify_tree_greedy_ffi",
+                    cuda_files=[str(_HERE / "verify_tree_greedy_ffi.cu")],
                     extra_include_paths=[str(_ROOT / "baseline"), str(_ROOT / "solution")],
-                    extra_cflags=["-O3"],
                     extra_cuda_cflags=["-O3"],  # symmetric; no one-sided fast-math
-                    verbose=False,
                 )
+                _stream_ctx = tvm_ffi.use_torch_stream()
+                _stream_ctx.__enter__()  # bind FFI env stream to torch's current stream
+                _ext = {
+                    "baseline": module["baseline_verify_tree_greedy"],
+                    "candidate": module["candidate_verify_tree_greedy"],
+                    "_module": module,
+                }
     return _ext
 
 
@@ -90,13 +103,11 @@ def make_case(workload: dict[str, Any], *, device: torch.device, seed: int) -> d
 
 
 def call_baseline(workload: dict[str, Any], inputs, outputs) -> None:
-    ext = _get_ext()
-    ext.baseline_verify_tree_greedy(*inputs, *outputs)
+    _get_ext()["baseline"](*inputs, *outputs)
 
 
 def call_candidate(workload: dict[str, Any], inputs, outputs) -> None:
-    ext = _get_ext()
-    ext.candidate_verify_tree_greedy(*inputs, *outputs)
+    _get_ext()["candidate"](*inputs, *outputs)
 
 
 def compare_outputs(workload, baseline_outputs, candidate_outputs, tolerance) -> dict[str, Any]:

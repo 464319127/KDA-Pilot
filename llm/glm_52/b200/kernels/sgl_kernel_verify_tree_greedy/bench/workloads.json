@@ -19,6 +19,39 @@
       "retrive_next_sibling": "int64",
       "target_predict": "int64"
     },
+    "strides": {
+      "candidates": [
+        2,
+        1
+      ],
+      "retrive_index": [
+        2,
+        1
+      ],
+      "retrive_next_token": [
+        2,
+        1
+      ],
+      "retrive_next_sibling": [
+        2,
+        1
+      ],
+      "target_predict": [
+        2,
+        1
+      ],
+      "predicts": [
+        1
+      ],
+      "accept_index": [
+        2,
+        1
+      ],
+      "accept_token_num": [
+        1
+      ]
+    },
+    "scalars": {},
     "contiguous": true,
     "tree": {
       "mode": "random",
@@ -50,6 +83,39 @@
       "retrive_next_sibling": "int64",
       "target_predict": "int64"
     },
+    "strides": {
+      "candidates": [
+        2,
+        1
+      ],
+      "retrive_index": [
+        2,
+        1
+      ],
+      "retrive_next_token": [
+        2,
+        1
+      ],
+      "retrive_next_sibling": [
+        2,
+        1
+      ],
+      "target_predict": [
+        2,
+        1
+      ],
+      "predicts": [
+        1
+      ],
+      "accept_index": [
+        2,
+        1
+      ],
+      "accept_token_num": [
+        1
+      ]
+    },
+    "scalars": {},
     "contiguous": true,
     "tree": {
       "mode": "random",
@@ -81,6 +147,39 @@
       "retrive_next_sibling": "int64",
       "target_predict": "int64"
     },
+    "strides": {
+      "candidates": [
+        2,
+        1
+      ],
+      "retrive_index": [
+        2,
+        1
+      ],
+      "retrive_next_token": [
+        2,
+        1
+      ],
+      "retrive_next_sibling": [
+        2,
+        1
+      ],
+      "target_predict": [
+        2,
+        1
+      ],
+      "predicts": [
+        1
+      ],
+      "accept_index": [
+        2,
+        1
+      ],
+      "accept_token_num": [
+        1
+      ]
+    },
+    "scalars": {},
     "contiguous": true,
     "tree": {
       "mode": "random",
@@ -112,6 +211,39 @@
       "retrive_next_sibling": "int64",
       "target_predict": "int64"
     },
+    "strides": {
+      "candidates": [
+        2,
+        1
+      ],
+      "retrive_index": [
+        2,
+        1
+      ],
+      "retrive_next_token": [
+        2,
+        1
+      ],
+      "retrive_next_sibling": [
+        2,
+        1
+      ],
+      "target_predict": [
+        2,
+        1
+      ],
+      "predicts": [
+        1
+      ],
+      "accept_index": [
+        2,
+        1
+      ],
+      "accept_token_num": [
+        1
+      ]
+    },
+    "scalars": {},
     "contiguous": true,
     "tree": {
       "mode": "random",
@@ -143,6 +275,39 @@
       "retrive_next_sibling": "int64",
       "target_predict": "int64"
     },
+    "strides": {
+      "candidates": [
+        2,
+        1
+      ],
+      "retrive_index": [
+        2,
+        1
+      ],
+      "retrive_next_token": [
+        2,
+        1
+      ],
+      "retrive_next_sibling": [
+        2,
+        1
+      ],
+      "target_predict": [
+        2,
+        1
+      ],
+      "predicts": [
+        1
+      ],
+      "accept_index": [
+        2,
+        1
+      ],
+      "accept_token_num": [
+        1
+      ]
+    },
+    "scalars": {},
     "contiguous": true,
     "tree": {
       "mode": "random",
@@ -174,6 +339,39 @@
       "retrive_next_sibling": "int64",
       "target_predict": "int64"
     },
+    "strides": {
+      "candidates": [
+        2,
+        1
+      ],
+      "retrive_index": [
+        2,
+        1
+      ],
+      "retrive_next_token": [
+        2,
+        1
+      ],
+      "retrive_next_sibling": [
+        2,
+        1
+      ],
+      "target_predict": [
+        2,
+        1
+      ],
+      "predicts": [
+        1
+      ],
+      "accept_index": [
+        2,
+        1
+      ],
+      "accept_token_num": [
+        1
+      ]
+    },
+    "scalars": {},
     "contiguous": true,
     "tree": {
       "mode": "random",
@@ -205,6 +403,39 @@
       "retrive_next_sibling": "int64",
       "target_predict": "int64"
     },
+    "strides": {
+      "candidates": [
+        2,
+        1
+      ],
+      "retrive_index": [
+        2,
+        1
+      ],
+      "retrive_next_token": [
+        2,
+        1
+      ],
+      "retrive_next_sibling": [
+        2,
+        1
+      ],
+      "target_predict": [
+        2,
+        1
+      ],
+      "predicts": [
+        1
+      ],
+      "accept_index": [
+        2,
+        1
+      ],
+      "accept_token_num": [
+        1
+      ]
+    },
+    "scalars": {},
     "contiguous": true,
     "tree": {
       "mode": "random",
@@ -236,6 +467,39 @@
       "retrive_next_sibling": "int64",
       "target_predict": "int64"
     },
+    "strides": {
+      "candidates": [
+        2,
+        1
+      ],
+      "retrive_index": [
+        2,
+        1
+      ],
+      "retrive_next_token": [
+        2,
+        1
+      ],
+      "retrive_next_sibling": [
+        2,
+        1
+      ],
+      "target_predict": [
+        2,
+        1
+      ],
+      "predicts": [
+        1
+      ],
+      "accept_index": [
+        2,
+        1
+      ],
+      "accept_token_num": [
+        1
+      ]
+    },
+    "scalars": {},
     "contiguous": true,
     "tree": {
       "mode": "random",
@@ -267,6 +531,39 @@
       "retrive_next_sibling": "int64",
       "target_predict": "int64"
     },
+    "strides": {
+      "candidates": [
+        2,
+        1
+      ],
+      "retrive_index": [
+        2,
+        1
+      ],
+      "retrive_next_token": [
+        2,
+        1
+      ],
+      "retrive_next_sibling": [
+        2,
+        1
+      ],
+      "target_predict": [
+        2,
+        1
+      ],
+      "predicts": [
+        1
+      ],
+      "accept_index": [
+        2,
+        1
+      ],
+      "accept_token_num": [
+        1
+      ]
+    },
+    "scalars": {},
     "contiguous": true,
     "tree": {
       "mode": "random",
@@ -298,6 +595,39 @@
       "retrive_next_sibling": "int64",
       "target_predict": "int64"
     },
+    "strides": {
+      "candidates": [
+        2,
+        1
+      ],
+      "retrive_index": [
+        2,
+        1
+      ],
+      "retrive_next_token": [
+        2,
+        1
+      ],
+      "retrive_next_sibling": [
+        2,
+        1
+      ],
+      "target_predict": [
+        2,
+        1
+      ],
+      "predicts": [
+        1
+      ],
+      "accept_index": [
+        2,
+        1
+      ],
+      "accept_token_num": [
+        1
+      ]
+    },
+    "scalars": {},
     "contiguous": true,
     "tree": {
       "mode": "random",
@@ -329,6 +659,39 @@
       "retrive_next_sibling": "int64",
       "target_predict": "int64"
     },
+    "strides": {
+      "candidates": [
+        6,
+        1
+      ],
+      "retrive_index": [
+        6,
+        1
+      ],
+      "retrive_next_token": [
+        6,
+        1
+      ],
+      "retrive_next_sibling": [
+        6,
+        1
+      ],
+      "target_predict": [
+        6,
+        1
+      ],
+      "predicts": [
+        1
+      ],
+      "accept_index": [
+        4,
+        1
+      ],
+      "accept_token_num": [
+        1
+      ]
+    },
+    "scalars": {},
     "contiguous": true,
     "tree": {
       "mode": "fixed_upstream"
@@ -358,6 +721,39 @@
       "retrive_next_sibling": "int64",
       "target_predict": "int64"
     },
+    "strides": {
+      "candidates": [
+        4,
+        1
+      ],
+      "retrive_index": [
+        4,
+        1
+      ],
+      "retrive_next_token": [
+        4,
+        1
+      ],
+      "retrive_next_sibling": [
+        4,
+        1
+      ],
+      "target_predict": [
+        4,
+        1
+      ],
+      "predicts": [
+        1
+      ],
+      "accept_index": [
+        3,
+        1
+      ],
+      "accept_token_num": [
+        1
+      ]
+    },
+    "scalars": {},
     "contiguous": true,
     "tree": {
       "mode": "random",
@@ -388,6 +784,39 @@
       "retrive_next_sibling": "int64",
       "target_predict": "int64"
     },
+    "strides": {
+      "candidates": [
+        2,
+        1
+      ],
+      "retrive_index": [
+        2,
+        1
+      ],
+      "retrive_next_token": [
+        2,
+        1
+      ],
+      "retrive_next_sibling": [
+        2,
+        1
+      ],
+      "target_predict": [
+        2,
+        1
+      ],
+      "predicts": [
+        1
+      ],
+      "accept_index": [
+        2,
+        1
+      ],
+      "accept_token_num": [
+        1
+      ]
+    },
+    "scalars": {},
     "contiguous": true,
     "tree": {
       "mode": "all_reject"
@@ -417,6 +846,39 @@
       "retrive_next_sibling": "int64",
       "target_predict": "int64"
     },
+    "strides": {
+      "candidates": [
+        4,
+        1
+      ],
+      "retrive_index": [
+        4,
+        1
+      ],
+      "retrive_next_token": [
+        4,
+        1
+      ],
+      "retrive_next_sibling": [
+        4,
+        1
+      ],
+      "target_predict": [
+        4,
+        1
+      ],
+      "predicts": [
+        1
+      ],
+      "accept_index": [
+        4,
+        1
+      ],
+      "accept_token_num": [
+        1
+      ]
+    },
+    "scalars": {},
     "contiguous": true,
     "tree": {
       "mode": "all_accept"
@@ -446,6 +908,39 @@
       "retrive_next_sibling": "int64",
       "target_predict": "int64"
     },
+    "strides": {
+      "candidates": [
+        5,
+        1
+      ],
+      "retrive_index": [
+        5,
+        1
+      ],
+      "retrive_next_token": [
+        5,
+        1
+      ],
+      "retrive_next_sibling": [
+        5,
+        1
+      ],
+      "target_predict": [
+        5,
+        1
+      ],
+      "predicts": [
+        1
+      ],
+      "accept_index": [
+        3,
+        1
+      ],
+      "accept_token_num": [
+        1
+      ]
+    },
+    "scalars": {},
     "contiguous": true,
     "tree": {
       "mode": "sibling_tiebreak"
@@ -475,6 +970,39 @@
       "retrive_next_sibling": "int64",
       "target_predict": "int64"
     },
+    "strides": {
+      "candidates": [
+        5,
+        1
+      ],
+      "retrive_index": [
+        5,
+        1
+      ],
+      "retrive_next_token": [
+        5,
+        1
+      ],
+      "retrive_next_sibling": [
+        5,
+        1
+      ],
+      "target_predict": [
+        5,
+        1
+      ],
+      "predicts": [
+        1
+      ],
+      "accept_index": [
+        4,
+        1
+      ],
+      "accept_token_num": [
+        1
+      ]
+    },
+    "scalars": {},
     "contiguous": true,
     "tree": {
       "mode": "random",
@@ -483,6 +1011,6 @@
     "atol": 0,
     "rtol": 0,
     "seed": 2006,
-    "note": "bs>CAP and nd>2: candidate MUST fall back to recovered baseline and still match oracle exactly"
+    "note": "nd>2 (and nss>2): outside the specialized nd==2/nss==2 family, so the candidate MUST fall back to the recovered baseline and still match the oracle exactly"
   }
 ]

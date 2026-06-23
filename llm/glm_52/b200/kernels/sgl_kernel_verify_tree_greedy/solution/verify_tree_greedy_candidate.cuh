@@ -65,11 +65,10 @@ __global__ void VerifyTreeGreedyLaneW2S2(
   predicts[last_accepted] = static_cast<int32_t>(__ldg(&target_predict[last_accepted]));
 }
 
-constexpr uint32_t kLaneBlock = 128;        // threads/block (captured bs<=10 -> 1 block)
-constexpr uint32_t kCandidateBsCap = 1024;  // above this, fall back to baseline
+constexpr uint32_t kLaneBlock = 128;  // threads/block (captured production bs<=10 -> 1 block)
 
 // Cheap host-side dispatch (reads tensor metadata only; no device sync on the hot
-// path): the captured regime goes to the specialized candidate, everything else
+// path): the captured shape family goes to the specialized candidate, everything else
 // falls back to the recovered baseline.
 inline void dispatch_verify_tree_greedy(
     int32_t* predicts,
@@ -84,8 +83,10 @@ inline void dispatch_verify_tree_greedy(
     uint32_t num_spec_step,
     uint32_t num_draft_tokens,
     cudaStream_t stream) {
-  const bool specialized =
-      (num_draft_tokens == 2 && num_spec_step == 2 && batch_size <= kCandidateBsCap);
+  // Specialize the captured shape family (num_draft_tokens==2, num_spec_step==2) for any
+  // batch size; the lane-per-request kernel scales via grid = ceil(bs / kLaneBlock).
+  // Captured production is bs<=10. Every uncovered shape falls back to the recovered baseline.
+  const bool specialized = (num_draft_tokens == 2 && num_spec_step == 2);
   if (specialized) {
     const uint32_t block = kLaneBlock;
     const uint32_t grid = (batch_size + block - 1) / block;

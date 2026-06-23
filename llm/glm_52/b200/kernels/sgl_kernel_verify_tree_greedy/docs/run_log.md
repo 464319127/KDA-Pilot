@@ -1,5 +1,7 @@
 # Run Log — `verify_tree_greedy` baseline-vs-candidate (B200)
 
+Round 1 run with the literal **TVM-FFI direct-symbol ABI** (supersedes the Round-0 pybind run).
+
 ## Environment
 
 | Field | Value |
@@ -11,16 +13,17 @@
 | PyTorch | 2.11.0+cu130 |
 | CUDA runtime | 13.0 |
 | nvcc | release 13.0, V13.0.88 |
+| tvm-ffi | 0.1.9 (headers `tvm_ffi/include`, `libtvm_ffi.so`); build via `tvm_ffi.cpp.load` |
 | Python | 3.12.3 |
 | Baseline upstream commit | `7e6587c94a1d0305815a14067c5d3cc02a9b0f36` (SGLang `main`) |
-| Local commit at run time | `85795628d` |
+| Code provenance | Round 1 working tree; the source hashes below pin the exact built sources |
 
 ### Source hashes (sha256)
 
 | File | sha256 |
 |------|--------|
-| `solution/verify_tree_greedy_candidate.cuh` | `ec47c49e9fe36ff1db9fdfbc6a77d55bfb48394a90d4f9055056dd3b4a95538a` |
-| `bench/verify_tree_greedy_ext.cu` | `f5baa1bdcac249d0d1608d6a4d324c0f1538ef9d2a2d15cebc0f75a8dafcbe30` |
+| `bench/verify_tree_greedy_ffi.cu` (TVM-FFI ABI) | `c435da8324371daff4bff93a61fd32126b25924dd62230dafaac3b1a4bcdeaee` |
+| `solution/verify_tree_greedy_candidate.cuh` | `18cfffabea1d5e6bb162b9cba04e98b5149fc9e0406fb16402883bd353b0eaeb` |
 | `baseline/verify_tree_greedy_kernel.cuh` | `d4bbf9d770e95b9e777742b82ed7b4a3651b0eb161d24dff534017512a603b2b` |
 
 ## GPU idle evidence (pinned GPU 7)
@@ -30,32 +33,38 @@
 - **Before**: `7, 0 %, 0 MiB` (idle — no active compute, no meaningful memory).
 - **After**: `7, 0 %, 4 MiB` (idle; 4 MiB trivial residual context).
 
-Other GPUs (2: 82 GiB, 5: 156 GiB) were in use by other tenants throughout; only GPU 7 was used for this run.
+The selected card (GPU 7) was idle before and after, as required. During this run, other
+tenants' GPUs became busy (GPU 0 ~88%, GPU 1 ~70%, GPU 3 ~1%; GPUs 2/5 held memory). This
+node-level host contention raised the absolute per-launch floor to ~4.8–6.1 µs (vs ~4.0–4.8 µs
+in the Round-0 run on a quieter node). The benchmark samples baseline and candidate
+**interleaved within each trial**, so both sides experience identical conditions and the
+speedup *ratio* is unaffected; the floor's sensitivity to host contention (with GPU 7 work
+unchanged) further reinforces that the kernel is launch/scheduler-bound, not body-bound.
 
 ## Commands
 
-Workspace synced into the container via `tar | docker exec` (see method notes). Then:
+Workspace synced into the container via `tar | docker exec`. Then on GPU 7:
 
 ```bash
-# Build + exact-match correctness gate (candidate == baseline == independent oracle)
+# Build (TVM-FFI via tvm_ffi.cpp.load) + exact-match gate (candidate == baseline == oracle)
 CUDA_VISIBLE_DEVICES=7 TORCH_CUDA_ARCH_LIST=10.0 python bench/correctness.py
 
-# Amplified fair benchmark (CUDA-event GPU time authoritative)
+# Amplified fair benchmark (CUDA-event GPU time authoritative; wall-clock secondary)
 CUDA_VISIBLE_DEVICES=7 TORCH_CUDA_ARCH_LIST=10.0 python bench/benchmark.py --device cuda:0
 ```
 
-Benchmark settings (from `bench/benchmark.py` provenance record): `warmup_runs=10`,
-`num_trials=7`, `inner_iterations_min/max=1/4096`, `target_sample_us=1000`,
-`isolated=True`. Inner-loop amplification ramped to **256** back-to-back launches per
-CUDA-event pair (256 × ~4 µs ≈ 1024 µs sample).
+Benchmark settings (from the `bench/results.jsonl` provenance record): `warmup_runs=10`,
+`num_trials=7`, `inner_iterations_min/max=1/4096`, `target_sample_us=1000`, `isolated=True`.
+Inner-loop amplification ramped to **256** back-to-back launches per CUDA-event pair
+(256 × ~5 µs ≈ 1280 µs sample).
 
 ## Outcomes
 
 - **Correctness**: 17/17 checks PASS — `candidate == baseline == oracle`, exact
   integer/structural match, across the upstream fixture, all 10 production shapes (5 seeds
-  each), and 6 regression rows (incl. the `bs>CAP, nd>2` baseline-fallback row).
-- **Benchmark**: 16/16 workloads PASS; production equal-weight geomean speedup = **0.9956**
-  (candidate ≈ baseline ≈ ~4.0–4.8 µs/launch). See `docs/results.md`.
+  each), and 6 regression rows (incl. the `nd>2` baseline-fallback row).
+- **Benchmark**: 16/16 workloads PASS; production equal-weight geomean speedup = **0.9924**
+  (candidate ≈ baseline ≈ ~4.8–6.1 µs/launch). See `docs/results.md` and `docs/dispatch.md`.
 
 Raw per-run records: `bench/results.jsonl` (kept local, NOT staged for the PR per the
 PR-scope rules).

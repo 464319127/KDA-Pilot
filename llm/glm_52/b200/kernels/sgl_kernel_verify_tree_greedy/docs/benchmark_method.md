@@ -2,16 +2,18 @@
 
 ## Build / ABI
 
-Both the recovered baseline and the candidate are compiled into a **single** torch
-CUDA extension (`bench/verify_tree_greedy_ext.cu`) built with
-`torch.utils.cpp_extension.load`. The extension exports two functions with the
-**identical** signature:
+Both the recovered baseline and the candidate are compiled into a **single** TVM-FFI
+module (`bench/verify_tree_greedy_ffi.cu`) built with `tvm_ffi.cpp.load` (tvm_ffi 0.1.9).
+Both entry points are exported via `TVM_FFI_DLL_EXPORT_TYPED_FUNC` and take
+`tvm::ffi::TensorView` arguments with the **identical** signature:
 
 - `baseline_verify_tree_greedy(candidates, retrive_index, retrive_next_token, retrive_next_sibling, target_predict, predicts, accept_index, accept_token_num)`
 - `candidate_verify_tree_greedy(... same args ...)`
 
-Both run the same host-side validation, launch on `at::cuda::getCurrentCUDAStream()`,
-and allocate nothing (the three outputs are passed in, preallocated by the harness).
+Both run the same host-side validation, allocate nothing (the three outputs are passed in,
+preallocated by the harness), and launch on the CUDA stream returned by the TVM-FFI
+environment (`TVMFFIEnvGetStream`), which the harness binds to PyTorch's current stream via
+`tvm_ffi.use_torch_stream()` — the same stream the benchmark's CUDA events are recorded on.
 
 ### Argument order — outputs LAST (documented remap)
 
@@ -22,25 +24,28 @@ for both sides identically:
 `(candidates, retrive_index, retrive_next_token, retrive_next_sibling, target_predict | predicts, accept_index, accept_token_num)`.
 The internal launch wrappers remap back to the upstream kernel order.
 
-### ABI mechanism note (deviation from the plan's literal wording)
+### ABI mechanism
 
-The plan's AC-2 names "TVM-FFI direct-symbol typed export with `tvm::ffi::TensorView`
-arguments". This task instead uses a single **symmetric torch `cpp_extension`** (pybind)
-for BOTH sides. The benchmark contract only *prefers* the TVM-FFI direct-symbol ABI;
-its controlling fairness rules are all satisfied here: identical signature / argument
-order / output-allocation policy, the same `at::cuda::getCurrentCUDAStream()`, the same
-builder path and compile flags, and no heavy one-sided wrapper. Because the kernel time
-is measured with CUDA events that bracket the launch, the (symmetric) pybind dispatch
-cost sits outside the timed region and cannot bias the comparison. This avoids adding a
-`tvm-ffi` runtime dependency to the standalone harness while preserving low, symmetric
-call overhead. (Logged in the goal-tracker Plan Evolution Log.)
+This is the literal local ABI required by AC-2 and `llm_kernel_optimization_rules.md`: a
+TVM-FFI direct-symbol typed export (`TVM_FFI_DLL_EXPORT_TYPED_FUNC`) with
+`tvm::ffi::TensorView` arguments, outputs passed last, destination-passing style (the
+harness preallocates the three outputs), shared validation, and a single shared build for
+both sides. The Python harness loads the module with `tvm_ffi.cpp.load` and calls the two
+exported symbols; `bench/adapter.py`'s `call_baseline` / `call_candidate` differ only by
+the exported symbol name, so the comparison is symmetric.
+
+Note: upstream sgl-kernel registers `verify_tree_greedy` via `TORCH_LIBRARY` with
+`at::Tensor` (not TVM-FFI). The TVM-FFI direct-symbol pattern is the KDA-Pilot-mandated
+*local* benchmark ABI, provided by the `tvm-ffi` package (headers under
+`tvm_ffi/include` + `libtvm_ffi.so`). The kernel sources in `baseline/` and `solution/`
+are ABI-agnostic (plain `cudaStream_t` launchers); only this binding depends on TVM-FFI.
 
 ## Compile flags (symmetric)
 
 - C++: `-O3`
-- CUDA: `-O3` (no `--use_fast_math`; no one-sided arch/math-mode flags)
-- Architecture: auto-selected by `cpp_extension` for the build GPU (NVIDIA B200 = `sm_100`).
-- Both kernels live in the same translation-unit/extension, so flags are identical by construction.
+- CUDA: `extra_cuda_cflags=["-O3"]` (no `--use_fast_math`; no one-sided arch/math-mode flags)
+- Architecture: `TORCH_CUDA_ARCH_LIST=10.0` for the build GPU (NVIDIA B200 = `sm_100`); `tvm_ffi.cpp.load` invokes `nvcc`.
+- Both kernels live in the same module/translation unit, so flags are identical by construction.
 
 These kernels do only integer comparisons and int loads/stores (no floating point),
 so fast-math is irrelevant to numerics; correctness is exact integer/structural match.
