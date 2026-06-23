@@ -37,21 +37,20 @@ def _load_abi():
     destination-passing signature). Built on the remote B200 (see solution/build.py)."""
     global _ABI
     if _ABI is None:
-        import sys
+        import importlib.util
         from pathlib import Path
-        sol = Path(__file__).resolve().parent.parent / "solution"
-        if str(sol) not in sys.path:
-            sys.path.insert(0, str(sol))  # find the .so built by solution/build.py
+        build_py = Path(__file__).resolve().parent.parent / "solution" / "build.py"
         try:
-            import topk_transform_abi as _abi
+            spec = importlib.util.spec_from_file_location("topk_abi_build", build_py)
+            mod = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(mod)
+            _ABI = mod.load_abi()  # builds (cached) + loads the TVM-FFI module
         except Exception as exc:  # pragma: no cover - until the remote build
             raise NotImplementedError(
-                "task ABI not built yet: run solution/build.py on the remote B200 to "
-                "compile baseline + candidate + binding into `topk_transform_abi` "
-                "(fast_topk_transform_fused_baseline / _candidate, destination-passing, "
-                f"at::cuda::getCurrentCUDAStream()). import error: {exc!r}"
+                "task ABI not built: run `python solution/build.py` on the remote B200 "
+                "(builds the TVM-FFI topk_transform_abi via tvm_ffi.cpp.load_inline). "
+                f"error: {exc!r}"
             )
-        _ABI = _abi
     return _ABI
 
 

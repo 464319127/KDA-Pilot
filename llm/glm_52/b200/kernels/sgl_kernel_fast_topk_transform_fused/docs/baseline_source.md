@@ -27,5 +27,11 @@ This is the DeepSeek-V3.2-style sparse-attention top-k indexer (`topk == 2048` a
 - Dispatch: `topk_transform_decode_kernel` vs `topk_transform_prefill_kernel` (prefill uses `cu_seqlens_q` to map tokens→sequences; `prefill_bs` small). `static_assert(TopK / kThreadsPerBlock == 2)` → 1024 threads emit 2048 outputs (2 per thread).
 - `row_starts` (always `None` in the GLM-5.2 capture) selects the ragged `[row_starts[i], row_starts[i]+lengths[i])` sub-range; the non-`None` path belongs to the separate `_ragged` variant.
 
-### OPEN SEMANTIC QUESTION (top correctness risk, gated to the build round)
-Upstream `main` `fast_topk_transform_fused` returns **one** `(B, topk)` int32 tensor (`dst_page_table`). The GLM-5.2 capture (`docs/evidence.json`) logged **two** `(B, 2048)` int32 result tensors per call. This discrepancy (logger double-recording the destination-passing buffer + an in-place arg, vs. a capture-build that returned two tensors) MUST be resolved by a differential probe against THIS recovered commit before the correctness oracle is finalized. `bench/correctness.py` is scaffolded to compare the returned `dst_page_table` and is flagged to add the second output once confirmed.
+### OUTPUT-COUNT CONTRACT — resolved to ONE output (static evidence; remote probe = final confirmation)
+The interface returns **one** `(B, topk)` int32 tensor per call (`dst_page_table`). Evidence:
+1. C++ `fast_topk_transform_interface` writes a single `dst_page_table` (destination-passing); there is no second output buffer.
+2. `top_k.py` allocates one `dst_page_table` and `return`s it.
+3. The caller `python/sglang/srt/layers/attention/dsa/dsa_topk_backend.py` consumes a single return value: `return fast_topk_transform_fused(...)`.
+4. In `docs/evidence.json` the per-variant `result.tensors` list has two entries, but **56 variants have entries with DIFFERING row counts** (e.g. variant[6]: score `B=3`, results `(3,2048)` and `(6,2048)`; the raw shows two separate `Output:` blocks). Since each call's output is `(score_B, 2048)`, a `(6,2048)` entry on a `B=3` variant must come from a *different call* — so `result.tensors` **aggregates the single-tensor returns of two sampled calls** of the variant, not two outputs of one call.
+
+Therefore the harness allocates/verifies **one** output. (This corrects the earlier "logger duplication" phrasing: the mechanism is multi-call aggregation in the capture record, not duplication of one buffer.) The remote differential probe in the build round is the final on-hardware confirmation: run the recovered op once and assert it returns exactly one `(B, topk)` int32 tensor.
