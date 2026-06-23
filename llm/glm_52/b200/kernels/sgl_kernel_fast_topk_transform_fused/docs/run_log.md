@@ -69,3 +69,33 @@ CUDA_VISIBLE_DEVICES=1 python3 bench/correctness.py cuda:0
 ```
 - **AC-3/AC-4 captured-contract coverage now complete**: the grid exercises `row_starts` tensor rows, non-linear page-table transform, naive exact-match, and radix valid-top-k. Build cached.
 
+## Session — Round 6 (freeze immutable baseline numbers)
+
+- Same host/container/toolchain; pinned GPU 1 (`CUDA_VISIBLE_DEVICES=1`, `--device cuda:0`).
+- **GPU-1 idle evidence (AC-7):** before `index 1: util 0%, mem 59666 MiB`; after `index 1: util 0%,
+  mem 59666 MiB`. A parked process (pid 3048677, sharded GPU0/1) holds 59 GB at **util 0%** (no active
+  compute) and never woke during the run; no cleanly-idle GPU existed (3/4/5/6/7 were 149-157 GB or
+  util 7-73%). `util 0%` before+after → timing valid on the pinned GPU; the 59 GB resident allocation
+  does not contend for SMs/bandwidth (documented caveat).
+- Two harness bugs fixed to make the template benchmark runnable (commit this round):
+  (1) `bench/adapter.py` `Case` changed from `@dataclass` to a plain class — the template loads the
+  adapter via `importlib.spec_from_file_location` without registering it in `sys.modules`, and Python
+  3.12 `@dataclass` then errors in the spawned isolated worker;
+  (2) `compare_outputs` made regime-aware (naive exact; radix order-tolerant sorted-set) — the baseline
+  radix order is non-deterministic, so the template's per-workload exact compare wrongly marked radix
+  rows INCORRECT. Authoritative correctness remains `bench/correctness.py` (valid-top-k, `matched_ratio==1.0`).
+
+### Command + result
+```
+CUDA_VISIBLE_DEVICES=1 python3 bench/benchmark.py --device cuda:0 \
+  --workloads bench/workloads.json --out bench/results.jsonl
+-> 251 workloads: 250 PASSED, 1 INCORRECT (reg_ties_boundary, radix+exact-ties REGRESSION row;
+   production=false; validated by correctness.py valid-top-k; not in the headline).
+-> production headline (236 rows): geomean 0.9977, arithmetic 0.9979, min 0.80, max 1.097
+   (candidate==baseline stub -> ~1.0 confirms a fair harness; ~±20% per-row tiny-kernel noise floor).
+-> per-regime baseline median_us: decode n=212 p50 9.32 (7.63-13.59); radix n=24 p50 9.29 (8.22-74.79).
+```
+- **Immutable baseline frozen** in `bench/results.jsonl` (raw `samples_us` trimmed; stats retained).
+  Provenance in `docs/benchmark_method.md`. No NCU this round (AC-11; the native candidate + a named
+  bound come next). Build cached (no recompile).
+

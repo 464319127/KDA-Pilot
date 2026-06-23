@@ -22,7 +22,6 @@ bind to the task-local `topk_transform_abi` module built on the remote B200 (see
 """
 from __future__ import annotations
 
-from dataclasses import dataclass
 from typing import Any
 
 import torch
@@ -55,12 +54,16 @@ def _load_abi():
     return _ABI
 
 
-@dataclass
 class Case:
-    inputs: dict[str, Any]
-    baseline_outputs: list[torch.Tensor]
-    candidate_outputs: list[torch.Tensor]
-    tolerance: dict[str, float]
+    # Plain class (NOT @dataclass): bench/benchmark.py loads this adapter via
+    # importlib.spec_from_file_location without registering it in sys.modules, and Python 3.12's
+    # @dataclass needs the module in sys.modules to resolve annotations (else AttributeError in the
+    # spawned isolated worker). The benchmark's _case_get uses attribute access, so a plain class works.
+    def __init__(self, inputs, baseline_outputs, candidate_outputs, tolerance):
+        self.inputs = inputs
+        self.baseline_outputs = baseline_outputs
+        self.candidate_outputs = candidate_outputs
+        self.tolerance = tolerance
 
 
 def _gen(device: torch.device, seed: int) -> torch.Generator:
@@ -176,11 +179,18 @@ def call_candidate(workload, inputs, outputs) -> None:
 
 
 def compare_outputs(workload, baseline_outputs, candidate_outputs, tolerance) -> dict:
-    """Exact integer match on every output (no atol/rtol on indices), with shape/dtype/
-    contiguity checks. This is the comparator for the DETERMINISTIC (naive, length<=topk)
-    regime; the non-deterministic radix path is validated by correctness.validate_topk
-    (valid-top-k), not by exact compare. Int32 outputs cannot hold NaN/Inf; a finite check
-    is applied only to any float output for completeness."""
+    """Benchmark per-workload SANITY check (the AUTHORITATIVE correctness gate is
+    bench/correctness.py, run to matched_ratio==1.0 before benchmarking). Regime-aware, because
+    the baseline radix path produces a non-deterministic output ORDER and this comparator only
+    receives the two output tensors (not the inputs needed for a full valid-top-k check):
+      - naive (max_valid_length <= topk): exact integer match (deterministic);
+      - radix (max_valid_length > topk): order-tolerant per-row sorted-set match (same selected
+        page-id set; tolerates the nondeterministic order). Exact-equal-value-tie rows that select
+        different valid sets are validated by correctness.validate_topk, not here.
+    Plus shape/dtype/contiguity/finite structural checks."""
+    sc = workload.get("scalars", {}) if isinstance(workload, dict) else {}
+    topk = int(sc.get("topk", 2048))
+    is_radix = int(sc.get("max_valid_length", 0)) > topk
     if len(baseline_outputs) != len(candidate_outputs):
         return _fail(f"output count {len(baseline_outputs)} vs {len(candidate_outputs)}")
     for idx, (b, c) in enumerate(zip(baseline_outputs, candidate_outputs)):
@@ -192,7 +202,10 @@ def compare_outputs(workload, baseline_outputs, candidate_outputs, tolerance) ->
             return _fail(f"output {idx} stride {b.stride()} vs {c.stride()}")
         if c.is_floating_point() and not torch.isfinite(c).all():
             return _fail(f"output {idx} has NaN/Inf")
-        if not torch.equal(b, c):
+        if is_radix:
+            if not torch.equal(torch.sort(b, dim=-1).values, torch.sort(c, dim=-1).values):
+                return _fail(f"output {idx} radix selected-set mismatch (order-tolerant sorted compare)")
+        elif not torch.equal(b, c):
             mism = int((b != c).sum().item())
             return _fail(f"output {idx} exact-match failed: {mism} mismatched entries")
     return {"ok": True, "max_abs": 0.0, "max_rel": 0.0, "message": ""}
