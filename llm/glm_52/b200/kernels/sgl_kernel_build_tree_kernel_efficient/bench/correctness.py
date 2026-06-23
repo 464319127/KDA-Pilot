@@ -148,9 +148,9 @@ def check_full_mask(device, bs, L, label, fails):
 
 
 # ----------------------------- fallback domain (candidate must == baseline) -----------------------------
-def check_identity(device, label, parent_list, selected_index, vsl, sc, total_tree, total_idx, fails):
+def check_identity(device, label, parent_list, selected_index, vsl, sc, total_tree, fails):
     nv = int(sc["draft_token_num"])
-    cbs = int(parent_list.shape[0])  # total_idx == cbs * nv
+    cbs = int(parent_list.shape[0])  # == total tree-index count / nv
     base_out = prestated_outputs(total_tree, cbs, nv, device)
     cand_out = prestated_outputs(total_tree, cbs, nv, device)
     # PROVE this off-domain case routes to the baseline fallback (route==0).
@@ -172,7 +172,7 @@ def fallback_cases(device, fails):
     si = torch.zeros((bs, 1), dtype=torch.int64, device=device)
     check_identity(device, "fallback/qlen_only", pl, si, vsl,
                    {"topk": 1, "depth": 1, "draft_token_num": 2, "tree_mask_mode": 1},
-                   NV * NV * bs, bs * NV, fails)
+                   NV * NV * bs, fails)
 
     # 2) non-contiguous verified_seq_len
     base = torch.tensor([5, 7, 3, 9], dtype=torch.int64, device=device).unsqueeze(1).repeat(1, 2).contiguous()
@@ -181,19 +181,19 @@ def fallback_cases(device, fails):
     T = 2 * int(vsl_nc.sum()) + 4 * bs
     check_identity(device, "fallback/noncontig_vsl", pl, si, vsl_nc,
                    {"topk": 1, "depth": 1, "draft_token_num": 2, "tree_mask_mode": 0},
-                   T, bs * NV, fails)
+                   T, fails)
 
     # 3) wrong parent_list dtype (int32) -> dtype guard -> fallback (parent_list [bs,0] never read)
     pl_i32 = torch.empty((bs, 0), dtype=torch.int32, device=device)
     check_identity(device, "fallback/parentlist_int32", pl_i32, si, vsl,
                    {"topk": 1, "depth": 1, "draft_token_num": 2, "tree_mask_mode": 0},
-                   2 * int(vsl.sum()) + 4 * bs, bs * NV, fails)
+                   2 * int(vsl.sum()) + 4 * bs, fails)
 
     # 4) wrong selected_index shape [bs,2] (expected [bs,1]) -> shape guard -> fallback
     si_bad = torch.zeros((bs, 2), dtype=torch.int64, device=device)
     check_identity(device, "fallback/selidx_shape", pl, si_bad, vsl,
                    {"topk": 1, "depth": 1, "draft_token_num": 2, "tree_mask_mode": 0},
-                   2 * int(vsl.sum()) + 4 * bs, bs * NV, fails)
+                   2 * int(vsl.sum()) + 4 * bs, fails)
 
     # 5) draft_token_num=4 -> scalar guard -> fallback (depth=1 -> parent_list [bs,1], selected_index 0)
     d = 4
@@ -202,7 +202,7 @@ def fallback_cases(device, fails):
     T4 = int(vsl.sum()) * d + d * d * bs
     check_identity(device, "fallback/draft4", pl4, si4, vsl,
                    {"topk": 1, "depth": 1, "draft_token_num": d, "tree_mask_mode": 0},
-                   T4, bs * d, fails)
+                   T4, fails)
 
 
 def evidence_bsT_sweep():
