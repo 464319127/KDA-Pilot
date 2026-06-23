@@ -112,6 +112,10 @@ def _output_checks(name, out, B, topk, device):
         msgs.append(f"{name} dtype {out.dtype} != int32")
     if out.device.type != device.type:
         msgs.append(f"{name} device {out.device.type} != {device.type}")
+    # Exact device-index pin (AC-7 provenance): under CUDA_VISIBLE_DEVICES=1 the pinned GPU is
+    # remapped to cuda:0, so the output must sit on that exact index, not just any CUDA device.
+    if device.index is not None and out.device.index != device.index:
+        msgs.append(f"{name} device index {out.device.index} != {device.index}")
     if not out.is_contiguous():
         msgs.append(f"{name} not contiguous (stride {out.stride()})")
     if out.is_floating_point() and not torch.isfinite(out).all():
