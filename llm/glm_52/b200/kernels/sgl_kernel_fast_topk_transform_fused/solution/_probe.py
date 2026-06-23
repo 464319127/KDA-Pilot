@@ -147,6 +147,33 @@ def run(name, B, N, S, M, page_table_mode="arange", row_starts_kind="none", **kw
     return okb and okc
 
 
+def fallback_regression():
+    """Out-of-contract metadata must take the baseline FALLBACK, not the native kernel. Here `score`
+    has a batch that mismatches `dst` (the baseline defines B = score.size(0) and rejects
+    dst.size(0) != B), so a correct candidate falls back and raises exactly like the baseline. Without
+    the `score.size(0) == batch` dispatch guard the native bucket would still fire (the kernel never
+    reads score) and silently return a wrong-contract output -> this is the regression guard."""
+    B, N, S, M = 8, 64, 8, 64
+    score, lengths, pt, cu, L, _ = case(B, N, S, M)
+    bad_score = torch.randn(B + 1, N, device=dev)  # mismatched batch (B+1 vs dst batch B)
+    dst = torch.full((B, topk), -17, dtype=torch.int32, device=dev)
+
+    def raises(fn, sc):
+        try:
+            fn(sc, lengths, pt, cu, topk, None, dst)
+            torch.cuda.synchronize()
+            return False
+        except Exception:
+            return True
+
+    cr = raises(cand, bad_score)
+    br = raises(base, bad_score)
+    ok_ctrl = not raises(cand, score)  # control: the valid-batch score must NOT raise (native path runs)
+    print(f"[fallback_regression] score_batch_mismatch candidate_raised={cr} baseline_raised={br} "
+          f"control_native_ok={ok_ctrl} (all expected True)")
+    return cr and br and ok_ctrl
+
+
 results = []
 results.append(run("decode_small", 2, 64, 2, 40))
 results.append(run("decode_contig_eqtopk", 8, 2048, 8, 2048))
@@ -156,6 +183,7 @@ results.append(run("prefill", 16, 448, 4, 409))
 results.append(run("permuted_naive", 4, 128, 4, 128, page_table_mode="permuted"))
 results.append(run("permuted_radix", 8, 2112, 8, 2112, page_table_mode="permuted"))
 results.append(run("row_starts_radix", 8, 2304, 8, 2176, row_starts_kind="tensor"))
+results.append(fallback_regression())  # out-of-contract input must fall back, not run native
 import sys
 print("PROBE_OK" if all(results) else "PROBE_FAIL")
 sys.exit(0 if all(results) else 1)

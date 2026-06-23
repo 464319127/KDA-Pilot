@@ -28,6 +28,14 @@
   baseline's own `TORCH_CHECK`s; and a non-synchronizing `C10_CUDA_KERNEL_LAUNCH_CHECK()` after the
   launch surfaces a launch-config error immediately (matches the baseline). Every memory access the
   kernel makes is now guarded.
+- **Dispatch guards completed (Round 11)** — the `decode_naive_bucket` predicate is now a SUPERSET of
+  the recovered baseline's metadata contract, so any public-ABI input the baseline would reject takes
+  the fallback (not the native path): added `score.size(0)==batch`, `score` float dtype / `stride(1)==1`
+  / `is_cuda`, `lengths.is_contiguous()`, `cu_seqlens_q.is_contiguous()`/`is_cuda()` (on top of the R10
+  rank guards). A `fallback_regression` case in `solution/_probe.py` proves an out-of-contract input
+  (score-batch mismatch) makes BOTH candidate and baseline raise (fallback, not a silent native run),
+  while a valid-batch control still runs native. Re-verified 251/251 with the SAME 221 native / 30
+  fallback split + PROBE_OK.
 - NOT yet done (timing-gated): candidate benchmark vs the frozen baseline, measured per-bucket speedup,
   NCU active-bound confirmation. These wait for a strictly-idle GPU 1.
 

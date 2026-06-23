@@ -196,3 +196,33 @@ CUDA_VISIBLE_DEVICES=1 TOPK_CANDIDATE_DEBUG=1 python3 bench/correctness.py cuda:
   221/30 split. AC-6 dispatch is now robust (fallback for every uncovered shape/param) and the launch is
   error-checked. **Candidate timing still deferred to strict idle.** Build cached after first compile.
 
+## Session — Round 11 (complete the dispatch guards to baseline-contract strictness; NO timing)
+
+- Same host/container/toolchain; pinned GPU 1. GPU 1 re-checked: still NOT strictly idle (parked pid
+  3048677 ~59.6 GB util 0%; GPU2 47%, GPU7 3%). **No timing/NCU** — build + correctness only.
+- Codex R10-review P0 (non-timing): the native dispatch was not yet as strict as the baseline metadata
+  contract. Extended `decode_naive_bucket` to a SUPERSET of the baseline's checks (added
+  `score.size(0)==batch`, `score` float/`stride(1)==1`/`is_cuda`, `lengths.is_contiguous()`,
+  `cu_seqlens_q.is_contiguous()`/`is_cuda()`), so any out-of-contract public-ABI input falls back.
+  Added a `fallback_regression` probe case. candidate `.cu` sha256
+  `b3ce68488088a0676fadcfad631552aaedbcd697bcac5b5425709a8142279f6f`.
+
+### Commands + results
+```
+cd /home/sglang-omni/bbuf/kda_topk && TORCH_CUDA_ARCH_LIST=10.0 CUDA_VISIBLE_DEVICES=1 python3 solution/build.py
+-> built+loaded topk_transform_abi: OK   (recompiled: candidate changed)
+
+CUDA_VISIBLE_DEVICES=1 TOPK_CANDIDATE_DEBUG=1 python3 bench/correctness.py cuda:0
+-> matched_ratio = 1.0000  (251/251 workloads)
+-> dispatch: 221 native bucket-1 + 30 fallback  (UNCHANGED -> the stricter guards reject only
+   out-of-contract inputs, not captured rows)
+
+CUDA_VISIBLE_DEVICES=1 python3 solution/_probe.py
+-> PROBE_OK; new [fallback_regression] score_batch_mismatch candidate_raised=True baseline_raised=True
+   control_native_ok=True  (out-of-contract input falls back exactly like the baseline; valid input
+   still runs native)
+```
+- **AC-6 dispatch robustness COMPLETE**: native predicate is a superset of the baseline metadata
+  contract, with a regression test proving fallback for an out-of-contract input. **Candidate timing
+  remains deferred to strict idle.** Build cached after first compile.
+

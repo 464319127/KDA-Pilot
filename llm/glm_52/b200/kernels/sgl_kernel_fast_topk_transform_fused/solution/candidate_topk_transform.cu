@@ -92,23 +92,39 @@ void fast_topk_transform_candidate(
   const int64_t num_seq = dims_ok ? src_page_table.size(0) : 0;
   const int64_t page_m = dims_ok ? src_page_table.size(1) : 0;
 
-  // Metadata-only dispatch: no host read of lengths, no sync, no allocation. The native path is taken
-  // only for inputs whose every kernel access (lengths[0..B), src[b,0..len_b), dst[b,0..2048)) is
-  // provably in-bounds for the captured decode contract; anything else -> recovered baseline.
+  // Metadata-only dispatch: no host read of lengths, no sync, no allocation. The predicate is a
+  // SUPERSET of the recovered baseline's metadata contract (baseline/.../topk.cu get_params +
+  // launcher TORCH_CHECKs), so any public-ABI input the baseline would reject — or that this bucket
+  // does not cover — takes fast_topk_transform_interface instead of the native kernel. Every kernel
+  // access (lengths[0..B), src[b,0..len_b), dst[b,0..2048)) is provably in-bounds under these guards.
   const bool decode_naive_bucket =
       dims_ok &&
       topk == 2048 &&
       !row_starts.has_value() &&
-      num_seq == batch &&                  // decode: one src-page row per token row (seq == b)
-      lengths.size(0) == batch &&          // kernel reads lengths[0..B)
-      cu_seqlens_q.size(0) == batch + 1 && // decode cu_seqlens contract (kernel does not read it)
-      std::min(seq_n, page_m) <= 2048 &&
-      dst_page_table.is_contiguous() &&
-      dst_page_table.scalar_type() == at::kInt &&
-      src_page_table.scalar_type() == at::kInt &&
+      num_seq == batch &&                          // decode: one src-page row per token row (seq == b)
+      std::min(seq_n, page_m) <= 2048 &&           // length <= min(N,M) <= topk -> naive path
+      // score (read only for the metadata above; guarded to match the baseline's score contract)
+      score.size(0) == batch &&
+      score.scalar_type() == at::kFloat &&
+      score.stride(1) == 1 &&
+      score.is_cuda() &&
+      // lengths (kernel reads lengths[0..B))
+      lengths.size(0) == batch &&
       lengths.scalar_type() == at::kInt &&
-      src_page_table.stride(1) == 1 &&  // contiguous columns -> coalesced gather + in-bounds [b,col]
-      dst_page_table.is_cuda() && src_page_table.is_cuda() && lengths.is_cuda();
+      lengths.is_contiguous() &&
+      lengths.is_cuda() &&
+      // cu_seqlens_q (decode contract; kernel does not read it, but the baseline requires it)
+      cu_seqlens_q.size(0) == batch + 1 &&
+      cu_seqlens_q.is_contiguous() &&
+      cu_seqlens_q.is_cuda() &&
+      // src_page_table (kernel gathers src[b, col], col-stride 1)
+      src_page_table.scalar_type() == at::kInt &&
+      src_page_table.stride(1) == 1 &&
+      src_page_table.is_cuda() &&
+      // dst_page_table (kernel writes contiguous dst[b, 0..2048))
+      dst_page_table.scalar_type() == at::kInt &&
+      dst_page_table.is_contiguous() &&
+      dst_page_table.is_cuda();
 
   // Optional, one-time-initialized diagnostic (no-op unless TOPK_CANDIDATE_DEBUG is set):
   // lets a correctness/probe run confirm which calls take the native bucket vs the fallback.

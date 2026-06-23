@@ -18,8 +18,10 @@ Faithful to the recovered C++ contract (baseline/.../elementwise/topk.cu):
     duplication of the destination-passing buffer (confirmed by C++ + wrapper + DSA caller; see
     docs/baseline_source.md). Final confirmation = remote differential probe.
 
-Dedup key = (B, N, score_contiguous, M, S) — the full distinguishing tuple (score dtype, scalar
-kwargs, output count are constant across the capture). Call counts are summed; labels collected.
+Dedup key = (B, N, score_contiguous, M, S, row_starts_kind) — the full distinguishing tuple
+(row_starts_kind is "none" or "tensor", separating the 4 large-prefill row_starts variants; score
+dtype, scalar kwargs, output count are constant across the capture). Call counts are summed; labels
+collected.
 Every distinct captured shape is kept as a production row (no high-call shape dropped); top rows by
 call volume are tagged headline. A synthetic regression grid (production:false) covers the edges.
 """
