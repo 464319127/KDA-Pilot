@@ -287,6 +287,23 @@ def main():
                        torch.randn(1024, E, dtype=torch.float16, device=DEV),
                        torch.randn(E, dtype=torch.float32, device=DEV))
 
+    # 2j) candidate must reject output tensors whose 2nd dim != topk (direct-caller
+    #     safety: the kernel indexes with token_id*topk+lane, so a mismatched K would
+    #     write out of bounds / corrupt the row layout).
+    if cand is not None:
+        for kout in (7, 9):  # topk is 8: too-small (OOB) and too-large (corrupt layout)
+            sc_g = torch.randn(4, E, dtype=torch.float32, device=DEV)
+            bz_g = torch.randn(E, dtype=torch.float32, device=DEV)
+            tvg = torch.empty(4, kout, dtype=torch.float32, device=DEV)
+            tig = torch.empty(4, kout, dtype=torch.int32, device=DEV)
+            raised = False
+            try:
+                cand.grouped_topk(sc_g, bz_g, tvg, tig, 1, 1, 8, True, 1.0)
+                torch.cuda.synchronize()
+            except Exception:
+                raised = True
+            ck.check(raised, f"guard: candidate must reject output 2nd-dim={kout} != topk=8")
+
     # 3) unsupported parameter must raise (baseline RuntimeCheck) — and candidate must match
     for (ng, tg, why) in [(2, 1, "num_expert_group=2"), (1, 2, "topk_group=2")]:
         torch.manual_seed(0)

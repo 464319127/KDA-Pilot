@@ -13,7 +13,7 @@ All numbers below are **measured** (no row substitution).
 - **Call-weighted geometric mean (by captured call frequency): 1.038×**
 - **No regression on any production row** (min 0.999×, i.e. parity at the noise floor).
 - Range: decode/small-N parity (1.000×) → prefill up to **1.67×**.
-- Correctness: full grid **1693 checks**, 0 failures, vs baseline + an independent oracle.
+- Correctness: full grid **1695 checks**, 0 failures, vs baseline + an independent oracle.
 
 The candidate dispatches by token count: the recovered baseline kernel for the
 launch-floor-bound decode/small regime (parity), a register-resident
@@ -108,7 +108,7 @@ apply. Diagnosis used NCU (occupancy/throughput/waves) per `ncu-report-skill`.
 
 ## Correctness
 
-`bench/correctness.py` — **1693 checks, 0 failures**. Candidate vs the recovered
+`bench/correctness.py` — **1695 checks, 0 failures**. Candidate vs the recovered
 baseline: exact-match ordered `topk_indices` and `topk_values` within fp32
 `atol=rtol=1e-5` on every captured production shape (×2 seeds) and the edge grid
 (exact ties → smaller index, equal `sigmoid+bias` via different bias, negative bias,
@@ -118,8 +118,10 @@ at N≥768** (E=128, E=512; topk=1/4/7; renormalize=False; scaling_factor=0.5)
 exact-matches the baseline (these route to the baseline kernel); **non-contiguous and
 non-fp32** inputs are rejected identically by both sides; and a fresh-process
 **K09_WPB=4 override regression** (profiler-observed) confirms the override cannot
-route off-domain inputs to the warp kernel. Output buffers poisoned before each run
-(no stale/poison survivors); NaN/Inf checked; shape/dtype/device verified.
+route off-domain inputs to the warp kernel; and the candidate **rejects output
+tensors whose 2nd dim ≠ topk** (the direct-caller `K==topk` guard, R5). Output
+buffers poisoned before each run (no stale/poison survivors); NaN/Inf checked;
+shape/dtype/device verified.
 Unsupported parameters (`num_expert_group≠1`, `topk_group≠1`) are rejected exactly as
 the baseline. The decode/small-N + off-domain **fallback path is the copied baseline
 kernel → bit-identical by construction**. The large-N **warp path** reuses the same

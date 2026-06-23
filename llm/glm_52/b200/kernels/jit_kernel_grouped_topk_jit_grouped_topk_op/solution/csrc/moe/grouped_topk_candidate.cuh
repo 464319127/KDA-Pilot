@@ -298,6 +298,11 @@ void grouped_topk(
   RuntimeCheck(num_expert_group == 1 && topk_group == 1, "This kernel only supports num_expert_group=1, topk_group=1");
   RuntimeCheck(topk <= MAX_TOPK, "topk must be <= ", MAX_TOPK);
   RuntimeCheck(num_experts <= 512, "num_experts must be <= 512");
+  // The kernels index outputs with `token_id * topk + lane` using the topk scalar,
+  // while K above is bound from the output tensors' 2nd dim. Guard that they agree so
+  // a direct caller passing mismatched output buffers cannot write out of bounds
+  // (K < topk) or corrupt the row layout (K > topk).
+  RuntimeCheck(K.unwrap() == topk, "topk_values/topk_indices second dim must equal topk, got ", K.unwrap(), " vs ", topk);
 
   if (num_tokens == 0) return;
 

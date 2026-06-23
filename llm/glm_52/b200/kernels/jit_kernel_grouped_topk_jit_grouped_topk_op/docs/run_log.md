@@ -64,8 +64,8 @@ GPU-independent; NCU diagnosis was on GPU 0 while it was usable. Pin the GPU wit
 
 Correctness (full grid, candidate vs baseline + independent oracle):
 ```
-cd bench && CUDA_VISIBLE_DEVICES=0 python correctness.py
-# -> 1693 checks passed, 0 failed
+cd bench && CUDA_VISIBLE_DEVICES=<idle id> python correctness.py
+# -> 1695 checks passed, 0 failed
 ```
 The grid covers: all 43 captured production shapes (×2 seeds) exact ordered-index +
 weights (fp32 atol=rtol=1e-5) vs baseline and the independent oracle; **output
@@ -75,9 +75,11 @@ max N=3769, renormalize=False); **off-domain fallback at N≥768** (E=128, E=512
 topk=1/4/7; renormalize=False; scaling_factor=0.5) exact-matching the baseline; and
 **non-contiguous / non-fp32 rejection** (identical on both sides). It also spawns a
 fresh process with **K09_WPB=4** and uses the profiler to assert the override does
-not route off-domain inputs to the warp kernel (production-domain gate holds).
-(Correctness is GPU-independent; this round it was run on an idle GPU while GPU 0
-was externally occupied — the count/result is identical on any B200.)
+not route off-domain inputs to the warp kernel (production-domain gate holds); and
+(R5) asserts the candidate **rejects output tensors whose 2nd dim ≠ topk** (the
+direct-caller K-guard). (Correctness is GPU-independent; this round it was run on an
+idle GPU while GPU 0 was externally occupied — the count/result is identical on any
+B200.)
 
 Authoritative benchmark (baseline vs candidate, all 46 workloads) — on idle GPU 6
 (plan revision; GPU 0 externally occupied):
