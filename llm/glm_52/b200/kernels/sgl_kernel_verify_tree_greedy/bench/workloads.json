@@ -1,0 +1,1016 @@
+[
+  {
+    "id": "prod_bs1_nd2_ss2",
+    "production": true,
+    "headline": true,
+    "function": "verify_tree_greedy",
+    "shapes": {
+      "bs": 1,
+      "num_draft_tokens": 2,
+      "num_spec_step": 2
+    },
+    "dtypes": {
+      "predicts": "int32",
+      "accept_index": "int32",
+      "accept_token_num": "int32",
+      "candidates": "int64",
+      "retrive_index": "int64",
+      "retrive_next_token": "int64",
+      "retrive_next_sibling": "int64",
+      "target_predict": "int64"
+    },
+    "strides": {
+      "candidates": [
+        2,
+        1
+      ],
+      "retrive_index": [
+        2,
+        1
+      ],
+      "retrive_next_token": [
+        2,
+        1
+      ],
+      "retrive_next_sibling": [
+        2,
+        1
+      ],
+      "target_predict": [
+        2,
+        1
+      ],
+      "predicts": [
+        1
+      ],
+      "accept_index": [
+        2,
+        1
+      ],
+      "accept_token_num": [
+        1
+      ]
+    },
+    "scalars": {},
+    "contiguous": true,
+    "tree": {
+      "mode": "random",
+      "accept_prob": 0.5
+    },
+    "atol": 0,
+    "rtol": 0,
+    "seed": 1001,
+    "capture_call_count": 27,
+    "note": "captured GLM-5.2 production shape; cuda:0..7 normalized to pinned GPU id 7"
+  },
+  {
+    "id": "prod_bs2_nd2_ss2",
+    "production": true,
+    "headline": true,
+    "function": "verify_tree_greedy",
+    "shapes": {
+      "bs": 2,
+      "num_draft_tokens": 2,
+      "num_spec_step": 2
+    },
+    "dtypes": {
+      "predicts": "int32",
+      "accept_index": "int32",
+      "accept_token_num": "int32",
+      "candidates": "int64",
+      "retrive_index": "int64",
+      "retrive_next_token": "int64",
+      "retrive_next_sibling": "int64",
+      "target_predict": "int64"
+    },
+    "strides": {
+      "candidates": [
+        2,
+        1
+      ],
+      "retrive_index": [
+        2,
+        1
+      ],
+      "retrive_next_token": [
+        2,
+        1
+      ],
+      "retrive_next_sibling": [
+        2,
+        1
+      ],
+      "target_predict": [
+        2,
+        1
+      ],
+      "predicts": [
+        1
+      ],
+      "accept_index": [
+        2,
+        1
+      ],
+      "accept_token_num": [
+        1
+      ]
+    },
+    "scalars": {},
+    "contiguous": true,
+    "tree": {
+      "mode": "random",
+      "accept_prob": 0.5
+    },
+    "atol": 0,
+    "rtol": 0,
+    "seed": 1002,
+    "capture_call_count": 15,
+    "note": "captured GLM-5.2 production shape; cuda:0..7 normalized to pinned GPU id 7"
+  },
+  {
+    "id": "prod_bs3_nd2_ss2",
+    "production": true,
+    "headline": true,
+    "function": "verify_tree_greedy",
+    "shapes": {
+      "bs": 3,
+      "num_draft_tokens": 2,
+      "num_spec_step": 2
+    },
+    "dtypes": {
+      "predicts": "int32",
+      "accept_index": "int32",
+      "accept_token_num": "int32",
+      "candidates": "int64",
+      "retrive_index": "int64",
+      "retrive_next_token": "int64",
+      "retrive_next_sibling": "int64",
+      "target_predict": "int64"
+    },
+    "strides": {
+      "candidates": [
+        2,
+        1
+      ],
+      "retrive_index": [
+        2,
+        1
+      ],
+      "retrive_next_token": [
+        2,
+        1
+      ],
+      "retrive_next_sibling": [
+        2,
+        1
+      ],
+      "target_predict": [
+        2,
+        1
+      ],
+      "predicts": [
+        1
+      ],
+      "accept_index": [
+        2,
+        1
+      ],
+      "accept_token_num": [
+        1
+      ]
+    },
+    "scalars": {},
+    "contiguous": true,
+    "tree": {
+      "mode": "random",
+      "accept_prob": 0.5
+    },
+    "atol": 0,
+    "rtol": 0,
+    "seed": 1003,
+    "capture_call_count": 19,
+    "note": "captured GLM-5.2 production shape; cuda:0..7 normalized to pinned GPU id 7"
+  },
+  {
+    "id": "prod_bs4_nd2_ss2",
+    "production": true,
+    "headline": true,
+    "function": "verify_tree_greedy",
+    "shapes": {
+      "bs": 4,
+      "num_draft_tokens": 2,
+      "num_spec_step": 2
+    },
+    "dtypes": {
+      "predicts": "int32",
+      "accept_index": "int32",
+      "accept_token_num": "int32",
+      "candidates": "int64",
+      "retrive_index": "int64",
+      "retrive_next_token": "int64",
+      "retrive_next_sibling": "int64",
+      "target_predict": "int64"
+    },
+    "strides": {
+      "candidates": [
+        2,
+        1
+      ],
+      "retrive_index": [
+        2,
+        1
+      ],
+      "retrive_next_token": [
+        2,
+        1
+      ],
+      "retrive_next_sibling": [
+        2,
+        1
+      ],
+      "target_predict": [
+        2,
+        1
+      ],
+      "predicts": [
+        1
+      ],
+      "accept_index": [
+        2,
+        1
+      ],
+      "accept_token_num": [
+        1
+      ]
+    },
+    "scalars": {},
+    "contiguous": true,
+    "tree": {
+      "mode": "random",
+      "accept_prob": 0.5
+    },
+    "atol": 0,
+    "rtol": 0,
+    "seed": 1004,
+    "capture_call_count": 58,
+    "note": "captured GLM-5.2 production shape; cuda:0..7 normalized to pinned GPU id 7"
+  },
+  {
+    "id": "prod_bs5_nd2_ss2",
+    "production": true,
+    "headline": true,
+    "function": "verify_tree_greedy",
+    "shapes": {
+      "bs": 5,
+      "num_draft_tokens": 2,
+      "num_spec_step": 2
+    },
+    "dtypes": {
+      "predicts": "int32",
+      "accept_index": "int32",
+      "accept_token_num": "int32",
+      "candidates": "int64",
+      "retrive_index": "int64",
+      "retrive_next_token": "int64",
+      "retrive_next_sibling": "int64",
+      "target_predict": "int64"
+    },
+    "strides": {
+      "candidates": [
+        2,
+        1
+      ],
+      "retrive_index": [
+        2,
+        1
+      ],
+      "retrive_next_token": [
+        2,
+        1
+      ],
+      "retrive_next_sibling": [
+        2,
+        1
+      ],
+      "target_predict": [
+        2,
+        1
+      ],
+      "predicts": [
+        1
+      ],
+      "accept_index": [
+        2,
+        1
+      ],
+      "accept_token_num": [
+        1
+      ]
+    },
+    "scalars": {},
+    "contiguous": true,
+    "tree": {
+      "mode": "random",
+      "accept_prob": 0.5
+    },
+    "atol": 0,
+    "rtol": 0,
+    "seed": 1005,
+    "capture_call_count": 3,
+    "note": "captured GLM-5.2 production shape; cuda:0..7 normalized to pinned GPU id 7"
+  },
+  {
+    "id": "prod_bs6_nd2_ss2",
+    "production": true,
+    "headline": true,
+    "function": "verify_tree_greedy",
+    "shapes": {
+      "bs": 6,
+      "num_draft_tokens": 2,
+      "num_spec_step": 2
+    },
+    "dtypes": {
+      "predicts": "int32",
+      "accept_index": "int32",
+      "accept_token_num": "int32",
+      "candidates": "int64",
+      "retrive_index": "int64",
+      "retrive_next_token": "int64",
+      "retrive_next_sibling": "int64",
+      "target_predict": "int64"
+    },
+    "strides": {
+      "candidates": [
+        2,
+        1
+      ],
+      "retrive_index": [
+        2,
+        1
+      ],
+      "retrive_next_token": [
+        2,
+        1
+      ],
+      "retrive_next_sibling": [
+        2,
+        1
+      ],
+      "target_predict": [
+        2,
+        1
+      ],
+      "predicts": [
+        1
+      ],
+      "accept_index": [
+        2,
+        1
+      ],
+      "accept_token_num": [
+        1
+      ]
+    },
+    "scalars": {},
+    "contiguous": true,
+    "tree": {
+      "mode": "random",
+      "accept_prob": 0.5
+    },
+    "atol": 0,
+    "rtol": 0,
+    "seed": 1006,
+    "capture_call_count": 4,
+    "note": "captured GLM-5.2 production shape; cuda:0..7 normalized to pinned GPU id 7"
+  },
+  {
+    "id": "prod_bs7_nd2_ss2",
+    "production": true,
+    "headline": true,
+    "function": "verify_tree_greedy",
+    "shapes": {
+      "bs": 7,
+      "num_draft_tokens": 2,
+      "num_spec_step": 2
+    },
+    "dtypes": {
+      "predicts": "int32",
+      "accept_index": "int32",
+      "accept_token_num": "int32",
+      "candidates": "int64",
+      "retrive_index": "int64",
+      "retrive_next_token": "int64",
+      "retrive_next_sibling": "int64",
+      "target_predict": "int64"
+    },
+    "strides": {
+      "candidates": [
+        2,
+        1
+      ],
+      "retrive_index": [
+        2,
+        1
+      ],
+      "retrive_next_token": [
+        2,
+        1
+      ],
+      "retrive_next_sibling": [
+        2,
+        1
+      ],
+      "target_predict": [
+        2,
+        1
+      ],
+      "predicts": [
+        1
+      ],
+      "accept_index": [
+        2,
+        1
+      ],
+      "accept_token_num": [
+        1
+      ]
+    },
+    "scalars": {},
+    "contiguous": true,
+    "tree": {
+      "mode": "random",
+      "accept_prob": 0.5
+    },
+    "atol": 0,
+    "rtol": 0,
+    "seed": 1007,
+    "capture_call_count": 5,
+    "note": "captured GLM-5.2 production shape; cuda:0..7 normalized to pinned GPU id 7"
+  },
+  {
+    "id": "prod_bs8_nd2_ss2",
+    "production": true,
+    "headline": true,
+    "function": "verify_tree_greedy",
+    "shapes": {
+      "bs": 8,
+      "num_draft_tokens": 2,
+      "num_spec_step": 2
+    },
+    "dtypes": {
+      "predicts": "int32",
+      "accept_index": "int32",
+      "accept_token_num": "int32",
+      "candidates": "int64",
+      "retrive_index": "int64",
+      "retrive_next_token": "int64",
+      "retrive_next_sibling": "int64",
+      "target_predict": "int64"
+    },
+    "strides": {
+      "candidates": [
+        2,
+        1
+      ],
+      "retrive_index": [
+        2,
+        1
+      ],
+      "retrive_next_token": [
+        2,
+        1
+      ],
+      "retrive_next_sibling": [
+        2,
+        1
+      ],
+      "target_predict": [
+        2,
+        1
+      ],
+      "predicts": [
+        1
+      ],
+      "accept_index": [
+        2,
+        1
+      ],
+      "accept_token_num": [
+        1
+      ]
+    },
+    "scalars": {},
+    "contiguous": true,
+    "tree": {
+      "mode": "random",
+      "accept_prob": 0.5
+    },
+    "atol": 0,
+    "rtol": 0,
+    "seed": 1008,
+    "capture_call_count": 2,
+    "note": "captured GLM-5.2 production shape; cuda:0..7 normalized to pinned GPU id 7"
+  },
+  {
+    "id": "prod_bs9_nd2_ss2",
+    "production": true,
+    "headline": true,
+    "function": "verify_tree_greedy",
+    "shapes": {
+      "bs": 9,
+      "num_draft_tokens": 2,
+      "num_spec_step": 2
+    },
+    "dtypes": {
+      "predicts": "int32",
+      "accept_index": "int32",
+      "accept_token_num": "int32",
+      "candidates": "int64",
+      "retrive_index": "int64",
+      "retrive_next_token": "int64",
+      "retrive_next_sibling": "int64",
+      "target_predict": "int64"
+    },
+    "strides": {
+      "candidates": [
+        2,
+        1
+      ],
+      "retrive_index": [
+        2,
+        1
+      ],
+      "retrive_next_token": [
+        2,
+        1
+      ],
+      "retrive_next_sibling": [
+        2,
+        1
+      ],
+      "target_predict": [
+        2,
+        1
+      ],
+      "predicts": [
+        1
+      ],
+      "accept_index": [
+        2,
+        1
+      ],
+      "accept_token_num": [
+        1
+      ]
+    },
+    "scalars": {},
+    "contiguous": true,
+    "tree": {
+      "mode": "random",
+      "accept_prob": 0.5
+    },
+    "atol": 0,
+    "rtol": 0,
+    "seed": 1009,
+    "capture_call_count": 9,
+    "note": "captured GLM-5.2 production shape; cuda:0..7 normalized to pinned GPU id 7"
+  },
+  {
+    "id": "prod_bs10_nd2_ss2",
+    "production": true,
+    "headline": true,
+    "function": "verify_tree_greedy",
+    "shapes": {
+      "bs": 10,
+      "num_draft_tokens": 2,
+      "num_spec_step": 2
+    },
+    "dtypes": {
+      "predicts": "int32",
+      "accept_index": "int32",
+      "accept_token_num": "int32",
+      "candidates": "int64",
+      "retrive_index": "int64",
+      "retrive_next_token": "int64",
+      "retrive_next_sibling": "int64",
+      "target_predict": "int64"
+    },
+    "strides": {
+      "candidates": [
+        2,
+        1
+      ],
+      "retrive_index": [
+        2,
+        1
+      ],
+      "retrive_next_token": [
+        2,
+        1
+      ],
+      "retrive_next_sibling": [
+        2,
+        1
+      ],
+      "target_predict": [
+        2,
+        1
+      ],
+      "predicts": [
+        1
+      ],
+      "accept_index": [
+        2,
+        1
+      ],
+      "accept_token_num": [
+        1
+      ]
+    },
+    "scalars": {},
+    "contiguous": true,
+    "tree": {
+      "mode": "random",
+      "accept_prob": 0.5
+    },
+    "atol": 0,
+    "rtol": 0,
+    "seed": 1010,
+    "capture_call_count": 45,
+    "note": "captured GLM-5.2 production shape; cuda:0..7 normalized to pinned GPU id 7"
+  },
+  {
+    "id": "reg_upstream_nd6_ss4_bs2",
+    "production": false,
+    "headline": false,
+    "function": "verify_tree_greedy",
+    "shapes": {
+      "bs": 2,
+      "num_draft_tokens": 6,
+      "num_spec_step": 4
+    },
+    "dtypes": {
+      "predicts": "int32",
+      "accept_index": "int32",
+      "accept_token_num": "int32",
+      "candidates": "int64",
+      "retrive_index": "int64",
+      "retrive_next_token": "int64",
+      "retrive_next_sibling": "int64",
+      "target_predict": "int64"
+    },
+    "strides": {
+      "candidates": [
+        6,
+        1
+      ],
+      "retrive_index": [
+        6,
+        1
+      ],
+      "retrive_next_token": [
+        6,
+        1
+      ],
+      "retrive_next_sibling": [
+        6,
+        1
+      ],
+      "target_predict": [
+        6,
+        1
+      ],
+      "predicts": [
+        1
+      ],
+      "accept_index": [
+        4,
+        1
+      ],
+      "accept_token_num": [
+        1
+      ]
+    },
+    "scalars": {},
+    "contiguous": true,
+    "tree": {
+      "mode": "fixed_upstream"
+    },
+    "atol": 0,
+    "rtol": 0,
+    "seed": 2001,
+    "note": "exact upstream test_eagle_utils fixture; deterministic expected outputs; sibling hop + 3/2 accepts"
+  },
+  {
+    "id": "reg_partial_accept_nd4_ss3_bs3",
+    "production": false,
+    "headline": false,
+    "function": "verify_tree_greedy",
+    "shapes": {
+      "bs": 3,
+      "num_draft_tokens": 4,
+      "num_spec_step": 3
+    },
+    "dtypes": {
+      "predicts": "int32",
+      "accept_index": "int32",
+      "accept_token_num": "int32",
+      "candidates": "int64",
+      "retrive_index": "int64",
+      "retrive_next_token": "int64",
+      "retrive_next_sibling": "int64",
+      "target_predict": "int64"
+    },
+    "strides": {
+      "candidates": [
+        4,
+        1
+      ],
+      "retrive_index": [
+        4,
+        1
+      ],
+      "retrive_next_token": [
+        4,
+        1
+      ],
+      "retrive_next_sibling": [
+        4,
+        1
+      ],
+      "target_predict": [
+        4,
+        1
+      ],
+      "predicts": [
+        1
+      ],
+      "accept_index": [
+        3,
+        1
+      ],
+      "accept_token_num": [
+        1
+      ]
+    },
+    "scalars": {},
+    "contiguous": true,
+    "tree": {
+      "mode": "random",
+      "accept_prob": 0.6
+    },
+    "atol": 0,
+    "rtol": 0,
+    "seed": 2002,
+    "note": "deeper tree: exercises partial-accept boundary (accept some, then reject)"
+  },
+  {
+    "id": "reg_full_reject_nd2_ss2_bs4",
+    "production": false,
+    "headline": false,
+    "function": "verify_tree_greedy",
+    "shapes": {
+      "bs": 4,
+      "num_draft_tokens": 2,
+      "num_spec_step": 2
+    },
+    "dtypes": {
+      "predicts": "int32",
+      "accept_index": "int32",
+      "accept_token_num": "int32",
+      "candidates": "int64",
+      "retrive_index": "int64",
+      "retrive_next_token": "int64",
+      "retrive_next_sibling": "int64",
+      "target_predict": "int64"
+    },
+    "strides": {
+      "candidates": [
+        2,
+        1
+      ],
+      "retrive_index": [
+        2,
+        1
+      ],
+      "retrive_next_token": [
+        2,
+        1
+      ],
+      "retrive_next_sibling": [
+        2,
+        1
+      ],
+      "target_predict": [
+        2,
+        1
+      ],
+      "predicts": [
+        1
+      ],
+      "accept_index": [
+        2,
+        1
+      ],
+      "accept_token_num": [
+        1
+      ]
+    },
+    "scalars": {},
+    "contiguous": true,
+    "tree": {
+      "mode": "all_reject"
+    },
+    "atol": 0,
+    "rtol": 0,
+    "seed": 2003,
+    "note": "every row rejects at root: accept_token_num=0, only root slot + bonus written"
+  },
+  {
+    "id": "reg_full_accept_nd4_ss4_bs2",
+    "production": false,
+    "headline": false,
+    "function": "verify_tree_greedy",
+    "shapes": {
+      "bs": 2,
+      "num_draft_tokens": 4,
+      "num_spec_step": 4
+    },
+    "dtypes": {
+      "predicts": "int32",
+      "accept_index": "int32",
+      "accept_token_num": "int32",
+      "candidates": "int64",
+      "retrive_index": "int64",
+      "retrive_next_token": "int64",
+      "retrive_next_sibling": "int64",
+      "target_predict": "int64"
+    },
+    "strides": {
+      "candidates": [
+        4,
+        1
+      ],
+      "retrive_index": [
+        4,
+        1
+      ],
+      "retrive_next_token": [
+        4,
+        1
+      ],
+      "retrive_next_sibling": [
+        4,
+        1
+      ],
+      "target_predict": [
+        4,
+        1
+      ],
+      "predicts": [
+        1
+      ],
+      "accept_index": [
+        4,
+        1
+      ],
+      "accept_token_num": [
+        1
+      ]
+    },
+    "scalars": {},
+    "contiguous": true,
+    "tree": {
+      "mode": "all_accept"
+    },
+    "atol": 0,
+    "rtol": 0,
+    "seed": 2004,
+    "note": "chain tree, every edge accepts: max accepted path"
+  },
+  {
+    "id": "reg_sibling_tiebreak_nd5_ss3_bs1",
+    "production": false,
+    "headline": false,
+    "function": "verify_tree_greedy",
+    "shapes": {
+      "bs": 1,
+      "num_draft_tokens": 5,
+      "num_spec_step": 3
+    },
+    "dtypes": {
+      "predicts": "int32",
+      "accept_index": "int32",
+      "accept_token_num": "int32",
+      "candidates": "int64",
+      "retrive_index": "int64",
+      "retrive_next_token": "int64",
+      "retrive_next_sibling": "int64",
+      "target_predict": "int64"
+    },
+    "strides": {
+      "candidates": [
+        5,
+        1
+      ],
+      "retrive_index": [
+        5,
+        1
+      ],
+      "retrive_next_token": [
+        5,
+        1
+      ],
+      "retrive_next_sibling": [
+        5,
+        1
+      ],
+      "target_predict": [
+        5,
+        1
+      ],
+      "predicts": [
+        1
+      ],
+      "accept_index": [
+        3,
+        1
+      ],
+      "accept_token_num": [
+        1
+      ]
+    },
+    "scalars": {},
+    "contiguous": true,
+    "tree": {
+      "mode": "sibling_tiebreak"
+    },
+    "atol": 0,
+    "rtol": 0,
+    "seed": 2005,
+    "note": "multiple matching siblings; first-linked sibling must win (linked-list tie-break)"
+  },
+  {
+    "id": "reg_fallback_nd5_ss4_bs16",
+    "production": false,
+    "headline": false,
+    "function": "verify_tree_greedy",
+    "shapes": {
+      "bs": 16,
+      "num_draft_tokens": 5,
+      "num_spec_step": 4
+    },
+    "dtypes": {
+      "predicts": "int32",
+      "accept_index": "int32",
+      "accept_token_num": "int32",
+      "candidates": "int64",
+      "retrive_index": "int64",
+      "retrive_next_token": "int64",
+      "retrive_next_sibling": "int64",
+      "target_predict": "int64"
+    },
+    "strides": {
+      "candidates": [
+        5,
+        1
+      ],
+      "retrive_index": [
+        5,
+        1
+      ],
+      "retrive_next_token": [
+        5,
+        1
+      ],
+      "retrive_next_sibling": [
+        5,
+        1
+      ],
+      "target_predict": [
+        5,
+        1
+      ],
+      "predicts": [
+        1
+      ],
+      "accept_index": [
+        4,
+        1
+      ],
+      "accept_token_num": [
+        1
+      ]
+    },
+    "scalars": {},
+    "contiguous": true,
+    "tree": {
+      "mode": "random",
+      "accept_prob": 0.5
+    },
+    "atol": 0,
+    "rtol": 0,
+    "seed": 2006,
+    "note": "nd>2 (and nss>2): outside the specialized nd==2/nss==2 family, so the candidate MUST fall back to the recovered baseline and still match the oracle exactly"
+  }
+]
