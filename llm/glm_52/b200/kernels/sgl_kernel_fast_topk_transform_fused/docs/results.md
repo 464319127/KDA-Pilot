@@ -1,5 +1,13 @@
 # Results — fast_topk_transform_fused (B200) — measured: NO-GO (candidate ≈ baseline)
 
+> **FINAL STATUS — NO FURTHER OPTIMIZATION ACHIEVABLE (on these captured shapes).** This kernel was
+> benchmarked candidate-vs-baseline on a strictly-idle B200 and shows **no measurable speedup**
+> (production geomean ≈ 1.0, within the tiny-kernel noise floor). The dominant decode path is already at
+> a fixed ~8 µs store/launch-overhead floor that a faster per-call copy cannot beat; a real win would
+> need a different class of change (launch elimination via CUDA Graphs / PDL), which is out of scope
+> here. The native candidate is **retained as correctness-clean and dispatch-robust but NOT promoted as
+> a speedup.** Marked closed: no better optimization expected for this kernel/shape set.
+
 > **Headline:** the native CUDA candidate is correctness-clean (`matched_ratio==1.0`, 251/251) but
 > delivers **no measurable speedup** over the recovered baseline. On the production grid the
 > candidate-vs-baseline **geomean speedup is ≈ 1.0** (0.9969 in the clean full-grid run; 1.0014 in an
