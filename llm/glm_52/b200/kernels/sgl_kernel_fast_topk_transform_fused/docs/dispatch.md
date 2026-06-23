@@ -21,6 +21,13 @@
   bucket-vs-fallback per call (used to confirm the 221/30 split; no-op by default).
 - Correctness: naive bucket rows pass exact candidate==baseline==oracle; fallback rows keep the
   baseline's valid-top-k behavior. `bench/correctness.py` → 251/251 (R9, see `docs/run_log.md`).
+- **Hardened (Round 10)** for final-publication robustness (correctness-preserving — re-verified
+  251/251 with the SAME 221 native / 30 fallback split): cheap rank guards run FIRST so the size reads
+  cannot throw on an out-of-contract shape (`score.dim==2`, `lengths.dim==1 && size==B`,
+  `src_page_table.dim==2`, `cu_seqlens_q.dim==1 && size==B+1`) → any unexpected shape falls back to the
+  baseline's own `TORCH_CHECK`s; and a non-synchronizing `C10_CUDA_KERNEL_LAUNCH_CHECK()` after the
+  launch surfaces a launch-config error immediately (matches the baseline). Every memory access the
+  kernel makes is now guarded.
 - NOT yet done (timing-gated): candidate benchmark vs the frozen baseline, measured per-bucket speedup,
   NCU active-bound confirmation. These wait for a strictly-idle GPU 1.
 

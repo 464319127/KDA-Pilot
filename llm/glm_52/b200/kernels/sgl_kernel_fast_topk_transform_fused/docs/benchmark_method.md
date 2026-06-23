@@ -7,8 +7,9 @@
   excluded from the timed region; per-workload median/mean/std/min/p10/p90 + per-workload speedup
   (`baseline_median/candidate_median`) + equal-weight geomean over production rows.
 - `bench/adapter.py` make_case/call_baseline/call_candidate + a regime-aware per-workload
-  `compare_outputs` sanity check (naive exact; radix order-tolerant sorted-set). The AUTHORITATIVE
-  correctness gate is `bench/correctness.py` (`matched_ratio==1.0`, R3/R4), run before benchmarking.
+  `compare_outputs` sanity check (naive exact; radix order-tolerant sorted-set; radix+exact-ties
+  structural-only, since equal-score boundary ties validly select different page-id sets). The
+  AUTHORITATIVE correctness gate is `bench/correctness.py` (`matched_ratio==1.0`, R3/R4), run before benchmarking.
 
 ## Environment / provenance
 - Host: `ion-b200` → `innomatrix-us-adc-smb200-0003`; container `sglang_bbuf`; workspace
@@ -18,8 +19,8 @@
 - Baseline source: SGLang `main` commit `7e6587c94a1d0305815a14067c5d3cc02a9b0f36` (see baseline_source.md).
 - Candidate source: the R6 PROVISIONAL run timed a **baseline-forwarding stub**
   (`candidate_topk_transform.cu` sha256 `a6e7835a486bc3b1db7914b65ff0ac5e52824d732a37fb1557e9b097d2af823a`).
-  As of **Round 9** the candidate is the **native Bucket-1 decode kernel**
-  (`candidate_topk_transform.cu` sha256 `1b5a0c71993b0eef09f052aa13a39a57f7c2454ff285ee0040e50495b4939232`;
+  As of **Round 10** the candidate is the **native Bucket-1 decode kernel (hardened)**
+  (`candidate_topk_transform.cu` sha256 `9902eef05e5c09cfc51b426d964fb357509c928d77f8712e7230481cb70bfa5c`;
   `binding.cu` sha256 `d8058ec2bfcc06306c012df7b0aec3d74a2f8071d5412aa8065708e518f116ff`, unchanged),
   correctness 251/251 with 221 native / 30 fallback — but it has **NOT been benchmarked** (timing is
   gated on strict idle). So the provisional speedup below is still baseline-vs-stub (≈1.0, a harness

@@ -170,3 +170,29 @@ CUDA_VISIBLE_DEVICES=1 TOPK_CANDIDATE_DEBUG=1 python3 bench/correctness.py cuda:
   rows with exact candidate==baseline==oracle output, and the 30 large-prefill/radix rows correctly
   fall back. Build cached after the first compile. **Candidate timing remains deferred to strict idle.**
 
+## Session — Round 10 (harden the native candidate; NO timing — GPU 1 still parked)
+
+- Same host/container/toolchain; pinned GPU 1. **GPU 1 re-checked: still NOT strictly idle** (parked
+  pid 3048677 `sgl_diffusion::scheduler` ~59.6 GB at util 0%; GPU2 47%, GPU7 3% — no strictly-idle
+  card). **No timing/NCU/benchmark** (honoring the wait decision); build + correctness only.
+- Hardened `solution/candidate_topk_transform.cu` for final-publication robustness (Codex R9-review
+  residual risks, non-timing): (1) cheap rank guards run FIRST (`score.dim==2`, `lengths.dim==1 &&
+  size==B`, `src_page_table.dim==2`, `cu_seqlens_q.dim==1 && size==B+1`) so the size reads can't throw
+  and any out-of-contract shape falls back to the baseline's `TORCH_CHECK`s; (2) a non-synchronizing
+  `C10_CUDA_KERNEL_LAUNCH_CHECK()` after the launch. candidate `.cu` sha256
+  `9902eef05e5c09cfc51b426d964fb357509c928d77f8712e7230481cb70bfa5c`.
+
+### Commands + results
+```
+cd /home/sglang-omni/bbuf/kda_topk && TORCH_CUDA_ARCH_LIST=10.0 CUDA_VISIBLE_DEVICES=1 python3 solution/build.py
+-> built+loaded topk_transform_abi: OK   (recompiled: candidate source changed)
+
+CUDA_VISIBLE_DEVICES=1 TOPK_CANDIDATE_DEBUG=1 python3 bench/correctness.py cuda:0
+-> matched_ratio = 1.0000  (251/251 workloads)
+-> dispatch: 221 native bucket-1 + 30 fallback  (UNCHANGED from R9 -> the added guards are conservative,
+   i.e. they do not change dispatch on the frozen captured grid; they only reject out-of-contract shapes)
+```
+- **Hardening is correctness-preserving + behavior-preserving on the frozen grid**: same 251/251, same
+  221/30 split. AC-6 dispatch is now robust (fallback for every uncovered shape/param) and the launch is
+  error-checked. **Candidate timing still deferred to strict idle.** Build cached after first compile.
+

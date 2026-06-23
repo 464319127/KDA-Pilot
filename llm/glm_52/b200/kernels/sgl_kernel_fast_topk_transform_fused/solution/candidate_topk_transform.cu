@@ -25,6 +25,7 @@
 
 #include <ATen/core/Tensor.h>
 #include <ATen/cuda/CUDAContext.h>
+#include <c10/cuda/CUDAException.h>
 
 #include <algorithm>
 #include <cstdio>
@@ -79,17 +80,28 @@ void fast_topk_transform_candidate(
     const at::Tensor& src_page_table,
     const at::Tensor& cu_seqlens_q,
     std::optional<at::Tensor> row_starts) {
-  const int64_t batch = dst_page_table.size(0);
-  const int64_t topk = dst_page_table.size(1);
-  const int64_t seq_n = score.size(1);
-  const int64_t num_seq = src_page_table.size(0);
-  const int64_t page_m = src_page_table.size(1);
+  // Cheap rank guards FIRST so the size() reads below cannot throw on an out-of-contract shape
+  // (an unexpected rank must fall back to the baseline's own TORCH_CHECKs, not abort here).
+  const bool dims_ok =
+      dst_page_table.dim() == 2 && score.dim() == 2 && src_page_table.dim() == 2 &&
+      lengths.dim() == 1 && cu_seqlens_q.dim() == 1;
 
-  // Metadata-only dispatch: no host read of lengths, no sync, no allocation.
+  const int64_t batch = dims_ok ? dst_page_table.size(0) : 0;
+  const int64_t topk = dims_ok ? dst_page_table.size(1) : 0;
+  const int64_t seq_n = dims_ok ? score.size(1) : 0;
+  const int64_t num_seq = dims_ok ? src_page_table.size(0) : 0;
+  const int64_t page_m = dims_ok ? src_page_table.size(1) : 0;
+
+  // Metadata-only dispatch: no host read of lengths, no sync, no allocation. The native path is taken
+  // only for inputs whose every kernel access (lengths[0..B), src[b,0..len_b), dst[b,0..2048)) is
+  // provably in-bounds for the captured decode contract; anything else -> recovered baseline.
   const bool decode_naive_bucket =
+      dims_ok &&
       topk == 2048 &&
       !row_starts.has_value() &&
-      num_seq == batch &&
+      num_seq == batch &&                  // decode: one src-page row per token row (seq == b)
+      lengths.size(0) == batch &&          // kernel reads lengths[0..B)
+      cu_seqlens_q.size(0) == batch + 1 && // decode cu_seqlens contract (kernel does not read it)
       std::min(seq_n, page_m) <= 2048 &&
       dst_page_table.is_contiguous() &&
       dst_page_table.scalar_type() == at::kInt &&
@@ -104,9 +116,9 @@ void fast_topk_transform_candidate(
 
   if (!decode_naive_bucket) {
     if (kDebug) {
-      std::fprintf(stderr, "[topk-candidate] fallback B=%ld N=%ld M=%ld S=%ld topk=%ld rs=%d\n",
+      std::fprintf(stderr, "[topk-candidate] fallback B=%ld N=%ld M=%ld S=%ld topk=%ld rs=%d dims_ok=%d\n",
                    (long)batch, (long)seq_n, (long)page_m, (long)num_seq, (long)topk,
-                   (int)row_starts.has_value());
+                   (int)row_starts.has_value(), (int)dims_ok);
     }
     // Every uncovered shape / parameter -> recovered SGLang baseline (identical output).
     fast_topk_transform_interface(score, lengths, dst_page_table, src_page_table, cu_seqlens_q, row_starts);
@@ -130,4 +142,5 @@ void fast_topk_transform_candidate(
       src_page_table.stride(0),
       lengths.stride(0),
       tiles_per_row);
+  C10_CUDA_KERNEL_LAUNCH_CHECK();  // non-synchronizing: surfaces a launch-config error immediately
 }
