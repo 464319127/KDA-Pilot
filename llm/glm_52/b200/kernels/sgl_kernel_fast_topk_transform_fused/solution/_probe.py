@@ -1,6 +1,11 @@
-"""Differential probe: confirm the TVM-FFI ABI is callable, the baseline runs on GPU,
-matches the independent naive oracle, and the candidate equals the baseline. Also resolves
-the tvm-ffi Module function-access pattern that bench/adapter.py should use.
+"""Differential probe: confirm the TVM-FFI ABI is callable, the baseline runs on GPU, matches the
+independent naive oracle, and the candidate equals the baseline (naive) or is a valid top-k (radix).
+Covers decode/prefill, naive/radix, contiguous/ties, NON-LINEAR (permuted) page tables, and a
+row_starts (ragged-prefill) case. Resolves the tvm-ffi Module function-access pattern adapter.py uses.
+
+This is a lightweight bring-up DIAGNOSTIC. The exhaustive frozen captured contract (all 251 rows,
+incl. the 4 large-prefill row_starts tensor variants) is authoritatively gated by bench/correctness.py
+(matched_ratio==1.0); this script mirrors its naive-oracle / valid-top-k criteria on a few cases.
 Run on the B200: CUDA_VISIBLE_DEVICES=1 python3 solution/_probe.py
 """
 import importlib.util as u
@@ -37,17 +42,27 @@ dev = "cuda:0"  # pinned via CUDA_VISIBLE_DEVICES=1
 topk = 2048
 
 
-def case(B, N, S, M, dist="random", lengths_mode="full"):
+def seq_per_row(B, cu, is_decode):
+    if is_decode:
+        return list(range(B))
+    cul = cu.tolist()
+    return [next(si for si in range(len(cul) - 1) if cul[si] <= b < cul[si + 1]) for b in range(B)]
+
+
+def case(B, N, S, M, dist="random", lengths_mode="full", page_table_mode="arange", row_starts_kind="none"):
     torch.manual_seed(0)
+    g = torch.Generator(device=dev).manual_seed(0)
     if dist == "ties":
-        score = torch.randint(0, 8, (B, N), device=dev).float()
+        score = torch.randint(0, 8, (B, N), device=dev, generator=g).float()
     else:
-        score = torch.randn(B, N, device=dev)
+        score = torch.randn(B, N, device=dev, generator=g)
     L = min(N, M)
     if lengths_mode == "half":
         L = max(0, L // 2)
     lengths = torch.full((B,), L, dtype=torch.int32, device=dev)
     pt = torch.arange(S * M, dtype=torch.int32, device=dev).reshape(S, M)
+    if page_table_mode == "permuted":  # non-linear: exercises the real-page-table inversion, not out-pt[s,0]
+        pt = torch.stack([pt[i][torch.randperm(M, generator=g, device=dev)] for i in range(S)])
     if S == B:
         cu = torch.arange(S + 1, dtype=torch.int32, device=dev)
     else:
@@ -56,13 +71,19 @@ def case(B, N, S, M, dist="random", lengths_mode="full"):
         for i in range(S):
             acc.append(acc[-1] + base_ + (1 if i < rem else 0))
         cu = torch.tensor(acc, dtype=torch.int32, device=dev)
-    return score, lengths, pt, cu, L
+    row_starts = None
+    if row_starts_kind == "tensor":  # ragged prefill: row_start[b] + L <= N keeps the score window in bounds
+        maxstart = max(0, N - L)
+        rs = (torch.arange(B, device=dev, dtype=torch.int64) * 7) % (maxstart + 1) if maxstart else torch.zeros(B, device=dev, dtype=torch.int64)
+        row_starts = rs.to(torch.int32)
+    return score, lengths, pt, cu, L, row_starts
 
 
 def naive_oracle(pt, lengths, cu, B, is_decode):
+    """Naive path: dst[b,i] = (i<length) ? page_table[seq][i] : -1 (uses the ACTUAL page table, so it
+    handles permuted rows; the naive path does not read score, so row_starts does not change it)."""
     out = torch.full((B, topk), -1, dtype=torch.int32, device=dev)
-    cul = cu.tolist()
-    seq = list(range(B)) if is_decode else [next(si for si in range(len(cul) - 1) if cul[si] <= b < cul[si + 1]) for b in range(B)]
+    seq = seq_per_row(B, cu, is_decode)
     for b in range(B):
         Lb = min(int(lengths[b]), topk)
         if Lb > 0:
@@ -70,43 +91,58 @@ def naive_oracle(pt, lengths, cu, B, is_decode):
     return out
 
 
-def valid_topk(out, score, lengths, pt, cu, B, is_decode):
-    """Valid top-k by full float (order/tie tolerant): recover positions, check range/count,
-    selected score multiset == true top-k scores."""
-    cul = cu.tolist()
-    seq = list(range(B)) if is_decode else [next(si for si in range(len(cul) - 1) if cul[si] <= b < cul[si + 1]) for b in range(B)]
+def valid_topk(out, score, lengths, pt, cu, B, is_decode, row_starts=None):
+    """Radix valid-top-k (order/tie tolerant), mirroring bench/correctness.py validate_topk:
+    invert each output page id through the ACTUAL page_table[seq] row (per-sequence scatter inverse,
+    so it works for permuted tables), require positions distinct & in [0,length) & count==topk, and
+    the selected score multiset (honoring the row_start score-window shift) == true top-k."""
+    seq = seq_per_row(B, cu, is_decode)
+    S, M = int(pt.shape[0]), int(pt.shape[1])
+    maxv = int(pt.max().item()) + 1
+    inv = torch.full((S, maxv), -1, dtype=torch.long, device=dev)
+    cols = torch.arange(M, device=dev, dtype=torch.long)
+    for si in range(S):
+        inv[si, pt[si].long()] = cols
     for b in range(B):
         L = int(lengths[b])
-        s = seq[b]
-        sel = out[b].to(torch.int64) - int(pt[s, 0])
-        if not bool(((sel >= 0) & (sel < L)).all()):
+        si = seq[b]
+        rs = int(row_starts[b]) if row_starts is not None else 0
+        ent = out[b].to(torch.int64)
+        if not bool(((ent >= 0) & (ent < maxv)).all()):
             return False
-        if int(torch.unique(sel).numel()) != topk:
+        pos = inv[si, ent]
+        if not bool(((pos >= 0) & (pos < L)).all()):
             return False
-        if not torch.equal(torch.sort(score[b, sel].float()).values,
-                           torch.sort(torch.topk(score[b, :L].float(), topk).values).values):
+        if int(torch.unique(pos).numel()) != topk:
+            return False
+        sel = score[b, rs + pos].float()
+        true_top = torch.topk(score[b, rs:rs + L].float(), topk).values
+        if not torch.equal(torch.sort(sel).values, torch.sort(true_top).values):
             return False
     return True
 
 
-def run(name, B, N, S, M, **kw):
-    score, lengths, pt, cu, L = case(B, N, S, M, **kw)
+def run(name, B, N, S, M, page_table_mode="arange", row_starts_kind="none", **kw):
+    score, lengths, pt, cu, L, row_starts = case(
+        B, N, S, M, page_table_mode=page_table_mode, row_starts_kind=row_starts_kind, **kw)
+    is_decode = (S == B) and (row_starts is None)  # baseline decode branch: row_starts None && S==B
     dst = torch.full((B, topk), -17, dtype=torch.int32, device=dev)
-    base(score, lengths, pt, cu, topk, None, dst)
+    base(score, lengths, pt, cu, topk, row_starts, dst)
     torch.cuda.synchronize()
     dst_c = torch.full((B, topk), -17, dtype=torch.int32, device=dev)
-    cand(score, lengths, pt, cu, topk, None, dst_c)
+    cand(score, lengths, pt, cu, topk, row_starts, dst_c)
     torch.cuda.synchronize()
+    tags = f"pt={page_table_mode} rs={row_starts_kind}"
     if L <= topk:  # naive path: deterministic -> exact candidate==baseline + oracle
         cc = torch.equal(dst, dst_c)
-        orc = naive_oracle(pt, lengths, cu, B, S == B)
+        orc = naive_oracle(pt, lengths, cu, B, is_decode)
         ok = torch.equal(dst, orc)
-        print(f"[{name}] B={B} N={N} S={S} M={M} L={L} candidate==baseline={cc} baseline==oracle={ok}")
+        print(f"[{name}] B={B} N={N} S={S} M={M} L={L} {tags} candidate==baseline={cc} baseline==oracle={ok}")
         return cc and ok
     # radix path: output order is race-nondeterministic -> validate each output as a valid top-k
-    okb = valid_topk(dst, score, lengths, pt, cu, B, S == B)
-    okc = valid_topk(dst_c, score, lengths, pt, cu, B, S == B)
-    print(f"[{name}] B={B} N={N} S={S} M={M} L={L} baseline_valid_topk={okb} "
+    okb = valid_topk(dst, score, lengths, pt, cu, B, is_decode, row_starts)
+    okc = valid_topk(dst_c, score, lengths, pt, cu, B, is_decode, row_starts)
+    print(f"[{name}] B={B} N={N} S={S} M={M} L={L} {tags} baseline_valid_topk={okb} "
           f"candidate_valid_topk={okc} (exact_order_match={torch.equal(dst, dst_c)}, expected False)")
     return okb and okc
 
@@ -117,6 +153,9 @@ results.append(run("decode_contig_eqtopk", 8, 2048, 8, 2048))
 results.append(run("radix_gt_topk", 8, 2112, 8, 2112))
 results.append(run("ties", 8, 256, 8, 256, dist="ties"))
 results.append(run("prefill", 16, 448, 4, 409))
+results.append(run("permuted_naive", 4, 128, 4, 128, page_table_mode="permuted"))
+results.append(run("permuted_radix", 8, 2112, 8, 2112, page_table_mode="permuted"))
+results.append(run("row_starts_radix", 8, 2304, 8, 2176, row_starts_kind="tensor"))
 import sys
 print("PROBE_OK" if all(results) else "PROBE_FAIL")
 sys.exit(0 if all(results) else 1)
