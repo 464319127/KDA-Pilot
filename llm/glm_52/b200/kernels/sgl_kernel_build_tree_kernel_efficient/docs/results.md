@@ -76,6 +76,22 @@ prefill_add ~21.8–22.3µs (op fraction ~0.35) → the Python-side prefill
 Fusing it is the only material lever, and it changes the measured ABI boundary
 (out of promotion scope per DEC-1; opt-in recommendation for a wider patch).
 
+## Profiling applicability (AC-11)
+- **Warp-specialization-report-skill: N/A.** `build_tree_kernel_efficient` is a tiny
+  index/mask metadata op — a single small launch writing O(bs) integers + one
+  `tree_mask` flip per request — not a warp-specialized producer/consumer pipeline
+  (no TMA/MMA/tcgen05 stages, no mbarrier/named-barrier producer-consumer overlap).
+  The skill does not apply, so **no warp-specialization timeline was collected**;
+  adding warp roles/barriers would only add overhead.
+- **Applicable profiling evidence for the no-go** is the empty-kernel **launch floor**
+  (`build_tree_noop`, same grid) plus the **controlled same-process probe** (all bs)
+  and the **measured wrapper-inclusive diagnostic** above. For a kernel whose body is
+  a sub-µs sliver of a ~10–12µs host/launch-bound per-call boundary, the floor +
+  controlled probe are stronger, more directly relevant evidence than an NCU/Nsight
+  trace, which would only restate "launch/marshalling bound" — so no separate NCU
+  trace was collected. Per-round KernelWiki / ncu-report-skill context was refreshed
+  (KernelWiki precedent: SGLang PR-6369 / PR-5086 on Python-side small-kernel overhead).
+
 ## Per-shape dispatch
 See `docs/dispatch.md`. Single specialized fast path + baseline fallback; route
 coverage proven (fast path all bs 1..10; fallback for off-domain).

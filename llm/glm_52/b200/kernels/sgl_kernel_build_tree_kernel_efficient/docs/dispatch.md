@@ -15,7 +15,7 @@ It selects, via `DLDataType` + a zero-numel-safe contiguity helper (`bte::`):
 
 | Condition (all must hold) | Path |
 |---|---|
-| scalars `topk==1 && depth==1 && draft_token_num==2 && tree_mask_mode==FULL_MASK` AND dtypes (parent_list/selected_index/verified_seq_len/positions/retrive_* int64, tree_mask bool) AND shapes (`parent_list [bs,0]`, `selected_index [bs,1]`, `verified_seq_len [bs]`, outputs numel `bs*2`) AND all contiguous AND all CUDA | **candidate** fast kernel |
+| scalars `topk==1 && depth==1 && draft_token_num==2 && tree_mask_mode==FULL_MASK` AND dtypes (parent_list/selected_index/verified_seq_len/positions/retrive_* int64, tree_mask bool) AND shapes (`parent_list [bs,0]`, `selected_index [bs,1]`, `verified_seq_len [bs]`, outputs numel `bs*2`) AND all contiguous AND the dereferenced tensors (verified_seq_len + the 5 outputs) on CUDA | **candidate** fast kernel |
 | anything else | **baseline** fallback |
 
 `parent_list.size(1)==0` is the sync-free signal of the degenerate depth-1 regime
