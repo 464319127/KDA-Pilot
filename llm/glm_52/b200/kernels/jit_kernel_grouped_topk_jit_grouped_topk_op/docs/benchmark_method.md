@@ -59,13 +59,33 @@ and interleaved within the same process, so the A/B comparison stays fair. The
 isolated mode remains available (drop `--no-isolated`); it is reliable for the
 prefill rows (which agree across modes) but not for the decode launch-floor.
 
+## Adapter fairness (per-call stat fix)
+
+The adapter must do equal per-call work on both sides. An earlier
+`call_candidate` ran `has_candidate()` (a `Path.is_file()` stat) on every
+invocation while `call_baseline` did not; for this CPU-launch-bound (~6 µs) kernel
+that asymmetric stat is negligible with a hot dentry cache but inflates the
+candidate side under host/IO load, producing a spurious decode "regression"
+(≈0.78) whenever the box was otherwise loaded. Candidate availability is now
+resolved **once at import**; both call paths do only a cached module lookup +
+launch. After the fix, decode measures at exactly parity even on a shared box.
+
 ## Tolerances
 
-Top-k indices: exact-match (ordered). Weights: fp32 `atol=rtol=1e-5`. Candidate
-vs baseline is in practice bit-identical (same kernel math); the independent
-oracle cross-check uses the same tolerance. See `bench/correctness.py`.
+Top-k indices: exact-match (ordered). Weights: fp32 `atol=rtol=1e-5`. The
+decode/small-N + off-domain **fallback path is the copied baseline kernel
+(bit-identical by construction)**; the large-N **warp path** is validated as exact
+ordered indices + weights within fp32 tolerance vs the baseline and an independent
+oracle (the recorded check is tolerance-based, not bytewise). See `bench/correctness.py`.
 
 ## GPU
 
-B200, pinned `CUDA_VISIBLE_DEVICES=0` for every correctness, benchmark, and NCU
-run. GPU-0 idle verified before/after (see `run_log.md`).
+B200. The task pins `REMOTE_GPU_ID=0`; the authoritative benchmark for this run was
+taken on **idle GPU 6** under a recorded, user-approved plan revision because an
+external job held GPU 0. All 8 cards are identical B200 sm_100 and the reported
+speedup is relative (baseline vs candidate, same idle card, A/B interleaved), so it
+is GPU-id independent; the round-0 quiet-box GPU-0 run independently reproduces the
+numbers. AC-7 idle evidence is an **external** `nvidia-smi` immediately **before** the
+run and immediately **after the process exits** (both `0% / 0 MiB` on the run GPU);
+the in-process `nvidia_smi_after` in `results.jsonl` is a diagnostic only. Correctness
+is GPU-independent. See `run_log.md`.

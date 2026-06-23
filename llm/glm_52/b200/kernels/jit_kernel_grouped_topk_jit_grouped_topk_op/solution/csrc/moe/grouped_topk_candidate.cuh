@@ -17,10 +17,13 @@
  *     parallelism beats warp-per-token, so the candidate dispatches to the
  *     baseline algorithm there (exact same result; no regression).
  *
- * All selection math (fast_sigmoid, packed value+index, renormalization) is
- * bit-identical to the baseline, so candidate output equals baseline output
- * exactly on every supported input. Unsupported parameters are rejected exactly
- * as the baseline.
+ * The SMALL-N / off-domain fallback path IS the copied baseline kernel, so its
+ * output is bit-identical to the baseline by construction. The LARGE-N warp path
+ * reuses the baseline's exact selection math (fast_sigmoid, packed value+index,
+ * renormalization reduction), so it matches the baseline on exact ordered top-k
+ * indices and on weights within fp32 tolerance (validated by bench/correctness.py;
+ * arithmetically it is the same sequence of ops). Unsupported parameters are
+ * rejected exactly as the baseline.
  */
 #include <sgl_kernel/tensor.h>  // For TensorMatcher, SymbolicSize, SymbolicDevice
 #include <sgl_kernel/utils.h>   // For RuntimeCheck, div_ceil

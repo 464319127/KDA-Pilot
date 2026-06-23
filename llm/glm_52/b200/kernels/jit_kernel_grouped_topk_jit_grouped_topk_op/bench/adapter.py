@@ -77,15 +77,22 @@ def _invoke(mod, inputs: dict, outputs: tuple) -> None:
     )
 
 
+# Resolve candidate availability ONCE at import — never inside the timed call.
+# (`has_candidate()` does a filesystem stat; calling it per invocation adds an
+# asymmetric ~µs syscall to the candidate side only, which silently biases the
+# CPU-launch-bound decode timings under host/IO contention. Both call paths below
+# now do only a cached module lookup + launch, so the A/B comparison is fair.)
+_CANDIDATE_AVAILABLE = has_candidate()
+
+
 def call_baseline(workload: dict[str, Any], inputs: dict, outputs: tuple) -> None:
     _invoke(baseline_module(), inputs, outputs)
 
 
 def call_candidate(workload: dict[str, Any], inputs: dict, outputs: tuple) -> None:
-    # Falls back to the baseline module until the native-CUDA candidate exists,
-    # so the harness is runnable end-to-end before the candidate is written.
-    mod = candidate_module() if has_candidate() else baseline_module()
-    _invoke(mod, inputs, outputs)
+    # Falls back to the baseline module if the native-CUDA candidate is absent, so
+    # the harness is runnable end-to-end before the candidate is written.
+    _invoke(candidate_module() if _CANDIDATE_AVAILABLE else baseline_module(), inputs, outputs)
 
 
 def compare_outputs(

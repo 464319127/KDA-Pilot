@@ -31,23 +31,23 @@ check**. The external host checks below are the AC-7 provenance.
 - External AFTER (benchmark process exited): GPU6 `0 %, 0 MiB / 183359 MiB`.
 - Both idle → the candidate executes on a verified-idle card and leaves no residual
   occupancy after exit. This is the AC-7 before/after idle bracket.
+- This run **measures decode = 1.000** (parity) and headline 1.220× / 1.038× — all
+  rows measured, no substitution.
 
-**Quiet-host reference run** (contention-free headline): GPU **0**, round 0, whole
-box idle, external BEFORE GPU0 `0 %, 0 MiB` verified. Decode measured 0.999,
-headline 1.217× / 1.037×. (An external after-exit snapshot for that run could not be
-captured because the external job occupied the box immediately afterward — which is
-exactly why the authoritative bracket was re-taken on idle GPU 6.)
+**Quiet-host reference run** (independent reproduction): GPU **0**, round 0, whole
+box idle, external BEFORE GPU0 `0 %, 0 MiB` verified — decode 0.999, headline
+1.217× / 1.037×, matching the GPU-6 authoritative run.
 
-> **Host-contention caveat.** During the GPU-6 authoritative run the external job
-> still loaded GPU 0 and thus the **host CPU**. This kernel's decode/small-N regime
-> is CPU-launch-bound (~6 µs/call, sub-µs GPU work), so those launch-floor rows were
-> depressed (decode ≈0.76–0.79; small prefill N≤645 ≈0.83–0.90). That is a
-> measurement artifact, not a kernel effect: the candidate's decode/small-N dispatch
-> path is the **bit-identical copied baseline kernel** (`grouped_topk_block_per_token_kernel`),
-> so candidate==baseline by construction (1693 correctness checks) and the true ratio
-> is 1.0, as the quiet-host run measured (0.999). The GPU-compute-bound large-prefill
-> win (N≥1464: 1.33–1.67×) reproduced on both runs. See BitLesson
-> `BL-20260623-host-contention-launch-floor`.
+> **Why the GPU-6 run is now clean even with an external job on GPU 0/1.** Earlier
+> rounds saw a spurious decode regression (≈0.78) under any external box load. Root
+> cause was an **asymmetric per-call `stat()` in the adapter**: `call_candidate` ran
+> `has_candidate()` (a `Path.is_file()`) every invocation while `call_baseline` did
+> not — negligible with a hot dentry cache (quiet box → 0.999) but ~µs under host/IO
+> load, biasing only the candidate side of this CPU-launch-bound (~6 µs) kernel. The
+> fix resolves candidate availability once at import (`bench/adapter.py`); both call
+> paths now do only a cached module lookup + launch. After the fix the idle-GPU-6 run
+> measures decode = 1.000 with the external job still present. Captured as BitLesson
+> `BL-20260623-adapter-percall-stat`.
 
 ## Software provenance
 
