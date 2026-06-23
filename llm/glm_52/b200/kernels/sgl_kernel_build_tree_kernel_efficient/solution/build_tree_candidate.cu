@@ -16,9 +16,14 @@
 // pre-state. Any other shape/dtype/scalar/contiguity combination falls back to
 // the recovered baseline so correctness is never lost. The dispatch test is
 // host-side and touches no device memory (no host sync on the hot path).
+//
+// ABI: local TVM-FFI direct-symbol (tvm::ffi::TensorView args, in place, current
+// CUDA stream), identical to the baseline.
 
-#include <ATen/ATen.h>
 #include <ATen/cuda/CUDAContext.h>
+#include <cuda_runtime.h>
+
+#include <tvm/ffi/function.h>
 
 #include "build_tree_ext.h"
 
@@ -62,21 +67,17 @@ __global__ void noop_kernel() {}
 
 constexpr int64_t FULL_MASK_MODE = 0;
 
-inline bool is_long(const at::Tensor& t) {
-  return t.scalar_type() == at::kLong;
-}
-
 }  // namespace
 
 void build_tree_candidate(
-    at::Tensor parent_list,
-    at::Tensor selected_index,
-    at::Tensor verified_seq_len,
-    at::Tensor tree_mask,
-    at::Tensor positions,
-    at::Tensor retrive_index,
-    at::Tensor retrive_next_token,
-    at::Tensor retrive_next_sibling,
+    tvm::ffi::TensorView parent_list,
+    tvm::ffi::TensorView selected_index,
+    tvm::ffi::TensorView verified_seq_len,
+    tvm::ffi::TensorView tree_mask,
+    tvm::ffi::TensorView positions,
+    tvm::ffi::TensorView retrive_index,
+    tvm::ffi::TensorView retrive_next_token,
+    tvm::ffi::TensorView retrive_next_sibling,
     int64_t topk,
     int64_t depth,
     int64_t draft_token_num,
@@ -84,14 +85,34 @@ void build_tree_candidate(
   const int64_t bs = parent_list.size(0);
 
   // Host-side, device-memory-free regime check (no host sync on the hot path).
-  const bool fast_path = topk == 1 && depth == 1 && draft_token_num == 2 &&
-      tree_mask_mode == FULL_MASK_MODE && parent_list.dim() == 2 &&
-      parent_list.size(1) == 0 && tree_mask.scalar_type() == at::kBool &&
-      is_long(verified_seq_len) && is_long(selected_index) && is_long(positions) &&
-      is_long(retrive_index) && is_long(retrive_next_token) && is_long(retrive_next_sibling) &&
-      verified_seq_len.is_contiguous() && tree_mask.is_contiguous() &&
-      positions.is_contiguous() && retrive_index.is_contiguous() &&
-      retrive_next_token.is_contiguous() && retrive_next_sibling.is_contiguous();
+  // Every piece of metadata that defines the fast-path domain is checked here;
+  // anything off-domain (wrong scalar, dtype, rank, shape, contiguity, or device)
+  // falls back to the recovered baseline so correctness is never lost.
+  const bool scalars_ok = topk == 1 && depth == 1 && draft_token_num == 2 &&
+      tree_mask_mode == FULL_MASK_MODE;
+  const bool dtypes_ok = bte::is_bool(tree_mask.dtype()) && bte::is_i64(parent_list.dtype()) &&
+      bte::is_i64(selected_index.dtype()) && bte::is_i64(verified_seq_len.dtype()) &&
+      bte::is_i64(positions.dtype()) && bte::is_i64(retrive_index.dtype()) &&
+      bte::is_i64(retrive_next_token.dtype()) && bte::is_i64(retrive_next_sibling.dtype());
+  // parent_list [bs, 0] (empty -> degenerate depth-1, selected_index must be 0);
+  // selected_index [bs, draft_token_num-1] = [bs, 1]; verified_seq_len [bs];
+  // positions/retrive_* numel == bs*draft_token_num.
+  const bool shapes_ok = parent_list.ndim() == 2 && parent_list.size(0) == bs &&
+      parent_list.size(1) == 0 && selected_index.ndim() == 2 &&
+      selected_index.size(0) == bs && selected_index.size(1) == draft_token_num - 1 &&
+      verified_seq_len.ndim() == 1 && verified_seq_len.size(0) == bs &&
+      bte::numel(positions) == bs * draft_token_num &&
+      bte::numel(retrive_index) == bs * draft_token_num &&
+      bte::numel(retrive_next_token) == bs * draft_token_num &&
+      bte::numel(retrive_next_sibling) == bs * draft_token_num;
+  const bool contig_ok = bte::is_contiguous(parent_list) && bte::is_contiguous(selected_index) &&
+      bte::is_contiguous(verified_seq_len) && bte::is_contiguous(tree_mask) &&
+      bte::is_contiguous(positions) && bte::is_contiguous(retrive_index) &&
+      bte::is_contiguous(retrive_next_token) && bte::is_contiguous(retrive_next_sibling);
+  const bool device_ok = bte::is_cuda(verified_seq_len) && bte::is_cuda(tree_mask) &&
+      bte::is_cuda(positions) && bte::is_cuda(retrive_index) &&
+      bte::is_cuda(retrive_next_token) && bte::is_cuda(retrive_next_sibling);
+  const bool fast_path = scalars_ok && dtypes_ok && shapes_ok && contig_ok && device_ok;
 
   if (!fast_path) {
     build_tree_baseline(
@@ -117,16 +138,16 @@ void build_tree_candidate(
   const int threads = bs <= 256 ? static_cast<int>(bs) : 256;
   const int blocks = static_cast<int>((bs + threads - 1) / threads);
   build_tree_candidate_kernel<<<blocks, threads, 0, stream>>>(
-      verified_seq_len.data_ptr<int64_t>(),
-      tree_mask.data_ptr<bool>(),
-      positions.data_ptr<int64_t>(),
-      retrive_index.data_ptr<int64_t>(),
-      retrive_next_token.data_ptr<int64_t>(),
+      bte::mptr<int64_t>(verified_seq_len),
+      bte::mptr<bool>(tree_mask),
+      bte::mptr<int64_t>(positions),
+      bte::mptr<int64_t>(retrive_index),
+      bte::mptr<int64_t>(retrive_next_token),
       static_cast<int>(bs));
 }
 
-void build_tree_noop(at::Tensor verified_seq_len, int64_t draft_token_num) {
-  const int64_t bs = verified_seq_len.numel();
+void build_tree_noop(tvm::ffi::TensorView verified_seq_len, int64_t draft_token_num) {
+  const int64_t bs = bte::numel(verified_seq_len);
   if (bs <= 0) {
     return;
   }
@@ -135,3 +156,6 @@ void build_tree_noop(at::Tensor verified_seq_len, int64_t draft_token_num) {
   const int blocks = static_cast<int>((bs + threads - 1) / threads);
   noop_kernel<<<blocks, threads, 0, stream>>>();
 }
+
+TVM_FFI_DLL_EXPORT_TYPED_FUNC(build_tree_candidate, build_tree_candidate);
+TVM_FFI_DLL_EXPORT_TYPED_FUNC(build_tree_noop, build_tree_noop);

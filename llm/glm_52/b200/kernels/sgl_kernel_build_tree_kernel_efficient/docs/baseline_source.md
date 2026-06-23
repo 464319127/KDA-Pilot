@@ -32,13 +32,20 @@
   requires are intentionally **not** copied; `build_tree` uses neither.
 
 ## Local edits vs upstream
-- Only the host entry-point name (`build_tree_kernel_efficient` -> `build_tree_baseline`)
-  and the wrapping `namespace { ... }` around the two `__global__` kernels (to
-  avoid symbol collisions when compiled together with the candidate). Device
-  kernel bodies are byte-identical to upstream.
+- Device kernel bodies (`build_tree_efficient`, `build_tree_efficient_partial_packed`)
+  are byte-identical to upstream.
+- The host entry point is renamed (`build_tree_kernel_efficient` -> `build_tree_baseline`),
+  wrapped in an anonymous `namespace` (avoid symbol collisions when compiled with the
+  candidate), and adapted to the local TVM-FFI direct-symbol ABI: it takes
+  `tvm::ffi::TensorView` args + `int64_t` scalars (instead of `at::Tensor`/`int64_t`),
+  extracts data pointers / sizes via the `bte::` helpers, launches on
+  `at::cuda::getCurrentCUDAStream()`, and is exported with
+  `TVM_FFI_DLL_EXPORT_TYPED_FUNC`. No logic change.
 
 ## Local ABI
-- Both baseline and candidate are exposed through one torch CUDA extension
-  (`bench/csrc/binding.cpp`, built by `bench/build_ext.py`) with the identical
-  destination-passing signature, same compile flags, and `at::cuda::getCurrentCUDAStream()`
-  launches. See `docs/benchmark_method.md`.
+- Both baseline and candidate are exposed through ONE TVM-FFI direct-symbol module
+  (`TVM_FFI_DLL_EXPORT_TYPED_FUNC` / `tvm::ffi::TensorView`, destination-passing,
+  `at::cuda::getCurrentCUDAStream()`), built together by `bench/build_ext.py` via
+  `tvm_ffi.cpp.load` with symmetric flags — matching the repo's `diffusion/kernels/*`
+  pattern. Identical registration/export/build/call path for both sides. See
+  `docs/benchmark_method.md`.

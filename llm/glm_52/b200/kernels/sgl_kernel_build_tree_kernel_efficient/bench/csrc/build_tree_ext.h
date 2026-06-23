@@ -1,45 +1,80 @@
-// Shared declarations for the standalone build_tree_kernel_efficient baseline +
-// candidate. Both sides expose the identical destination-passing ABI:
-// outputs are pre-allocated and passed last-but-for-scalars; the function returns
-// void (Python None) and mutates the output tensors in place; every launch uses
-// at::cuda::getCurrentCUDAStream(). This mirrors the upstream
-// sgl_kernel.build_tree_kernel_efficient op signature exactly.
+// Shared declarations + helpers for the standalone build_tree_kernel_efficient
+// baseline + candidate, exposed through the repo's local direct-symbol ABI:
+// TVM-FFI (`TVM_FFI_DLL_EXPORT_TYPED_FUNC` / `tvm::ffi::TensorView`), destination
+// passing (outputs pre-allocated and mutated in place; returns void/None), every
+// launch on at::cuda::getCurrentCUDAStream(). Mirrors the diffusion/kernels/*
+// pattern. Baseline and candidate are compiled together in one module with
+// identical flags so both sides share the exact same registration/export/build
+// style and call path (the fairness requirement).
 #pragma once
-#include <ATen/ATen.h>
 
-// Recovered upstream baseline (verbatim kernel bodies; see baseline/).
+#include <cstdint>
+
+#include <dlpack/dlpack.h>
+#include <tvm/ffi/container/tensor.h>
+
+namespace bte {
+using tvm::ffi::TensorView;
+
+// --- dtype helpers (DLDataType) ---
+inline bool dtype_is(DLDataType d, uint8_t code, uint8_t bits) {
+  return d.code == code && d.bits == bits && d.lanes == 1;
+}
+inline bool is_i64(DLDataType d) { return dtype_is(d, kDLInt, 64); }
+inline bool is_bool(DLDataType d) { return dtype_is(d, kDLBool, 8); }
+
+// --- view helpers ---
+template <typename T>
+inline T* mptr(const TensorView& t) {
+  return reinterpret_cast<T*>(static_cast<char*>(t.data_ptr()) + t.byte_offset());
+}
+inline bool is_contiguous(const TensorView& t) {
+  int64_t expect = 1;
+  for (int i = t.ndim() - 1; i >= 0; --i) {
+    if (t.size(i) == 1) continue;  // stride free on size-1 dims
+    if (t.stride(i) != expect) return false;
+    expect *= t.size(i);
+  }
+  return true;
+}
+inline int64_t numel(const TensorView& t) {
+  int64_t n = 1;
+  for (int i = 0; i < t.ndim(); ++i) n *= t.size(i);
+  return n;
+}
+inline bool is_cuda(const TensorView& t) { return t.device().device_type == kDLCUDA; }
+}  // namespace bte
+
+// Recovered upstream baseline (verbatim device kernels; see baseline/).
 void build_tree_baseline(
-    at::Tensor parent_list,
-    at::Tensor selected_index,
-    at::Tensor verified_seq_len,
-    at::Tensor tree_mask,
-    at::Tensor positions,
-    at::Tensor retrive_index,
-    at::Tensor retrive_next_token,
-    at::Tensor retrive_next_sibling,
+    tvm::ffi::TensorView parent_list,
+    tvm::ffi::TensorView selected_index,
+    tvm::ffi::TensorView verified_seq_len,
+    tvm::ffi::TensorView tree_mask,
+    tvm::ffi::TensorView positions,
+    tvm::ffi::TensorView retrive_index,
+    tvm::ffi::TensorView retrive_next_token,
+    tvm::ffi::TensorView retrive_next_sibling,
     int64_t topk,
     int64_t depth,
     int64_t draft_token_num,
     int64_t tree_mask_mode);
 
-// Native-CUDA candidate (specialized fast path for the captured GLM-5.2 regime
-// topk=1, depth=1, draft_token_num=2, FULL_MASK, contiguous int64/bool; every
-// other shape/dtype/scalar combination falls back to build_tree_baseline).
+// Native-CUDA candidate (specialized fast path for the captured GLM-5.2 regime;
+// any other shape/dtype/scalar/contiguity combination falls back to the baseline).
 void build_tree_candidate(
-    at::Tensor parent_list,
-    at::Tensor selected_index,
-    at::Tensor verified_seq_len,
-    at::Tensor tree_mask,
-    at::Tensor positions,
-    at::Tensor retrive_index,
-    at::Tensor retrive_next_token,
-    at::Tensor retrive_next_sibling,
+    tvm::ffi::TensorView parent_list,
+    tvm::ffi::TensorView selected_index,
+    tvm::ffi::TensorView verified_seq_len,
+    tvm::ffi::TensorView tree_mask,
+    tvm::ffi::TensorView positions,
+    tvm::ffi::TensorView retrive_index,
+    tvm::ffi::TensorView retrive_next_token,
+    tvm::ffi::TensorView retrive_next_sibling,
     int64_t topk,
     int64_t depth,
     int64_t draft_token_num,
     int64_t tree_mask_mode);
 
-// Empty-kernel launch-floor probe: launches a do-nothing kernel with the same
-// grid/block the candidate fast path uses (one block, bs threads). Used to
-// measure the irreducible launch/scheduling latency on the target GPU.
-void build_tree_noop(at::Tensor verified_seq_len, int64_t draft_token_num);
+// Empty-kernel launch-floor probe (same grid/block the candidate fast path uses).
+void build_tree_noop(tvm::ffi::TensorView verified_seq_len, int64_t draft_token_num);

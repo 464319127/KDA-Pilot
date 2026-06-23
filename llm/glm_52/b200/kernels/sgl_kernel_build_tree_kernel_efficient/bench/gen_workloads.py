@@ -1,22 +1,18 @@
 #!/usr/bin/env python3
 """Freeze bench/workloads.json from docs/evidence.json (run once, before tuning).
 
-The captured interface has FIXED scalars across all 187 variants
-(topk=1, depth=1, draft_token_num=2, tree_mask_mode=FULL_MASK). The only varying
-dimensions are batch size `bs` and the bool tree_mask length `T`, related by the
-invariant T = 2*sum(verified_seq_len) + 4*bs (verified: 0 violations over 187).
+AC-3: EVERY distinct captured production (bs, T, dtype, stride, scalar) combination
+is emitted as a production row — no captured bucket is dropped. The captured
+interface has FIXED scalars across all 187 variants (topk=1, depth=1,
+draft_token_num=2, tree_mask_mode=FULL_MASK) and all tensors are contiguous
+(is_contiguous=True in the evidence); the distinguishing shape axes are batch size
+`bs` and the bool tree_mask length `T`, related by T = 2*sum(verified_seq_len) +
+4*bs (verified: 0 violations over 187 variants).
 
-The op's work is determined by `bs` and is INDEPENDENT of `T` (it writes a fixed
-number of entries per request and loops only over prior requests, never over T or
-seq_len). Therefore the 183 distinct (bs, T) captured shapes collapse, for the
-performance HEADLINE, into one representative production row per distinct bs
-(1..10), each pinned to a real captured (bs, T) shape (the median captured T for
-that bs). This is an explicit, documented collapse -- not a silent drop: every
-captured bs bucket is represented, and bench/correctness.py separately sweeps the
-full captured (bs, T) range and multiple seq-length distributions.
-
-Regression-only edge rows (production:false, excluded from the headline) cover the
-extreme tree_mask lengths and the baseline-fallback path (a non-FULL_MASK mode).
+Production rows = all distinct captured (bs, T) (183 rows). Regression-only rows
+(production:false, excluded from the headline geomean) cover synthetic edges and
+the baseline-fallback domain (degenerate seq, non-FULL_MASK mode, non-contiguous
+inputs, off-domain dtype/shape) so the candidate dispatch guards are exercised.
 """
 
 from __future__ import annotations
@@ -34,11 +30,34 @@ OUT = HERE / "workloads.json"
 ARG0 = re.compile(r"arg\[0\]=Tensor\(\s*shape=\((\d+), \d+\)")
 ARG3 = re.compile(r"arg\[3\]=Tensor\(\s*shape=\((\d+),\)")
 
+# All captured tensors are contiguous (row-major). Strides recorded per AC-3.
+CONTIG = "contiguous (row-major; all captured variants is_contiguous=True)"
+DTYPES = {"int": "int64", "tree_mask": "bool"}
+FULL_MASK = {"topk": 1, "depth": 1, "draft_token_num": 2, "tree_mask_mode": 0}
+
+
+def base_row(rid, bs, T, scalars, production, **extra):
+    return {
+        "id": rid,
+        "production": production,
+        "function": "build_tree",
+        "bs": bs,
+        "tree_mask_len": T,
+        "seq_sum": (T - 4 * bs) // 2,
+        "dtypes": DTYPES,
+        "strides": CONTIG,
+        "contiguous": True,
+        "scalars": scalars,
+        "atol": 0.0,
+        "rtol": 0.0,
+        "seed": 0,
+        **extra,
+    }
+
 
 def main() -> None:
     ev = json.loads(EVIDENCE.read_text())
     counts: collections.Counter = collections.Counter()
-    per_bs = collections.defaultdict(list)
     for v in ev["variants"]:
         raw = v["args"][0]["raw"]
         bs = int(ARG0.search(raw).group(1))
@@ -46,100 +65,30 @@ def main() -> None:
         rem = T - 4 * bs
         assert rem >= 0 and rem % 2 == 0, f"invariant violation bs={bs} T={T}"
         counts[(bs, T)] += v.get("call_count", 1)
-        per_bs[bs].append(T)
 
     rows = []
-
-    # Production / headline rows: one representative real captured shape per bs.
-    for bs in sorted(per_bs):
-        ts = sorted(per_bs[bs])
-        T = ts[len(ts) // 2]  # median captured T for this bs (a real captured shape)
-        seq_sum = (T - 4 * bs) // 2
-        captured_calls = sum(c for (b, _), c in counts.items() if b == bs)
+    # Production rows: every distinct captured (bs, T), sorted for stability.
+    for (bs, T) in sorted(counts):
         rows.append(
-            {
-                "id": f"glm52_bs{bs}_T{T}",
-                "production": True,
-                "function": "build_tree",
-                "bs": bs,
-                "tree_mask_len": T,
-                "seq_sum": seq_sum,
-                "dtypes": {"int": "int64", "tree_mask": "bool"},
-                "scalars": {"topk": 1, "depth": 1, "draft_token_num": 2, "tree_mask_mode": 0},
-                "distinct_T_for_bs": len(set(per_bs[bs])),
-                "captured_calls_for_bs": captured_calls,
-                "atol": 0.0,
-                "rtol": 0.0,
-                "seed": 0,
-            }
+            base_row(f"glm52_bs{bs}_T{T}", bs, T, FULL_MASK, True,
+                     captured_calls=counts[(bs, T)])
         )
 
-    # Regression-only edge rows (excluded from the headline geomean).
-    bs_min, T_min = min(counts, key=lambda k: k[1])
-    bs_max, T_max = max(counts, key=lambda k: k[1])
-    edge = [
-        ("edge_minT", bs_min, T_min, 0),     # smallest captured tree_mask
-        ("edge_maxT", bs_max, T_max, 0),     # largest captured tree_mask
-        ("edge_bs1_seq0", 1, 4, 0),          # degenerate: seq_len=0 -> T=4
-    ]
-    for name, bs, T, mode in edge:
-        rows.append(
-            {
-                "id": name,
-                "production": False,
-                "function": "build_tree",
-                "bs": bs,
-                "tree_mask_len": T,
-                "seq_sum": (T - 4 * bs) // 2,
-                "dtypes": {"int": "int64", "tree_mask": "bool"},
-                "scalars": {"topk": 1, "depth": 1, "draft_token_num": 2, "tree_mask_mode": mode},
-                "atol": 0.0,
-                "rtol": 0.0,
-                "seed": 0,
-            }
-        )
-
-    # Fallback regression row: QLEN_ONLY mode (1) -> candidate must route to baseline.
-    # QLEN_ONLY tree_mask length = num_verify*num_verify*bs = 4*bs.
-    rows.append(
-        {
-            "id": "fallback_qlen_only_bs4",
-            "production": False,
-            "function": "build_tree",
-            "bs": 4,
-            "tree_mask_len": 4 * 4,  # 4*bs, bs=4
-            "seq_sum": 24,           # arbitrary valid; QLEN_ONLY tree_mask size ignores seq_sum
-            "dtypes": {"int": "int64", "tree_mask": "bool"},
-            "scalars": {"topk": 1, "depth": 1, "draft_token_num": 2, "tree_mask_mode": 1},
-            "fallback_expected": True,
-            "atol": 0.0,
-            "rtol": 0.0,
-            "seed": 0,
-        }
-    )
-
-    # Fallback regression row: non-contiguous verified_seq_len -> candidate routes to baseline.
-    rows.append(
-        {
-            "id": "fallback_noncontig_bs4",
-            "production": False,
-            "function": "build_tree",
-            "bs": 4,
-            "tree_mask_len": (24) * 2 + 4 * 4,
-            "seq_sum": 24,
-            "dtypes": {"int": "int64", "tree_mask": "bool"},
-            "scalars": {"topk": 1, "depth": 1, "draft_token_num": 2, "tree_mask_mode": 0},
-            "noncontiguous": True,
-            "fallback_expected": True,
-            "atol": 0.0,
-            "rtol": 0.0,
-            "seed": 0,
-        }
-    )
+    # Regression-only rows (production:false) — synthetic edges + fallback domain.
+    # (min/max captured T are already production rows above; the off-shape guard
+    #  conditions — draft!=2, non-contiguous parent_list, wrong selected_index
+    #  shape — are exercised directly in bench/correctness.py, which builds those
+    #  draft-specific tensors without complicating make_case.)
+    rows.append(base_row("edge_bs1_seq0", 1, 4, FULL_MASK, False))            # seq_len=0 -> T=4
+    rows.append(base_row("edge_bs10_seq0", 10, 40, FULL_MASK, False))         # all seq_len=0, bs=10
+    rows.append(base_row("fallback_qlen_only_bs4", 4, 16, {**FULL_MASK, "tree_mask_mode": 1},
+                         False, fallback_expected=True))                       # mode!=FULL_MASK -> baseline
+    rows.append(base_row("fallback_noncontig_vsl_bs4", 4, 64, FULL_MASK, False,
+                         noncontiguous="verified_seq_len", fallback_expected=True))
 
     OUT.write_text(json.dumps(rows, indent=2) + "\n")
     prod = sum(1 for r in rows if r["production"])
-    print(f"wrote {OUT} : {len(rows)} rows ({prod} production/headline, {len(rows)-prod} regression)")
+    print(f"wrote {OUT}: {len(rows)} rows ({prod} production, {len(rows)-prod} regression)")
 
 
 if __name__ == "__main__":

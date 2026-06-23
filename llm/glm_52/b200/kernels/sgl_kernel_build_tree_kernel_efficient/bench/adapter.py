@@ -1,32 +1,28 @@
 """Benchmark adapter for sgl_kernel.build_tree_kernel_efficient.
 
-Implements the make_case / call_baseline / call_candidate / compare_outputs API
-used by bench/benchmark.py.
+Implements make_case / call_baseline / call_candidate / compare_outputs for
+bench/benchmark.py.
 
-Key design points (see docs/benchmark_method.md for the full rationale):
+Pre-state contract (AC-6): the op is IN PLACE and depends on the FULL_MASK
+callsite output pre-state (tree_mask prefilled True; retrive_next_token /
+retrive_next_sibling prefilled -1). The harness poisons `outputs` before the
+correctness call, so outputs are returned as a custom RingOutputs object (NOT a
+tensor/list/dict) — the harness' _poison_outputs treats it as a non-tensor and
+leaves the pre-state untouched.
 
-* The op is IN PLACE and depends on the FULL_MASK callsite output pre-state
-  (tree_mask prefilled True; retrive_next_token / retrive_next_sibling prefilled
-  -1). The harness poisons `outputs` before the correctness call, so outputs are
-  returned as a custom RingOutputs object (NOT a tensor/list/dict): the harness'
-  _poison_outputs treats it as a non-tensor and leaves it untouched, preserving
-  the required pre-state.
+OUTPUT-BUFFER RING (no wrap): each invocation writes into a fresh, pre-stated
+output set so it NEVER observes a prior call's mutation. The ring is held as
+contiguous 2D tensors (RING x elems) whose rows are the per-call output views, so
+memory + allocation stay cheap regardless of RING. RING (default 16384) is sized
+to exceed the maximum per-trial invocation count for the configured benchmark
+(correctness 1 + warmup + calibration sum<=8191 + timed<=inner_max=4096 ~= 12298
+for inner_max=4096); RingOutputs.next() HARD-ASSERTS it never wraps. make_case is
+called per trial, so the cursor resets each trial.
 
-* OUTPUT-BUFFER RING: each call writes into the next of K pre-stated output sets,
-  so an invocation never observes a previous call's mutation. The op is also
-  data-independent (fixed per-request work, no loop over tree_mask length and no
-  buffer-state-dependent work beyond a single int64 store), so timing is unbiased
-  even when the ring wraps; the ring's primary job is to give the correctness-
-  gating compare a clean pre-state. K is configurable via BUILD_TREE_RING.
-
-* compare_outputs is EXACT-match (int64 / bool / tree structure), per the
-  llm_correctness_contract speculative-tree rule -- not atol/rtol.
-
-* Synthetic inputs are generated from the captured invariants (parent_list [bs,0]
-  empty so selected_index must be 0; verified_seq_len sums to (T-4*bs)/2 for
-  FULL_MASK). No tensor VALUES were captured, only shapes, so synthesis is
-  required; candidate-vs-baseline exact-match stays valid for any input that
-  satisfies the kernel's preconditions.
+Synthetic inputs come from the captured invariants (parent_list [bs,0] empty so
+selected_index must be 0; verified_seq_len sums to (T-4*bs)/2 for FULL_MASK). No
+tensor VALUES were captured, only shapes; candidate-vs-baseline exact-match stays
+valid for any input satisfying the kernel's preconditions.
 """
 
 from __future__ import annotations
@@ -35,9 +31,10 @@ import os
 
 import torch
 
-from build_ext import get_ext
+import build_ext
 
-RING = int(os.environ.get("BUILD_TREE_RING", "512"))
+RING = int(os.environ.get("BUILD_TREE_RING", "16384"))
+NV = 2  # draft_token_num for the captured fixed regime
 
 OUTPUT_NAMES = (
     "tree_mask",
@@ -49,23 +46,43 @@ OUTPUT_NAMES = (
 
 
 class RingOutputs:
-    """K pre-stated output sets cycled round-robin. Not a tensor/list/dict, so the
-    benchmark harness' _poison_outputs leaves it (and the pre-state) untouched."""
+    """RING pre-stated output sets as 2D tensors; next() returns row-views and
+    hard-asserts it never wraps onto an already-used (mutated) set."""
 
-    def __init__(self, sets: list[dict]):
-        self.sets = sets
-        self.k = len(sets)
+    def __init__(self, rings: dict, k: int):
+        self._rings = rings  # name -> 2D tensor (k, elems)
+        self.k = k
         self.cursor = 0
         self.last = 0
 
     def next(self) -> dict:
-        s = self.sets[self.cursor]
-        self.last = self.cursor
-        self.cursor = (self.cursor + 1) % self.k
-        return s
+        if self.cursor >= self.k:
+            raise RuntimeError(
+                f"output-buffer ring wrapped (k={self.k}); a measured invocation would "
+                f"reuse a mutated set. Increase BUILD_TREE_RING."
+            )
+        i = self.cursor
+        self.last = i
+        self.cursor += 1
+        return {name: t[i] for name, t in self._rings.items()}
 
     def last_set(self) -> dict:
-        return self.sets[self.last]
+        return {name: t[self.last] for name, t in self._rings.items()}
+
+
+def _make_ring(bs: int, tree_len: int, device, k: int) -> dict:
+    """k pre-stated output sets (FULL_MASK pre-state) as contiguous 2D tensors."""
+    rings = {
+        "tree_mask": torch.empty((k, tree_len), dtype=torch.bool, device=device),
+        "positions": torch.empty((k, bs * NV), dtype=torch.int64, device=device),
+        "retrive_index": torch.empty((k, bs * NV), dtype=torch.int64, device=device),
+        "retrive_next_token": torch.empty((k, bs * NV), dtype=torch.int64, device=device),
+        "retrive_next_sibling": torch.empty((k, bs * NV), dtype=torch.int64, device=device),
+    }
+    rings["tree_mask"].fill_(True)
+    for name in ("positions", "retrive_index", "retrive_next_token", "retrive_next_sibling"):
+        rings[name].fill_(-1)
+    return rings
 
 
 def _verified_seq_len(bs: int, seq_sum: int, device, seed: int) -> torch.Tensor:
@@ -75,24 +92,9 @@ def _verified_seq_len(bs: int, seq_sum: int, device, seed: int) -> torch.Tensor:
     base = seq_sum // bs
     rem = seq_sum - base * bs
     vals = [base + (1 if i < rem else 0) for i in range(bs)]
-    # deterministic rotation by seed so trials vary the split without changing sum
     shift = seed % bs
     vals = vals[shift:] + vals[:shift]
     return torch.tensor(vals, dtype=torch.int64, device=device)
-
-
-def _make_prestated_set(bs: int, tree_len: int, device) -> dict:
-    """One output set in the FULL_MASK callsite pre-state."""
-    nv = 2  # draft_token_num
-    return {
-        "tree_mask": torch.full((tree_len,), True, dtype=torch.bool, device=device),
-        # positions / retrive_index are fully written by the op; init -1 like the callsite buffer.
-        "positions": torch.full((bs * nv,), -1, dtype=torch.int64, device=device),
-        "retrive_index": torch.full((bs * nv,), -1, dtype=torch.int64, device=device),
-        # retrive_next_token / retrive_next_sibling: -1 pre-state is REQUIRED (op leaves some at -1).
-        "retrive_next_token": torch.full((bs * nv,), -1, dtype=torch.int64, device=device),
-        "retrive_next_sibling": torch.full((bs * nv,), -1, dtype=torch.int64, device=device),
-    }
 
 
 def make_case(workload: dict, *, device: torch.device, seed: int):
@@ -102,13 +104,10 @@ def make_case(workload: dict, *, device: torch.device, seed: int):
     sc = workload["scalars"]
 
     verified_seq_len = _verified_seq_len(bs, seq_sum, device, seed)
-    if workload.get("noncontiguous"):
+    if workload.get("noncontiguous") == "verified_seq_len":
         # Strided (non-contiguous) verified_seq_len so the candidate must fall back
-        # to the baseline. Both columns are set to verified_seq_len: the baseline
-        # reads the underlying storage as if contiguous, so for a UNIFORM (all-equal)
-        # split the first bs storage elements equal the logical values and the read
-        # stays in-bounds and correct (no uninitialized garbage -> no OOB). The
-        # noncontiguous workload row therefore uses a uniform split (bs | seq_sum).
+        # to baseline. Both columns hold the value (uniform split) so the
+        # contiguous-assuming baseline pointer read stays in-bounds.
         padded = verified_seq_len.unsqueeze(1).repeat(1, 2).contiguous()
         verified_seq_len = padded[:, 0]
         assert not verified_seq_len.is_contiguous()
@@ -123,13 +122,10 @@ def make_case(workload: dict, *, device: torch.device, seed: int):
         "tree_mask_mode": int(sc["tree_mask_mode"]),
     }
 
-    baseline_sets = [_make_prestated_set(bs, tree_len, device) for _ in range(RING)]
-    candidate_sets = [_make_prestated_set(bs, tree_len, device) for _ in range(RING)]
-
     return {
         "inputs": inputs,
-        "baseline_outputs": RingOutputs(baseline_sets),
-        "candidate_outputs": RingOutputs(candidate_sets),
+        "baseline_outputs": RingOutputs(_make_ring(bs, tree_len, device, RING), RING),
+        "candidate_outputs": RingOutputs(_make_ring(bs, tree_len, device, RING), RING),
         "tolerance": {"atol": 0.0, "rtol": 0.0},
     }
 
@@ -152,11 +148,11 @@ def _launch(fn, inputs, s):
 
 
 def call_baseline(workload: dict, inputs, outputs) -> None:
-    _launch(get_ext().build_tree_baseline, inputs, outputs.next())
+    _launch(build_ext.baseline, inputs, outputs.next())
 
 
 def call_candidate(workload: dict, inputs, outputs) -> None:
-    _launch(get_ext().build_tree_candidate, inputs, outputs.next())
+    _launch(build_ext.candidate, inputs, outputs.next())
 
 
 def compare_outputs(workload, baseline_outputs, candidate_outputs, tolerance):

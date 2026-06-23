@@ -3,60 +3,53 @@
 ## Regime analysis
 The captured GLM-5.2 B200 interface is a single fixed scalar point across all 187
 variants: `topk=1, depth=1, draft_token_num=2, tree_mask_mode=FULL_MASK`,
-contiguous int64 inputs + bool `tree_mask`, with `parent_list` shape `[bs, 0]`
-(empty). The only varying dimensions are `bs` (1..10) and the bool `tree_mask`
-length `T = 2*sum(verified_seq_len) + 4*bs`. The op's work is determined by `bs`
-and is independent of `T`. Therefore the expected "per-shape kernel dispatch"
-collapses to ONE specialized fast path plus a baseline fallback — no multi-bucket
-kernel family is warranted by the evidence (a single fixed-scalar point, only the
-launch-bound `bs` axis varies).
+contiguous int64 inputs + bool `tree_mask`, `parent_list` shape `[bs, 0]` (empty).
+Only `bs` (1..10) and `T = 2*sum(verified_seq_len) + 4*bs` vary; the op's work is
+`bs`-determined and `T`-independent. So "per-shape dispatch" collapses to ONE
+specialized fast path + a baseline fallback — no multi-bucket family is warranted.
 
 ## Dispatch logic (host-side, no device sync on the hot path)
-`solution/build_tree_candidate.cu :: build_tree_candidate` selects:
+`solution/build_tree_candidate.cu :: build_tree_candidate` (TVM-FFI `TensorView`
+ABI) selects, checking ALL metadata that defines the fast-path domain via
+`DLDataType` + a contiguity helper (`bte::`):
 
-| Condition (all must hold) | Chosen path |
+| Condition (all must hold) | Path |
 |---|---|
-| `topk==1 && depth==1 && draft_token_num==2 && tree_mask_mode==FULL_MASK(0)` AND `parent_list.dim()==2 && parent_list.size(1)==0` AND all tensors int64 (tree_mask bool) AND all contiguous | **candidate** fast kernel (`build_tree_candidate_kernel`) |
-| anything else (other scalar mode, draft_token_num≠2, non-empty parent_list, wrong dtype, non-contiguous) | **baseline** fallback (`build_tree_baseline`, the recovered upstream op) |
+| scalars `topk==1 && depth==1 && draft_token_num==2 && tree_mask_mode==FULL_MASK` AND dtypes (parent_list/selected_index/verified_seq_len/positions/retrive_* int64, tree_mask bool) AND shapes (`parent_list [bs,0]`, `selected_index [bs,1]`, `verified_seq_len [bs]`, outputs numel `bs*2`) AND all contiguous AND all CUDA | **candidate** fast kernel |
+| anything else (other scalar mode, draft≠2, non-empty/non-int64 parent_list, wrong selected_index shape/dtype, non-contiguous, non-CUDA) | **baseline** fallback |
 
-`parent_list.size(1)==0` is the sync-free signal that we are in the degenerate
-depth-1 regime where `selected_index` must be all-zero (any nonzero value would
-dereference the zero-column `parent_list` in the baseline, i.e. an invalid input),
-so the fast path can skip the parent traversal entirely. No output values are read
-on the host, so the dispatch performs no device synchronization.
+`parent_list.size(1)==0` is the sync-free signal of the degenerate depth-1 regime
+where `selected_index` must be all-zero, so the fast path skips parent traversal.
+No output values are read on the host → no device synchronization. Fallback routing
+is verified by 5 correctness cases (QLEN_ONLY, non-contig vsl, parent_list int32,
+selected_index `[bs,2]`, draft=4) — each matches the baseline bit-for-bit.
 
-## Candidate fast path
-One block (bs ≤ 256), one thread per request `b`, draft_token_num fixed to 2.
-Each thread writes only what differs from the True/-1 pre-state:
-`tree_mask[S_b + L_b + 1] = false`; `positions[2b]=L_b, [2b+1]=L_b+1`;
-`retrive_index[2b]=2b, [2b+1]=2b+1`; `retrive_next_token[2b]=1`. It leaves
-`retrive_next_token[2b+1]` and both `retrive_next_sibling` entries at their `-1`
-pre-state, and all other `tree_mask` entries at their `True` pre-state — matching
-the recovered baseline's net effect bit-for-bit. Versus the baseline (grid=bs
-blocks × 2 threads), the candidate uses a single block to reduce grid scheduling;
-it cannot reduce the host launch count below one launch.
+## Per-regime baseline-vs-candidate (controlled same-process probe, all bs 1–10)
+Controlled probe (`bench/floor_probe.py` Section A; 31 trials, tight p10/p90; fresh
+retrieve buffers per call → no reuse artifact). Removes the cross-subprocess clock
+noise of the official harness; this is the conclusive per-regime verdict.
 
-## Per-regime baseline-vs-candidate results
-Official harness, NVIDIA B200 GPU 6, CUDA-event median µs (see `docs/results.md`
-for the noise caveat: the bs6/7/9 subprocesses ran in a low-clock state, so their
-ratios understate the candidate; the controlled same-process probe shows
-non-overlapping p10/p90 candidate-faster for bs 2–10).
-| bs (regime) | representative T | baseline (µs) | candidate (µs) | speedup | chosen path |
-|---|---|---|---|---|---|
-| 1 | 300 | 4.122 | 2.887 | 1.428 | candidate |
-| 2 | 1234 | 4.120 | 2.879 | 1.431 | candidate |
-| 3 | 3814 | 4.120 | 2.955 | 1.394 | candidate |
-| 4 | 2246 | 4.114 | 3.036 | 1.355 | candidate |
-| 5 | 5528 | 4.117 | 4.046 | 1.017 | candidate |
-| 6 | 6216 | 5.272 | 5.264 | 1.001 | candidate |
-| 7 | 6024 | 5.264 | 5.387 | 0.977* | candidate |
-| 8 | 9138 | 4.119 | 4.064 | 1.014 | candidate |
-| 9 | 9842 | 5.304 | 5.402 | 0.982* | candidate |
-| 10 | 5382 | 4.128 | 4.093 | 1.008 | candidate |
-| fallback (QLEN_ONLY / non-contiguous) | — | == baseline by construction | — | ~1.00 | baseline |
+| bs | floor µs | baseline µs | candidate µs | speedup | verdict | chosen path |
+|---|---|---|---|---|---|---|
+| 1 | 3.36 | 9.42 | 9.54 | 0.987 | tie | candidate(==baseline) |
+| 2 | 3.35 | 9.47 | 9.52 | 0.995 | tie | candidate(==baseline) |
+| 3 | 3.36 | 9.45 | 9.56 | 0.988 | tie | candidate(==baseline) |
+| 4 | 3.35 | 9.52 | 9.63 | 0.989 | tie | candidate(==baseline) |
+| 5 | 3.36 | 9.46 | 9.61 | 0.985 | tie | candidate(==baseline) |
+| 6 | 3.36 | 9.41 | 9.62 | 0.979 | tie | candidate(==baseline) |
+| 7 | 3.35 | 9.46 | 9.62 | 0.984 | tie | candidate(==baseline) |
+| 8 | 3.35 | 9.45 | 9.61 | 0.984 | tie | candidate(==baseline) |
+| 9 | 3.31 | 9.42 | 9.59 | 0.982 | tie | candidate(==baseline) |
+| 10 | 3.31 | 9.37 | 9.53 | 0.983 | tie | candidate(==baseline) |
+| fallback (off-domain) | — | == baseline by construction | — | ~1.00 | baseline |
 
-`*` clock artifact (both sides ran ~5.3µs in a low-clock subprocess), not a real
-regression — see `docs/results.md`. Production geomean = **1.144×** (official) /
-**1.021×** (controlled same-process probe). Active bound is the CUDA launch floor
-(~2.0–3.2µs, ~50–80% of runtime), so a single specialized fast path + baseline
-fallback is the right shape; no multi-bucket kernel family is warranted.
+Controlled geomean 0.9854; official-harness production geomean 0.9932. **Every bs is
+a statistical tie** — no kernel-level win survives the ~3.35µs launch floor + ~6µs
+8-tensor `TensorView` marshalling that dominate the <0.1µs kernel body.
+
+## Conclusion
+**No-go under the strict op ABI**: a single specialized fast path + fallback is the
+correct shape, the candidate is correct on every regime, but it ties the baseline
+(host-overhead/launch-bound). The only material lever — fusing the wrapper prefill
+(~63% of the realistic path, measured) — is out of promotion scope per DEC-1. See
+`docs/results.md`.

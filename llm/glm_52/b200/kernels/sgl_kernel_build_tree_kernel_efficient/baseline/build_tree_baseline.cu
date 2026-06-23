@@ -19,14 +19,18 @@
 //   7e6587c94a1d0305815a14067c5d3cc02a9b0f36 (resolved 2026-06-23),
 //   file sgl-kernel/csrc/speculative/eagle_utils.cu.
 // The two device kernels (build_tree_efficient, build_tree_efficient_partial_packed)
-// are copied verbatim. The host entry point is the upstream
-// build_tree_kernel_efficient body, renamed build_tree_baseline so the candidate
-// can be exposed through the identical local ABI. The unrelated verify_tree_greedy
-// op (a separate kernel task) and the pytorch_extension_utils.h include it needs
-// are intentionally omitted; build_tree does not use those macros.
+// are copied VERBATIM. The host entry point is the upstream
+// build_tree_kernel_efficient body, renamed build_tree_baseline and adapted to the
+// local TVM-FFI direct-symbol ABI (tvm::ffi::TensorView args; outputs in place;
+// launch on at::cuda::getCurrentCUDAStream()) so the candidate can be exposed
+// through the identical ABI. The unrelated verify_tree_greedy op (a separate
+// kernel task) and the pytorch_extension_utils.h include it needs are omitted;
+// build_tree uses neither.
 
-#include <ATen/ATen.h>
 #include <ATen/cuda/CUDAContext.h>
+#include <cuda_runtime.h>
+
+#include <tvm/ffi/function.h>
 
 #include "build_tree_ext.h"
 
@@ -220,23 +224,22 @@ __global__ void build_tree_efficient_partial_packed(
 }
 }  // namespace
 
-// Upstream build_tree_kernel_efficient host body, renamed build_tree_baseline.
+// Upstream build_tree_kernel_efficient host body, renamed build_tree_baseline and
+// adapted to the TVM-FFI TensorView ABI (raw-pointer device kernels unchanged).
 void build_tree_baseline(
-    at::Tensor parent_list,
-    at::Tensor selected_index,
-    at::Tensor verified_seq_len,
-    at::Tensor tree_mask,
-    at::Tensor positions,
-    at::Tensor retrive_index,
-    at::Tensor retrive_next_token,
-    at::Tensor retrive_next_sibling,
+    tvm::ffi::TensorView parent_list,
+    tvm::ffi::TensorView selected_index,
+    tvm::ffi::TensorView verified_seq_len,
+    tvm::ffi::TensorView tree_mask,
+    tvm::ffi::TensorView positions,
+    tvm::ffi::TensorView retrive_index,
+    tvm::ffi::TensorView retrive_next_token,
+    tvm::ffi::TensorView retrive_next_sibling,
     int64_t topk,
     int64_t depth,
     int64_t draft_token_num,
     int64_t tree_mask_mode) {
-  // TODO (ying) check shape
-  // TODO (ying) check type
-  int bs = parent_list.size(0);
+  int bs = static_cast<int>(parent_list.size(0));
   dim3 grid(bs);
   dim3 block(draft_token_num);
   const cudaStream_t stream = at::cuda::getCurrentCUDAStream();
@@ -249,31 +252,33 @@ void build_tree_baseline(
       num_bytes_per_item = 2;
     }
     build_tree_efficient_partial_packed<<<grid, block, 0, stream>>>(
-        static_cast<int64_t*>(parent_list.data_ptr()),
-        static_cast<int64_t*>(selected_index.data_ptr()),
-        static_cast<int64_t*>(verified_seq_len.data_ptr()),
-        static_cast<uint8_t*>(tree_mask.data_ptr()),
-        static_cast<int64_t*>(positions.data_ptr()),
-        static_cast<int64_t*>(retrive_index.data_ptr()),
-        static_cast<int64_t*>(retrive_next_token.data_ptr()),
-        static_cast<int64_t*>(retrive_next_sibling.data_ptr()),
+        bte::mptr<int64_t>(parent_list),
+        bte::mptr<int64_t>(selected_index),
+        bte::mptr<int64_t>(verified_seq_len),
+        bte::mptr<uint8_t>(tree_mask),
+        bte::mptr<int64_t>(positions),
+        bte::mptr<int64_t>(retrive_index),
+        bte::mptr<int64_t>(retrive_next_token),
+        bte::mptr<int64_t>(retrive_next_sibling),
         int32_t(topk),
         int32_t(depth),
         int32_t(draft_token_num),
         num_bytes_per_item);
   } else {
     build_tree_efficient<<<grid, block, 0, stream>>>(
-        static_cast<int64_t*>(parent_list.data_ptr()),
-        static_cast<int64_t*>(selected_index.data_ptr()),
-        static_cast<int64_t*>(verified_seq_len.data_ptr()),
-        static_cast<bool*>(tree_mask.data_ptr()),
-        static_cast<int64_t*>(positions.data_ptr()),
-        static_cast<int64_t*>(retrive_index.data_ptr()),
-        static_cast<int64_t*>(retrive_next_token.data_ptr()),
-        static_cast<int64_t*>(retrive_next_sibling.data_ptr()),
+        bte::mptr<int64_t>(parent_list),
+        bte::mptr<int64_t>(selected_index),
+        bte::mptr<int64_t>(verified_seq_len),
+        bte::mptr<bool>(tree_mask),
+        bte::mptr<int64_t>(positions),
+        bte::mptr<int64_t>(retrive_index),
+        bte::mptr<int64_t>(retrive_next_token),
+        bte::mptr<int64_t>(retrive_next_sibling),
         int32_t(topk),
         int32_t(depth),
         int32_t(draft_token_num),
         int32_t(tree_mask_mode));
   }
 }
+
+TVM_FFI_DLL_EXPORT_TYPED_FUNC(build_tree_baseline, build_tree_baseline);

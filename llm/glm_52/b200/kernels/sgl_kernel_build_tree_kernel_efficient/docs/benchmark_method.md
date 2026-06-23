@@ -1,103 +1,86 @@
 # Benchmark Method
 
 ## Kernel under test
-`sgl_kernel.build_tree_kernel_efficient` (SGLang EAGLE/MTP speculative-decoding
-tree builder). In place, returns `None`; mutates `tree_mask`, `positions`,
-`retrive_index`, `retrive_next_token`, `retrive_next_sibling`. Captured GLM-5.2
-B200 regime is a single fixed scalar point: `topk=1, depth=1, draft_token_num=2,
-tree_mask_mode=FULL_MASK`, contiguous int64 inputs + bool `tree_mask`. Only `bs`
-(1..10) and the bool `tree_mask` length `T` vary, with `T = 2*sum(verified_seq_len) + 4*bs`.
+`sgl_kernel.build_tree_kernel_efficient` (SGLang EAGLE/MTP tree builder). In place,
+returns `None`; mutates `tree_mask`, `positions`, `retrive_index`,
+`retrive_next_token`, `retrive_next_sibling`. Captured GLM-5.2 B200 regime: fixed
+scalars `topk=1, depth=1, draft_token_num=2, tree_mask_mode=FULL_MASK`, contiguous
+int64 inputs + bool `tree_mask`. Only `bs` (1..10) and the `tree_mask` length `T`
+vary, with `T = 2*sum(verified_seq_len) + 4*bs`.
 
-## ABI (baseline and candidate are symmetric)
-Both sides are exposed through ONE torch CUDA extension
-(`bench/csrc/binding.cpp`, built by `bench/build_ext.py`) that compiles
-`baseline/build_tree_baseline.cu` and `solution/build_tree_candidate.cu`
-together. Consequences:
-- Identical registration/export style (pybind), identical build, identical
-  compile flags, identical Python call path for both sides — so any wrapper /
-  dispatch overhead is the same on both sides and cancels in the speedup ratio.
-- Destination-passing: outputs are pre-allocated and passed in; the function
-  returns `None` and mutates them in place (matches the captured op).
-- Every launch uses `at::cuda::getCurrentCUDAStream()`.
-
-We use the pybind torch-extension ABI (not TVM-FFI) for build reliability; it is
-symmetric, which is the fairness requirement. The per-call host overhead is
-identical on both sides; see "Measurement caveats".
+## ABI — local TVM-FFI direct-symbol (symmetric)
+Baseline + candidate are compiled together in ONE module by `bench/build_ext.py`
+via `tvm_ffi.cpp.load` (the repo's `diffusion/kernels/*` pattern), each host
+launcher exported with `TVM_FFI_DLL_EXPORT_TYPED_FUNC` and taking
+`tvm::ffi::TensorView` + `int64_t` scalars; the device `__global__` kernels are
+unchanged. Destination-passing (outputs in place), launch on
+`at::cuda::getCurrentCUDAStream()`. `bench/build_ext.py` exposes the only entry
+points the harness uses — `baseline()`, `candidate()`, `noop()` — and torch tensors
+are auto-marshalled to `TensorView` by tvm-ffi. Identical build / export / call
+path for both sides (the fairness requirement).
 
 ## Compile flags (symmetric)
-- `extra_cflags = ["-O3"]`, `extra_cuda_cflags = ["-O3"]` for the single combined
-  build. No one-sided `--use_fast_math`; no architecture/math flags applied to one
-  side only. The build is JIT (torch `cpp_extension.load`) and happens at import,
-  outside any timed region.
+`extra_cflags=[-std=c++17,-O3]`, `extra_cuda_cflags=[-std=c++17,-O3,-gencode …sm_100]`,
+torch ldlibs (`-lc10 -lc10_cuda -ltorch_cpu -ltorch_cuda`). No one-sided
+`--use_fast_math`. Build is JIT at import (outside any timed region).
 
 ## Timing harness
-`bench/benchmark.py` is a verbatim copy of
-`llm/docs/standalone_llm_benchmark_template.py` (unchanged timing logic):
-- CUDA-event timing; warmup; one isolated subprocess per workload.
-- Inner-loop amplification: each timed sample runs N back-to-back invocations
-  inside one event pair, N grown until the sample reaches `target_sample_us=1000`
-  or `inner_iterations_max=4096`. Essential for this launch-bound kernel.
-- Interleaved A/B order per trial; `num_trials=7`, `warmup_runs=10`.
-- Per workload: median / mean / std / min / p10 / p90; speedup =
-  baseline_median / candidate_median; headline = equal-weight geomean of speedup
-  over the `production: true` rows.
-- Invocation:
-  `CUDA_VISIBLE_DEVICES=6 python bench/benchmark.py --device cuda:0 --warmup-runs 10 --num-trials 7 --inner-iterations-min 1 --inner-iterations-max 4096 --target-sample-us 1000 --out bench/results.jsonl`
+`bench/benchmark.py` is the verbatim repo template
+(`standalone_llm_benchmark_template.py`): CUDA-event timing, warmup, one isolated
+subprocess per workload, interleaved A/B, inner-loop amplification to
+`target_sample_us=1000` (cap 4096), `num_trials=7`, `warmup_runs=10`; per workload
+median/mean/std/min/p10/p90; speedup = baseline_median/candidate_median; headline =
+equal-weight geomean over `production: true` rows. Invocation:
+`CUDA_VISIBLE_DEVICES=6 python bench/benchmark.py --device cuda:0 --warmup-runs 10 --num-trials 7 --inner-iterations-min 1 --inner-iterations-max 4096 --target-sample-us 1000 --out bench/results.jsonl`.
 
-## Output pre-state + buffer ring (adapter)
-The op depends on the FULL_MASK callsite pre-state: `tree_mask` prefilled `True`;
-`retrive_next_token` / `retrive_next_sibling` prefilled `-1`. The harness poisons
-`outputs` before the correctness call, so the adapter returns outputs as a custom
-`RingOutputs` object (not a tensor/list/dict) — the harness' `_poison_outputs`
-skips non-tensors, preserving the pre-state. Each invocation writes into the next
-of `BUILD_TREE_RING` (default 512) pre-stated output sets so it never observes a
-prior call's mutation; the correctness-gating compare always uses a freshly
-pre-stated set. The op is data-independent (fixed per-request work; no loop over
-`T`/`seq_len`; the only buffer-state-dependent path is one extra int64 store in
-the baseline's `retrive_next_token` else-branch — a sub-nanosecond effect), so
-timing is unbiased even if the ring wraps.
+## Workloads (AC-3: complete captured coverage)
+`bench/workloads.json` is frozen from `docs/evidence.json` (`bench/gen_workloads.py`)
+and contains **every distinct captured `(bs,T)` shape as a production row (183
+rows)** — no captured bucket is dropped — each recording shapes, dtypes, strides
+(all contiguous; `is_contiguous=True` in the evidence), the fixed scalars, exact
+tolerance (atol=rtol=0), and a seed. Plus 4 regression-only rows (`production:false`,
+excluded from the headline): two degenerate seq=0 edges, a QLEN_ONLY fallback, and
+a non-contiguous fallback. (Off-shape guard conditions — draft≠2, wrong
+`parent_list` dtype, wrong `selected_index` shape — are exercised directly in
+`bench/correctness.py`.)
 
-## Correctness (gate before any benchmark counts)
-`bench/correctness.py`: EXACT match (int64 / bool / tree structure) of both
-baseline and candidate against an INDEPENDENT pure-Python oracle derived from the
-recovered semantics, plus candidate-vs-baseline; poison on the fully-written
-buffers (`positions`, `retrive_index`) to catch partial writes; baseline and
-candidate on SEPARATE copies (in-place); shape / dtype / device / stride checks;
-multiple `verified_seq_len` distributions (uniform / skewed / monotonic / random);
-a sweep over the full captured `(bs, T)` range (per-bs min/median/max T); and the
-fallback rows (non-FULL_MASK mode, non-contiguous input) where the candidate must
-reproduce the baseline bit-for-bit.
+## Output pre-state + no-wrap buffer ring (AC-6)
+The op depends on the FULL_MASK callsite pre-state (`tree_mask`=True;
+`retrive_next_token`/`retrive_next_sibling`=-1). The harness poisons `outputs`
+before the correctness call, so the adapter returns a custom `RingOutputs` object
+(not a tensor/list/dict) — `_poison_outputs` skips it, preserving the pre-state.
+The ring holds 5 contiguous 2D tensors (`RING × elems`) whose rows are the per-call
+output sets; `RING=16384` exceeds the maximum per-trial invocation count for the
+configured benchmark (correctness 1 + warmup + calibration sum ≤8191 + timed
+≤inner_max=4096 ≈ 12298), and `RingOutputs.next()` **hard-asserts it never wraps**,
+so every warmup/calibration/timed invocation writes into a fresh, pre-stated set
+and never observes a prior call's mutation. make_case is called per trial, so the
+cursor resets each trial. The 2D layout keeps memory + allocation cheap.
 
-## Workload selection (headline vs regression)
-`bench/workloads.json` is frozen from `docs/evidence.json` (see
-`bench/gen_workloads.py`). The 183 distinct captured `(bs, T)` shapes collapse,
-for the performance HEADLINE, to one representative production row per distinct
-`bs` (1..10), each pinned to a real captured `(bs, T)` shape (median captured T
-for that bs). This is justified — and explicitly documented, not silently dropped
-— because the op's work and timing are determined by `bs` and are independent of
-`T`; every captured bs bucket is represented, and correctness covers the full
-`(bs, T)` range. Regression-only rows (`production: false`, excluded from the
-headline) cover the extreme tree_mask lengths (T=36, T=11626), a degenerate
-seq_len=0 case, and the baseline-fallback path. See `docs/dispatch.md`.
+## Correctness (gate before any benchmark)
+`bench/correctness.py`: EXACT int/bool/tree match of baseline AND candidate vs an
+independent Python oracle; poison on the fully-written outputs; separate in-place
+copies; shape/dtype/device/stride checks; 4 distributions; full captured `(bs,T)`
+sweep; 5 fallback cases. 691 cases, 0 failures on B200.
 
-## Empty-kernel launch floor
-`build_tree_noop` launches a do-nothing kernel with the same grid/block the
-candidate fast path uses. Timed with the same CUDA-event + inner-loop method, it
-gives the irreducible launch/scheduling latency on the target GPU — the lower
-bound for any achievable op time and the key reference for the win/no-go verdict.
+## Empty-kernel floor + controlled probe + wrapper diagnostic
+`bench/floor_probe.py`: (A) controlled same-process A/B probe for ALL bs 1–10
+(fresh retrieve buffers per call via a ring → no baseline reuse artifact), 31
+trials, tight p10/p90, vs the empty-kernel (`build_tree_noop`, same grid) launch
+floor; (B) the MEASURED wrapper-inclusive path (alloc + `tree_mask.fill_(True)` +
+`retrieve_buf=full(-1)` + op) vs op-only. The controlled probe removes the
+cross-subprocess GPU-clock noise of the official harness and is the clock-noise-free
+verdict.
 
-## Measurement caveats (launch-bound kernel)
-This op writes only a few KB at most and runs as a single tiny launch on both
-sides. The dominant cost is kernel launch / scheduling / per-call host overhead,
-which is identical on both sides; therefore the headline ratio is expected to sit
-near 1.0 and a kernel-body win is hard to surface through the standard per-call
-harness. The empty-kernel floor quantifies this. A CUDA-graph-replay measurement
-(DEC-3, auxiliary only) is used as a secondary diagnostic to isolate GPU-bound op
-time when needed; it is not the headline.
+## Active bound (why this is a no-go)
+The op writes <a few KB and runs as a single tiny launch. Per-call cost is
+dominated by the ~3.35µs empty-kernel launch floor plus ~6µs of 8-tensor
+torch→TensorView marshalling; the kernel body is <0.1µs of the ~9.5µs. So the
+candidate's grid-block reduction is unmeasurable and no kernel-level win exists
+under the strict op ABI. The only material lever is the wrapper prefill (~63% of
+the realistic path, measured), which DEC-1 holds out of promotion scope.
 
 ## Provenance
-See `docs/baseline_source.md` (upstream commit + copied files), `docs/run_log.md`
-(host / GPU id / model + before/after idle), and `bench/results.jsonl`
-(per-run records + harness provenance event with CUDA/torch versions).
-
-<!-- Numbers (geomean, per-row medians, floor) are recorded in docs/results.md after the remote B200 run. -->
+`docs/results.md` (numbers + verdict), `docs/dispatch.md` (dispatch table),
+`docs/run_log.md` (host/GPU/idle/versions/commands), `bench/results.jsonl` (raw,
+gitignored), `bench/floor_probe_out.txt` (controlled probe + wrapper).

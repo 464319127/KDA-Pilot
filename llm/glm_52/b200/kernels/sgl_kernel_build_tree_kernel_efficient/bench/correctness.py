@@ -1,24 +1,22 @@
 #!/usr/bin/env python3
 """Correctness suite for build_tree_kernel_efficient (baseline + native-CUDA candidate).
 
-Checks, per the llm_correctness_contract speculative-tree rule (EXACT match for
-integer / bool / tree-structure outputs):
+Per the llm_correctness_contract speculative-tree rule, integer/bool/tree-structure
+outputs are EXACT-match. Coverage:
 
-* INDEPENDENT ORACLE: the expected post-state for the captured fixed regime
-  (topk=1, depth=1, draft_token_num=2, FULL_MASK, selected_index==0) is computed
-  in pure Python from the recovered semantics, NOT from the CUDA baseline. Both
-  baseline and candidate are checked against it.
-* POISON: positions / retrive_index (fully written by the op) are pre-filled with
-  a sentinel so a partial / skipped write is detected; tree_mask /
-  retrive_next_token / retrive_next_sibling carry the REQUIRED callsite pre-state
-  (True / -1 / -1).
-* IN-PLACE: baseline and candidate run on SEPARATE copies; we compare each to the
-  oracle and to each other, plus shape / dtype / device / stride.
-* COVERAGE: every workloads.json row; multiple verified_seq_len distributions
-  (uniform / skewed / monotonic / random) for multi-batch rows; a sweep over the
-  full captured (bs, T) range (per-bs min / median / max T from evidence.json);
-  and the baseline-fallback rows (non-FULL_MASK mode and non-contiguous input),
-  where the candidate must reproduce the baseline bit-for-bit.
+* INDEPENDENT ORACLE for the captured fixed regime (topk=1, depth=1,
+  draft_token_num=2, FULL_MASK, selected_index==0), computed in pure Python from
+  the recovered semantics — both baseline and candidate are checked against it.
+* POISON: positions / retrive_index (fully written) pre-filled with a sentinel to
+  catch partial writes; tree_mask / retrive_next_token / retrive_next_sibling carry
+  the REQUIRED callsite pre-state (True / -1 / -1).
+* IN-PLACE: baseline and candidate run on SEPARATE copies; compared to the oracle
+  and to each other, with shape/dtype/device/stride checks.
+* COVERAGE: every production row (multiple verified_seq_len distributions), the full
+  captured (bs,T) range sweep, and the baseline-FALLBACK domain — non-FULL_MASK
+  mode, non-contiguous verified_seq_len, draft_token_num!=2, wrong parent_list
+  dtype, and wrong selected_index shape — where the candidate must reproduce the
+  baseline bit-for-bit (its dispatch must route off-domain inputs to the baseline).
 
 Run: python bench/correctness.py   (exit 0 iff all cases pass)
 """
@@ -34,12 +32,12 @@ from pathlib import Path
 import torch
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from build_ext import get_ext  # noqa: E402
+import build_ext  # noqa: E402
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 POISON = -17
-NV = 2  # draft_token_num
+NV = 2  # draft_token_num for the fixed regime
 
 
 # ----------------------------- input construction -----------------------------
@@ -56,13 +54,11 @@ def seq_lens(bs: int, seq_sum: int, dist: str, seed: int) -> list[int]:
         v[0] = seq_sum
         return v
     if dist == "monotonic":
-        # increasing, summing to seq_sum
         w = list(range(1, bs + 1))
         sw = sum(w)
         v = [seq_sum * x // sw for x in w]
         v[-1] += seq_sum - sum(v)
         return v
-    # random non-negative split
     cuts = sorted(torch.randint(0, seq_sum + 1, (bs - 1,), generator=g).tolist())
     pts = [0] + cuts + [seq_sum]
     return [pts[i + 1] - pts[i] for i in range(bs)]
@@ -91,41 +87,39 @@ def oracle_full_mask(L: list[int], device) -> dict:
             "retrive_next_token": rnt, "retrive_next_sibling": rns}
 
 
-def prestated_outputs(bs: int, T: int, device) -> dict:
-    """Required callsite pre-state, with positions/retrive_index POISONED to catch
-    partial writes."""
+def prestated_outputs(total_tree: int, total_idx: int, device) -> dict:
+    """Required callsite pre-state; positions/retrive_index POISONED to catch partial writes."""
     return {
-        "tree_mask": torch.full((T,), True, dtype=torch.bool, device=device),
-        "positions": torch.full((bs * NV,), POISON, dtype=torch.int64, device=device),
-        "retrive_index": torch.full((bs * NV,), POISON, dtype=torch.int64, device=device),
-        "retrive_next_token": torch.full((bs * NV,), -1, dtype=torch.int64, device=device),
-        "retrive_next_sibling": torch.full((bs * NV,), -1, dtype=torch.int64, device=device),
+        "tree_mask": torch.full((total_tree,), True, dtype=torch.bool, device=device),
+        "positions": torch.full((total_idx,), POISON, dtype=torch.int64, device=device),
+        "retrive_index": torch.full((total_idx,), POISON, dtype=torch.int64, device=device),
+        "retrive_next_token": torch.full((total_idx,), -1, dtype=torch.int64, device=device),
+        "retrive_next_sibling": torch.full((total_idx,), -1, dtype=torch.int64, device=device),
     }
 
 
-def run_op(fn, parent_list, selected_index, vsl, out, scalars):
+def run_op(fn, parent_list, selected_index, vsl, out, sc):
     fn(parent_list, selected_index, vsl, out["tree_mask"], out["positions"],
        out["retrive_index"], out["retrive_next_token"], out["retrive_next_sibling"],
-       scalars["topk"], scalars["depth"], scalars["draft_token_num"], scalars["tree_mask_mode"])
+       sc["topk"], sc["depth"], sc["draft_token_num"], sc["tree_mask_mode"])
 
 
 def exact_eq(a, b) -> bool:
     return a.shape == b.shape and a.dtype == b.dtype and a.stride() == b.stride() and torch.equal(a, b)
 
 
-# ----------------------------- one FULL_MASK case -----------------------------
-def check_full_mask(ext, device, bs, L, label, fails):
-    seq_sum = sum(L)
-    T = 2 * seq_sum + 4 * bs
+# ----------------------------- FULL_MASK fixed regime -----------------------------
+def check_full_mask(device, bs, L, label, fails):
+    T = 2 * sum(L) + 4 * bs
     parent_list = torch.empty((bs, 0), dtype=torch.int64, device=device)
     selected_index = torch.zeros((bs, 1), dtype=torch.int64, device=device)
     vsl = torch.tensor(L, dtype=torch.int64, device=device)
     sc = {"topk": 1, "depth": 1, "draft_token_num": 2, "tree_mask_mode": 0}
 
-    base_out = prestated_outputs(bs, T, device)
-    cand_out = prestated_outputs(bs, T, device)  # SEPARATE copy
-    run_op(ext.build_tree_baseline, parent_list, selected_index, vsl, base_out, sc)
-    run_op(ext.build_tree_candidate, parent_list, selected_index, vsl, cand_out, sc)
+    base_out = prestated_outputs(T, bs * NV, device)
+    cand_out = prestated_outputs(T, bs * NV, device)  # SEPARATE copy
+    run_op(build_ext.baseline, parent_list, selected_index, vsl, base_out, sc)
+    run_op(build_ext.candidate, parent_list, selected_index, vsl, cand_out, sc)
     torch.cuda.synchronize()
 
     oracle = oracle_full_mask(L, device)
@@ -140,32 +134,57 @@ def check_full_mask(ext, device, bs, L, label, fails):
             fails.append(f"[{label}] {name} left POISON (partial write)")
 
 
-def check_fallback(ext, device, row, fails):
-    """Non-FULL_MASK or non-contiguous: candidate must equal baseline exactly."""
-    bs = int(row["bs"])
-    sc = {"topk": 1, "depth": 1, "draft_token_num": 2, "tree_mask_mode": int(row["scalars"]["tree_mask_mode"])}
-    label = row["id"]
-    seq_sum = int(row["seq_sum"])
-    L = seq_lens(bs, seq_sum, "uniform", 0)
-    vsl = torch.tensor(L, dtype=torch.int64, device=device)
-    if row.get("noncontiguous"):
-        # Both columns = vsl so the baseline's contiguous storage read stays
-        # in-bounds for a uniform split (see adapter.make_case for rationale).
-        padded = vsl.unsqueeze(1).repeat(1, 2).contiguous()
-        vsl = padded[:, 0]
-        if vsl.is_contiguous():
-            fails.append(f"[{label}] expected non-contiguous verified_seq_len")
-    parent_list = torch.empty((bs, 0), dtype=torch.int64, device=device)
-    selected_index = torch.zeros((bs, 1), dtype=torch.int64, device=device)
-    T = int(row["tree_mask_len"])
-    base_out = prestated_outputs(bs, T, device)
-    cand_out = prestated_outputs(bs, T, device)
-    run_op(ext.build_tree_baseline, parent_list, selected_index, vsl, base_out, sc)
-    run_op(ext.build_tree_candidate, parent_list, selected_index, vsl, cand_out, sc)
+# ----------------------------- fallback domain (candidate must == baseline) -----------------------------
+def check_identity(device, label, parent_list, selected_index, vsl, sc, total_tree, total_idx, fails):
+    base_out = prestated_outputs(total_tree, total_idx, device)
+    cand_out = prestated_outputs(total_tree, total_idx, device)
+    run_op(build_ext.baseline, parent_list, selected_index, vsl, base_out, sc)
+    run_op(build_ext.candidate, parent_list, selected_index, vsl, cand_out, sc)
     torch.cuda.synchronize()
     for name in base_out:
         if not exact_eq(cand_out[name], base_out[name]):
             fails.append(f"[{label}] fallback candidate {name} != baseline")
+
+
+def fallback_cases(device, fails):
+    # 1) non-FULL_MASK mode (QLEN_ONLY): tree_mask size = draft^2 * bs
+    bs = 4
+    vsl = torch.tensor([5, 7, 3, 9], dtype=torch.int64, device=device)
+    pl = torch.empty((bs, 0), dtype=torch.int64, device=device)
+    si = torch.zeros((bs, 1), dtype=torch.int64, device=device)
+    check_identity(device, "fallback/qlen_only", pl, si, vsl,
+                   {"topk": 1, "depth": 1, "draft_token_num": 2, "tree_mask_mode": 1},
+                   NV * NV * bs, bs * NV, fails)
+
+    # 2) non-contiguous verified_seq_len
+    base = torch.tensor([5, 7, 3, 9], dtype=torch.int64, device=device).unsqueeze(1).repeat(1, 2).contiguous()
+    vsl_nc = base[:, 0]
+    assert not vsl_nc.is_contiguous()
+    T = 2 * int(vsl_nc.sum()) + 4 * bs
+    check_identity(device, "fallback/noncontig_vsl", pl, si, vsl_nc,
+                   {"topk": 1, "depth": 1, "draft_token_num": 2, "tree_mask_mode": 0},
+                   T, bs * NV, fails)
+
+    # 3) wrong parent_list dtype (int32) -> dtype guard -> fallback (parent_list [bs,0] never read)
+    pl_i32 = torch.empty((bs, 0), dtype=torch.int32, device=device)
+    check_identity(device, "fallback/parentlist_int32", pl_i32, si, vsl,
+                   {"topk": 1, "depth": 1, "draft_token_num": 2, "tree_mask_mode": 0},
+                   2 * int(vsl.sum()) + 4 * bs, bs * NV, fails)
+
+    # 4) wrong selected_index shape [bs,2] (expected [bs,1]) -> shape guard -> fallback
+    si_bad = torch.zeros((bs, 2), dtype=torch.int64, device=device)
+    check_identity(device, "fallback/selidx_shape", pl, si_bad, vsl,
+                   {"topk": 1, "depth": 1, "draft_token_num": 2, "tree_mask_mode": 0},
+                   2 * int(vsl.sum()) + 4 * bs, bs * NV, fails)
+
+    # 5) draft_token_num=4 -> scalar guard -> fallback (depth=1 -> parent_list [bs,1], selected_index 0)
+    d = 4
+    pl4 = torch.zeros((bs, 1), dtype=torch.int64, device=device)
+    si4 = torch.zeros((bs, d - 1), dtype=torch.int64, device=device)
+    T4 = int(vsl.sum()) * d + d * d * bs
+    check_identity(device, "fallback/draft4", pl4, si4, vsl,
+                   {"topk": 1, "depth": 1, "draft_token_num": d, "tree_mask_mode": 0},
+                   T4, bs * d, fails)
 
 
 def evidence_bsT_sweep():
@@ -190,27 +209,28 @@ def main() -> int:
         print("CUDA required")
         return 2
     device = torch.device("cuda")
-    ext = get_ext()
+    build_ext.get_ext()
     fails: list[str] = []
     n = 0
 
     rows = json.loads((HERE / "workloads.json").read_text())
     for row in rows:
+        if not row["production"]:
+            continue  # fallback/edge rows handled explicitly below
         bs = int(row["bs"])
-        if row.get("fallback_expected"):
-            check_fallback(ext, device, row, fails)
-            n += 1
-            continue
-        for dist in ("uniform", "skewed", "monotonic", "random"):
+        dists = ("uniform",) if bs == 1 else ("uniform", "skewed", "monotonic", "random")
+        for dist in dists:
             L = seq_lens(bs, int(row["seq_sum"]), dist, 1234 + bs)
-            check_full_mask(ext, device, bs, L, f"{row['id']}/{dist}", fails)
+            check_full_mask(device, bs, L, f"{row['id']}/{dist}", fails)
             n += 1
 
-    # full captured (bs, T) range sweep
     for bs, seq_sum in evidence_bsT_sweep():
         L = seq_lens(bs, seq_sum, "uniform", 7)
-        check_full_mask(ext, device, bs, L, f"sweep_bs{bs}_seqsum{seq_sum}", fails)
+        check_full_mask(device, bs, L, f"sweep_bs{bs}_seqsum{seq_sum}", fails)
         n += 1
+
+    fallback_cases(device, fails)
+    n += 5
 
     print(f"ran {n} cases; {len(fails)} failures")
     for f in fails[:50]:
