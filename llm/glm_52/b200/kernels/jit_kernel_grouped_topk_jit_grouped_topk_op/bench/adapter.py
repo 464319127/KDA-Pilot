@@ -27,7 +27,7 @@ def _alloc_outputs(num_tokens: int, topk: int, device: torch.device) -> tuple:
     )
 
 
-def make_case(workload: dict[str, Any], *, device: torch.device, seed: int) -> Case:
+def make_case(workload: dict[str, Any], *, device: torch.device, seed: int) -> dict:
     shapes = workload["shapes"]
     scalars = workload["scalars"]
     N = int(shapes["num_tokens"])
