@@ -16,9 +16,11 @@ Faithful to the recovered C++ contract (baseline/.../elementwise/topk.cu):
     two result records per variant are two sampled calls' single returns (multi-call aggregation,
     not two outputs of one call; see docs/baseline_source.md).
 
-The outputs are int32 indices, so `compare_outputs` is EXACT integer match (the harness
-default float atol/rtol comparator is wrong for index outputs). call_baseline/call_candidate
-bind to the task-local `topk_transform_abi` module built on the remote B200 (see solution/).
+The outputs are int32 indices, so `compare_outputs` is a regime-aware SANITY check (NOT the
+authoritative gate): naive (`max_valid_length<=topk`) exact integer match; radix (`>topk`)
+order-tolerant sorted-set; radix+ties structural-only (boundary-tie sets validly differ). The
+authoritative correctness gate is `bench/correctness.py` (valid-top-k, matched_ratio==1.0).
+call_baseline/call_candidate bind to the task-local `topk_transform_abi` module (see solution/).
 """
 from __future__ import annotations
 
@@ -191,6 +193,11 @@ def compare_outputs(workload, baseline_outputs, candidate_outputs, tolerance) ->
     sc = workload.get("scalars", {}) if isinstance(workload, dict) else {}
     topk = int(sc.get("topk", 2048))
     is_radix = int(sc.get("max_valid_length", 0)) > topk
+    # Radix + exact-value ties: equal-score boundary ties let the kernel select DIFFERENT valid
+    # page-id sets across runs, so even the order-tolerant sorted-set compare validly differs.
+    # compare_outputs has no inputs to run a full valid-top-k check, so do structural-only here;
+    # correctness.validate_topk (valid-top-k, run to matched_ratio==1.0) is authoritative for these.
+    radix_tie = is_radix and sc.get("score_dist") == "ties"
     if len(baseline_outputs) != len(candidate_outputs):
         return _fail(f"output count {len(baseline_outputs)} vs {len(candidate_outputs)}")
     for idx, (b, c) in enumerate(zip(baseline_outputs, candidate_outputs)):
@@ -202,6 +209,8 @@ def compare_outputs(workload, baseline_outputs, candidate_outputs, tolerance) ->
             return _fail(f"output {idx} stride {b.stride()} vs {c.stride()}")
         if c.is_floating_point() and not torch.isfinite(c).all():
             return _fail(f"output {idx} has NaN/Inf")
+        if radix_tie:
+            continue  # structural-only (see above); correctness.py is authoritative
         if is_radix:
             if not torch.equal(torch.sort(b, dim=-1).values, torch.sort(c, dim=-1).values):
                 return _fail(f"output {idx} radix selected-set mismatch (order-tolerant sorted compare)")
