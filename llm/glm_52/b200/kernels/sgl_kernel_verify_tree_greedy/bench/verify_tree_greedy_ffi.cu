@@ -73,6 +73,38 @@ void validate(
   require(predicts.shape()[0] == bs * nd, "predicts length");
 }
 
+// Shared entry body: validate, derive dims, resolve the stream, cast pointers, and launch.
+// The two exported functions differ only by the launcher passed in — `launch_baseline` and
+// `dispatch_verify_tree_greedy` have the identical pointer/dim/stream signature.
+template <typename Launch>
+inline void run_verify(
+    Launch launch,
+    TensorView candidates,
+    TensorView retrive_index,
+    TensorView retrive_next_token,
+    TensorView retrive_next_sibling,
+    TensorView target_predict,
+    TensorView predicts,
+    TensorView accept_index,
+    TensorView accept_token_num) {
+  validate(candidates, retrive_index, retrive_next_token, retrive_next_sibling, target_predict,
+           predicts, accept_index, accept_token_num);
+  const uint32_t bs = static_cast<uint32_t>(candidates.shape()[0]);
+  const uint32_t nd = static_cast<uint32_t>(candidates.shape()[1]);
+  const uint32_t nss = static_cast<uint32_t>(accept_index.shape()[1]);
+  cudaStream_t stream = get_stream(predicts.device());
+  launch(
+      static_cast<int32_t*>(predicts.data_ptr()),
+      static_cast<int32_t*>(accept_index.data_ptr()),
+      static_cast<int32_t*>(accept_token_num.data_ptr()),
+      static_cast<const int64_t*>(candidates.data_ptr()),
+      static_cast<const int64_t*>(retrive_index.data_ptr()),
+      static_cast<const int64_t*>(retrive_next_token.data_ptr()),
+      static_cast<const int64_t*>(retrive_next_sibling.data_ptr()),
+      static_cast<const int64_t*>(target_predict.data_ptr()),
+      bs, nss, nd, stream);
+}
+
 }  // namespace
 
 // Baseline: recovered upstream kernel, grid(bs)/block(1).
@@ -85,22 +117,8 @@ void baseline_verify_tree_greedy(
     TensorView predicts,
     TensorView accept_index,
     TensorView accept_token_num) {
-  validate(candidates, retrive_index, retrive_next_token, retrive_next_sibling, target_predict,
-           predicts, accept_index, accept_token_num);
-  const uint32_t bs = static_cast<uint32_t>(candidates.shape()[0]);
-  const uint32_t nd = static_cast<uint32_t>(candidates.shape()[1]);
-  const uint32_t nss = static_cast<uint32_t>(accept_index.shape()[1]);
-  cudaStream_t stream = get_stream(predicts.device());
-  baseline_vtg::launch_baseline(
-      static_cast<int32_t*>(predicts.data_ptr()),
-      static_cast<int32_t*>(accept_index.data_ptr()),
-      static_cast<int32_t*>(accept_token_num.data_ptr()),
-      static_cast<const int64_t*>(candidates.data_ptr()),
-      static_cast<const int64_t*>(retrive_index.data_ptr()),
-      static_cast<const int64_t*>(retrive_next_token.data_ptr()),
-      static_cast<const int64_t*>(retrive_next_sibling.data_ptr()),
-      static_cast<const int64_t*>(target_predict.data_ptr()),
-      bs, nss, nd, stream);
+  run_verify(baseline_vtg::launch_baseline, candidates, retrive_index, retrive_next_token,
+             retrive_next_sibling, target_predict, predicts, accept_index, accept_token_num);
 }
 
 // Candidate: specialized lane-per-request kernel with baseline fallback.
@@ -113,22 +131,9 @@ void candidate_verify_tree_greedy(
     TensorView predicts,
     TensorView accept_index,
     TensorView accept_token_num) {
-  validate(candidates, retrive_index, retrive_next_token, retrive_next_sibling, target_predict,
-           predicts, accept_index, accept_token_num);
-  const uint32_t bs = static_cast<uint32_t>(candidates.shape()[0]);
-  const uint32_t nd = static_cast<uint32_t>(candidates.shape()[1]);
-  const uint32_t nss = static_cast<uint32_t>(accept_index.shape()[1]);
-  cudaStream_t stream = get_stream(predicts.device());
-  candidate_vtg::dispatch_verify_tree_greedy(
-      static_cast<int32_t*>(predicts.data_ptr()),
-      static_cast<int32_t*>(accept_index.data_ptr()),
-      static_cast<int32_t*>(accept_token_num.data_ptr()),
-      static_cast<const int64_t*>(candidates.data_ptr()),
-      static_cast<const int64_t*>(retrive_index.data_ptr()),
-      static_cast<const int64_t*>(retrive_next_token.data_ptr()),
-      static_cast<const int64_t*>(retrive_next_sibling.data_ptr()),
-      static_cast<const int64_t*>(target_predict.data_ptr()),
-      bs, nss, nd, stream);
+  run_verify(candidate_vtg::dispatch_verify_tree_greedy, candidates, retrive_index,
+             retrive_next_token, retrive_next_sibling, target_predict, predicts, accept_index,
+             accept_token_num);
 }
 
 TVM_FFI_DLL_EXPORT_TYPED_FUNC(baseline_verify_tree_greedy, &baseline_verify_tree_greedy);

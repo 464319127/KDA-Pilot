@@ -22,7 +22,7 @@ Round 1 run with the literal **TVM-FFI direct-symbol ABI** (supersedes the Round
 
 | File | sha256 |
 |------|--------|
-| `bench/verify_tree_greedy_ffi.cu` (TVM-FFI ABI) | `c435da8324371daff4bff93a61fd32126b25924dd62230dafaac3b1a4bcdeaee` |
+| `bench/verify_tree_greedy_ffi.cu` (TVM-FFI ABI, finalized) | `f483a3dee61cdb2de340c0e8111b1ce5e1851225e3f00fdc5fa77f09cca55c89` |
 | `solution/verify_tree_greedy_candidate.cuh` | `18cfffabea1d5e6bb162b9cba04e98b5149fc9e0406fb16402883bd353b0eaeb` |
 | `baseline/verify_tree_greedy_kernel.cuh` | `d4bbf9d770e95b9e777742b82ed7b4a3651b0eb161d24dff534017512a603b2b` |
 
@@ -33,10 +33,11 @@ Round 1 run with the literal **TVM-FFI direct-symbol ABI** (supersedes the Round
 - **Before**: `7, 0 %, 0 MiB` (idle — no active compute, no meaningful memory).
 - **After**: `7, 0 %, 4 MiB` (idle; 4 MiB trivial residual context).
 
-The selected card (GPU 7) was idle before and after, as required. During this run, other
-tenants' GPUs became busy (GPU 0 ~88%, GPU 1 ~70%, GPU 3 ~1%; GPUs 2/5 held memory). This
-node-level host contention raised the absolute per-launch floor to ~4.8–6.1 µs (vs ~4.0–4.8 µs
-in the Round-0 run on a quieter node). The benchmark samples baseline and candidate
+The selected card (GPU 7) was idle before and after, as required. During the runs, other
+tenants' GPUs were intermittently busy (this finalized run: GPU 2 ~47%; the prior R1 run:
+GPU 0 ~88%, GPU 1 ~70%; some GPUs held memory). This node-level host contention raised the
+absolute per-launch floor to ~4.9–5.9 µs (vs ~4.0–4.8 µs in the Round-0 run on a quieter
+node). The benchmark samples baseline and candidate
 **interleaved within each trial**, so both sides experience identical conditions and the
 speedup *ratio* is unaffected; the floor's sensitivity to host contention (with GPU 7 work
 unchanged) further reinforces that the kernel is launch/scheduler-bound, not body-bound.
@@ -63,8 +64,8 @@ Inner-loop amplification ramped to **256** back-to-back launches per CUDA-event 
 - **Correctness**: 17/17 checks PASS — `candidate == baseline == oracle`, exact
   integer/structural match, across the upstream fixture, all 10 production shapes (5 seeds
   each), and 6 regression rows (incl. the `nd>2` baseline-fallback row).
-- **Benchmark**: 16/16 workloads PASS; production equal-weight geomean speedup = **0.9924**
-  (candidate ≈ baseline ≈ ~4.8–6.1 µs/launch). See `docs/results.md` and `docs/dispatch.md`.
+- **Benchmark**: 16/16 workloads PASS; production equal-weight geomean speedup = **0.9933**
+  (candidate ≈ baseline ≈ ~4.9–5.9 µs/launch). See `docs/results.md` and `docs/dispatch.md`.
 
 Raw per-run records: `bench/results.jsonl` (kept local, NOT staged for the PR per the
 PR-scope rules).
