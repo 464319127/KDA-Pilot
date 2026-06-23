@@ -70,6 +70,25 @@ def naive_oracle(pt, lengths, cu, B, is_decode):
     return out
 
 
+def valid_topk(out, score, lengths, pt, cu, B, is_decode):
+    """Valid top-k by full float (order/tie tolerant): recover positions, check range/count,
+    selected score multiset == true top-k scores."""
+    cul = cu.tolist()
+    seq = list(range(B)) if is_decode else [next(si for si in range(len(cul) - 1) if cul[si] <= b < cul[si + 1]) for b in range(B)]
+    for b in range(B):
+        L = int(lengths[b])
+        s = seq[b]
+        sel = out[b].to(torch.int64) - int(pt[s, 0])
+        if not bool(((sel >= 0) & (sel < L)).all()):
+            return False
+        if int(torch.unique(sel).numel()) != topk:
+            return False
+        if not torch.equal(torch.sort(score[b, sel].float()).values,
+                           torch.sort(torch.topk(score[b, :L].float(), topk).values).values):
+            return False
+    return True
+
+
 def run(name, B, N, S, M, **kw):
     score, lengths, pt, cu, L = case(B, N, S, M, **kw)
     dst = torch.full((B, topk), -17, dtype=torch.int32, device=dev)
@@ -78,18 +97,18 @@ def run(name, B, N, S, M, **kw):
     dst_c = torch.full((B, topk), -17, dtype=torch.int32, device=dev)
     cand(score, lengths, pt, cu, topk, None, dst_c)
     torch.cuda.synchronize()
-    cc = torch.equal(dst, dst_c)
-    msg = f"[{name}] B={B} N={N} S={S} M={M} L={L} candidate==baseline={cc}"
-    if L <= topk:  # naive path -> exact oracle
+    if L <= topk:  # naive path: deterministic -> exact candidate==baseline + oracle
+        cc = torch.equal(dst, dst_c)
         orc = naive_oracle(pt, lengths, cu, B, S == B)
         ok = torch.equal(dst, orc)
-        msg += f" baseline==oracle={ok}"
-    else:
-        # radix path: just sanity-check no poison left and indices in range
-        ok = bool((dst != -17).all().item())
-        msg += f" radix_no_poison={ok}"
-    print(msg)
-    return cc and ok
+        print(f"[{name}] B={B} N={N} S={S} M={M} L={L} candidate==baseline={cc} baseline==oracle={ok}")
+        return cc and ok
+    # radix path: output order is race-nondeterministic -> validate each output as a valid top-k
+    okb = valid_topk(dst, score, lengths, pt, cu, B, S == B)
+    okc = valid_topk(dst_c, score, lengths, pt, cu, B, S == B)
+    print(f"[{name}] B={B} N={N} S={S} M={M} L={L} baseline_valid_topk={okb} "
+          f"candidate_valid_topk={okc} (exact_order_match={torch.equal(dst, dst_c)}, expected False)")
+    return okb and okc
 
 
 results = []
@@ -98,4 +117,6 @@ results.append(run("decode_contig_eqtopk", 8, 2048, 8, 2048))
 results.append(run("radix_gt_topk", 8, 2112, 8, 2112))
 results.append(run("ties", 8, 256, 8, 256, dist="ties"))
 results.append(run("prefill", 16, 448, 4, 409))
+import sys
 print("PROBE_OK" if all(results) else "PROBE_FAIL")
+sys.exit(0 if all(results) else 1)

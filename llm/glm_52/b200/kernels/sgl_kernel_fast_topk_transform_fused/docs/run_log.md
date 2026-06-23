@@ -36,3 +36,22 @@ CUDA_VISIBLE_DEVICES=1 python3 solution/_probe.py
 
 ### Consequence (carried to next round)
 AC-4's literal "exact-match selected indices + baseline-identical tie-break" is **infeasible for the radix path** because the baseline itself is non-deterministic there. The correctness criterion must split by regime: naive path = exact-match (works now); radix path = a tie-tolerant valid-top-k criterion (selected indices' 8-bit keys all ≥ the threshold key; per-bucket counts and the transform/pad match), comparing against the baseline's 8-bit-key selection semantics rather than a single non-deterministic run.
+
+## Session — Round 3 (regime-split correctness gate → matched_ratio == 1.0)
+
+- Same host/container/toolchain; pinned GPU 1 (`CUDA_VISIBLE_DEVICES=1`); GPU 1 still **not idle** (other tenant). Correctness only (not timing-sensitive); **no benchmark timing taken** (AC-7 timing still deferred until GPU 1 idle).
+- Refined the radix criterion from the Round-2 sketch: `fast_topk_cuda_tl` does an 8-bit coarse histogram then **refines the boundary bin via full 32-bit `convert_to_uint32` radix rounds** (topk.cu ~184-251), so it selects the TRUE top-k by full float precision; only output ORDER (and exactly-equal-value ties) is race-nondeterministic. So the radix criterion is a full-float VALID-top-k check, not an 8-bit bucket check.
+
+### Commands + results
+```
+CUDA_VISIBLE_DEVICES=1 python3 bench/correctness.py cuda:0
+-> matched_ratio = 1.0000  (248/248 workloads)   [236 production + 12 regression]
+
+CUDA_VISIBLE_DEVICES=1 python3 solution/_probe.py
+-> naive cases: candidate==baseline==oracle (exact)
+-> radix_gt_topk (B=8,N=2112): baseline_valid_topk=True candidate_valid_topk=True
+   (exact_order_match=False, expected) ; PROBE_OK ; exit 0
+```
+- **AC-4 gate PASSES**: `bench/correctness.py` regime-splits — naive (`length<=topk`) exact candidate==baseline==oracle; radix (`length>topk`) validates EACH output as a valid top-k by full float key (recover selected positions from transformed entries, require distinct & in `[0,length)` & count topk, selected score multiset == `torch.topk(score[:length], topk)` values). Output poisoning + shape/dtype/device/contiguity/finite checks retained.
+- Build was cached (no rebuild needed this session).
+

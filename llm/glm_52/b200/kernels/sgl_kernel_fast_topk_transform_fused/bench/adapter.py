@@ -12,8 +12,9 @@ Faithful to the recovered C++ contract (baseline/.../elementwise/topk.cu):
   - `page_table_size_1` (src_page_table) is shape (S, M); S = cu_seqlens_q.size(0)-1.
   - is_decode = (row_starts is None and S == B); else prefill (cu_seqlens maps token->seq).
   - `score` has stride(1)==1; "non-contiguous" captures are row-strided (stride(0) > N).
-  - ONE output (dst_page_table (B, topk) int32). The capture's two identical records are
-    logger duplication (see docs/baseline_source.md); final confirmation = remote probe.
+  - ONE output (dst_page_table (B, topk) int32), confirmed on B200 (Round 2 probe). The capture's
+    two result records per variant are two sampled calls' single returns (multi-call aggregation,
+    not two outputs of one call; see docs/baseline_source.md).
 
 The outputs are int32 indices, so `compare_outputs` is EXACT integer match (the harness
 default float atol/rtol comparator is wrong for index outputs). call_baseline/call_candidate

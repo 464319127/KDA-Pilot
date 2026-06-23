@@ -57,6 +57,36 @@ def reference_naive_transform(score, lengths, page_table, cu_seqlens, topk, is_d
     return out
 
 
+def validate_topk(name, out, inputs, topk, is_decode):
+    """Radix path (length>topk): the baseline selects the TRUE top-k by full float key
+    (`fast_topk_cuda_tl` refines the 8-bit boundary via 32-bit `convert_to_uint32` rounds),
+    but the output ORDER (and exactly-equal-value ties) is race-nondeterministic. So validate
+    each output as a VALID top-k independent of order: recover the selected raw positions from
+    the transformed page-table entries (synthetic page_table[s] is arange, so pos = entry -
+    page_table[s,0]), require them in [0,length), distinct, count==topk, and the multiset of
+    their scores equal to torch.topk(score[:length], topk).values (sorted-equal, exact float)."""
+    score = inputs["score"]
+    lengths = inputs["lengths"]
+    page_table = inputs["page_table_size_1"]
+    cu = inputs["cu_seqlens_q"]
+    B = score.shape[0]
+    seq_of = list(range(B)) if is_decode else seq_index_per_row(B, cu)
+    for b in range(B):
+        L = int(lengths[b])
+        s = seq_of[b]
+        base_id = int(page_table[s, 0])
+        sel = out[b].to(torch.int64) - base_id  # recovered raw candidate positions
+        if not bool(((sel >= 0) & (sel < L)).all()):
+            return False, f"{name} row {b}: selected position outside [0,{L})"
+        if int(torch.unique(sel).numel()) != topk:
+            return False, f"{name} row {b}: {int(torch.unique(sel).numel())} distinct positions != topk={topk}"
+        sel_scores = score[b, sel]
+        true_top = torch.topk(score[b, :L].float(), topk).values
+        if not torch.equal(torch.sort(sel_scores.float()).values, torch.sort(true_top).values):
+            return False, f"{name} row {b}: selected score multiset != true top-k"
+    return True, ""
+
+
 def _output_checks(name, out, B, topk, device):
     msgs = []
     if tuple(out.shape) != (B, topk):
@@ -100,16 +130,29 @@ def run(device_str: str = "cuda:0") -> int:
         for o in case.candidate_outputs:
             problems += _output_checks("candidate", o, B, topk, device)
 
-        cmp = adapter.compare_outputs(wl, case.baseline_outputs, case.candidate_outputs, case.tolerance)
-        if not cmp["ok"]:
-            problems.append(f"candidate != baseline: {cmp['message']}")
+        lengths = case.inputs["lengths"]
+        is_radix = bool(lengths.numel()) and int(lengths.max().item()) > topk
 
-        ref = reference_naive_transform(
-            case.inputs["score"], case.inputs["lengths"], case.inputs["page_table_size_1"],
-            case.inputs["cu_seqlens_q"], topk, is_decode)
-        if ref is not None and not torch.equal(ref, case.baseline_outputs[0]):
-            mism = int((ref != case.baseline_outputs[0]).sum().item())
-            problems.append(f"baseline != oracle (naive path): {mism} mismatched entries")
+        if not is_radix:
+            # Naive path (length<=topk): deterministic identity+pad+transform.
+            # Exact candidate-vs-baseline AND baseline-vs-independent-oracle.
+            cmp = adapter.compare_outputs(wl, case.baseline_outputs, case.candidate_outputs, case.tolerance)
+            if not cmp["ok"]:
+                problems.append(f"candidate != baseline: {cmp['message']}")
+            ref = reference_naive_transform(
+                case.inputs["score"], lengths, case.inputs["page_table_size_1"],
+                case.inputs["cu_seqlens_q"], topk, is_decode)
+            if ref is not None and not torch.equal(ref, case.baseline_outputs[0]):
+                mism = int((ref != case.baseline_outputs[0]).sum().item())
+                problems.append(f"baseline != oracle (naive path): {mism} mismatched entries")
+        else:
+            # Radix path (length>topk): baseline output ORDER is race-nondeterministic, so do
+            # NOT exact-compare candidate vs baseline. Instead validate EACH output as a valid
+            # top-k by full float key (order/tie tolerant).
+            for nm, out in (("baseline", case.baseline_outputs[0]), ("candidate", case.candidate_outputs[0])):
+                ok, msg = validate_topk(nm, out, case.inputs, topk, is_decode)
+                if not ok:
+                    problems.append(msg)
 
         if problems:
             failures.append((wl["id"], problems))
