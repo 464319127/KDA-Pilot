@@ -120,13 +120,32 @@ Baseline from sgl-project/sglang `main` @ `6b2c730bf793984c39f7f07b3c074ca05b059
 Symmetric compile flags; matched ABI; current-stream launch. Exact commands and
 idle evidence in `run_log.md`; build/timing details in `benchmark_method.md`.
 
+## Dispatch scope and provenance notes
+
+- **Production-only fast path.** The warp-per-token kernel runs only on the captured
+  production domain (`E=256, topk=8, num_expert_group=1, topk_group=1, renormalize,
+  scaling_factor=1.0, N>=768`); every other baseline-supported input uses the copied
+  baseline kernel (`docs/dispatch.md`). **Decode parity is therefore by
+  construction** — the candidate's decode/small-N path is the bit-identical recovered
+  baseline kernel, so it cannot be a real regression; any sub-1.0 decode benchmark
+  number is a CPU-launch-floor measurement artifact, not a kernel effect.
+- **Idle provenance.** The authoritative numbers above are from a whole-box-quiet run
+  on GPU 0 (external `nvidia-smi` verified idle before). A clean external
+  before/after-exit idle bracket was additionally captured on idle GPU 2 (a
+  user-approved deviation from the GPU-0 pin, taken because an unrelated external job
+  later occupied GPUs 0–1). The GPU-2 run's launch-floor decode speedups were
+  depressed by host CPU contention from that external job (decode is parity by
+  construction), so it serves as the idle bracket, not the headline. Full details and
+  the in-process-vs-external `nvidia-smi` distinction are in `docs/run_log.md`.
+
 ## Conclusion
 
 **Promote the candidate.** It preserves correctness exactly, never regresses
-(decode at parity, bounded by the kernel-launch floor — the named active bound),
-and delivers a 1.217× equal-weight / 1.037× call-weighted geometric-mean speedup,
-reaching 1.67× on the largest prefill shapes, by converting the baseline's idle
-selection warps and excess block count into higher achieved occupancy.
+(decode at parity by construction, bounded by the kernel-launch floor — the named
+active bound), and delivers a 1.217× equal-weight / 1.037× call-weighted
+geometric-mean speedup, reaching 1.67× on the largest prefill shapes, by converting
+the baseline's idle selection warps and excess block count into higher achieved
+occupancy.
 
 ### Future headroom (optional)
 

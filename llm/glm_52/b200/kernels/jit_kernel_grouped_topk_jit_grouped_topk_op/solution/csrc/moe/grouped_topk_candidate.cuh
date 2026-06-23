@@ -302,7 +302,17 @@ void grouped_topk(
   auto* idx_ptr = static_cast<int32_t*>(topk_indices.data_ptr());
 
   const int ov = warps_per_block_override();
-  const bool use_warp_path = (ov != 0) || (num_tokens >= WARP_PATH_MIN_TOKENS);
+  // The warp-per-token fast path runs ONLY on the captured production domain.
+  // Contiguity and fp32 are already enforced by the TensorMatcher verifies above
+  // (non-contiguous / non-fp32 are rejected identically to the baseline before
+  // reaching here), so they are not re-tested in this predicate. Every other
+  // baseline-supported case — num_experts != 256, topk != 8, renormalize == false,
+  // scaling_factor != 1, or num_tokens < WARP_PATH_MIN_TOKENS — falls back to the
+  // recovered baseline kernel below.
+  const bool production_domain =
+      (num_experts == 256) && (topk == 8) && (num_expert_group == 1) &&
+      (topk_group == 1) && renormalize && (scale_f == 1.0f);
+  const bool use_warp_path = (ov != 0) || (production_domain && num_tokens >= WARP_PATH_MIN_TOKENS);
 
   if (!use_warp_path) {
     // Baseline block-per-token path for the small-N / launch-floor regime.

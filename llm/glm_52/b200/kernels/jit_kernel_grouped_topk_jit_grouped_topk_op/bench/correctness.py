@@ -131,6 +131,15 @@ def validate_case(ck: Checker, label, scores, bias, topk=8, renorm=True, scale=1
         ck.no_poison(label + "[cand]", cv, ci)
         ck.exact_idx(label + "[cand-vs-base]", ci, bi)
         ck.weights_close(label + "[cand-vs-base]", cv, bv)
+        # output stride / contiguity must match the baseline's outputs
+        ck.check(
+            cv.stride() == bv.stride() and ci.stride() == bi.stride()
+            and cv.is_contiguous() == bv.is_contiguous()
+            and ci.is_contiguous() == bi.is_contiguous(),
+            f"{label}[cand-vs-base]: output stride/contiguity mismatch "
+            f"(vals {tuple(cv.stride())} vs {tuple(bv.stride())}, "
+            f"ids {tuple(ci.stride())} vs {tuple(bi.stride())})",
+        )
 
 
 def main():
@@ -196,6 +205,48 @@ def main():
         ck.check(False, f"N=0 raised: {e}")
     # 2g) renormalize=False path
     validate_case(ck, "renorm_false", scn, bias0, 8, False, 1.0, cand)
+
+    # 2h) off-domain cases at N>=768: the candidate must FALL BACK to the baseline
+    #     kernel (production fast path is E=256,topk=8,ng=1,tg=1,renorm,scale=1 only)
+    #     and still match the baseline exactly, plus the independent oracle.
+    NF = 1024
+    torch.manual_seed(11)
+    validate_case(ck, "fallback_E128_N1024",
+                  torch.randn(NF, 128, dtype=torch.float32, device=DEV),
+                  torch.randn(128, dtype=torch.float32, device=DEV), 8, True, 1.0, cand)
+    validate_case(ck, "fallback_E512_N1024",
+                  torch.randn(NF, 512, dtype=torch.float32, device=DEV),
+                  torch.randn(512, dtype=torch.float32, device=DEV), 8, True, 1.0, cand)
+    for tk in (1, 4, 7):
+        validate_case(ck, f"fallback_topk{tk}_N1024",
+                      torch.randn(NF, E, dtype=torch.float32, device=DEV),
+                      torch.randn(E, dtype=torch.float32, device=DEV), tk, True, 1.0, cand)
+    _scf = torch.randn(NF, E, dtype=torch.float32, device=DEV)
+    _bzf = torch.randn(E, dtype=torch.float32, device=DEV)
+    validate_case(ck, "fallback_renormFalse_N1024", _scf, _bzf, 8, False, 1.0, cand)
+    validate_case(ck, "fallback_scale0p5_N1024", _scf, _bzf, 8, True, 0.5, cand)
+
+    # 2i) non-contiguous and non-fp32 inputs must be rejected identically by both
+    #     sides (TensorMatcher enforces contiguous fp32 before any dispatch).
+    def expect_both_reject(label, scores, bias):
+        b_raised = c_raised = (cand is None)
+        try:
+            run_kernel(base, scores, bias, 8, True, 1.0, poison=False)
+        except Exception:
+            b_raised = True
+        if cand is not None:
+            try:
+                run_kernel(cand, scores, bias, 8, True, 1.0, poison=False)
+            except Exception:
+                c_raised = True
+        ck.check(b_raised and c_raised,
+                 f"{label}: expected both baseline and candidate to reject")
+    nc = torch.randn(1024, 2 * E, dtype=torch.float32, device=DEV)[:, :E]  # non-contiguous view
+    assert not nc.is_contiguous()
+    expect_both_reject("reject_noncontiguous", nc, torch.randn(E, dtype=torch.float32, device=DEV))
+    expect_both_reject("reject_nonfp32_fp16",
+                       torch.randn(1024, E, dtype=torch.float16, device=DEV),
+                       torch.randn(E, dtype=torch.float32, device=DEV))
 
     # 3) unsupported parameter must raise (baseline RuntimeCheck) — and candidate must match
     for (ng, tg, why) in [(2, 1, "num_expert_group=2"), (1, 2, "topk_group=2")]:

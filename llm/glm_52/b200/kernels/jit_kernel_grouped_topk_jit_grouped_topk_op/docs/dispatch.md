@@ -6,17 +6,37 @@ host-side only — no host sync on the hot path. Every supported input
 (`num_expert_group=1, topk_group=1, topk<=8, num_experts<=512`) is covered;
 unsupported parameters are rejected exactly as the baseline (same `RuntimeCheck`).
 
-## Buckets (E = 256, topk = 8 — the production domain)
+## Fast-path domain gate (checked first)
 
-| Token regime | Condition | Kernel | warps/block | Reason |
+The native warp-per-token fast path runs **only** on the captured production
+domain. The predicate is:
+
+```
+num_experts == 256 && topk == 8 && num_expert_group == 1 && topk_group == 1
+  && renormalize == true && scaling_factor == 1.0 && num_tokens >= 768
+```
+
+Contiguity and fp32 are enforced earlier by the `TensorMatcher` verifies (a
+non-contiguous or non-fp32 input is rejected identically to the baseline before
+dispatch), so they are not re-tested in the predicate. **Any input that does not
+satisfy the predicate falls back to the recovered baseline kernel**
+(`grouped_topk_block_per_token_kernel`), which covers the entire baseline-supported
+domain (`num_expert_group=1, topk_group=1, topk<=8, num_experts<=512`, any
+`renormalize`/`scaling_factor`). Inputs the baseline itself rejects
+(`num_expert_group≠1`, `topk_group≠1`, `topk>8`, `num_experts>512`) are rejected by
+the same `RuntimeCheck`s on both sides.
+
+## Buckets
+
+| Case | Condition | Kernel | warps/block | Reason |
 |---|---|---|---|---|
-| decode + small/mid prefill | `N < 768` | `grouped_topk_block_per_token_kernel` (recovered baseline algorithm) | n/a (256 threads, 1 block/token) | Launch-floor / SFU-latency bound; full-block parallel sigmoid + per-token CTA spread beats warp-per-token. The candidate equals the baseline here (no regression). |
-| large prefill | `768 <= N <= 1280` | `grouped_topk_warp_per_token_kernel` | 8 (8 tokens/CTA) | Enough work to fill SMs; packing 8 tokens/CTA cuts block count at the transition. |
-| large prefill | `N > 1280` | `grouped_topk_warp_per_token_kernel` | 4 (4 tokens/CTA) | Best across the large region in the sweep; raises achieved occupancy vs the baseline while keeping enough blocks to avoid heavy wave-quantization tails. |
+| **fallback** | not in fast-path domain (incl. `N < 768`, `E≠256`, `topk≠8`, `renormalize=False`, `scaling≠1`) | `grouped_topk_block_per_token_kernel` (recovered baseline algorithm) | n/a (E-tier threads, 1 block/token) | Decode/small-N is launch-floor / SFU-latency bound (full-block parallel sigmoid + per-token CTA spread beats warp-per-token); off-production cases are not the tuning target, so they take the proven baseline path. The candidate equals the baseline here (no regression, exact match). |
+| fast path | production domain, `768 <= N <= 1280` | `grouped_topk_warp_per_token_kernel` | 8 (8 tokens/CTA) | Enough work to fill SMs; packing 8 tokens/CTA cuts block count at the transition. |
+| fast path | production domain, `N > 1280` | `grouped_topk_warp_per_token_kernel` | 4 (4 tokens/CTA) | Best across the large region in the sweep; raises achieved occupancy vs the baseline while keeping enough blocks to avoid heavy wave-quantization tails. |
 
-Expert-count tiers (register slots per lane = `ceil(E/32)`): `E<=128 → 4`,
-`E<=256 → 8` (production), `E<=512 → 16`. `K09_WPB` env var (1/2/4/8) forces the
-warp path with that warps-per-block for tuning sweeps; unset = the table above.
+The warp kernel still carries E-tier register sizing (`ceil(E/32)`: `E<=128 → 4`,
+`E<=256 → 8`, `E<=512 → 16`) so the `K09_WPB` env override (1/2/4/8, tuning sweeps
+only) can exercise it on non-256 E; the default dispatch never sends `E≠256` to it.
 
 ## Per-bucket measured speedup (B200, idle GPU 0; baseline_median / candidate_median)
 
