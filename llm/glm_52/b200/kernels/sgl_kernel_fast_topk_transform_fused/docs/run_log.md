@@ -226,3 +226,23 @@ CUDA_VISIBLE_DEVICES=1 python3 solution/_probe.py
   contract, with a regression test proving fallback for an out-of-contract input. **Candidate timing
   remains deferred to strict idle.** Build cached after first compile.
 
+## Session — Round 12 (final loop round: workflow-marker cleanup + results.md; NO timing)
+
+- Same host/container/toolchain; pinned GPU 1. GPU 1 re-checked: still NOT strictly idle (parked pid
+  3048677 ~59.6 GB util 0%). Notable: GPUs 2/3/4/6/7 are now ~idle (0 util, ~0 MiB), but AC-7 pins
+  timing to GPU id 1, so an idle alternate card cannot substitute; GPU 1 still has the 59 GB parked
+  residency → not strictly idle. **No timing/NCU.**
+- Removed the only plan-workflow marker left in implementation code (Codex R11-review P0): the
+  `bench/correctness.py` device-index comment said "AC-7 provenance" → reworded to "GPU-pinning
+  provenance". `grep -RIn "AC-|Milestone|Step|Phase" solution bench baseline` → **0 hits**. py_compile OK.
+- Re-verified correctness on GPU 1 (the comment edit is logic-neutral):
+```
+CUDA_VISIBLE_DEVICES=1 python3 bench/correctness.py cuda:0
+-> matched_ratio = 1.0000  (251/251 workloads)
+```
+- Wrote `docs/results.md` to complete the folder contract — an honest STATUS doc: real evidence only
+  (provisional baseline-vs-stub medians, correctness 251/251, candidate state), with the candidate
+  win/no-go explicitly **UNDETERMINED pending the strict-idle benchmark + NCU**. No fabricated numbers.
+- This is the loop's final round (12/12). The deliverable is complete on every non-timing axis; the
+  measured candidate speedup + NCU active bound remain blocked on a strictly-idle GPU 1.
+
