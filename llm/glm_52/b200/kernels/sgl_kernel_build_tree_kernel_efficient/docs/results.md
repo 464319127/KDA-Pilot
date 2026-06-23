@@ -3,7 +3,22 @@
 Run on remote host `ion-b200`, NVIDIA B200 GPU id 6 (idle before and after).
 Upstream baseline commit `7e6587c94a1d0305815a14067c5d3cc02a9b0f36`. tvm_ffi build,
 `sm_100`, symmetric `-std=c++17 -O3` (no fast-math). Candidate source sha256:
-`70e6a38853f01d160d0d1214700db46fd113d7bd7bcf58bc2c4d707ba43750f5`.
+`e6668cc557c93ec43351e9a49266a00b8759550f4aa30891ddfa63431f5d5a0a`.
+
+> **Captured-shape fidelity (Round 4).** The `retrive_index` / `retrive_next_token`
+> / `retrive_next_sibling` outputs now use the exact captured **2-D `[bs, NV]`** shape
+> (positions stays 1-D `[bs*NV]`), in the adapter, correctness oracle, and probe; the
+> candidate dispatch predicate **enforces** it (`ndim()==2 && size(0)==bs &&
+> size(1)==draft_token_num`, not just `numel`). Re-verified on B200: correctness
+> 691/0 and route==1 for all bs 1..10 (incl. `[10,2]`) on the 2-D shape. The benchmark
+> **timing is rank-invariant** — a contiguous `[bs,2]` tensor is byte-identical in
+> storage to `[bs*2]`, the device kernel indexes flat, and the launch is unchanged —
+> so the Round-2 timing numbers below are valid for the 2-D shape. A fresh timing
+> rerun on the literal 2-D shape was deferred this round because GPU 6 was occupied by
+> another user's job (157.7 GB, 5–72% util); per the GPU-idle policy no timing was
+> taken on a busy GPU and no GPU switch was made. The rebuilt 2-D module is staged on
+> the remote to re-time when GPU 6 is idle; rank-invariance means the verdict is
+> unchanged.
 
 ## Verdict: definitive NO-GO (strict op ABI, DEC-1) — candidate genuinely exercised
 With the Round-1 dispatch bug fixed, the native-CUDA candidate now **provably runs**

@@ -50,11 +50,12 @@ def probe_fns(bs, L=64):
     vsl = torch.full((bs,), L, dtype=torch.int64, device=dev)
     pl = torch.empty((bs, 0), dtype=torch.int64, device=dev)
     si = torch.zeros((bs, 1), dtype=torch.int64, device=dev)
-    tm = torch.full((T,), True, dtype=torch.bool, device=dev)        # idempotent, shared
-    pos = torch.full((bs * NV,), -1, dtype=torch.int64, device=dev)  # idempotent, shared
-    ri = torch.full((bs * NV,), -1, dtype=torch.int64, device=dev)   # idempotent, shared
-    nt = torch.full((RING, bs * NV), -1, dtype=torch.int64, device=dev)  # fresh per call
-    ns = torch.full((RING, bs * NV), -1, dtype=torch.int64, device=dev)  # fresh per call
+    # Captured shapes: positions [bs*NV] (1-D); retrive_* [bs, NV] (2-D).
+    tm = torch.full((T,), True, dtype=torch.bool, device=dev)         # idempotent, shared
+    pos = torch.full((bs * NV,), -1, dtype=torch.int64, device=dev)   # idempotent, shared
+    ri = torch.full((bs, NV), -1, dtype=torch.int64, device=dev)      # idempotent, shared
+    nt = torch.full((RING, bs, NV), -1, dtype=torch.int64, device=dev)  # fresh per call
+    ns = torch.full((RING, bs, NV), -1, dtype=torch.int64, device=dev)  # fresh per call
     c = [0]
 
     def _row():

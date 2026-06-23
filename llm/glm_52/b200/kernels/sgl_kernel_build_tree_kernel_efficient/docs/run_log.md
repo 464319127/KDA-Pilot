@@ -6,7 +6,20 @@
 - Target GPU: NVIDIA B200, **GPU id 6** (`REMOTE_GPU_ID=6`, pinned via `CUDA_VISIBLE_DEVICES=6` for every build / correctness / benchmark / probe command)
 - Task source commit (this worktree base): `47114cdca5ee630ce599c91abce17b8fb95c3a4d`
 - Upstream baseline commit: `7e6587c94a1d0305815a14067c5d3cc02a9b0f36`
-- Candidate sha256: `70e6a38853f01d160d0d1214700db46fd113d7bd7bcf58bc2c4d707ba43750f5`
+- Candidate sha256: `e6668cc557c93ec43351e9a49266a00b8759550f4aa30891ddfa63431f5d5a0a` (Round 4; was 70e6a388 in Round 2 — `candidate.cu` predicate now enforces the captured 2-D retrieve shape)
+
+## Round 4 (captured 2-D retrieve shape — functional verification)
+GPU 6 was **occupied by another user's job** this round (foreign pid holding ~157.7 GB,
+util 5–72%): BEFORE `6, NVIDIA B200, 77 %, 157680 MiB / 183359 MiB`; AFTER
+`6, NVIDIA B200, 69 %, 157684 MiB / 183359 MiB`. Per the GPU-idle policy, **no timing
+was measured on the busy GPU and no GPU switch was made**. The non-timed, low-memory
+functional checks (build, correctness, route) ran while sharing:
+- Rebuild OK (build cache cleared); `python bench/correctness.py` → **691 cases, 0
+  failures**, route==1 for all bs 1..10 on the 2-D `[bs,NV]` retrieve shape (incl.
+  bs=10 `[10,2]`), route==0 for the 5 off-domain cases.
+- Benchmark + floor_probe **deferred** (busy GPU). Timing is rank-invariant (see
+  `docs/results.md`), so the Round-2 numbers remain valid for the 2-D shape; the
+  rebuilt 2-D module is staged on the remote to re-time once GPU 6 is idle.
 
 ## GPU idleness (performance data valid only when idle)
 ### Before

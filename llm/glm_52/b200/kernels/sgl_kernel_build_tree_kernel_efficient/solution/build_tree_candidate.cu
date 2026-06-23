@@ -93,17 +93,22 @@ inline bool candidate_fast_path_eligible(
       bte::is_i64(selected_index.dtype()) && bte::is_i64(verified_seq_len.dtype()) &&
       bte::is_i64(positions.dtype()) && bte::is_i64(retrive_index.dtype()) &&
       bte::is_i64(retrive_next_token.dtype()) && bte::is_i64(retrive_next_sibling.dtype());
-  // parent_list [bs, 0] (empty -> degenerate depth-1, selected_index must be 0);
-  // selected_index [bs, draft_token_num-1] = [bs, 1]; verified_seq_len [bs];
-  // positions/retrive_* numel == bs*draft_token_num.
+  // Exact captured interface metadata: parent_list [bs, 0] (empty -> degenerate
+  // depth-1, selected_index must be 0); selected_index [bs, draft_token_num-1] =
+  // [bs, 1]; verified_seq_len [bs]; positions [bs*draft_token_num] (1-D);
+  // retrive_index/retrive_next_token/retrive_next_sibling [bs, draft_token_num]
+  // (2-D). The retrieve outputs are checked by rank+both dims (not just numel) so a
+  // wrong-rank/layout tensor (e.g. [draft_token_num, bs]) cannot take the fast path.
+  auto retrive_shape_ok = [&](const tvm::ffi::TensorView& t) {
+    return t.ndim() == 2 && t.size(0) == bs && t.size(1) == draft_token_num;
+  };
   const bool shapes_ok = parent_list.ndim() == 2 && parent_list.size(0) == bs &&
       parent_list.size(1) == 0 && selected_index.ndim() == 2 &&
       selected_index.size(0) == bs && selected_index.size(1) == draft_token_num - 1 &&
       verified_seq_len.ndim() == 1 && verified_seq_len.size(0) == bs &&
-      bte::numel(positions) == bs * draft_token_num &&
-      bte::numel(retrive_index) == bs * draft_token_num &&
-      bte::numel(retrive_next_token) == bs * draft_token_num &&
-      bte::numel(retrive_next_sibling) == bs * draft_token_num;
+      positions.ndim() == 1 && positions.size(0) == bs * draft_token_num &&
+      retrive_shape_ok(retrive_index) && retrive_shape_ok(retrive_next_token) &&
+      retrive_shape_ok(retrive_next_sibling);
   const bool contig_ok = bte::is_contiguous(parent_list) && bte::is_contiguous(selected_index) &&
       bte::is_contiguous(verified_seq_len) && bte::is_contiguous(tree_mask) &&
       bte::is_contiguous(positions) && bte::is_contiguous(retrive_index) &&

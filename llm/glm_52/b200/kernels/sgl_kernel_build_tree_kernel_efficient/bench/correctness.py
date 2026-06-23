@@ -69,32 +69,33 @@ def oracle_full_mask(L: list[int], device) -> dict:
     bs = len(L)
     T = 2 * sum(L) + 4 * bs
     tm = torch.ones(T, dtype=torch.bool, device=device)
-    pos = torch.empty(bs * NV, dtype=torch.int64, device=device)
-    ri = torch.empty(bs * NV, dtype=torch.int64, device=device)
-    rnt = torch.empty(bs * NV, dtype=torch.int64, device=device)
-    rns = torch.empty(bs * NV, dtype=torch.int64, device=device)
+    pos = torch.empty(bs * NV, dtype=torch.int64, device=device)       # 1-D [bs*NV]
+    ri = torch.empty((bs, NV), dtype=torch.int64, device=device)       # 2-D [bs, NV]
+    rnt = torch.empty((bs, NV), dtype=torch.int64, device=device)      # 2-D [bs, NV]
+    rns = torch.empty((bs, NV), dtype=torch.int64, device=device)      # 2-D [bs, NV]
     prefix = 0
     for b in range(bs):
         Lb = L[b]
         S = 4 * b + 2 * prefix
         tm[S + Lb + 1] = False
         pos[2 * b], pos[2 * b + 1] = Lb, Lb + 1
-        ri[2 * b], ri[2 * b + 1] = 2 * b, 2 * b + 1
-        rnt[2 * b], rnt[2 * b + 1] = 1, -1
-        rns[2 * b], rns[2 * b + 1] = -1, -1
+        ri[b, 0], ri[b, 1] = 2 * b, 2 * b + 1
+        rnt[b, 0], rnt[b, 1] = 1, -1
+        rns[b, 0], rns[b, 1] = -1, -1
         prefix += Lb
     return {"tree_mask": tm, "positions": pos, "retrive_index": ri,
             "retrive_next_token": rnt, "retrive_next_sibling": rns}
 
 
-def prestated_outputs(total_tree: int, total_idx: int, device) -> dict:
-    """Required callsite pre-state; positions/retrive_index POISONED to catch partial writes."""
+def prestated_outputs(total_tree: int, bs: int, nv: int, device) -> dict:
+    """Required callsite pre-state in the captured shapes: positions [bs*nv] (1-D),
+    retrive_* [bs, nv] (2-D). positions/retrive_index POISONED to catch partial writes."""
     return {
         "tree_mask": torch.full((total_tree,), True, dtype=torch.bool, device=device),
-        "positions": torch.full((total_idx,), POISON, dtype=torch.int64, device=device),
-        "retrive_index": torch.full((total_idx,), POISON, dtype=torch.int64, device=device),
-        "retrive_next_token": torch.full((total_idx,), -1, dtype=torch.int64, device=device),
-        "retrive_next_sibling": torch.full((total_idx,), -1, dtype=torch.int64, device=device),
+        "positions": torch.full((bs * nv,), POISON, dtype=torch.int64, device=device),
+        "retrive_index": torch.full((bs, nv), POISON, dtype=torch.int64, device=device),
+        "retrive_next_token": torch.full((bs, nv), -1, dtype=torch.int64, device=device),
+        "retrive_next_sibling": torch.full((bs, nv), -1, dtype=torch.int64, device=device),
     }
 
 
@@ -124,8 +125,8 @@ def check_full_mask(device, bs, L, label, fails):
     vsl = torch.tensor(L, dtype=torch.int64, device=device)
     sc = {"topk": 1, "depth": 1, "draft_token_num": 2, "tree_mask_mode": 0}
 
-    base_out = prestated_outputs(T, bs * NV, device)
-    cand_out = prestated_outputs(T, bs * NV, device)  # SEPARATE copy
+    base_out = prestated_outputs(T, bs, NV, device)
+    cand_out = prestated_outputs(T, bs, NV, device)  # SEPARATE copy
     # PROVE the candidate actually takes the native fast path for this captured
     # production regime (route==1) — not a silent baseline fallback.
     if route_of(parent_list, selected_index, vsl, cand_out, sc) != 1:
@@ -148,8 +149,10 @@ def check_full_mask(device, bs, L, label, fails):
 
 # ----------------------------- fallback domain (candidate must == baseline) -----------------------------
 def check_identity(device, label, parent_list, selected_index, vsl, sc, total_tree, total_idx, fails):
-    base_out = prestated_outputs(total_tree, total_idx, device)
-    cand_out = prestated_outputs(total_tree, total_idx, device)
+    nv = int(sc["draft_token_num"])
+    cbs = int(parent_list.shape[0])  # total_idx == cbs * nv
+    base_out = prestated_outputs(total_tree, cbs, nv, device)
+    cand_out = prestated_outputs(total_tree, cbs, nv, device)
     # PROVE this off-domain case routes to the baseline fallback (route==0).
     if route_of(parent_list, selected_index, vsl, cand_out, sc) != 0:
         fails.append(f"[{label}] expected baseline fallback but took fast path (route!=0)")

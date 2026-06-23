@@ -72,12 +72,14 @@ class RingOutputs:
 
 def _make_ring(bs: int, tree_len: int, device, k: int) -> dict:
     """k pre-stated output sets (FULL_MASK pre-state) as contiguous 2D tensors."""
+    # Captured interface shapes: positions [bs*NV] (1-D); retrive_* [bs, NV] (2-D).
+    # Ring rows therefore are positions[i]=(bs*NV,) and retrive_*[i]=(bs, NV).
     rings = {
         "tree_mask": torch.empty((k, tree_len), dtype=torch.bool, device=device),
         "positions": torch.empty((k, bs * NV), dtype=torch.int64, device=device),
-        "retrive_index": torch.empty((k, bs * NV), dtype=torch.int64, device=device),
-        "retrive_next_token": torch.empty((k, bs * NV), dtype=torch.int64, device=device),
-        "retrive_next_sibling": torch.empty((k, bs * NV), dtype=torch.int64, device=device),
+        "retrive_index": torch.empty((k, bs, NV), dtype=torch.int64, device=device),
+        "retrive_next_token": torch.empty((k, bs, NV), dtype=torch.int64, device=device),
+        "retrive_next_sibling": torch.empty((k, bs, NV), dtype=torch.int64, device=device),
     }
     rings["tree_mask"].fill_(True)
     for name in ("positions", "retrive_index", "retrive_next_token", "retrive_next_sibling"):
