@@ -17,9 +17,12 @@ Both sides are header-only TVM-FFI modules built with `tvm_ffi.cpp.load_inline`
   output policy, and `host::LaunchKernel(..., device)` stream resolution
   (`TVMFFIEnvGetStream` = the caller's current CUDA stream).
 
-No one-sided `--use_fast_math`; no asymmetric flags. `fast_sigmoid`, the packed
-`(value, index)` comparator, and the renormalization reduction are bit-identical
-between the two sides, so candidate output equals baseline output exactly.
+No one-sided `--use_fast_math`; no asymmetric flags; both sides use the same compile
+flags and ABI. The decode/small-N + off-domain **fallback path is the copied baseline
+kernel** (bit-identical by construction). The large-N **warp path** reuses the same
+semantic operations (`fast_sigmoid`, the packed `(value, index)` comparator, the
+renormalization reduction) and is validated against the baseline by the recorded
+exact-ordered-index + fp32-tolerance correctness grid (not a bytewise check).
 
 ## ABI parity
 

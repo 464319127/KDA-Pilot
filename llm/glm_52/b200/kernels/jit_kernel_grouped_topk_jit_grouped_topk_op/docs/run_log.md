@@ -56,7 +56,11 @@ box idle, external BEFORE GPU0 `0 %, 0 MiB` verified — decode 0.999, headline
 - Platform: `Linux-6.8.0-111-generic-x86_64-with-glibc2.39`
 - Baseline upstream commit: `6b2c730bf793984c39f7f07b3c074ca05b059b00` (sgl-project/sglang `main`); see `baseline_source.md`.
 
-## Commands (run inside the container, GPU 0)
+## Commands (run inside the container)
+
+(Authoritative benchmark on GPU 6 per the plan revision; correctness is
+GPU-independent; NCU diagnosis was on GPU 0 while it was usable. Pin the GPU with
+`CUDA_VISIBLE_DEVICES=<id>` as shown per command.)
 
 Correctness (full grid, candidate vs baseline + independent oracle):
 ```

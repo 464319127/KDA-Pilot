@@ -243,8 +243,11 @@ __global__ void grouped_topk_block_per_token_kernel(
 }
 
 // ── dispatch tuning ──────────────────────────────────────────────────────────
-// Optional warps-per-block override (read once). When set (1/2/4/8) it forces
-// the large-N warp path with that warps-per-block; 0 = shape-based dispatch.
+// Optional warps-per-block override (read once). When set (1/2/4/8) it selects that
+// warps-per-block for the warp path and lowers the token threshold — but ONLY within
+// the production domain (the dispatch predicate below still hard-gates on
+// production_domain, so the override can never route an off-domain input to the warp
+// kernel). 0 = shape-based dispatch.
 inline int warps_per_block_override() {
   static const int v = [] {
     const char* e = std::getenv("K09_WPB");

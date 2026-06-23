@@ -44,18 +44,21 @@ the template is well-formed; the default and override dispatch both send only
 E=256 to it.) A correctness regression (`bench/correctness.py`, run in a fresh
 process with `K09_WPB=4`) asserts off-domain large-N still takes the baseline path.
 
-## Per-bucket measured speedup (B200, idle GPU 0; baseline_median / candidate_median)
+## Per-bucket measured speedup (authoritative R3 run: idle GPU 6, `bench/results.jsonl`; baseline_median / candidate_median)
 
 | Regime | N range | speedup | note |
 |---|---|---|---|
-| decode | 2–38 | **0.999** (parity) | identical kernel; launch-floor bound (~6.15 µs both) |
-| mid | 110 | 1.039 | |
-| small prefill | 392–645 | 1.02–1.05 | baseline-path region, near floor |
-| prefill transition | 861–1167 | ~1.000 | warp path ties baseline (8.20 µs) |
-| prefill | 1464–1731 | **1.50** | warp path, baseline at 12.3 µs vs candidate 8.2 µs |
-| prefill | 1811–2366 | 1.20–1.28 | wave-quantization step in candidate time |
-| prefill | 2798–3524 | **1.60** | |
-| prefill | 3617–3769 | **1.67** | max win; baseline 20.5 µs vs candidate 12.3 µs |
+| decode | 2–38 | **1.000** (parity) | identical kernel (copied baseline); launch-floor bound (~6.15 µs both) |
+| mid | 110 | 1.009 | |
+| small prefill | 392 / 445 / 489 / 645 | 1.081 / 1.041 / 1.040 / 1.000 | baseline-path region (N<768), near floor |
+| prefill transition | 861–1167 | ~1.000 | warp path ties baseline (~8.20 µs) |
+| prefill | 1464–1731 | **1.499** | warp path, baseline ~12.3 µs vs candidate ~8.2 µs |
+| prefill | 1811–2247 | 1.20–1.33 | wave-quantization step in candidate time |
+| prefill | 2798 | **1.598** | |
+| prefill | 3617–3769 | **1.67** | max win; baseline ~20.5 µs vs candidate ~12.3 µs |
+
+(Authoritative measured on idle GPU 6; the round-0 quiet-box GPU-0 run reproduced the
+same pattern: decode 0.999, prefill up to 1.67×.)
 
 ## How the thresholds were chosen
 
