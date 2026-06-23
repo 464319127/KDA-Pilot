@@ -312,7 +312,12 @@ void grouped_topk(
   const bool production_domain =
       (num_experts == 256) && (topk == 8) && (num_expert_group == 1) &&
       (topk_group == 1) && renormalize && (scale_f == 1.0f);
-  const bool use_warp_path = (ov != 0) || (production_domain && num_tokens >= WARP_PATH_MIN_TOKENS);
+  // production_domain is a HARD gate: the warp path is only ever taken inside the
+  // captured production domain. The K09_WPB tuning override can only vary
+  // warps-per-block / lower the token threshold WITHIN that domain — it can never
+  // route an off-domain input (E!=256, topk!=8, renormalize=False, scaling!=1, etc.)
+  // to the warp kernel; those always fall back to the baseline kernel below.
+  const bool use_warp_path = production_domain && ((ov != 0) || (num_tokens >= WARP_PATH_MIN_TOKENS));
 
   if (!use_warp_path) {
     // Baseline block-per-token path for the small-N / launch-floor regime.

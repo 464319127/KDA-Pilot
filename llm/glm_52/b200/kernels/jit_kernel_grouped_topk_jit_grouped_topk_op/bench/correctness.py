@@ -142,7 +142,46 @@ def validate_case(ck: Checker, label, scores, bias, topk=8, renorm=True, scale=1
         )
 
 
+def _candidate_kernel_names(cand, scores, bias, topk, renorm, scale):
+    """Return the CUDA kernel name(s) the candidate launches for this input, via
+    the torch profiler — used to observe the dispatch choice (both paths produce
+    correct output, so only the kernel identity distinguishes warp vs baseline)."""
+    import torch.profiler as tp
+    run_kernel(cand, scores, bias, topk, renorm, scale, poison=False)  # warmup/build
+    torch.cuda.synchronize()
+    with tp.profile(activities=[tp.ProfilerActivity.CUDA]) as prof:
+        run_kernel(cand, scores, bias, topk, renorm, scale, poison=False)
+        torch.cuda.synchronize()
+    return " ".join(e.name for e in prof.events())
+
+
+def override_dispatch_regression():
+    """Runs in a fresh child process with K09_WPB=4 set. Proves the env override
+    cannot bypass the production-domain gate: an off-domain large-N input must
+    still launch the baseline block-per-token kernel (not the warp kernel), while
+    a production large-N input may use the warp kernel. Exit 0 iff both hold."""
+    import os
+    assert os.environ.get("K09_WPB"), "child must run with K09_WPB set"
+    cand = candidate_module()
+    off = _candidate_kernel_names(
+        cand, torch.randn(1024, 128, dtype=torch.float32, device=DEV),
+        torch.randn(128, dtype=torch.float32, device=DEV), 8, True, 1.0)
+    prod = _candidate_kernel_names(
+        cand, torch.randn(1024, 256, dtype=torch.float32, device=DEV),
+        torch.randn(256, dtype=torch.float32, device=DEV), 8, True, 1.0)
+    off_baseline = ("block_per_token" in off) and ("warp_per_token" not in off)
+    prod_warp = "warp_per_token" in prod
+    print(f"override(K09_WPB={os.environ.get('K09_WPB')}): off_domain_uses_baseline={off_baseline} "
+          f"production_uses_warp={prod_warp}")
+    if not off_baseline:
+        print(f"  FAIL off-domain kernels: {[n for n in off.split() if 'grouped_topk' in n][:4]}")
+    sys.exit(0 if (off_baseline and prod_warp) else 1)
+
+
 def main():
+    if "--override-regression" in sys.argv:
+        override_dispatch_regression()
+        return
     torch.manual_seed(1234)
     ck = Checker()
     base = baseline_module()
@@ -265,6 +304,20 @@ def main():
             except Exception:
                 cand_raised = True
             ck.check(cand_raised == base_raised, f"unsupported {why}: candidate must match baseline reject")
+
+    # 4) K09_WPB override must NOT bypass the production-domain gate. Run a fresh
+    #    child process with K09_WPB=4 and confirm off-domain stays on the baseline
+    #    kernel (observed via the profiler in override_dispatch_regression()).
+    if cand is not None:
+        import os
+        import subprocess
+        rc = subprocess.run(
+            [sys.executable, __file__, "--override-regression"],
+            env={**os.environ, "K09_WPB": "4"},
+        ).returncode
+        ck.check(rc == 0,
+                 "K09_WPB=4 must not route off-domain inputs to the warp kernel "
+                 "(production-domain gate must hold for the override)")
 
     print(f"\nCORRECTNESS: {ck.npass} checks passed, {ck.fail} failed")
     print("RESULT:", "PASS" if ck.fail == 0 else "FAIL")

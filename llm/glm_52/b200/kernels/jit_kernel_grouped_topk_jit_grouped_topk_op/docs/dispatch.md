@@ -34,9 +34,15 @@ the same `RuntimeCheck`s on both sides.
 | fast path | production domain, `768 <= N <= 1280` | `grouped_topk_warp_per_token_kernel` | 8 (8 tokens/CTA) | Enough work to fill SMs; packing 8 tokens/CTA cuts block count at the transition. |
 | fast path | production domain, `N > 1280` | `grouped_topk_warp_per_token_kernel` | 4 (4 tokens/CTA) | Best across the large region in the sweep; raises achieved occupancy vs the baseline while keeping enough blocks to avoid heavy wave-quantization tails. |
 
-The warp kernel still carries E-tier register sizing (`ceil(E/32)`: `E<=128 → 4`,
-`E<=256 → 8`, `E<=512 → 16`) so the `K09_WPB` env override (1/2/4/8, tuning sweeps
-only) can exercise it on non-256 E; the default dispatch never sends `E≠256` to it.
+`production_domain` is a **hard gate**: the `K09_WPB` env override (1/2/4/8, tuning
+sweeps only) can only change warps-per-block or lower the token threshold **within**
+the production domain (E=256, topk=8, group 1/1, renormalize, scale=1.0). It can
+**never** route an off-production input (E≠256, topk≠8, renormalize=False,
+scaling≠1) to the warp kernel — those always fall back to the baseline kernel,
+override or not. (The warp kernel keeps E-tier register sizing `ceil(E/32)` only so
+the template is well-formed; the default and override dispatch both send only
+E=256 to it.) A correctness regression (`bench/correctness.py`, run in a fresh
+process with `K09_WPB=4`) asserts off-domain large-N still takes the baseline path.
 
 ## Per-bucket measured speedup (B200, idle GPU 0; baseline_median / candidate_median)
 
