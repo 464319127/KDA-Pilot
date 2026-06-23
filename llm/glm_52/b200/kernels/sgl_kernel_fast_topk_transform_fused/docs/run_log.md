@@ -55,3 +55,17 @@ CUDA_VISIBLE_DEVICES=1 python3 solution/_probe.py
 - **AC-4 gate PASSES**: `bench/correctness.py` regime-splits — naive (`length<=topk`) exact candidate==baseline==oracle; radix (`length>topk`) validates EACH output as a valid top-k by full float key (recover selected positions from transformed entries, require distinct & in `[0,length)` & count topk, selected score multiset == `torch.topk(score[:length], topk)` values). Output poisoning + shape/dtype/device/contiguity/finite checks retained.
 - Build was cached (no rebuild needed this session).
 
+## Session — Round 4 (captured-contract coverage: row_starts + non-linear page table)
+
+- Same host/container/toolchain; pinned GPU 1; still **not idle** → correctness only, **no timing** (AC-7 deferred).
+- Closed the R3-review AC-3/AC-4 coverage gaps: (1) the 4 large-prefill production variants pass a `(B,)` int32 `row_starts` tensor (verified in `docs/evidence.json`) — `gen_workloads.py` now keys `row_starts_kind`, the adapter synthesizes valid `row_starts` (`row_start+length<=N`), and `validate_topk` reads the ragged window `score[b, row_start:row_start+length]`; (2) `validate_topk` now inverts each output entry through the ACTUAL `page_table[seq]` row (per-sequence scatter inverse) instead of the linear `out - page_table[s,0]` shortcut, and a non-linear (permuted) page-table regression row was added.
+
+### Command + result
+```
+CUDA_VISIBLE_DEVICES=1 python3 bench/correctness.py cuda:0
+-> matched_ratio = 1.0000  (251/251 workloads)
+   [236 production (incl. 4 row_starts=tensor large-prefill) + 15 regression
+    (incl. permuted_naive, permuted_radix, row_starts_radix)]
+```
+- **AC-3/AC-4 captured-contract coverage now complete**: the grid exercises `row_starts` tensor rows, non-linear page-table transform, naive exact-match, and radix valid-top-k. Build cached.
+

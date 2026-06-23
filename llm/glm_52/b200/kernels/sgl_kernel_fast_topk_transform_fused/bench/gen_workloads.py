@@ -39,7 +39,8 @@ def score_stride(N, contiguous):
 
 
 def base_row(rid, B, N, S, M, contiguous, *, production, headline, label,
-             calls=None, score_dist="random", lengths_mode="full"):
+             calls=None, score_dist="random", lengths_mode="full",
+             page_table_mode="arange", row_starts_kind="none"):
     max_valid_length = min(N, M)  # cap so naive path never reads past src_page_table / score
     row = {
         "id": rid,
@@ -62,6 +63,8 @@ def base_row(rid, B, N, S, M, contiguous, *, production, headline, label,
         },
         "scalars": {
             "topk": TOPK, "row_starts": None,
+            "row_starts_kind": row_starts_kind,   # "none" | "tensor" (captured large-prefill rows)
+            "page_table_mode": page_table_mode,   # "arange" | "permuted" (transform validation)
             "B": B, "N": N, "S": S, "M": M,
             "max_valid_length": max_valid_length,
             "is_decode": (S == B),
@@ -93,8 +96,9 @@ def main():
         S = (cu["shape"][0] - 1) if cu else B
         pt = tens.get("page_table_size_1")
         M = pt["shape"][1] if pt else N
+        rs_kind = "tensor" if "row_starts" in tens else "none"  # captured row_starts scalar contract
         calls = int(v.get("call_count", 0))
-        key = (B, N, contig, M, S)
+        key = (B, N, contig, M, S, rs_kind)
         g = groups.setdefault(key, {"calls": 0, "labels": collections.Counter()})
         g["calls"] += calls
         g["labels"][v.get("label")] += calls
@@ -103,13 +107,14 @@ def main():
     total_calls = sum(g["calls"] for _, g in rows)
     cum = 0
     workloads = []
-    for (B, N, contig, M, S), g in rows:
+    for (B, N, contig, M, S, rs_kind), g in rows:
         cum += g["calls"]
         headline = (cum <= 0.90 * total_calls) or (g["calls"] >= 100)
         tag = "cont" if contig else "strided"
-        rid = f"ftt_B{B}_N{N}_M{M}_S{S}_{tag}"
+        rs_tag = "_rs" if rs_kind == "tensor" else ""
+        rid = f"ftt_B{B}_N{N}_M{M}_S{S}_{tag}{rs_tag}"
         wl = base_row(rid, B, N, S, M, contig, production=True, headline=bool(headline),
-                      label=g["labels"].most_common(1)[0][0], calls=g["calls"])
+                      label=g["labels"].most_common(1)[0][0], calls=g["calls"], row_starts_kind=rs_kind)
         workloads.append(wl)
     n_prod = len(workloads)
 
@@ -132,6 +137,9 @@ def main():
     add("len_half", 8, 960, 8, 900, False, lengths_mode="half")   # lengths < M, strided
     add("prefill_small", 16, 448, 4, 409, False)                  # prefill S<B, strided
     add("prefill_decode_mix", 20, 704, 20, 700, True)             # decode S==B, contiguous
+    add("permuted_naive", 8, 256, 8, 256, True, page_table_mode="permuted")       # non-linear transform (naive)
+    add("permuted_radix", 8, 2112, 8, 2112, True, page_table_mode="permuted")     # non-linear transform (radix)
+    add("row_starts_radix", 8, 2304, 8, 2176, False, row_starts_kind="tensor")    # ragged prefill, L=2176>topk
     workloads.extend(reg)
 
     OUT.write_text(json.dumps(workloads, indent=2) + "\n")

@@ -1,10 +1,12 @@
 """Correctness gate for `fast_topk_transform_fused` (GLM-5.2 / B200).
 
-Runs the full frozen grid (production + regression rows in workloads.json) and checks the
-candidate against the recovered baseline by EXACT integer match on every output, plus an
-independent PyTorch oracle on the naive (length<=TopK) path. Output buffers are poisoned
-before each run so stale / partial-write / skipped-kernel bugs are visible. `matched_ratio`
-must be 1.0 before any benchmark counts.
+Runs the full frozen grid (production + regression rows in workloads.json). The correctness
+criterion is REGIME-SPLIT (the baseline radix path is non-deterministic in output order):
+  - naive (length<=topk): exact candidate==baseline==independent-oracle (deterministic);
+  - radix (length>topk): each output validated as a VALID top-k by full float key, tolerant of
+    output order and exact-value ties (see validate_topk), honoring row_starts.
+Output buffers are poisoned before each run so stale / partial-write / skipped-kernel bugs are
+visible. `matched_ratio` must be 1.0 before any benchmark counts.
 
 Runs both as `python bench/correctness.py [device]` and `python -m bench.correctness`.
 Requires the task-local ABI built on the remote B200 (see solution/build.py).
@@ -61,27 +63,42 @@ def validate_topk(name, out, inputs, topk, is_decode):
     """Radix path (length>topk): the baseline selects the TRUE top-k by full float key
     (`fast_topk_cuda_tl` refines the 8-bit boundary via 32-bit `convert_to_uint32` rounds),
     but the output ORDER (and exactly-equal-value ties) is race-nondeterministic. So validate
-    each output as a VALID top-k independent of order: recover the selected raw positions from
-    the transformed page-table entries (synthetic page_table[s] is arange, so pos = entry -
-    page_table[s,0]), require them in [0,length), distinct, count==topk, and the multiset of
-    their scores equal to torch.topk(score[:length], topk).values (sorted-equal, exact float)."""
+    each output as a VALID top-k independent of order:
+      - invert each output page id through the ACTUAL `page_table[seq]` row (per-sequence scatter
+        inverse — works for any unique page table, not just arange) to recover the selected
+        relative position `pos` in [0, M);
+      - require `pos` distinct, in [0, length), count == topk;
+      - the radix reads `score[b, row_start + idx]` for idx in [0,length), so the selected scores
+        are `score[b, row_start + pos]`; require their multiset == `torch.topk(score[b,
+        row_start:row_start+length], topk).values` (sorted-equal, exact float)."""
     score = inputs["score"]
     lengths = inputs["lengths"]
     page_table = inputs["page_table_size_1"]
     cu = inputs["cu_seqlens_q"]
+    row_starts = inputs.get("row_starts")
     B = score.shape[0]
+    S, M = int(page_table.shape[0]), int(page_table.shape[1])
     seq_of = list(range(B)) if is_decode else seq_index_per_row(B, cu)
+    # per-sequence inverse map: physical page id -> position in [0, M)
+    maxv = int(page_table.max().item()) + 1
+    inv = torch.full((S, maxv), -1, dtype=torch.long, device=score.device)
+    cols = torch.arange(M, device=score.device, dtype=torch.long)
+    for s in range(S):
+        inv[s, page_table[s].long()] = cols
     for b in range(B):
         L = int(lengths[b])
         s = seq_of[b]
-        base_id = int(page_table[s, 0])
-        sel = out[b].to(torch.int64) - base_id  # recovered raw candidate positions
-        if not bool(((sel >= 0) & (sel < L)).all()):
-            return False, f"{name} row {b}: selected position outside [0,{L})"
-        if int(torch.unique(sel).numel()) != topk:
-            return False, f"{name} row {b}: {int(torch.unique(sel).numel())} distinct positions != topk={topk}"
-        sel_scores = score[b, sel]
-        true_top = torch.topk(score[b, :L].float(), topk).values
+        rs = int(row_starts[b]) if row_starts is not None else 0
+        ent = out[b].to(torch.int64)
+        if not bool(((ent >= 0) & (ent < maxv)).all()):
+            return False, f"{name} row {b}: output entry is not a valid page id"
+        pos = inv[s, ent]  # recovered relative positions via the real page table
+        if not bool(((pos >= 0) & (pos < L)).all()):
+            return False, f"{name} row {b}: selected entry not in page_table[seq][:{L}]"
+        if int(torch.unique(pos).numel()) != topk:
+            return False, f"{name} row {b}: {int(torch.unique(pos).numel())} distinct positions != topk={topk}"
+        sel_scores = score[b, rs + pos]
+        true_top = torch.topk(score[b, rs:rs + L].float(), topk).values
         if not torch.equal(torch.sort(sel_scores.float()).values, torch.sort(true_top).values):
             return False, f"{name} row {b}: selected score multiset != true top-k"
     return True, ""

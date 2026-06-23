@@ -111,9 +111,29 @@ def make_cu_seqlens(B, S, device) -> torch.Tensor:
     return torch.tensor(cu, device=device, dtype=torch.int32)
 
 
-def make_page_table(S, M, device) -> torch.Tensor:
-    """src_page_table (S, M) int32 logical->physical map (contiguous on dim 1)."""
-    return torch.arange(S * M, device=device, dtype=torch.int32).reshape(S, M)
+def make_page_table(S, M, device, g, mode="arange") -> torch.Tensor:
+    """src_page_table (S, M) int32 logical->physical map (contiguous on dim 1). Each row holds
+    distinct page ids (invertible). mode='permuted' makes it non-linear so the transform is
+    actually validated (not just an arange that hides a base+pos shortcut)."""
+    base = torch.arange(S * M, device=device, dtype=torch.int32).reshape(S, M)
+    if mode == "permuted":
+        out = torch.empty_like(base)
+        for s in range(S):
+            out[s] = base[s][torch.randperm(M, generator=g, device=device)]
+        return out
+    return base
+
+
+def make_row_starts(B, N, L, kind, device):
+    """Captured ragged-prefill row_starts: int32 (B,) with row_start[b] + length <= N so the
+    baseline's score window score[b, row_start:row_start+length] stays in bounds. None otherwise."""
+    if kind != "tensor":
+        return None
+    maxstart = max(0, N - L)
+    if maxstart == 0:
+        return torch.zeros(B, device=device, dtype=torch.int32)
+    rs = (torch.arange(B, device=device, dtype=torch.int64) * 7) % (maxstart + 1)
+    return rs.to(torch.int32)
 
 
 def make_case(workload: dict[str, Any], *, device: torch.device, seed: int) -> Case:
@@ -123,15 +143,20 @@ def make_case(workload: dict[str, Any], *, device: torch.device, seed: int) -> C
     contiguous = bool(workload["strides"]["score_contiguous"])
     dist = sc.get("score_dist", "random")
     lengths_mode = sc.get("lengths_mode", "full")
+    page_table_mode = sc.get("page_table_mode", "arange")
+    row_starts_kind = sc.get("row_starts_kind", "none")
     g = _gen(device, seed)
 
+    lengths = make_lengths(B, N, M, lengths_mode, device)
+    valid_len = int(lengths.max().item()) if lengths.numel() else 0
     inputs = {
         "score": make_score(B, N, contiguous, dist, device, g),
-        "lengths": make_lengths(B, N, M, lengths_mode, device),
-        "page_table_size_1": make_page_table(S, M, device),
+        "lengths": lengths,
+        "page_table_size_1": make_page_table(S, M, device, g, page_table_mode),
         "cu_seqlens_q": make_cu_seqlens(B, S, device),
         "topk": topk,
-        "row_starts": None,  # always None across the GLM-5.2 capture
+        # 243 captured variants have row_starts=None; 4 large-prefill variants pass a (B,) tensor.
+        "row_starts": make_row_starts(B, N, valid_len, row_starts_kind, device),
     }
     baseline_outputs = [torch.empty(B, topk, device=device, dtype=torch.int32)]
     candidate_outputs = [torch.empty(B, topk, device=device, dtype=torch.int32)]
@@ -152,8 +177,10 @@ def call_candidate(workload, inputs, outputs) -> None:
 
 def compare_outputs(workload, baseline_outputs, candidate_outputs, tolerance) -> dict:
     """Exact integer match on every output (no atol/rtol on indices), with shape/dtype/
-    contiguity checks. Int32 outputs cannot hold NaN/Inf; a finite check is applied only
-    to any float output for completeness."""
+    contiguity checks. This is the comparator for the DETERMINISTIC (naive, length<=topk)
+    regime; the non-deterministic radix path is validated by correctness.validate_topk
+    (valid-top-k), not by exact compare. Int32 outputs cannot hold NaN/Inf; a finite check
+    is applied only to any float output for completeness."""
     if len(baseline_outputs) != len(candidate_outputs):
         return _fail(f"output count {len(baseline_outputs)} vs {len(candidate_outputs)}")
     for idx, (b, c) in enumerate(zip(baseline_outputs, candidate_outputs)):
