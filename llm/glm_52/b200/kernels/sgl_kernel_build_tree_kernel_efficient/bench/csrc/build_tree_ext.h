@@ -29,6 +29,14 @@ inline T* mptr(const TensorView& t) {
   return reinterpret_cast<T*>(static_cast<char*>(t.data_ptr()) + t.byte_offset());
 }
 inline bool is_contiguous(const TensorView& t) {
+  // A zero-element tensor (any size-0 dim, e.g. the captured parent_list [bs,0])
+  // has no elements to stride over and is contiguous by PyTorch convention. This
+  // guard is required: without it the compact-stride walk below multiplies the
+  // expected stride by the zero dim and then wrongly rejects the leading dim for
+  // bs>1, which would silently route the candidate fast path to the baseline.
+  for (int i = 0; i < t.ndim(); ++i) {
+    if (t.size(i) == 0) return true;
+  }
   int64_t expect = 1;
   for (int i = t.ndim() - 1; i >= 0; --i) {
     if (t.size(i) == 1) continue;  // stride free on size-1 dims
@@ -78,3 +86,22 @@ void build_tree_candidate(
 
 // Empty-kernel launch-floor probe (same grid/block the candidate fast path uses).
 void build_tree_noop(tvm::ffi::TensorView verified_seq_len, int64_t draft_token_num);
+
+// Dispatch-route diagnostic: returns 1 if these inputs take the candidate native
+// fast path, 0 if they fall back to the baseline. Runs the SAME predicate as
+// build_tree_candidate, launches nothing — used by bench/correctness.py to PROVE
+// route coverage (fast path for the captured production regime; fallback for
+// off-domain inputs), so a silent fallback can never masquerade as a candidate run.
+int64_t build_tree_candidate_route(
+    tvm::ffi::TensorView parent_list,
+    tvm::ffi::TensorView selected_index,
+    tvm::ffi::TensorView verified_seq_len,
+    tvm::ffi::TensorView tree_mask,
+    tvm::ffi::TensorView positions,
+    tvm::ffi::TensorView retrive_index,
+    tvm::ffi::TensorView retrive_next_token,
+    tvm::ffi::TensorView retrive_next_sibling,
+    int64_t topk,
+    int64_t depth,
+    int64_t draft_token_num,
+    int64_t tree_mask_mode);

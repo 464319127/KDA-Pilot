@@ -104,6 +104,14 @@ def run_op(fn, parent_list, selected_index, vsl, out, sc):
        sc["topk"], sc["depth"], sc["draft_token_num"], sc["tree_mask_mode"])
 
 
+def route_of(parent_list, selected_index, vsl, out, sc) -> int:
+    """1 = candidate native fast path, 0 = baseline fallback (no kernel launch)."""
+    return build_ext.route(
+        parent_list, selected_index, vsl, out["tree_mask"], out["positions"],
+        out["retrive_index"], out["retrive_next_token"], out["retrive_next_sibling"],
+        sc["topk"], sc["depth"], sc["draft_token_num"], sc["tree_mask_mode"])
+
+
 def exact_eq(a, b) -> bool:
     return a.shape == b.shape and a.dtype == b.dtype and a.stride() == b.stride() and torch.equal(a, b)
 
@@ -118,6 +126,10 @@ def check_full_mask(device, bs, L, label, fails):
 
     base_out = prestated_outputs(T, bs * NV, device)
     cand_out = prestated_outputs(T, bs * NV, device)  # SEPARATE copy
+    # PROVE the candidate actually takes the native fast path for this captured
+    # production regime (route==1) — not a silent baseline fallback.
+    if route_of(parent_list, selected_index, vsl, cand_out, sc) != 1:
+        fails.append(f"[{label}] candidate did NOT take the native fast path (route!=1)")
     run_op(build_ext.baseline, parent_list, selected_index, vsl, base_out, sc)
     run_op(build_ext.candidate, parent_list, selected_index, vsl, cand_out, sc)
     torch.cuda.synchronize()
@@ -138,6 +150,9 @@ def check_full_mask(device, bs, L, label, fails):
 def check_identity(device, label, parent_list, selected_index, vsl, sc, total_tree, total_idx, fails):
     base_out = prestated_outputs(total_tree, total_idx, device)
     cand_out = prestated_outputs(total_tree, total_idx, device)
+    # PROVE this off-domain case routes to the baseline fallback (route==0).
+    if route_of(parent_list, selected_index, vsl, cand_out, sc) != 0:
+        fails.append(f"[{label}] expected baseline fallback but took fast path (route!=0)")
     run_op(build_ext.baseline, parent_list, selected_index, vsl, base_out, sc)
     run_op(build_ext.candidate, parent_list, selected_index, vsl, cand_out, sc)
     torch.cuda.synchronize()

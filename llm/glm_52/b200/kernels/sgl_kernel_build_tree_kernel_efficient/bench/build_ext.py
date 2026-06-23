@@ -83,3 +83,9 @@ def candidate(*args) -> None:
 
 def noop(verified_seq_len, draft_token_num) -> None:
     get_ext().build_tree_noop(verified_seq_len, draft_token_num)
+
+
+# Dispatch-route diagnostic: 1 = candidate fast path, 0 = baseline fallback (no launch).
+# Same 12-arg signature as baseline/candidate.
+def route(*args) -> int:
+    return int(get_ext().build_tree_candidate_route(*args))

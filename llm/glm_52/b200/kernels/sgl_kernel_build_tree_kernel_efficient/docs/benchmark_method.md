@@ -63,6 +63,18 @@ independent Python oracle; poison on the fully-written outputs; separate in-plac
 copies; shape/dtype/device/stride checks; 4 distributions; full captured `(bs,T)`
 sweep; 5 fallback cases. 691 cases, 0 failures on B200.
 
+## Route coverage proof
+A TVM-FFI diagnostic `build_tree_candidate_route` (exported alongside the ops;
+`build_ext.route`) runs the SAME predicate as the candidate dispatcher
+(`candidate_fast_path_eligible`) and returns 1=fast path / 0=baseline fallback
+without launching. `bench/correctness.py` ASSERTS route==1 for every captured
+production row (all bs 1..10) and route==0 for the 5 off-domain cases — proving the
+native kernel is actually exercised over the captured regime (not silently falling
+back). This is required because output-equality alone passes even when the candidate
+wrongly falls back to the baseline (the Round-1 `is_contiguous` zero-size-dim bug).
+The contiguity helper now treats any zero-element tensor (e.g. `parent_list [bs,0]`)
+as contiguous, matching PyTorch.
+
 ## Empty-kernel floor + controlled probe + wrapper diagnostic
 `bench/floor_probe.py`: (A) controlled same-process A/B probe for ALL bs 1–10
 (fresh retrieve buffers per call via a ring → no baseline reuse artifact), 31
@@ -73,12 +85,15 @@ cross-subprocess GPU-clock noise of the official harness and is the clock-noise-
 verdict.
 
 ## Active bound (why this is a no-go)
-The op writes <a few KB and runs as a single tiny launch. Per-call cost is
-dominated by the ~3.35µs empty-kernel launch floor plus ~6µs of 8-tensor
-torch→TensorView marshalling; the kernel body is <0.1µs of the ~9.5µs. So the
-candidate's grid-block reduction is unmeasurable and no kernel-level win exists
-under the strict op ABI. The only material lever is the wrapper prefill (~63% of
-the realistic path, measured), which DEC-1 holds out of promotion scope.
+The op writes <a few KB and runs as a single tiny launch. Per-call cost (Round-2,
+candidate genuinely running) is dominated by the empty-kernel launch floor
+(~4.4–6.7µs) plus multi-arg TVM-FFI marshalling; baseline and candidate both land
+~10.6–12.6µs, so the kernel body is a sub-µs sliver with no headroom. No
+kernel-body design can produce a stable win under the strict op ABI — the
+candidate's single-block layout is even marginally worse than the baseline's
+bs-block parallel launch for bs>1 (mild regression, geomean 0.984). The only
+material lever is the wrapper prefill (~64% of the realistic path, measured),
+which DEC-1 holds out of promotion scope.
 
 ## Provenance
 `docs/results.md` (numbers + verdict), `docs/dispatch.md` (dispatch table),

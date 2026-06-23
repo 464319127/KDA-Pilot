@@ -67,27 +67,26 @@ __global__ void noop_kernel() {}
 
 constexpr int64_t FULL_MASK_MODE = 0;
 
-}  // namespace
-
-void build_tree_candidate(
-    tvm::ffi::TensorView parent_list,
-    tvm::ffi::TensorView selected_index,
-    tvm::ffi::TensorView verified_seq_len,
-    tvm::ffi::TensorView tree_mask,
-    tvm::ffi::TensorView positions,
-    tvm::ffi::TensorView retrive_index,
-    tvm::ffi::TensorView retrive_next_token,
-    tvm::ffi::TensorView retrive_next_sibling,
+// Shared fast-path predicate (host-side, device-memory-free; no host sync on the
+// hot path). Every piece of metadata that defines the candidate's domain is
+// checked here; anything off-domain (wrong scalar, dtype, rank, shape, contiguity,
+// or device) is rejected so the dispatcher falls back to the recovered baseline.
+// Used by BOTH build_tree_candidate (dispatch) and build_tree_candidate_route
+// (the diagnostic the correctness suite asserts on).
+inline bool candidate_fast_path_eligible(
+    const tvm::ffi::TensorView& parent_list,
+    const tvm::ffi::TensorView& selected_index,
+    const tvm::ffi::TensorView& verified_seq_len,
+    const tvm::ffi::TensorView& tree_mask,
+    const tvm::ffi::TensorView& positions,
+    const tvm::ffi::TensorView& retrive_index,
+    const tvm::ffi::TensorView& retrive_next_token,
+    const tvm::ffi::TensorView& retrive_next_sibling,
     int64_t topk,
     int64_t depth,
     int64_t draft_token_num,
     int64_t tree_mask_mode) {
   const int64_t bs = parent_list.size(0);
-
-  // Host-side, device-memory-free regime check (no host sync on the hot path).
-  // Every piece of metadata that defines the fast-path domain is checked here;
-  // anything off-domain (wrong scalar, dtype, rank, shape, contiguity, or device)
-  // falls back to the recovered baseline so correctness is never lost.
   const bool scalars_ok = topk == 1 && depth == 1 && draft_token_num == 2 &&
       tree_mask_mode == FULL_MASK_MODE;
   const bool dtypes_ok = bte::is_bool(tree_mask.dtype()) && bte::is_i64(parent_list.dtype()) &&
@@ -112,7 +111,29 @@ void build_tree_candidate(
   const bool device_ok = bte::is_cuda(verified_seq_len) && bte::is_cuda(tree_mask) &&
       bte::is_cuda(positions) && bte::is_cuda(retrive_index) &&
       bte::is_cuda(retrive_next_token) && bte::is_cuda(retrive_next_sibling);
-  const bool fast_path = scalars_ok && dtypes_ok && shapes_ok && contig_ok && device_ok;
+  return scalars_ok && dtypes_ok && shapes_ok && contig_ok && device_ok;
+}
+
+}  // namespace
+
+void build_tree_candidate(
+    tvm::ffi::TensorView parent_list,
+    tvm::ffi::TensorView selected_index,
+    tvm::ffi::TensorView verified_seq_len,
+    tvm::ffi::TensorView tree_mask,
+    tvm::ffi::TensorView positions,
+    tvm::ffi::TensorView retrive_index,
+    tvm::ffi::TensorView retrive_next_token,
+    tvm::ffi::TensorView retrive_next_sibling,
+    int64_t topk,
+    int64_t depth,
+    int64_t draft_token_num,
+    int64_t tree_mask_mode) {
+  const int64_t bs = parent_list.size(0);
+  const bool fast_path = candidate_fast_path_eligible(
+      parent_list, selected_index, verified_seq_len, tree_mask, positions,
+      retrive_index, retrive_next_token, retrive_next_sibling,
+      topk, depth, draft_token_num, tree_mask_mode);
 
   if (!fast_path) {
     build_tree_baseline(
@@ -157,5 +178,32 @@ void build_tree_noop(tvm::ffi::TensorView verified_seq_len, int64_t draft_token_
   noop_kernel<<<blocks, threads, 0, stream>>>();
 }
 
+// Dispatch-route diagnostic: 1 = candidate native fast path, 0 = baseline fallback.
+// Runs the SAME predicate as build_tree_candidate; launches nothing. Lets the
+// correctness suite PROVE the fast path actually covers the captured production
+// regime (and that off-domain inputs fall back), so a silent fallback cannot
+// masquerade as a candidate run.
+int64_t build_tree_candidate_route(
+    tvm::ffi::TensorView parent_list,
+    tvm::ffi::TensorView selected_index,
+    tvm::ffi::TensorView verified_seq_len,
+    tvm::ffi::TensorView tree_mask,
+    tvm::ffi::TensorView positions,
+    tvm::ffi::TensorView retrive_index,
+    tvm::ffi::TensorView retrive_next_token,
+    tvm::ffi::TensorView retrive_next_sibling,
+    int64_t topk,
+    int64_t depth,
+    int64_t draft_token_num,
+    int64_t tree_mask_mode) {
+  return candidate_fast_path_eligible(
+             parent_list, selected_index, verified_seq_len, tree_mask, positions,
+             retrive_index, retrive_next_token, retrive_next_sibling, topk, depth,
+             draft_token_num, tree_mask_mode)
+             ? 1
+             : 0;
+}
+
 TVM_FFI_DLL_EXPORT_TYPED_FUNC(build_tree_candidate, build_tree_candidate);
+TVM_FFI_DLL_EXPORT_TYPED_FUNC(build_tree_candidate_route, build_tree_candidate_route);
 TVM_FFI_DLL_EXPORT_TYPED_FUNC(build_tree_noop, build_tree_noop);
