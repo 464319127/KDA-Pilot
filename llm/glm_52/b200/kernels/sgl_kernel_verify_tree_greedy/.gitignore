@@ -1,0 +1,12 @@
+# Raw benchmark / profiler / build / scratch artifacts — kept LOCAL for evidence,
+# never staged for the PR (per llm/docs/llm_kernel_optimization_rules.md "PR Scope").
+bench/results.jsonl
+**/__pycache__/
+*.pyc
+*.so
+*.o
+*.ncu-rep
+*.nsys-rep
+*.qdrep
+nsight_*/
+build/
