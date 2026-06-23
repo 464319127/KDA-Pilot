@@ -5,7 +5,9 @@ Run: `python3 bench/gen_workloads.py` (deterministic; re-emits the frozen file).
 
 Faithful to the recovered C++ contract (baseline/.../elementwise/topk.cu):
   fast_topk_transform_fused(score[B,N] f32, lengths[B] i32, page_table_size_1[S,M] i32,
-                            cu_seqlens_q[S+1] i32, topk=2048, row_starts=None) -> dst[B,2048] i32
+                            cu_seqlens_q[S+1] i32, topk=2048, row_starts=None|tensor[B] i32) -> dst[B,2048] i32
+    (row_starts is None for 243 captured variants; a (B,) int32 tensor for the 4 large-prefill ones —
+     tracked per row by the row_starts_kind scalar, which is also part of the dedup key below.)
   - lengths is shape B (per token row); TORCH_CHECK(lengths.size(0)==score.size(0)).
   - src_page_table (page_table_size_1) is shape (S, M); S = cu_seqlens_q.size(0)-1.
   - is_decode = (row_starts is None and S == B); otherwise prefill (cu_seqlens maps token->seq).
@@ -83,7 +85,7 @@ def main():
     d = json.loads(EVIDENCE.read_text())
     variants = d["variants"]
 
-    groups = {}  # (B,N,contig,M,S) -> dict(calls, labels)
+    groups = {}  # dedup key (B,N,contig,M,S,row_starts_kind) -> dict(calls, labels)
     for v in variants:
         arg = v["args"][0]
         tens = {t["name"]: t for t in arg["tensors"]}
@@ -146,7 +148,7 @@ def main():
     head = [w for w in workloads if w["production"] and w["headline"]]
     print(f"wrote {OUT}")
     print(f"  total rows:      {len(workloads)}")
-    print(f"  production rows: {n_prod} (dedup key (B,N,contig,M,S); covering {total_calls} calls)")
+    print(f"  production rows: {n_prod} (dedup key (B,N,contig,M,S,row_starts_kind); covering {total_calls} calls)")
     print(f"  headline rows:   {len(head)}")
     print(f"  regression rows: {len(reg)}")
     # sanity: lengths never exceeds min(N,M); src_page_table never over-read
