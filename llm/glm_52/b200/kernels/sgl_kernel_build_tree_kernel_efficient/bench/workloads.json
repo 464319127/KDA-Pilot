@@ -1,0 +1,340 @@
+[
+  {
+    "id": "glm52_bs1_T300",
+    "production": true,
+    "function": "build_tree",
+    "bs": 1,
+    "tree_mask_len": 300,
+    "seq_sum": 148,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "distinct_T_for_bs": 25,
+    "captured_calls_for_bs": 27,
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0
+  },
+  {
+    "id": "glm52_bs2_T1234",
+    "production": true,
+    "function": "build_tree",
+    "bs": 2,
+    "tree_mask_len": 1234,
+    "seq_sum": 613,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "distinct_T_for_bs": 15,
+    "captured_calls_for_bs": 15,
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0
+  },
+  {
+    "id": "glm52_bs3_T3814",
+    "production": true,
+    "function": "build_tree",
+    "bs": 3,
+    "tree_mask_len": 3814,
+    "seq_sum": 1901,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "distinct_T_for_bs": 19,
+    "captured_calls_for_bs": 19,
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0
+  },
+  {
+    "id": "glm52_bs4_T2246",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 2246,
+    "seq_sum": 1115,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "distinct_T_for_bs": 58,
+    "captured_calls_for_bs": 58,
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0
+  },
+  {
+    "id": "glm52_bs5_T5528",
+    "production": true,
+    "function": "build_tree",
+    "bs": 5,
+    "tree_mask_len": 5528,
+    "seq_sum": 2754,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "distinct_T_for_bs": 3,
+    "captured_calls_for_bs": 3,
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0
+  },
+  {
+    "id": "glm52_bs6_T6216",
+    "production": true,
+    "function": "build_tree",
+    "bs": 6,
+    "tree_mask_len": 6216,
+    "seq_sum": 3096,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "distinct_T_for_bs": 4,
+    "captured_calls_for_bs": 4,
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0
+  },
+  {
+    "id": "glm52_bs7_T6024",
+    "production": true,
+    "function": "build_tree",
+    "bs": 7,
+    "tree_mask_len": 6024,
+    "seq_sum": 2998,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "distinct_T_for_bs": 5,
+    "captured_calls_for_bs": 5,
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0
+  },
+  {
+    "id": "glm52_bs8_T9138",
+    "production": true,
+    "function": "build_tree",
+    "bs": 8,
+    "tree_mask_len": 9138,
+    "seq_sum": 4553,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "distinct_T_for_bs": 2,
+    "captured_calls_for_bs": 2,
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0
+  },
+  {
+    "id": "glm52_bs9_T9842",
+    "production": true,
+    "function": "build_tree",
+    "bs": 9,
+    "tree_mask_len": 9842,
+    "seq_sum": 4903,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "distinct_T_for_bs": 9,
+    "captured_calls_for_bs": 9,
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0
+  },
+  {
+    "id": "glm52_bs10_T5382",
+    "production": true,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 5382,
+    "seq_sum": 2671,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "distinct_T_for_bs": 43,
+    "captured_calls_for_bs": 45,
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0
+  },
+  {
+    "id": "edge_minT",
+    "production": false,
+    "function": "build_tree",
+    "bs": 1,
+    "tree_mask_len": 36,
+    "seq_sum": 16,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0
+  },
+  {
+    "id": "edge_maxT",
+    "production": false,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 11626,
+    "seq_sum": 5793,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0
+  },
+  {
+    "id": "edge_bs1_seq0",
+    "production": false,
+    "function": "build_tree",
+    "bs": 1,
+    "tree_mask_len": 4,
+    "seq_sum": 0,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0
+  },
+  {
+    "id": "fallback_qlen_only_bs4",
+    "production": false,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 16,
+    "seq_sum": 24,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 1
+    },
+    "fallback_expected": true,
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0
+  },
+  {
+    "id": "fallback_noncontig_bs4",
+    "production": false,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 64,
+    "seq_sum": 24,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "noncontiguous": true,
+    "fallback_expected": true,
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0
+  }
+]

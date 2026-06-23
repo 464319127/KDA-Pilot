@@ -1,0 +1,30 @@
+# Keep raw build / benchmark / profiler artifacts LOCAL — never stage for the PR.
+# The PR carries only kernel source, harnesses, small provenance notes, the
+# dispatch table, and the per-shape results summary (docs/results.md).
+
+# Python / build
+__pycache__/
+*.pyc
+*.so
+*.o
+*.obj
+build/
+*.egg-info/
+
+# Raw benchmark data (summarized into docs/results.md)
+bench/results.jsonl
+*.jsonl
+
+# Profiler / Nsight / NCU / warp-timeline dumps
+*.ncu-rep
+*.nsys-rep
+*.sqlite
+*.qdrep
+*.qdstrm
+profiler/
+nsight/
+
+# Scratch logs / failed-experiment dumps
+*.log
+scratch/
+tmp/
