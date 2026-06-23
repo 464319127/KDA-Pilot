@@ -1,0 +1,61 @@
+# Candidate Dispatch & Design — fast_topk_transform_fused (B200)
+
+> Status: **planned design (task8, Round 5)** — KernelWiki + Codex `analyze` ranking. No candidate
+> kernel implemented yet (gated on frozen baseline numbers + idle GPU 1). Per-bucket speedups and the
+> final dispatch table are filled after benchmarking (`docs/results.md`).
+
+## Regimes (from the captured contract)
+- **Naive (`length = min(N,M) <= topk`)** — the baseline writes `dst[i] = (i<length)?src_page_table[i]:-1`,
+  no score read, fully deterministic; **dominant: 3674/4246 captured calls**. Memory-bound (store of one
+  `(B,2048)` int32 row per token = 8 KB/row).
+- **Tiny-B decode** — `B in {2,6,8,14,18,20}`, the bulk of calls; many tiny launches → launch/occupancy bound.
+- **Large-B prefill radix (`length > topk`)** — `B in {2207..3080}`, `N` up to 5151; ~572 calls incl. 4
+  with `row_starts` tensors. The candidate needs only a **valid** top-k here (selected score multiset ==
+  true top-k); it is NOT required to bit-match the non-deterministic baseline order.
+
+## Ranked candidate directions (benefit vs risk; KernelWiki + Codex)
+1. **Decode exact-naive tiled copy/fill** (FIRST EDIT). For `topk==2048 && row_starts==None && S==B &&
+   min(N,M)<=2048`: one CTA per `(row, dst_tile)` (e.g. 8 tiles × 256) instead of a single 1024-thread row
+   block; coalesced/vectorized (`int4`, 128-bit) `dst` stores; guarded page-table loads for `i<length`;
+   vector `-1` fill for `[length,2048)`. Dominant regime, no score read, tiny correctness surface, exact-naive.
+   Low risk. Attacks store throughput + low-CTA-count/tail underutilization.
+2. **Scheme-X bucket tuning** (per TRT-LLM PR-13477 dispatcher): metadata buckets for tiny `B<=20` vs larger
+   B, choosing CTAs-per-row + tile size separately. Attacks waves-per-SM/tail. Low-med risk, exact-naive.
+3. **Extend exact-naive to prefill/ragged** (`S!=B` and/or `row_starts!=None`, `min(N,M)<=topk`): correct
+   `cu_seqlens_q` token→seq mapping + row-start window. Medium risk.
+4. **Native valid-radix (GVR)** for `min(N,M)>topk`: approximate bin to find the boundary, then verify/refine
+   with full float so the selected multiset is the exact true top-k. High per-call benefit, low volume, high
+   risk. KernelWiki basis: `pr-TensorRT-LLM-13477` (Guess-Verify-Refine).
+5. **PDL / CUDA-Graph launch orchestration** for repeated `(B,N)` buckets / radix guess→verify→refine.
+   Medium, integration-dependent.
+6. **Memory micro-tuning** (128-bit vector stores/loads where aligned, `L1::no_allocate` streaming reads,
+   `__launch_bounds__`/register budgeting). Apply after layout is right. KernelWiki: `pattern-memory-bound`.
+
+## Active-bound hypotheses (confirm with NCU, AC-8/AC-10)
+- Naive large-B: store/DRAM bound — expect low compute util, store-heavy L2/DRAM; win from coalesced/vectorized
+  full-row writes + avoiding excess threads.
+- Tiny-decode: launch/tail/under-occupancy bound — expect waves-per-SM << 1, low SM-active, DRAM not saturated;
+  multi-CTA row tiling helps device time but cannot remove fixed launch overhead.
+
+## Dispatch plan (metadata-only; no host read of `lengths`, no sync, no per-call cudaMalloc)
+Inputs available without sync: `B, N, M, S, topk, row_starts pointer (null?), score.stride, dtype/device/alignment`.
+- **Bucket 1 (implement first):** `topk==2048 && row_starts==None && S==B && min(N,M)<=2048` → native exact-naive decode.
+- Future bucket 2: `... && S!=B && min(N,M)<=2048` → native exact-naive prefill.
+- Future bucket 3: `... && row_starts!=None && min(N,M)<=2048` → native exact-naive ragged.
+- Future bucket 4: `min(N,M)>2048 && score.stride(1)==1` (+ supported row/ragged mode) → native valid-radix/GVR.
+- **Fallback rule:** any uncovered shape, unsupported `topk`, uncertain mapping, bad alignment, or
+  not-yet-implemented path → the recovered SGLang baseline (`fast_topk_transform_interface`).
+
+## Pitfalls (correctness-critical)
+- Naive: write ALL 2048 outputs/row; `i>=length` is exactly `-1`; do NOT read `score`; non-contiguous score
+  is irrelevant on this path. Use `min(N,M)` (N>2048 with M<=2048 is still naive). Do NOT host-check `lengths[b]`.
+- `seq=b` only when `row_starts==None && S==B`; prefill maps token→seq via `cu_seqlens_q`; ragged `row_starts`
+  offsets the score window (`score[idx+row_start]`) — the page-table index is still the relative position.
+- Output entries are page-table VALUES (`src_page_table[seq][pos]`), not relative indices.
+- Radix: output order may differ from the baseline, but the selected score multiset must equal the true top-k;
+  8-bit bins alone are invalid — the boundary needs full-float refinement.
+- Vectorized loads/stores need alignment/pitch checks; scalar tail or fallback otherwise.
+
+## Correctness gate (already enforced, R3/R4)
+`bench/correctness.py` must stay `matched_ratio==1.0` after every candidate edit: naive = exact
+candidate==baseline==oracle; radix = valid-top-k (order/tie tolerant) with row_starts + real page-table inversion.
