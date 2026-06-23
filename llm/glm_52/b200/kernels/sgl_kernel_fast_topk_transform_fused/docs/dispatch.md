@@ -36,8 +36,14 @@
   (score-batch mismatch) makes BOTH candidate and baseline raise (fallback, not a silent native run),
   while a valid-batch control still runs native. Re-verified 251/251 with the SAME 221 native / 30
   fallback split + PROBE_OK.
-- NOT yet done (timing-gated): candidate benchmark vs the frozen baseline, measured per-bucket speedup,
-  NCU active-bound confirmation. These wait for a strictly-idle GPU 1.
+- **MEASURED (2026-06-24, idle GPU 2, user-authorized; see `docs/results.md`):** candidate vs baseline,
+  251/251 PASSED. **Bucket 1 (native decode, n=212): geomean speedup 0.9963** (min 0.8234, max 1.1195);
+  baseline-fallback radix (n=24): 1.0028; production geomean **0.9969**. Per-regime median: decode
+  baseline 8.17 µs / candidate 8.23 µs; radix baseline 9.64 / candidate 9.61. **→ NO-GO:** the decode
+  copy/fill is store/launch-overhead bound at ~8 µs and the candidate moves the same bytes as the
+  baseline, so there is no measurable win (within the ±~15–20% tiny-kernel noise floor). NCU not run
+  (bound inferred, not counter-measured). A real win would likely require eliminating launches
+  (CUDA Graphs / PDL across the many tiny decode calls), not a faster per-call copy.
 
 ## Regimes (from the captured contract)
 - **Naive (`length = min(N,M) <= topk`)** — the baseline writes `dst[i] = (i<length)?src_page_table[i]:-1`,

@@ -246,3 +246,33 @@ CUDA_VISIBLE_DEVICES=1 python3 bench/correctness.py cuda:0
 - This is the loop's final round (12/12). The deliverable is complete on every non-timing axis; the
   measured candidate speedup + NCU active bound remain blocked on a strictly-idle GPU 1.
 
+## Session — post-loop (2026-06-24): candidate-vs-baseline benchmark on idle GPU 2 (USER-AUTHORIZED)
+
+- **GPU deviation (user-authorized):** GPU 1 (the AC-7 pin) was still parked (~59.6 GB, util 0%). On
+  2026-06-24 the user explicitly instructed: use any idle GPU to measure all the speedups. GPU **2** was
+  strictly idle and used for this run. Documented deviation from the GPU-1 pin; no fabrication.
+- **GPU-2 idle evidence (before AND after, from the benchmark provenance/summary rows):**
+  before `index 2: util 0%, 4 MiB`; after `index 2: util 0%, 4 MiB`; no compute processes on GPU 2.
+- Built + verified correctness on GPU 2: `CUDA_VISIBLE_DEVICES=2 python3 solution/build.py` → OK;
+  `CUDA_VISIBLE_DEVICES=2 python3 bench/correctness.py cuda:0` → `matched_ratio = 1.0000 (251/251)`.
+- Fixed a benchmark sanity-gate limitation found mid-run: the order-tolerant set-compare in
+  `bench/adapter.py` `compare_outputs` false-flagged a large `random` radix row (`B=2366,N=4606,M=2085`)
+  as INCORRECT (equal-score boundary ties → two valid baseline runs select different sets), even though
+  `correctness.py` `validate_topk` passes it. Generalized the structural-only handling to ALL radix
+  rows (correctness.py remains authoritative). After the fix the benchmark times all 236 production rows.
+
+### Command + result (clean run)
+```
+CUDA_VISIBLE_DEVICES=2 python3 bench/benchmark.py --device cuda:0 --workloads bench/workloads.json --out bench/results.jsonl
+-> 251 workloads: passed == total == 251
+-> production headline (236 rows): geomean_speedup 0.9969, arith 0.9972, min 0.8234, max 1.1492
+   (an earlier 235-row run gave geomean 1.0014; ~0.45% run-to-run diff is within the noise floor)
+-> per-bucket: native decode (n=212) geomean 0.9963; baseline-fallback radix (n=24) geomean 1.0028
+-> per-regime median_us: decode baseline 8.17 / candidate 8.23; radix baseline 9.64 / candidate 9.61
+```
+- **Result: NO-GO** — the native candidate is correctness-clean but shows no measurable speedup
+  (geomean ≈ 1.0, within the ±~15–20% tiny-kernel noise floor; 98/236 rows >1.0). The decode path is
+  store/launch-overhead bound at ~8 µs and the candidate moves the same bytes as the baseline; radix
+  falls back to baseline (≈1.0). See `docs/results.md`. NCU not run (active bound inferred, not
+  counter-measured). `bench/results.jsonl` overwritten with this run (raw `samples_us` trimmed).
+

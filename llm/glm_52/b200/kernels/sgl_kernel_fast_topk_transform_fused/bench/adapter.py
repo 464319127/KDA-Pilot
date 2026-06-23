@@ -183,21 +183,19 @@ def call_candidate(workload, inputs, outputs) -> None:
 def compare_outputs(workload, baseline_outputs, candidate_outputs, tolerance) -> dict:
     """Benchmark per-workload SANITY check (the AUTHORITATIVE correctness gate is
     bench/correctness.py, run to matched_ratio==1.0 before benchmarking). Regime-aware, because
-    the baseline radix path produces a non-deterministic output ORDER and this comparator only
-    receives the two output tensors (not the inputs needed for a full valid-top-k check):
-      - naive (max_valid_length <= topk): exact integer match (deterministic);
-      - radix (max_valid_length > topk): order-tolerant per-row sorted-set match (same selected
-        page-id set; tolerates the nondeterministic order). Exact-equal-value-tie rows that select
-        different valid sets are validated by correctness.validate_topk, not here.
-    Plus shape/dtype/contiguity/finite structural checks."""
+    this comparator only receives the two output tensors (not the inputs needed for a valid-top-k
+    check):
+      - naive (max_valid_length <= topk): deterministic -> exact integer match;
+      - radix (max_valid_length > topk): the baseline radix is non-deterministic in output ORDER and
+        in WHICH equal-score boundary entries it selects -- two valid runs can pick different (equally
+        valid) page-id sets. This happens for ANY score distribution (incl. 'random' float32) whenever
+        the top-k boundary has ties, so an order-tolerant set-equality compare is unsound here (it
+        false-flags valid radix rows). Radix rows therefore get STRUCTURAL-only checks; their semantic
+        validity is gated authoritatively by correctness.validate_topk (valid-top-k, matched_ratio==1.0).
+    Plus shape/dtype/contiguity/finite structural checks for every row."""
     sc = workload.get("scalars", {}) if isinstance(workload, dict) else {}
     topk = int(sc.get("topk", 2048))
     is_radix = int(sc.get("max_valid_length", 0)) > topk
-    # Radix + exact-value ties: equal-score boundary ties let the kernel select DIFFERENT valid
-    # page-id sets across runs, so even the order-tolerant sorted-set compare validly differs.
-    # compare_outputs has no inputs to run a full valid-top-k check, so do structural-only here;
-    # correctness.validate_topk (valid-top-k, run to matched_ratio==1.0) is authoritative for these.
-    radix_tie = is_radix and sc.get("score_dist") == "ties"
     if len(baseline_outputs) != len(candidate_outputs):
         return _fail(f"output count {len(baseline_outputs)} vs {len(candidate_outputs)}")
     for idx, (b, c) in enumerate(zip(baseline_outputs, candidate_outputs)):
@@ -209,12 +207,10 @@ def compare_outputs(workload, baseline_outputs, candidate_outputs, tolerance) ->
             return _fail(f"output {idx} stride {b.stride()} vs {c.stride()}")
         if c.is_floating_point() and not torch.isfinite(c).all():
             return _fail(f"output {idx} has NaN/Inf")
-        if radix_tie:
-            continue  # structural-only (see above); correctness.py is authoritative
         if is_radix:
-            if not torch.equal(torch.sort(b, dim=-1).values, torch.sort(c, dim=-1).values):
-                return _fail(f"output {idx} radix selected-set mismatch (order-tolerant sorted compare)")
-        elif not torch.equal(b, c):
+            continue  # radix: structural-only -- correctness.validate_topk is authoritative
+                      # (equal-score boundary ties make output set-equality invalid here)
+        if not torch.equal(b, c):
             mism = int((b != c).sum().item())
             return _fail(f"output {idx} exact-match failed: {mism} mismatched entries")
     return {"ok": True, "max_abs": 0.0, "max_rel": 0.0, "message": ""}

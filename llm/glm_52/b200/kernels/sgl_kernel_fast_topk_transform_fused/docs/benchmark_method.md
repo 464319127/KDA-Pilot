@@ -1,4 +1,12 @@
-# Benchmark Method & Baseline (PROVISIONAL — not AC-7-complete) — fast_topk_transform_fused (B200)
+# Benchmark Method & Results — fast_topk_transform_fused (B200)
+
+> **MEASURED (2026-06-24, user-authorized idle GPU 2):** the candidate-vs-baseline benchmark has now
+> been run on a **strictly-idle B200 GPU 2** (0% util, ~0–4 MiB, before+after) — the user explicitly
+> authorized using any idle GPU since the pinned GPU 1 never reached strict idle. **Result: production
+> geomean speedup ≈ 1.0 (0.9969), 251/251 PASSED → NO-GO (candidate ≈ baseline).** Full numbers,
+> per-regime medians, and the active-bound reasoning are in `docs/results.md`; the run is logged in
+> `docs/run_log.md` (post-loop session). The Round-6 "provisional, baseline-vs-stub" sections below are
+> **superseded** by that measured run and kept only as historical method/noise-floor context.
 
 ## Harness
 - `bench/benchmark.py` is a byte-identical copy of `llm/docs/standalone_llm_benchmark_template.py`
