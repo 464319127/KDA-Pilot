@@ -1,8 +1,28 @@
 # Candidate Dispatch & Design — fast_topk_transform_fused (B200)
 
-> Status: **planned design (task8, Round 5)** — KernelWiki + Codex `analyze` ranking. No candidate
-> kernel implemented yet (gated on frozen baseline numbers + idle GPU 1). Per-bucket speedups and the
-> final dispatch table are filled after benchmarking (`docs/results.md`).
+> Status: **Bucket 1 IMPLEMENTED + correctness-verified (Round 9)**; design from task8 (Round 5,
+> KernelWiki + Codex `analyze` ranking). `solution/candidate_topk_transform.cu` now contains a native
+> CUDA decode copy/fill kernel for Bucket 1 with metadata-only dispatch + baseline fallback. On the
+> frozen 251-row grid (B200 GPU 1, R9): **`matched_ratio = 1.0000 (251/251)`** with **221 calls taking
+> the native kernel and 30 falling back** (the large-prefill/radix `min(N,M)>2048` rows) — definitive
+> proof the native path executes and is exact. **Candidate-vs-baseline timing + per-bucket speedups +
+> NCU active bound are still pending a strictly-idle GPU 1** (user chose to wait; only the benchmark is
+> timing-gated — implementation/correctness are not). Speedups + `docs/results.md` filled after that.
+
+## Implemented (Round 9) — Bucket 1 native decode copy/fill
+- `solution/candidate_topk_transform.cu`: `fast_topk_transform_candidate` dispatches to
+  `decode_copy_fill_kernel` when `topk==2048 && row_starts==None && S==B && min(N,M)<=2048` (+ int32
+  dtype / contiguous-dst / `src.stride(1)==1` / CUDA guards); every other case calls
+  `fast_topk_transform_interface` (the recovered baseline). The kernel writes all 2048 outputs/row,
+  `dst[b,col] = (col<lengths[b]) ? src_page_table[b,col] : -1` (seq==b on this bucket), one CTA per
+  (row, 256-col tile) and one thread/column (coalesced int32 stores; multiple CTAs/row for small-B
+  occupancy). No `score` read, no host `lengths` read, no host sync, no hot-path allocation; launches on
+  `at::cuda::getCurrentCUDAStream()`. An env-gated (`TOPK_CANDIDATE_DEBUG`) one-time diagnostic reports
+  bucket-vs-fallback per call (used to confirm the 221/30 split; no-op by default).
+- Correctness: naive bucket rows pass exact candidate==baseline==oracle; fallback rows keep the
+  baseline's valid-top-k behavior. `bench/correctness.py` → 251/251 (R9, see `docs/run_log.md`).
+- NOT yet done (timing-gated): candidate benchmark vs the frozen baseline, measured per-bucket speedup,
+  NCU active-bound confirmation. These wait for a strictly-idle GPU 1.
 
 ## Regimes (from the captured contract)
 - **Naive (`length = min(N,M) <= topk`)** — the baseline writes `dst[i] = (i<length)?src_page_table[i]:-1`,

@@ -16,9 +16,14 @@
 - Toolchain: torch `2.11.0+cu130`, CUDA `13.0`, nvcc `13.0.88`, `tvm_ffi 0.1.9`.
 - Pinned GPU: id 1 (`CUDA_VISIBLE_DEVICES=1`, `--device cuda:0`).
 - Baseline source: SGLang `main` commit `7e6587c94a1d0305815a14067c5d3cc02a9b0f36` (see baseline_source.md).
-- Candidate source hash (current = baseline-forwarding stub): `candidate_topk_transform.cu`
-  sha256 `a6e7835a486bc3b1db7914b65ff0ac5e52824d732a37fb1557e9b097d2af823a`; `binding.cu` sha256
-  `d8058ec2bfcc06306c012df7b0aec3d74a2f8071d5412aa8065708e518f116ff`.
+- Candidate source: the R6 PROVISIONAL run timed a **baseline-forwarding stub**
+  (`candidate_topk_transform.cu` sha256 `a6e7835a486bc3b1db7914b65ff0ac5e52824d732a37fb1557e9b097d2af823a`).
+  As of **Round 9** the candidate is the **native Bucket-1 decode kernel**
+  (`candidate_topk_transform.cu` sha256 `1b5a0c71993b0eef09f052aa13a39a57f7c2454ff285ee0040e50495b4939232`;
+  `binding.cu` sha256 `d8058ec2bfcc06306c012df7b0aec3d74a2f8071d5412aa8065708e518f116ff`, unchanged),
+  correctness 251/251 with 221 native / 30 fallback — but it has **NOT been benchmarked** (timing is
+  gated on strict idle). So the provisional speedup below is still baseline-vs-stub (≈1.0, a harness
+  fairness check); a real candidate-vs-baseline speedup awaits the strict-idle run.
 - ABI build flags (one module, symmetric; `solution/build.py`): `nvcc -O3 -std=c++17 -lineinfo
   -gencode=arch=compute_100,code=sm_100 -D_GLIBCXX_USE_CXX11_ABI=<torch>`; **no fast-math**; torch
   include/lib linked (`-ltorch -ltorch_cpu -lc10 -ltorch_cuda -lc10_cuda`).
