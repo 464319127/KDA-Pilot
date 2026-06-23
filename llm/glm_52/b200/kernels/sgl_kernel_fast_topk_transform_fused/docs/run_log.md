@@ -69,14 +69,22 @@ CUDA_VISIBLE_DEVICES=1 python3 bench/correctness.py cuda:0
 ```
 - **AC-3/AC-4 captured-contract coverage now complete**: the grid exercises `row_starts` tensor rows, non-linear page-table transform, naive exact-match, and radix valid-top-k. Build cached.
 
-## Session — Round 6 (freeze immutable baseline numbers)
+## Session — Round 6 (record baseline numbers — PROVISIONAL, see Round 8)
+
+> **[SUPERSEDED / status corrected in Round 8]** This run timed at `util 0%` but with a 59 GB parked
+> non-task process resident on GPU 1 — a deviation from AC-7's strict "no meaningful memory occupancy"
+> idle bar. In Round 7 the user chose to **WAIT for strict GPU-1 idle** rather than accept that
+> deviation, so this run is **NOT an AC-7-complete immutable baseline**. The numbers below stand only
+> as **provisional noise-floor / harness-fairness evidence** (candidate==baseline stub → geomean ≈ 1.0
+> confirms a fair harness). The AC-7-complete 251/251 freeze requires a future strict-idle rerun.
 
 - Same host/container/toolchain; pinned GPU 1 (`CUDA_VISIBLE_DEVICES=1`, `--device cuda:0`).
-- **GPU-1 idle evidence (AC-7):** before `index 1: util 0%, mem 59666 MiB`; after `index 1: util 0%,
-  mem 59666 MiB`. A parked process (pid 3048677, sharded GPU0/1) holds 59 GB at **util 0%** (no active
-  compute) and never woke during the run; no cleanly-idle GPU existed (3/4/5/6/7 were 149-157 GB or
-  util 7-73%). `util 0%` before+after → timing valid on the pinned GPU; the 59 GB resident allocation
-  does not contend for SMs/bandwidth (documented caveat).
+- **GPU-1 state at run time (AC-7 — provisional, not strict-idle):** before `index 1: util 0%, mem
+  59666 MiB`; after `index 1: util 0%, mem 59666 MiB`. A parked process (pid 3048677, sharded GPU0/1)
+  holds 59 GB at **util 0%** (no active compute) and never woke during the run; no cleanly-idle GPU
+  existed (3/4/5/6/7 were 149-157 GB or util 7-73%). `util 0%` before+after means no active-compute
+  contention, BUT the 59 GB resident non-task allocation fails AC-7's strict idle bar → this timing is
+  **provisional only** (the user chose to wait for strict idle; see Round 8). Not AC-7-complete.
 - Two harness bugs fixed to make the template benchmark runnable (commit this round):
   (1) `bench/adapter.py` `Case` changed from `@dataclass` to a plain class — the template loads the
   adapter via `importlib.spec_from_file_location` without registering it in `sys.modules`, and Python
@@ -95,7 +103,39 @@ CUDA_VISIBLE_DEVICES=1 python3 bench/benchmark.py --device cuda:0 \
    (candidate==baseline stub -> ~1.0 confirms a fair harness; ~±20% per-row tiny-kernel noise floor).
 -> per-regime baseline median_us: decode n=212 p50 9.32 (7.63-13.59); radix n=24 p50 9.29 (8.22-74.79).
 ```
-- **Immutable baseline frozen** in `bench/results.jsonl` (raw `samples_us` trimmed; stats retained).
-  Provenance in `docs/benchmark_method.md`. No NCU this round (AC-11; the native candidate + a named
-  bound come next). Build cached (no recompile).
+- **Provisional baseline recorded** in `bench/results.jsonl` (raw `samples_us` trimmed; stats
+  retained) — **NOT an AC-7-complete immutable freeze** (see the superseding note above; strict-idle
+  rerun pending). Note: this artifact is 250/251 PASSED — `reg_ties_boundary` is `INCORRECT` here
+  (the R6 `compare_outputs` could not resolve radix+exact-tie sets; code-fixed in R7, so the row will
+  time on the next run). Provenance in `docs/benchmark_method.md`. No NCU this round (AC-11; the native
+  candidate + a named bound come after the strict-idle freeze). Build cached (no recompile).
+
+## Session — Round 8 (GPU-1 re-check; provenance corrected — still blocked on strict idle)
+
+- Same host/container/toolchain; pinned GPU 1. **No timing/build/NCU this round** (honoring the
+  Round-7 user decision to wait for strict GPU-1 idle; AC-11 satisfied).
+- **GPU-1 re-check (before-state, raw `nvidia-smi`):**
+```
+# nvidia-smi --query-gpu=index,utilization.gpu,memory.used,memory.total --format=csv,noheader,nounits
+0, 0, 59666, 183359
+1, 0, 59666, 183359     <-- pinned GPU 1: util 0% but 59666 MiB resident (parked, non-task)
+2, 0, 84952, 183359
+3, 0, 149494, 183359
+4, 0, 149736, 183359
+5, 0, 156764, 183359
+6, 68, 157698, 183359
+7, 8, 5710, 183359
+# nvidia-smi -i 1 --query-compute-apps=pid,process_name,used_memory --format=csv,noheader
+3048677, sgl_diffusion::scheduler, 59646 MiB
+```
+- **Decision:** GPU 1 is **NOT strictly idle** — the same parked process (pid 3048677,
+  `sgl_diffusion::scheduler`, ~59.6 GB) persists across R5–R8 at util 0%, and no GPU on the box is
+  strictly idle (GPU6 util 68%, GPU7 util 8%). Per the user's wait-for-strict-idle decision, the
+  strict-idle 251/251 baseline freeze (AC-5/AC-7) and the native candidate (AC-6) remain **blocked**.
+- **Work done this round (non-timing):** corrected the R6 session above + `docs/benchmark_method.md`
+  so the Round-6 numbers are labeled **PROVISIONAL / not AC-7-complete** (was incorrectly described as
+  "timing valid" / "immutable"). `bench/results.jsonl` is unchanged (no fabricated timing for the
+  ties row). This addresses the Round-7-review doc-drift blocker; the strict-idle freeze still pending.
+- **Re-check cadence:** each subsequent round re-checks GPU 1; the freeze + candidate resume only when
+  GPU 1 has no active compute AND no meaningful non-task residency.
 

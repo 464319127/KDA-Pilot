@@ -1,4 +1,4 @@
-# Benchmark Method & Frozen Baseline — fast_topk_transform_fused (B200)
+# Benchmark Method & Baseline (PROVISIONAL — not AC-7-complete) — fast_topk_transform_fused (B200)
 
 ## Harness
 - `bench/benchmark.py` is a byte-identical copy of `llm/docs/standalone_llm_benchmark_template.py`
@@ -31,18 +31,27 @@ CUDA_VISIBLE_DEVICES=1 python3 bench/benchmark.py --device cuda:0 \
 #   --inner-iterations-max 4096 --target-sample-us 1000 --timeout-seconds 600 (isolated)
 ```
 
-## GPU-1 idle evidence (AC-7)
+## GPU-1 idle evidence (AC-7) — PROVISIONAL, NOT strict-idle
+> **Status corrected in Round 8.** This run timed at `util 0%` but with a 59 GB parked non-task process
+> resident on GPU 1, which fails AC-7's strict "no meaningful memory occupancy" idle bar. In Round 7
+> the user chose to **WAIT for strict GPU-1 idle** rather than accept that deviation, so the numbers
+> below are **NOT an AC-7-complete immutable baseline** — they stand only as provisional noise-floor /
+> harness-fairness evidence. The AC-7-complete freeze requires a future strict-idle rerun (251/251).
 - Before: GPU 1 `util 0%`, `59666 MiB` used (a parked process pid 3048677 sharded GPU0/1, **util 0%**,
   no active compute). No cleanly-idle GPU existed (3/4/5/6/7 were 149-157 GB used or util 7-73%).
-- After: GPU 1 `util 0%`, `59666 MiB` used — unchanged; the parked process never woke, so no compute
-  interference during the run.
-- Decision: `util 0%` = no active-compute contention → timing valid on the pinned GPU. The 59 GB
-  resident parked allocation does not contend for SMs/bandwidth; documented as a caveat.
+- After: GPU 1 `util 0%`, `59666 MiB` used — unchanged; the parked process never woke, so no active
+  compute interference during the run.
+- Assessment: `util 0%` before+after = no active-compute contention, so these numbers are usable as a
+  **provisional** noise floor / fair-harness check. But the 59 GB resident non-task allocation means
+  GPU 1 was **not strictly idle**, so this does NOT satisfy AC-7. Re-check GPU 1 each round; rerun the
+  freeze only under strict idle (no active compute AND no meaningful non-task residency).
 
-## Frozen immutable baseline (candidate == baseline stub this run; speedup ≈ 1.0 confirms a fair harness)
+## Provisional baseline (NOT AC-7-complete; candidate == baseline stub, so speedup ≈ 1.0 confirms a fair harness)
 - 251 workloads: **250 PASSED, 1 INCORRECT** (`reg_ties_boundary`, a radix+exact-ties REGRESSION row;
-  the order-tolerant `compare_outputs` cannot resolve tie-set ambiguity without inputs — it is
-  `production=false` and is authoritatively validated by `correctness.py` valid-top-k; not in the headline).
+  the R6 order-tolerant `compare_outputs` could not resolve tie-set ambiguity without inputs — it is
+  `production=false` and is authoritatively validated by `correctness.py` valid-top-k; not in the
+  headline). The R7 `compare_outputs` fix makes this row structural-only, so the strict-idle rerun is
+  expected to report 251/251; this provisional artifact remains 250/251 until that rerun.
 - **Production headline (236 rows): geomean_speedup 0.9977, arithmetic 0.9979, min 0.80, max 1.097.**
   Baseline-vs-itself ≈ 1.0 confirms the harness is fair; the per-row spread (~±20%) is the
   **tiny-kernel measurement noise floor** — a real candidate win must robustly clear it.
@@ -52,7 +61,10 @@ CUDA_VISIBLE_DEVICES=1 python3 bench/benchmark.py --device cuda:0 \
 - Raw per-run `samples_us` arrays trimmed from the committed `bench/results.jsonl` (stats retained).
 
 ## Notes
-- These baseline numbers are **immutable**: a candidate is benchmarked by re-running this same command
-  (which re-times both sides in one fair run); the workloads/settings are frozen and not changed.
+- These baseline numbers are **provisional, not yet immutable**: they were taken on a GPU 1 that was
+  not strictly idle (59 GB parked allocation), and the user chose to wait for strict idle. The
+  AC-7-complete immutable freeze is produced by re-running this same command under strict GPU-1 idle
+  (which re-times both sides in one fair run); the workloads/settings are frozen and not changed, so
+  only the idle precondition + the `reg_ties_boundary` timing differ from this provisional run.
 - Active-bound to confirm with NCU once the native candidate exists (per `docs/dispatch.md`): decode
   ≈ store/launch-overhead bound at ~9 µs; large-B prefill ≈ selection/store bound at ~75 µs.
