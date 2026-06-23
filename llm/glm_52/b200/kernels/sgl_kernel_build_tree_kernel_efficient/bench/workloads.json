@@ -1,0 +1,4489 @@
+[
+  {
+    "id": "glm52_bs1_T36",
+    "production": true,
+    "function": "build_tree",
+    "bs": 1,
+    "tree_mask_len": 36,
+    "seq_sum": 16,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs1_T38",
+    "production": true,
+    "function": "build_tree",
+    "bs": 1,
+    "tree_mask_len": 38,
+    "seq_sum": 17,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs1_T42",
+    "production": true,
+    "function": "build_tree",
+    "bs": 1,
+    "tree_mask_len": 42,
+    "seq_sum": 19,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs1_T46",
+    "production": true,
+    "function": "build_tree",
+    "bs": 1,
+    "tree_mask_len": 46,
+    "seq_sum": 21,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 2
+  },
+  {
+    "id": "glm52_bs1_T50",
+    "production": true,
+    "function": "build_tree",
+    "bs": 1,
+    "tree_mask_len": 50,
+    "seq_sum": 23,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 2
+  },
+  {
+    "id": "glm52_bs1_T80",
+    "production": true,
+    "function": "build_tree",
+    "bs": 1,
+    "tree_mask_len": 80,
+    "seq_sum": 38,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs1_T84",
+    "production": true,
+    "function": "build_tree",
+    "bs": 1,
+    "tree_mask_len": 84,
+    "seq_sum": 40,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs1_T88",
+    "production": true,
+    "function": "build_tree",
+    "bs": 1,
+    "tree_mask_len": 88,
+    "seq_sum": 42,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs1_T272",
+    "production": true,
+    "function": "build_tree",
+    "bs": 1,
+    "tree_mask_len": 272,
+    "seq_sum": 134,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs1_T276",
+    "production": true,
+    "function": "build_tree",
+    "bs": 1,
+    "tree_mask_len": 276,
+    "seq_sum": 136,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs1_T280",
+    "production": true,
+    "function": "build_tree",
+    "bs": 1,
+    "tree_mask_len": 280,
+    "seq_sum": 138,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs1_T300",
+    "production": true,
+    "function": "build_tree",
+    "bs": 1,
+    "tree_mask_len": 300,
+    "seq_sum": 148,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs1_T304",
+    "production": true,
+    "function": "build_tree",
+    "bs": 1,
+    "tree_mask_len": 304,
+    "seq_sum": 150,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs1_T370",
+    "production": true,
+    "function": "build_tree",
+    "bs": 1,
+    "tree_mask_len": 370,
+    "seq_sum": 183,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs1_T480",
+    "production": true,
+    "function": "build_tree",
+    "bs": 1,
+    "tree_mask_len": 480,
+    "seq_sum": 238,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs1_T484",
+    "production": true,
+    "function": "build_tree",
+    "bs": 1,
+    "tree_mask_len": 484,
+    "seq_sum": 240,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs1_T488",
+    "production": true,
+    "function": "build_tree",
+    "bs": 1,
+    "tree_mask_len": 488,
+    "seq_sum": 242,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs1_T492",
+    "production": true,
+    "function": "build_tree",
+    "bs": 1,
+    "tree_mask_len": 492,
+    "seq_sum": 244,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs1_T788",
+    "production": true,
+    "function": "build_tree",
+    "bs": 1,
+    "tree_mask_len": 788,
+    "seq_sum": 392,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs1_T790",
+    "production": true,
+    "function": "build_tree",
+    "bs": 1,
+    "tree_mask_len": 790,
+    "seq_sum": 393,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs1_T794",
+    "production": true,
+    "function": "build_tree",
+    "bs": 1,
+    "tree_mask_len": 794,
+    "seq_sum": 395,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs1_T798",
+    "production": true,
+    "function": "build_tree",
+    "bs": 1,
+    "tree_mask_len": 798,
+    "seq_sum": 397,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs1_T802",
+    "production": true,
+    "function": "build_tree",
+    "bs": 1,
+    "tree_mask_len": 802,
+    "seq_sum": 399,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs1_T818",
+    "production": true,
+    "function": "build_tree",
+    "bs": 1,
+    "tree_mask_len": 818,
+    "seq_sum": 407,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs1_T1048",
+    "production": true,
+    "function": "build_tree",
+    "bs": 1,
+    "tree_mask_len": 1048,
+    "seq_sum": 522,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs2_T168",
+    "production": true,
+    "function": "build_tree",
+    "bs": 2,
+    "tree_mask_len": 168,
+    "seq_sum": 80,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs2_T516",
+    "production": true,
+    "function": "build_tree",
+    "bs": 2,
+    "tree_mask_len": 516,
+    "seq_sum": 254,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs2_T552",
+    "production": true,
+    "function": "build_tree",
+    "bs": 2,
+    "tree_mask_len": 552,
+    "seq_sum": 272,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs2_T606",
+    "production": true,
+    "function": "build_tree",
+    "bs": 2,
+    "tree_mask_len": 606,
+    "seq_sum": 299,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs2_T718",
+    "production": true,
+    "function": "build_tree",
+    "bs": 2,
+    "tree_mask_len": 718,
+    "seq_sum": 355,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs2_T970",
+    "production": true,
+    "function": "build_tree",
+    "bs": 2,
+    "tree_mask_len": 970,
+    "seq_sum": 481,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs2_T1228",
+    "production": true,
+    "function": "build_tree",
+    "bs": 2,
+    "tree_mask_len": 1228,
+    "seq_sum": 610,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs2_T1234",
+    "production": true,
+    "function": "build_tree",
+    "bs": 2,
+    "tree_mask_len": 1234,
+    "seq_sum": 613,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs2_T1338",
+    "production": true,
+    "function": "build_tree",
+    "bs": 2,
+    "tree_mask_len": 1338,
+    "seq_sum": 665,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs2_T1878",
+    "production": true,
+    "function": "build_tree",
+    "bs": 2,
+    "tree_mask_len": 1878,
+    "seq_sum": 935,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs2_T2486",
+    "production": true,
+    "function": "build_tree",
+    "bs": 2,
+    "tree_mask_len": 2486,
+    "seq_sum": 1239,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs2_T2604",
+    "production": true,
+    "function": "build_tree",
+    "bs": 2,
+    "tree_mask_len": 2604,
+    "seq_sum": 1298,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs2_T3362",
+    "production": true,
+    "function": "build_tree",
+    "bs": 2,
+    "tree_mask_len": 3362,
+    "seq_sum": 1677,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs2_T3428",
+    "production": true,
+    "function": "build_tree",
+    "bs": 2,
+    "tree_mask_len": 3428,
+    "seq_sum": 1710,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs2_T3518",
+    "production": true,
+    "function": "build_tree",
+    "bs": 2,
+    "tree_mask_len": 3518,
+    "seq_sum": 1755,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs3_T592",
+    "production": true,
+    "function": "build_tree",
+    "bs": 3,
+    "tree_mask_len": 592,
+    "seq_sum": 290,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs3_T1026",
+    "production": true,
+    "function": "build_tree",
+    "bs": 3,
+    "tree_mask_len": 1026,
+    "seq_sum": 507,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs3_T1146",
+    "production": true,
+    "function": "build_tree",
+    "bs": 3,
+    "tree_mask_len": 1146,
+    "seq_sum": 567,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs3_T2122",
+    "production": true,
+    "function": "build_tree",
+    "bs": 3,
+    "tree_mask_len": 2122,
+    "seq_sum": 1055,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs3_T2922",
+    "production": true,
+    "function": "build_tree",
+    "bs": 3,
+    "tree_mask_len": 2922,
+    "seq_sum": 1455,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs3_T3428",
+    "production": true,
+    "function": "build_tree",
+    "bs": 3,
+    "tree_mask_len": 3428,
+    "seq_sum": 1708,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs3_T3570",
+    "production": true,
+    "function": "build_tree",
+    "bs": 3,
+    "tree_mask_len": 3570,
+    "seq_sum": 1779,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs3_T3582",
+    "production": true,
+    "function": "build_tree",
+    "bs": 3,
+    "tree_mask_len": 3582,
+    "seq_sum": 1785,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs3_T3802",
+    "production": true,
+    "function": "build_tree",
+    "bs": 3,
+    "tree_mask_len": 3802,
+    "seq_sum": 1895,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs3_T3814",
+    "production": true,
+    "function": "build_tree",
+    "bs": 3,
+    "tree_mask_len": 3814,
+    "seq_sum": 1901,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs3_T3826",
+    "production": true,
+    "function": "build_tree",
+    "bs": 3,
+    "tree_mask_len": 3826,
+    "seq_sum": 1907,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs3_T4088",
+    "production": true,
+    "function": "build_tree",
+    "bs": 3,
+    "tree_mask_len": 4088,
+    "seq_sum": 2038,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs3_T4478",
+    "production": true,
+    "function": "build_tree",
+    "bs": 3,
+    "tree_mask_len": 4478,
+    "seq_sum": 2233,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs3_T4490",
+    "production": true,
+    "function": "build_tree",
+    "bs": 3,
+    "tree_mask_len": 4490,
+    "seq_sum": 2239,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs3_T4678",
+    "production": true,
+    "function": "build_tree",
+    "bs": 3,
+    "tree_mask_len": 4678,
+    "seq_sum": 2333,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs3_T5354",
+    "production": true,
+    "function": "build_tree",
+    "bs": 3,
+    "tree_mask_len": 5354,
+    "seq_sum": 2671,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs3_T5366",
+    "production": true,
+    "function": "build_tree",
+    "bs": 3,
+    "tree_mask_len": 5366,
+    "seq_sum": 2677,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs3_T5378",
+    "production": true,
+    "function": "build_tree",
+    "bs": 3,
+    "tree_mask_len": 5378,
+    "seq_sum": 2683,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs3_T6796",
+    "production": true,
+    "function": "build_tree",
+    "bs": 3,
+    "tree_mask_len": 6796,
+    "seq_sum": 3392,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T906",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 906,
+    "seq_sum": 445,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T916",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 916,
+    "seq_sum": 450,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T928",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 928,
+    "seq_sum": 456,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T942",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 942,
+    "seq_sum": 463,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T954",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 954,
+    "seq_sum": 469,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T1026",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 1026,
+    "seq_sum": 505,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T1038",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 1038,
+    "seq_sum": 511,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T1050",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 1050,
+    "seq_sum": 517,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T1062",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 1062,
+    "seq_sum": 523,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T1076",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 1076,
+    "seq_sum": 530,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T1306",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 1306,
+    "seq_sum": 645,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T1318",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 1318,
+    "seq_sum": 651,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T1332",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 1332,
+    "seq_sum": 658,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T1346",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 1346,
+    "seq_sum": 665,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T1358",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 1358,
+    "seq_sum": 671,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T1624",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 1624,
+    "seq_sum": 804,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T1738",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 1738,
+    "seq_sum": 861,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T1752",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 1752,
+    "seq_sum": 868,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T1762",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 1762,
+    "seq_sum": 873,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T1764",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 1764,
+    "seq_sum": 874,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T1774",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 1774,
+    "seq_sum": 879,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T1778",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 1778,
+    "seq_sum": 881,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T1788",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 1788,
+    "seq_sum": 886,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T1794",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 1794,
+    "seq_sum": 889,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T1802",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 1802,
+    "seq_sum": 893,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T1816",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 1816,
+    "seq_sum": 900,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T2206",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 2206,
+    "seq_sum": 1095,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T2218",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 2218,
+    "seq_sum": 1101,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T2230",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 2230,
+    "seq_sum": 1107,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T2246",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 2246,
+    "seq_sum": 1115,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T2260",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 2260,
+    "seq_sum": 1122,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T2350",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 2350,
+    "seq_sum": 1167,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T2448",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 2448,
+    "seq_sum": 1216,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T2490",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 2490,
+    "seq_sum": 1237,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T2812",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 2812,
+    "seq_sum": 1398,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T3464",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 3464,
+    "seq_sum": 1724,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T3478",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 3478,
+    "seq_sum": 1731,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T3480",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 3480,
+    "seq_sum": 1732,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T3852",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 3852,
+    "seq_sum": 1918,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T3888",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 3888,
+    "seq_sum": 1936,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T4364",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 4364,
+    "seq_sum": 2174,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T4378",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 4378,
+    "seq_sum": 2181,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T4414",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 4414,
+    "seq_sum": 2199,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T4426",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 4426,
+    "seq_sum": 2205,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T4442",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 4442,
+    "seq_sum": 2213,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T4510",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 4510,
+    "seq_sum": 2247,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T4684",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 4684,
+    "seq_sum": 2334,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T4696",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 4696,
+    "seq_sum": 2340,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T4708",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 4708,
+    "seq_sum": 2346,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T4722",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 4722,
+    "seq_sum": 2353,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T4734",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 4734,
+    "seq_sum": 2359,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T5856",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 5856,
+    "seq_sum": 2920,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T5898",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 5898,
+    "seq_sum": 2941,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T6176",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 6176,
+    "seq_sum": 3080,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T6190",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 6190,
+    "seq_sum": 3087,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T6206",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 6206,
+    "seq_sum": 3095,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T6222",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 6222,
+    "seq_sum": 3103,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs4_T6238",
+    "production": true,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 6238,
+    "seq_sum": 3111,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs5_T3122",
+    "production": true,
+    "function": "build_tree",
+    "bs": 5,
+    "tree_mask_len": 3122,
+    "seq_sum": 1551,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs5_T5528",
+    "production": true,
+    "function": "build_tree",
+    "bs": 5,
+    "tree_mask_len": 5528,
+    "seq_sum": 2754,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs5_T6006",
+    "production": true,
+    "function": "build_tree",
+    "bs": 5,
+    "tree_mask_len": 6006,
+    "seq_sum": 2993,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs6_T5046",
+    "production": true,
+    "function": "build_tree",
+    "bs": 6,
+    "tree_mask_len": 5046,
+    "seq_sum": 2511,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs6_T5476",
+    "production": true,
+    "function": "build_tree",
+    "bs": 6,
+    "tree_mask_len": 5476,
+    "seq_sum": 2726,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs6_T6216",
+    "production": true,
+    "function": "build_tree",
+    "bs": 6,
+    "tree_mask_len": 6216,
+    "seq_sum": 3096,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs6_T6908",
+    "production": true,
+    "function": "build_tree",
+    "bs": 6,
+    "tree_mask_len": 6908,
+    "seq_sum": 3442,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs7_T5754",
+    "production": true,
+    "function": "build_tree",
+    "bs": 7,
+    "tree_mask_len": 5754,
+    "seq_sum": 2863,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs7_T5900",
+    "production": true,
+    "function": "build_tree",
+    "bs": 7,
+    "tree_mask_len": 5900,
+    "seq_sum": 2936,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs7_T6024",
+    "production": true,
+    "function": "build_tree",
+    "bs": 7,
+    "tree_mask_len": 6024,
+    "seq_sum": 2998,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs7_T6272",
+    "production": true,
+    "function": "build_tree",
+    "bs": 7,
+    "tree_mask_len": 6272,
+    "seq_sum": 3122,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs7_T8136",
+    "production": true,
+    "function": "build_tree",
+    "bs": 7,
+    "tree_mask_len": 8136,
+    "seq_sum": 4054,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs8_T7542",
+    "production": true,
+    "function": "build_tree",
+    "bs": 8,
+    "tree_mask_len": 7542,
+    "seq_sum": 3755,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs8_T9138",
+    "production": true,
+    "function": "build_tree",
+    "bs": 8,
+    "tree_mask_len": 9138,
+    "seq_sum": 4553,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs9_T7494",
+    "production": true,
+    "function": "build_tree",
+    "bs": 9,
+    "tree_mask_len": 7494,
+    "seq_sum": 3729,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs9_T7918",
+    "production": true,
+    "function": "build_tree",
+    "bs": 9,
+    "tree_mask_len": 7918,
+    "seq_sum": 3941,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs9_T8112",
+    "production": true,
+    "function": "build_tree",
+    "bs": 9,
+    "tree_mask_len": 8112,
+    "seq_sum": 4038,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs9_T8148",
+    "production": true,
+    "function": "build_tree",
+    "bs": 9,
+    "tree_mask_len": 8148,
+    "seq_sum": 4056,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs9_T9842",
+    "production": true,
+    "function": "build_tree",
+    "bs": 9,
+    "tree_mask_len": 9842,
+    "seq_sum": 4903,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs9_T9874",
+    "production": true,
+    "function": "build_tree",
+    "bs": 9,
+    "tree_mask_len": 9874,
+    "seq_sum": 4919,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs9_T9900",
+    "production": true,
+    "function": "build_tree",
+    "bs": 9,
+    "tree_mask_len": 9900,
+    "seq_sum": 4932,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs9_T9932",
+    "production": true,
+    "function": "build_tree",
+    "bs": 9,
+    "tree_mask_len": 9932,
+    "seq_sum": 4948,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs9_T9966",
+    "production": true,
+    "function": "build_tree",
+    "bs": 9,
+    "tree_mask_len": 9966,
+    "seq_sum": 4965,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs10_T2790",
+    "production": true,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 2790,
+    "seq_sum": 1375,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs10_T2824",
+    "production": true,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 2824,
+    "seq_sum": 1392,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs10_T2860",
+    "production": true,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 2860,
+    "seq_sum": 1410,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs10_T2892",
+    "production": true,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 2892,
+    "seq_sum": 1426,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs10_T2930",
+    "production": true,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 2930,
+    "seq_sum": 1445,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs10_T3768",
+    "production": true,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 3768,
+    "seq_sum": 1864,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs10_T3800",
+    "production": true,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 3800,
+    "seq_sum": 1880,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs10_T3832",
+    "production": true,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 3832,
+    "seq_sum": 1896,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs10_T3868",
+    "production": true,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 3868,
+    "seq_sum": 1914,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs10_T3902",
+    "production": true,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 3902,
+    "seq_sum": 1931,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs10_T4858",
+    "production": true,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 4858,
+    "seq_sum": 2409,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs10_T4890",
+    "production": true,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 4890,
+    "seq_sum": 2425,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs10_T4928",
+    "production": true,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 4928,
+    "seq_sum": 2444,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs10_T4968",
+    "production": true,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 4968,
+    "seq_sum": 2464,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 2
+  },
+  {
+    "id": "glm52_bs10_T4992",
+    "production": true,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 4992,
+    "seq_sum": 2476,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs10_T5004",
+    "production": true,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 5004,
+    "seq_sum": 2482,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs10_T5030",
+    "production": true,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 5030,
+    "seq_sum": 2495,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs10_T5064",
+    "production": true,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 5064,
+    "seq_sum": 2512,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs10_T5100",
+    "production": true,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 5100,
+    "seq_sum": 2530,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs10_T5316",
+    "production": true,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 5316,
+    "seq_sum": 2638,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs10_T5348",
+    "production": true,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 5348,
+    "seq_sum": 2654,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs10_T5382",
+    "production": true,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 5382,
+    "seq_sum": 2671,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs10_T5416",
+    "production": true,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 5416,
+    "seq_sum": 2688,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs10_T5452",
+    "production": true,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 5452,
+    "seq_sum": 2706,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs10_T8856",
+    "production": true,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 8856,
+    "seq_sum": 4408,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs10_T8862",
+    "production": true,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 8862,
+    "seq_sum": 4411,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs10_T8896",
+    "production": true,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 8896,
+    "seq_sum": 4428,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs10_T9252",
+    "production": true,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 9252,
+    "seq_sum": 4606,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs10_T9282",
+    "production": true,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 9282,
+    "seq_sum": 4621,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs10_T9294",
+    "production": true,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 9294,
+    "seq_sum": 4627,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs10_T9314",
+    "production": true,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 9314,
+    "seq_sum": 4637,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs10_T9348",
+    "production": true,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 9348,
+    "seq_sum": 4654,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs10_T9386",
+    "production": true,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 9386,
+    "seq_sum": 4673,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs10_T9656",
+    "production": true,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 9656,
+    "seq_sum": 4808,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs10_T10160",
+    "production": true,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 10160,
+    "seq_sum": 5060,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs10_T10198",
+    "production": true,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 10198,
+    "seq_sum": 5079,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs10_T10342",
+    "production": true,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 10342,
+    "seq_sum": 5151,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs10_T10376",
+    "production": true,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 10376,
+    "seq_sum": 5168,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs10_T10414",
+    "production": true,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 10414,
+    "seq_sum": 5187,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs10_T10454",
+    "production": true,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 10454,
+    "seq_sum": 5207,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 2
+  },
+  {
+    "id": "glm52_bs10_T10490",
+    "production": true,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 10490,
+    "seq_sum": 5225,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs10_T11140",
+    "production": true,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 11140,
+    "seq_sum": 5550,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "glm52_bs10_T11626",
+    "production": true,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 11626,
+    "seq_sum": 5793,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "captured_calls": 1
+  },
+  {
+    "id": "edge_bs1_seq0",
+    "production": false,
+    "function": "build_tree",
+    "bs": 1,
+    "tree_mask_len": 4,
+    "seq_sum": 0,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0
+  },
+  {
+    "id": "edge_bs10_seq0",
+    "production": false,
+    "function": "build_tree",
+    "bs": 10,
+    "tree_mask_len": 40,
+    "seq_sum": 0,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0
+  },
+  {
+    "id": "fallback_qlen_only_bs4",
+    "production": false,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 16,
+    "seq_sum": 0,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 1
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "fallback_expected": true
+  },
+  {
+    "id": "fallback_noncontig_vsl_bs4",
+    "production": false,
+    "function": "build_tree",
+    "bs": 4,
+    "tree_mask_len": 64,
+    "seq_sum": 24,
+    "dtypes": {
+      "int": "int64",
+      "tree_mask": "bool"
+    },
+    "strides": "contiguous (row-major; all captured variants is_contiguous=True)",
+    "contiguous": true,
+    "scalars": {
+      "topk": 1,
+      "depth": 1,
+      "draft_token_num": 2,
+      "tree_mask_mode": 0
+    },
+    "atol": 0.0,
+    "rtol": 0.0,
+    "seed": 0,
+    "noncontiguous": "verified_seq_len",
+    "fallback_expected": true
+  }
+]
