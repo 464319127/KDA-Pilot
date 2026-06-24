@@ -68,13 +68,14 @@ Per token row:
 2. Iterative arg-max selects `topk_routed = topk - num_fused_shared_experts` routed
    experts from `biased`: pick the max, record it, set that slot to `-FLT_MAX`, repeat.
    Selected experts are emitted in **descending biased-score order** (selection order).
-   - **Tie-break = smaller expert index wins.** The large-token kernel
-     (`num_rows > 512`) makes this explicit in the warp reduction
-     (`other_val == max_val && other_expert < max_expert`). The small-token kernel
-     (`num_rows <= 512`, 1 token/block) achieves the same smallest-index outcome
-     structurally via strict `>` comparisons over increasing expert ids. (For random
-     float32 sigmoid+bias scores, exact ties are practically never hit; the adversarial
-     tie rows in the correctness grid pin this down.)
+   - **Tie-break = smaller expert index wins (large-token path, source-guaranteed).**
+     The large-token kernel (`num_rows > 512`, used for prefill M=1074..7432) makes this
+     explicit in the warp reduction (`other_val == max_val && other_expert < max_expert`).
+   - **Small-token path (`num_rows <= 512`, used for decode M=1..79): tie-break is NOT
+     source-guaranteed** — see the "Independent semantics cross-check" section below. For
+     random float32 sigmoid+bias scores exact ties are practically never hit, so this only
+     matters for the constructed adversarial-tie rows, which are validated empirically on
+     GPU (baseline-vs-oracle) rather than assumed.
 3. `routed_sum = sum of the topk_routed selected un-biased scores`.
 4. Output slot `j` for `j in [0, topk)`:
    - `is_shared = j >= topk_routed` (the last `num_fused_shared_experts` slots).
@@ -138,3 +139,39 @@ baseline/reference/moe_fused_gate.py          (upstream Python wrapper, referenc
 The build exposes the baseline through the workspace-owned local ABI (`bench/_jit_build.py`,
 TVM-FFI `load_inline`) pointing at `baseline/csrc/moe/moe_fused_gate.cuh` with
 `baseline/include` on the include path — never importing a live SGLang install.
+
+## Independent semantics cross-check (Codex, gpt-5.5:high)
+
+The recovered semantics above were independently cross-checked against the source
+(`VERDICT: CONFIRMED-WITH-CORRECTIONS`). Confirmed: no grouping params (flat top-k);
+bias-correction (select on `biased`, weight on un-biased `score`); shared index = 128;
+dispatch threshold `num_rows <= 512`; `routed_sum == 0` → `norm = 1.0` (shared weight 0).
+Two corrections affect the correctness oracle and must be honored:
+
+1. **Small-token kernel uninitialized-read hazard (decode path, `num_experts == 128`).**
+   `warps_per_token = div_ceil(128, 32) = 4`, but `dispatch_small_token_kernel` instantiates
+   the `<8>` template, so `moe_fused_gate_kernel_small_token` declares `warp_maxs[8]` /
+   `warp_experts[8]` while only warps 0..3 write entries 0..3. Warp 0's final cross-warp
+   reduction then reads the **unwritten** `warp_maxs[4..7]` / `warp_experts[4..7]`
+   (`moe_fused_gate.cuh:118-126`). Consequence: the small/decode path's selection — and
+   therefore its smallest-index tie-break and descending order — is **not source-guaranteed**
+   deterministic for this shape. For random float32 inputs exact ties are measure-zero and
+   the hazard is expected to be benign in practice, but this is a property to **verify
+   empirically on GPU** (baseline-vs-independent-oracle over many seeds), not to assume.
+   Tracked as a queued correctness risk; resolved at the correctness-validation step.
+   The candidate kernel will implement the well-defined intended semantics (clean top-k,
+   smaller-index tie-break, no uninitialized reads).
+
+2. **Shared-slot weight is not bit-exactly 1.0 for subnormal `routed_sum`.** The closed form
+   `(routed_sum / 2.0) / routed_sum * 2.0` equals `1.0` for normal positive finite
+   `routed_sum`, but a positive *subnormal* `routed_sum` can underflow in `routed_sum / 2.0`.
+   The oracle must compute the actual float32 operation order
+   `(routed_sum / f32(2.0)) / norm * f32(2.0)` (with `norm = routed_sum if routed_sum > 0
+   else 1.0`) rather than hardcoding `1.0`. Routed-slot weights likewise follow
+   `score / norm * scale`.
+
+Other oracle edges noted: `+inf`→sigmoid 1, `-inf`→0, `NaN`→NaN propagates through
+`routed_sum`; small kernel reads `shared_original_scores[expert_id]` before the
+`expert_id >= 0` guard (OOB risk on degenerate selection); `M=0` reaches the launch path
+with a zero-block grid (no-op); only `topk > num_fused_shared_experts` is range-checked
+(our `topk = 5 <= kMaxTopK = 16`, fine).
