@@ -101,6 +101,37 @@ def call_candidate(workload: dict[str, Any], inputs: dict, outputs: tuple) -> No
     _invoke(candidate_module() if _CANDIDATE_AVAILABLE else baseline_module(), inputs, outputs)
 
 
+def _prime_context() -> None:
+    """Prime the CUDA context once before any timed region.
+
+    The recovered baseline's decode (small-token) kernel reads uninitialized shared memory
+    for num_experts=128 and faults on a COLD context (see docs/baseline_source.md). A safe
+    large-path launch first primes the shared-memory region so the first *timed* decode call
+    is warm — mirroring warmed serving. This runs at import (outside benchmark.py's timed
+    region) and is symmetric: it builds + warms both modules the harness will call.
+    """
+    try:
+        dev = torch.device("cuda")
+        x = torch.randn((1024, 128), dtype=torch.float32, device=dev)
+        b = torch.randn((128,), dtype=torch.float32, device=dev)
+        o = torch.empty((1024, 5), dtype=torch.float32, device=dev)
+        i = torch.empty((1024, 5), dtype=torch.int32, device=dev)
+        xs = torch.randn((64, 128), dtype=torch.float32, device=dev)
+        os_ = torch.empty((64, 5), dtype=torch.float32, device=dev)
+        is_ = torch.empty((64, 5), dtype=torch.int32, device=dev)
+        mods = [baseline_module()] + ([candidate_module()] if _CANDIDATE_AVAILABLE else [])
+        for m in mods:
+            m.moe_fused_gate(x, b, o, i, 5, 0, 1, True, 2.0, True)   # large path (cold-safe)
+            m.moe_fused_gate(xs, b, os_, is_, 5, 0, 1, True, 2.0, True)  # small path (now warm)
+        torch.cuda.synchronize()
+    except Exception:  # noqa: BLE001 — priming is best-effort; never block the harness import
+        pass
+
+
+if torch.cuda.is_available():
+    _prime_context()
+
+
 def compare_outputs(
     workload: dict[str, Any],
     baseline_outputs: tuple,

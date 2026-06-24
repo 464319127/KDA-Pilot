@@ -148,19 +148,25 @@ bias-correction (select on `biased`, weight on un-biased `score`); shared index 
 dispatch threshold `num_rows <= 512`; `routed_sum == 0` → `norm = 1.0` (shared weight 0).
 Two corrections affect the correctness oracle and must be honored:
 
-1. **Small-token kernel uninitialized-read hazard (decode path, `num_experts == 128`).**
-   `warps_per_token = div_ceil(128, 32) = 4`, but `dispatch_small_token_kernel` instantiates
-   the `<8>` template, so `moe_fused_gate_kernel_small_token` declares `warp_maxs[8]` /
-   `warp_experts[8]` while only warps 0..3 write entries 0..3. Warp 0's final cross-warp
-   reduction then reads the **unwritten** `warp_maxs[4..7]` / `warp_experts[4..7]`
-   (`moe_fused_gate.cuh:118-126`). Consequence: the small/decode path's selection — and
-   therefore its smallest-index tie-break and descending order — is **not source-guaranteed**
-   deterministic for this shape. For random float32 inputs exact ties are measure-zero and
-   the hazard is expected to be benign in practice, but this is a property to **verify
-   empirically on GPU** (baseline-vs-independent-oracle over many seeds), not to assume.
-   Tracked as a queued correctness risk; resolved at the correctness-validation step.
-   The candidate kernel will implement the well-defined intended semantics (clean top-k,
-   smaller-index tie-break, no uninitialized reads).
+1. **Small-token kernel uninitialized-read bug (decode path, `num_experts == 128`) —
+   CONFIRMED on GPU.** `warps_per_token = div_ceil(128, 32) = 4`, but
+   `dispatch_small_token_kernel` instantiates the `<8>` template, so
+   `moe_fused_gate_kernel_small_token` declares `warp_maxs[8]` / `warp_experts[8]` while only
+   warps 0..3 write entries 0..3. Warp 0's final cross-warp reduction then reads the
+   **unwritten** `warp_maxs[4..7]` / `warp_experts[4..7]` (`moe_fused_gate.cuh:118-126`); a
+   garbage `warp_experts[4..7]` index propagates to `shared_scores[selected] = -FLT_MAX`
+   (`moe_fused_gate.cuh:140-142`) as an out-of-bounds shared-memory write.
+   **Observed on B200 (GPU 4):** when the decode small-token kernel is the FIRST launch on a
+   cold CUDA context, it raises `CUDA error: an illegal memory access was encountered`. When
+   the context is warmed first by a large-path launch (priming the shared-memory region with
+   benign values), the decode kernel runs and its output **matches the independent oracle
+   exactly** (idx + weights, M=1/32/79/512). So the bug is latent UB: correct in warmed
+   steady state (as in live serving), faulting on a cold context.
+   Implications: (a) correctness and benchmark harnesses **warm up with a large-path launch
+   before exercising the decode path**, and document it; (b) the independent oracle is the
+   ground-truth reference — the candidate must match the oracle exactly and be **cold-safe**
+   (no uninitialized reads); (c) a correct, cold-safe candidate is itself a correctness/safety
+   improvement over the recovered baseline on the dominant decode regime.
 
 2. **Shared-slot weight is not bit-exactly 1.0 for subnormal `routed_sum`.** The closed form
    `(routed_sum / 2.0) / routed_sum * 2.0` equals `1.0` for normal positive finite

@@ -175,6 +175,17 @@ def main() -> int:
     cand = candidate_module() if has_candidate() else None
     print(f"candidate present: {cand is not None}")
 
+    # Warmup: the recovered baseline's small-token (decode) kernel reads uninitialized
+    # warp_maxs[4..7] for num_experts=128 and faults on a COLD context (see
+    # docs/baseline_source.md). Prime with a safe large-path launch first so the warmed
+    # baseline can be validated against the oracle, mirroring warmed serving. The candidate
+    # is additionally checked for cold-safety below.
+    _wu = torch.randn((1024, NUM_EXPERTS), dtype=torch.float32, device=dev)
+    _wb = torch.randn((NUM_EXPERTS,), dtype=torch.float32, device=dev)
+    _run_module(base, _wu, _wb)
+    if cand is not None:
+        _run_module(cand, _wu, _wb)
+
     # 1) Baseline vs independent oracle + candidate vs baseline on production/boundary shapes.
     for regime, ms, seeds in (("decode", DECODE_M, (0, 1)),
                               ("prefill", PREFILL_M, (0, 1)),
