@@ -123,3 +123,23 @@ CUDA_VISIBLE_DEVICES=3 ncu --metrics dram__bytes_read...,sm__throughput...,sm__p
 - **Verdict**: small-M = evidence-backed no-go; route gated off
   (`kSmallMSwapAbEnabled=false`), falls back to baseline (no regression). M=1
   promotion unchanged. Full small-M table + bound in `docs/results.md`.
+
+## Round 3 — real bias candidate-fallback route + final provenance
+
+GPU 3 idle; correctness on GPU 3+4. Final source hashes at HEAD:
+- `solution/fp8_scaled_mm_candidate.cu`: `507dcce3532d30f35fabc08d4ecdb220f3ffd9f03fcc9939d5be1d9d3a3a99ee`
+- `baseline/fp8_scaled_mm_baseline.cu`: `69979be8ec322ab2580ef1d356a61b75f749fb13af9f5ca27c5d39546c96a5bf`
+- `solution/fp8_swapab_smallm.cu`: `d19e004ed0e4c579049b48b4b9d2575ab8c7d0e6324a6ef08b2f0172fbbb7c19`
+- `bench/correctness.py`: `8338da181d4c6ac6d6c2e64c5c614b5cd8a8d6e6418693735cdd7b7dd10ca76b`
+- `bench/benchmark.py` == template `2e1712e567b50ba19340f62314f13e122fc3b547775bd06ed6c4d284d144ee13`
+
+Final correctness command + result:
+```
+CUDA_VISIBLE_DEVICES=3,4 python bench/correctness.py
+=> 299 passed, 0 failed (286 production + 4 edge + 9 negative/edge)
+```
+The bias edge now runs through the candidate fallback route: `route_bias=0`,
+`baseline_bias` and `candidate_bias` both match the fp32 oracle (`out=(A@B)·
+scale_a·scale_b+bias`), `candidate==baseline`. Benchmark numbers (M=1 promotion,
+small-M no-go, fallback overhead) are unchanged from Rounds 1–2 (the candidate's
+fast-path code is unchanged; only the test-only bias entry was added).

@@ -16,9 +16,13 @@ All evidence is from `ion-b200` GPU id 3 (B200 sm_100, CUDA 13.0, torch
 (`docs/run_log.md`). Timing: the unmodified `standalone_llm_benchmark_template.py`
 (template sha256 `2e1712e5…`, byte-identical), CUDA events, inner-loop
 amplification, isolated subprocess, interleaved A/B, 7 trials (25 for the
-fallback-overhead run). Correctness: **296 passed / 0 failed** (286 production +
-4 edge + 6 malformed-input negatives) vs an fp32-dequant oracle AND the baseline.
-Candidate source sha256 `1580070d…`; baseline ABI wrapper `07d0403b…`.
+fallback-overhead run). Correctness: **299 passed / 0 failed** (286 production +
+4 edge rows + 9 negative/edge tests: e5m2/uint8 A, e5m2 B, malformed scale
+`[M,2]`/`[N,2]`, fp16-out, CPU-input, mixed-device, and the bias edge) vs an
+fp32-dequant oracle AND the baseline. Source sha256 (HEAD):
+candidate `507dcce3…`, baseline ABI wrapper `69979be8…`, swap-AB `d19e004e…`,
+`bench/correctness.py` `8338da18…`; benchmark.py byte-identical to the template
+(`2e1712e5…`).
 
 ## Final full-grid benchmark (all 286 production shapes, idle GPU 3)
 
@@ -139,14 +143,22 @@ verdict.
 Named active bounds: baseline M=1 = tensor-core under-utilization; candidate M=1 =
 global-load latency.
 
-## Contract scope (bias)
+## Contract scope (bias) — `bias!=None` → candidate fallback to baseline (AC-3.1)
 
-All 2,720 captured variants are `bias=None` and `out_dtype=bf16`. The recovered
-local ABI implements that captured contract (no bias channel); `bias!=None` is
-outside the benchmarked interface and is therefore not a routable/edge case (it
-was removed as a metadata-only row). The hardened predicate + ABI dtype guard
-reject any non-fp8_e4m3fn input, malformed scale rank, or mixed-device tensor
-(proven by `bench/correctness.py` negative-route tests).
+All 2,720 captured variants are `bias=None` and `out_dtype=bf16`, so the
+production candidate ABI is 5-arg (no bias). The required AC-3.1 `bias!=None`
+edge is exercised through a **test-only bias-capable candidate fallback route**:
+`fp8_scaled_mm_candidate_bias(a,b,scale_a,scale_b,bias,out)` + its route
+`fp8_scaled_mm_candidate_bias_route(...)`. `bench/correctness.py:bias_edge_test`
+uses an otherwise-covered M=1 winner (M=1,K=1024,N=8192) and verifies:
+`route_bias==0` (a biased call is routed away from the bias-unaware M=1 GEMV fast
+path), and `candidate_bias` produces the correct biased result
+(`out=(A@B)·scale_a·scale_b+bias`) — equal to both the recovered baseline
+(`baseline_bias`) and the fp32 oracle within bf16 tol. So a biased call falls back
+to the baseline and is correct. The hardened predicate + ABI guard additionally
+reject any non-fp8_e4m3fn input, malformed scale rank, or non-CUDA/mixed-device
+tensor before any view (proven by `bench/correctness.py` negative-route tests
+incl. CPU-input and e5m2-B).
 
 ## Status of the plan's directions
 
