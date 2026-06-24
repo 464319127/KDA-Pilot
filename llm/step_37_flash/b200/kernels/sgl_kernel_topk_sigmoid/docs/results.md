@@ -21,9 +21,9 @@ atol/rtol 1e-5). Promotion is judged at the strict op ABI (DEC-1).
   is bit-faithful to the baseline for every input the host-only route predicate admits (any fp32
   `[N,288]` bias), not only a "realistic" bias range (Round 1 fix; see Correctness).
 
-## Correctness (functional, GPU; 39/39 + 27/27 adversarial)
+## Correctness (functional, GPU; 40/40 + 27/27 adversarial)
 
-`bench/correctness.py` → **39/39 PASS**:
+`bench/correctness.py` → **40/40 PASS**:
 - All 24 production rows: candidate == recovered baseline EXACT on selected expert ids AND within fp32
   atol/rtol 1e-5 on weights; AND == independent fp32 torch oracle (sigmoid+bias selection, unbiased
   `gather`, renormalize) — matching upstream `test_topk_sigmoid_renormalize_correction_bias`.
@@ -45,7 +45,9 @@ atol/rtol 1e-5). Promotion is judged at the strict op ABI (DEC-1).
   does not self-check — output dtypes (`topk_weights` fp32 / `topk_indices` int32) and single-device.
   `fp16_output` (fp16 weights) routes to baseline and raises cleanly (no fp32-into-fp16 corruption), and
   `cross_device` (tensors on different GPUs, run with ≥2 visible) routes off the fast path and raises
-  cleanly (no mixed-device launch).
+  cleanly (no mixed-device launch). The fallback validates **device type** (`is_cuda`) for every tensor,
+  not just `device_id` (a CPU tensor reports `device_id==0`), so `cpu_tensor_fallback` (a CPU output
+  paired with CUDA inputs) routes to baseline and raises cleanly (no host-pointer-as-CUDA access).
 - 4 constructed tie rows (identical logits, block-tied bias, equal score / different sigmoid, forced
   sigmoid tie) match the baseline exactly (lower-index tie-break).
 - Output buffers poisoned (NaN/-17) each run; `gating_output` verified not mutated (read-only).

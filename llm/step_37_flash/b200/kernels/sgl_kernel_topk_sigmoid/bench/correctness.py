@@ -273,6 +273,35 @@ def cross_device_row(errs) -> bool:
     return ok
 
 
+def cpu_tensor_fallback_row(device, errs) -> bool:
+    """A CPU tensor paired with CUDA tensors must route to baseline (route==0) and be rejected cleanly.
+    A CPU tensor reports device_id==0, which can match a CUDA device_id, so the bridge must check
+    is_cuda (not just device_id) or it would re-wrap a host pointer as CUDA and read/write host memory."""
+    n = 16
+    gen = torch.Generator(device=device).manual_seed(909)
+    g = torch.randn((n, NUM_EXPERTS), dtype=torch.float32, device=device, generator=gen)
+    b = torch.randn((NUM_EXPERTS,), dtype=torch.float32, device=device, generator=gen)
+    w_cpu = torch.empty((n, TOPK), dtype=torch.float32, device="cpu")  # CPU output paired with CUDA inputs
+    idx = torch.empty((n, TOPK), dtype=torch.int32, device=device)
+    ok = True
+    if build_ext.route(w_cpu, idx, g, 1, b) != 0:
+        errs.append("[cpu_tensor] route != 0 (a CPU tensor must be off the fast path)"); ok = False
+
+    def raises_cleanly(fn) -> bool:
+        try:
+            fn()
+            torch.cuda.synchronize()
+            return False
+        except RuntimeError:
+            return True
+
+    if not raises_cleanly(lambda: build_ext.baseline(w_cpu, idx, g, 1, b)):
+        errs.append("[cpu_tensor] baseline did not reject a CPU tensor cleanly (host pointer as CUDA?)"); ok = False
+    if not raises_cleanly(lambda: build_ext.candidate(w_cpu, idx, g, 1, b)):
+        errs.append("[cpu_tensor] candidate did not reject a CPU tensor cleanly"); ok = False
+    return ok
+
+
 def tie_rows(device):
     """Constructed tie/edge rows; validated against the authoritative baseline (torch.topk
     tie-break is unstable, so the baseline — not the oracle — is the reference here)."""
@@ -347,6 +376,9 @@ def main() -> int:
         npass += 1
     ntotal += 1
     if cross_device_row(errs):
+        npass += 1
+    ntotal += 1
+    if cpu_tensor_fallback_row(device, errs):
         npass += 1
 
     print(f"correctness: {npass}/{ntotal} rows passed")

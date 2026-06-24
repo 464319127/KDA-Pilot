@@ -117,9 +117,10 @@ void topk_sigmoid_baseline(
   TORCH_CHECK(tse::is_f32(topk_weights.dtype()), "topk_sigmoid: topk_weights must be float32");
   TORCH_CHECK(tse::is_i32(topk_indices.dtype()), "topk_sigmoid: topk_indices must be int32");
   const int base_dev = tse::device_id(gating_output);
-  TORCH_CHECK(tse::is_cuda(gating_output) && tse::device_id(topk_weights) == base_dev &&
+  TORCH_CHECK(tse::is_cuda(gating_output) && tse::is_cuda(topk_weights) && tse::is_cuda(topk_indices) &&
+                  tse::is_cuda(correction_bias) && tse::device_id(topk_weights) == base_dev &&
                   tse::device_id(topk_indices) == base_dev && tse::device_id(correction_bias) == base_dev,
-              "topk_sigmoid: all tensors must be on the same CUDA device");
+              "topk_sigmoid: all tensors must be CUDA and on the same device");
   const at::cuda::OptionalCUDAGuard guard(at::Device(at::kCUDA, base_dev));
   // Strided views over the caller's storage. The vendored kernel assumes contiguous row-major, so
   // pass .contiguous() read-only inputs and scatter results back into any strided in-place output
@@ -148,9 +149,9 @@ void topk_sigmoid_baseline_nobias(
   TORCH_CHECK(tse::is_f32(topk_weights.dtype()), "topk_sigmoid: topk_weights must be float32");
   TORCH_CHECK(tse::is_i32(topk_indices.dtype()), "topk_sigmoid: topk_indices must be int32");
   const int base_dev = tse::device_id(gating_output);
-  TORCH_CHECK(tse::is_cuda(gating_output) && tse::device_id(topk_weights) == base_dev &&
-                  tse::device_id(topk_indices) == base_dev,
-              "topk_sigmoid: all tensors must be on the same CUDA device");
+  TORCH_CHECK(tse::is_cuda(gating_output) && tse::is_cuda(topk_weights) && tse::is_cuda(topk_indices) &&
+                  tse::device_id(topk_weights) == base_dev && tse::device_id(topk_indices) == base_dev,
+              "topk_sigmoid: all tensors must be CUDA and on the same device");
   const at::cuda::OptionalCUDAGuard guard(at::Device(at::kCUDA, base_dev));
   torch::Tensor w_view = as_torch(topk_weights);
   torch::Tensor idx_view = as_torch(topk_indices);
