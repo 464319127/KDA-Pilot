@@ -146,6 +146,38 @@ def nobias_row(device, errs) -> bool:
     return ok
 
 
+def fp16_bias_fallback_row(device, errs) -> bool:
+    """Fallback-safety: an fp16 correction_bias is off-domain (the fast path requires fp32 bias), so it
+    must route to the baseline (route==0). The local ABI bridge must preserve the real fp16 dtype so the
+    vendored baseline's `correction_bias must be float32` TORCH_CHECK fires cleanly on BOTH sides — not
+    re-tag the fp16 storage as fp32 and read past the allocation. Run last: a regression here raises
+    host-side before any launch, but guarding placement keeps a buggy build from affecting other rows."""
+    n = 16
+    gen = torch.Generator(device=device).manual_seed(8765)
+    g = torch.randn((n, NUM_EXPERTS), dtype=torch.float32, device=device, generator=gen)
+    bias16 = torch.randn((NUM_EXPERTS,), dtype=torch.float16, device=device, generator=gen)
+    w = torch.empty((n, TOPK), dtype=torch.float32, device=device)
+    idx = torch.empty((n, TOPK), dtype=torch.int32, device=device)
+    ok = True
+
+    if build_ext.route(w, idx, g, 1, bias16) != 0:
+        errs.append("[fp16_bias_fallback] route != 0 (fp16 bias must be off the fast path)"); ok = False
+
+    def raises_cleanly(fn) -> bool:
+        try:
+            fn()
+            torch.cuda.synchronize()
+            return False
+        except RuntimeError:
+            return True
+
+    if not raises_cleanly(lambda: build_ext.baseline(w, idx, g, 1, bias16)):
+        errs.append("[fp16_bias_fallback] baseline did not reject fp16 bias (expected dtype TORCH_CHECK)"); ok = False
+    if not raises_cleanly(lambda: build_ext.candidate(w, idx, g, 1, bias16)):
+        errs.append("[fp16_bias_fallback] candidate did not reject fp16 bias cleanly (possible OOB / wrong-element-size reinterpretation)"); ok = False
+    return ok
+
+
 def tie_rows(device):
     """Constructed tie/edge rows; validated against the authoritative baseline (torch.topk
     tie-break is unstable, so the baseline — not the oracle — is the reference here)."""
@@ -207,6 +239,11 @@ def main() -> int:
         torch.cuda.synchronize()
         if _check_pair(name, w_b, idx_b, w_c, idx_c, 1e-5, 1e-5, errs):
             npass += 1
+
+    # fp16-bias fallback safety (run last; see the function docstring)
+    ntotal += 1
+    if fp16_bias_fallback_row(device, errs):
+        npass += 1
 
     print(f"correctness: {npass}/{ntotal} rows passed")
     if errs:

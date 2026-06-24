@@ -33,22 +33,31 @@ void topk_sigmoid(
 
 namespace {
 
-// Zero-copy torch::Tensor view over a TensorView's storage (for calling the vendored baseline).
-torch::Tensor as_torch(const tvm::ffi::TensorView& t, at::ScalarType dtype) {
+// Map a DLPack dtype to the matching at::ScalarType, preserving the REAL element size. Unsupported
+// dtypes are rejected here (not silently re-tagged), so the bridge can never reinterpret storage with
+// the wrong element size; the vendored baseline then applies its own dtype TORCH_CHECKs (e.g.
+// correction_bias must be float32). gating_output legitimately spans fp32/fp16/bf16 (baseline-supported).
+at::ScalarType dl_to_scalar_type(DLDataType d) {
+  TORCH_CHECK(d.lanes == 1, "topk_sigmoid local ABI: vector dtypes (lanes>1) are unsupported");
+  if (d.code == kDLFloat && d.bits == 32) return at::kFloat;
+  if (d.code == kDLFloat && d.bits == 16) return at::kHalf;
+  if (d.code == kDLBfloat && d.bits == 16) return at::kBFloat16;
+  if (d.code == kDLInt && d.bits == 32) return at::kInt;
+  if (d.code == kDLInt && d.bits == 64) return at::kLong;
+  TORCH_CHECK(false, "topk_sigmoid local ABI: unsupported tensor dtype (DLPack code=",
+              static_cast<int>(d.code), " bits=", static_cast<int>(d.bits), ")");
+}
+
+// Zero-copy torch::Tensor view over a TensorView's storage, preserving its REAL dtype (so off-domain
+// fallback inputs are never reinterpreted with the wrong element size). For calling the vendored baseline.
+torch::Tensor as_torch(const tvm::ffi::TensorView& t) {
   std::vector<int64_t> sizes;
   sizes.reserve(t.ndim());
   for (int i = 0; i < t.ndim(); ++i) sizes.push_back(t.size(i));
-  auto opts = torch::TensorOptions().dtype(dtype).device(torch::kCUDA, tse::device_id(t));
+  auto opts =
+      torch::TensorOptions().dtype(dl_to_scalar_type(t.dtype())).device(torch::kCUDA, tse::device_id(t));
   void* ptr = static_cast<char*>(t.data_ptr()) + t.byte_offset();
   return torch::from_blob(ptr, sizes, opts);
-}
-
-// gating_output may be fp32/fp16/bf16 (the recovered baseline supports all three); map the
-// TensorView's actual dtype so the bytes are not reinterpreted.
-at::ScalarType gating_scalar_type(DLDataType gdt) {
-  if (gdt.code == kDLFloat && gdt.bits == 16) return at::kHalf;
-  if (gdt.code == kDLBfloat && gdt.bits == 16) return at::kBFloat16;
-  return at::kFloat;
 }
 
 // Empty kernel launched at the candidate's grid/block to bound launch overhead.
@@ -93,10 +102,10 @@ void topk_sigmoid_baseline(
     int64_t renormalize,
     tvm::ffi::TensorView correction_bias) {
   const at::cuda::OptionalCUDAGuard guard(at::Device(at::kCUDA, tse::device_id(gating_output)));
-  torch::Tensor w = as_torch(topk_weights, at::kFloat);
-  torch::Tensor idx = as_torch(topk_indices, at::kInt);
-  torch::Tensor gating = as_torch(gating_output, gating_scalar_type(gating_output.dtype()));
-  torch::Tensor bias = as_torch(correction_bias, at::kFloat);
+  torch::Tensor w = as_torch(topk_weights);
+  torch::Tensor idx = as_torch(topk_indices);
+  torch::Tensor gating = as_torch(gating_output);
+  torch::Tensor bias = as_torch(correction_bias);
   c10::optional<torch::Tensor> bias_opt(bias);
   topk_sigmoid(w, idx, gating, renormalize != 0, bias_opt);
 }
@@ -111,9 +120,9 @@ void topk_sigmoid_baseline_nobias(
     tvm::ffi::TensorView gating_output,
     int64_t renormalize) {
   const at::cuda::OptionalCUDAGuard guard(at::Device(at::kCUDA, tse::device_id(gating_output)));
-  torch::Tensor w = as_torch(topk_weights, at::kFloat);
-  torch::Tensor idx = as_torch(topk_indices, at::kInt);
-  torch::Tensor gating = as_torch(gating_output, gating_scalar_type(gating_output.dtype()));
+  torch::Tensor w = as_torch(topk_weights);
+  torch::Tensor idx = as_torch(topk_indices);
+  torch::Tensor gating = as_torch(gating_output);
   topk_sigmoid(w, idx, gating, renormalize != 0, c10::nullopt);
 }
 
