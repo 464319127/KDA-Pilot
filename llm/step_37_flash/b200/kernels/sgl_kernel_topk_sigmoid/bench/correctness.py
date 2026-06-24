@@ -214,6 +214,65 @@ def strided_output_row(device, errs) -> bool:
     return ok
 
 
+def fp16_output_fallback_row(device, errs) -> bool:
+    """Off-domain OUTPUT dtype: fp16 `topk_weights` must route to the baseline (route==0) and be
+    rejected cleanly — the baseline writes via data_ptr<float>(), so this must NOT write fp32 into a
+    half-sized fp16 allocation (memory corruption)."""
+    n = 16
+    gen = torch.Generator(device=device).manual_seed(555)
+    g = torch.randn((n, NUM_EXPERTS), dtype=torch.float32, device=device, generator=gen)
+    b = torch.randn((NUM_EXPERTS,), dtype=torch.float32, device=device, generator=gen)
+    w16 = torch.empty((n, TOPK), dtype=torch.float16, device=device)
+    idx = torch.empty((n, TOPK), dtype=torch.int32, device=device)
+    ok = True
+    if build_ext.route(w16, idx, g, 1, b) != 0:
+        errs.append("[fp16_output] route != 0 (fp16 topk_weights must be off the fast path)"); ok = False
+
+    def raises_cleanly(fn) -> bool:
+        try:
+            fn()
+            torch.cuda.synchronize()
+            return False
+        except RuntimeError:
+            return True
+
+    if not raises_cleanly(lambda: build_ext.baseline(w16, idx, g, 1, b)):
+        errs.append("[fp16_output] baseline did not reject fp16 topk_weights cleanly"); ok = False
+    if not raises_cleanly(lambda: build_ext.candidate(w16, idx, g, 1, b)):
+        errs.append("[fp16_output] candidate did not reject fp16 topk_weights cleanly (possible corruption)"); ok = False
+    return ok
+
+
+def cross_device_row(errs) -> bool:
+    """Tensors split across CUDA devices must route to the baseline (route==0) and be rejected cleanly,
+    not launched with mixed-device pointers (illegal access). Guarded: runs only when >=2 CUDA devices
+    are visible (run the suite with two GPUs visible to exercise it)."""
+    if torch.cuda.device_count() < 2:
+        print("  (cross_device row skipped: <2 visible CUDA devices)")
+        return True
+    d0, d1 = torch.device("cuda:0"), torch.device("cuda:1")
+    n = 16
+    g = torch.randn((n, NUM_EXPERTS), dtype=torch.float32, device=d0)
+    b = torch.randn((NUM_EXPERTS,), dtype=torch.float32, device=d0)
+    w = torch.empty((n, TOPK), dtype=torch.float32, device=d1)  # different device from the rest
+    idx = torch.empty((n, TOPK), dtype=torch.int32, device=d0)
+    ok = True
+    if build_ext.route(w, idx, g, 1, b) != 0:
+        errs.append("[cross_device] route != 0 (mixed-device tensors must be off the fast path)"); ok = False
+
+    def raises_cleanly(fn) -> bool:
+        try:
+            fn()
+            torch.cuda.synchronize()
+            return False
+        except RuntimeError:
+            return True
+
+    if not raises_cleanly(lambda: build_ext.candidate(w, idx, g, 1, b)):
+        errs.append("[cross_device] candidate did not reject mixed-device tensors cleanly"); ok = False
+    return ok
+
+
 def tie_rows(device):
     """Constructed tie/edge rows; validated against the authoritative baseline (torch.topk
     tie-break is unstable, so the baseline — not the oracle — is the reference here)."""
@@ -282,6 +341,12 @@ def main() -> int:
         npass += 1
     ntotal += 1
     if strided_output_row(device, errs):
+        npass += 1
+    ntotal += 1
+    if fp16_output_fallback_row(device, errs):
+        npass += 1
+    ntotal += 1
+    if cross_device_row(errs):
         npass += 1
 
     print(f"correctness: {npass}/{ntotal} rows passed")

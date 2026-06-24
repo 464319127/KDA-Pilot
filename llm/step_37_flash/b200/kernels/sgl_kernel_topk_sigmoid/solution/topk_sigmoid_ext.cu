@@ -92,8 +92,13 @@ inline bool candidate_eligible(
       tse::is_i32(topk_indices.dtype()) && tse::is_f32(correction_bias.dtype());
   const bool contig_ok = tse::is_contiguous(gating_output) && tse::is_contiguous(topk_weights) &&
       tse::is_contiguous(topk_indices) && tse::is_contiguous(correction_bias);
+  // All tensors must be CUDA AND on the SAME device — otherwise the single-device launch below would
+  // read/write pointers from other devices (illegal access / unsynchronized peer writes on multi-GPU).
+  const int dev = tse::device_id(gating_output);
   const bool device_ok = tse::is_cuda(gating_output) && tse::is_cuda(topk_weights) &&
-      tse::is_cuda(topk_indices) && tse::is_cuda(correction_bias);
+      tse::is_cuda(topk_indices) && tse::is_cuda(correction_bias) &&
+      tse::device_id(topk_weights) == dev && tse::device_id(topk_indices) == dev &&
+      tse::device_id(correction_bias) == dev;
   const bool scalars_ok = renormalize != 0;  // captured contract is renormalize=True
   return shapes_ok && dtypes_ok && contig_ok && device_ok && scalars_ok;
 }
@@ -106,7 +111,16 @@ void topk_sigmoid_baseline(
     tvm::ffi::TensorView gating_output,
     int64_t renormalize,
     tvm::ffi::TensorView correction_bias) {
-  const at::cuda::OptionalCUDAGuard guard(at::Device(at::kCUDA, tse::device_id(gating_output)));
+  // The vendored baseline supports only fp32 topk_weights / int32 topk_indices and a single device
+  // (it writes via data_ptr<float>()/<int>() and checks neither). Validate before any device op so
+  // unsupported output dtypes / cross-device inputs raise cleanly instead of corrupting memory.
+  TORCH_CHECK(tse::is_f32(topk_weights.dtype()), "topk_sigmoid: topk_weights must be float32");
+  TORCH_CHECK(tse::is_i32(topk_indices.dtype()), "topk_sigmoid: topk_indices must be int32");
+  const int base_dev = tse::device_id(gating_output);
+  TORCH_CHECK(tse::is_cuda(gating_output) && tse::device_id(topk_weights) == base_dev &&
+                  tse::device_id(topk_indices) == base_dev && tse::device_id(correction_bias) == base_dev,
+              "topk_sigmoid: all tensors must be on the same CUDA device");
+  const at::cuda::OptionalCUDAGuard guard(at::Device(at::kCUDA, base_dev));
   // Strided views over the caller's storage. The vendored kernel assumes contiguous row-major, so
   // pass .contiguous() read-only inputs and scatter results back into any strided in-place output
   // (`.contiguous()` is the same tensor — no copy — when the view is already contiguous).
@@ -131,7 +145,13 @@ void topk_sigmoid_baseline_nobias(
     tvm::ffi::TensorView topk_indices,
     tvm::ffi::TensorView gating_output,
     int64_t renormalize) {
-  const at::cuda::OptionalCUDAGuard guard(at::Device(at::kCUDA, tse::device_id(gating_output)));
+  TORCH_CHECK(tse::is_f32(topk_weights.dtype()), "topk_sigmoid: topk_weights must be float32");
+  TORCH_CHECK(tse::is_i32(topk_indices.dtype()), "topk_sigmoid: topk_indices must be int32");
+  const int base_dev = tse::device_id(gating_output);
+  TORCH_CHECK(tse::is_cuda(gating_output) && tse::device_id(topk_weights) == base_dev &&
+                  tse::device_id(topk_indices) == base_dev,
+              "topk_sigmoid: all tensors must be on the same CUDA device");
+  const at::cuda::OptionalCUDAGuard guard(at::Device(at::kCUDA, base_dev));
   torch::Tensor w_view = as_torch(topk_weights);
   torch::Tensor idx_view = as_torch(topk_indices);
   torch::Tensor gating = as_torch(gating_output).contiguous();
