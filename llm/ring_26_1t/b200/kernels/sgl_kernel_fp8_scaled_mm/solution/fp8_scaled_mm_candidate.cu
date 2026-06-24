@@ -107,6 +107,18 @@ inline bool same_cuda_dev(const tvm::ffi::TensorView& ref, const tvm::ffi::Tenso
   return t.device().device_type == kDLCUDA && t.device().device_type == ref.device().device_type &&
          t.device().device_id == ref.device().device_id;
 }
+// The GEMV issues 16-byte uint4 loads from A (cptr) and each B column
+// (Brow = B + n*K). With K%16==0 every column start is base + a 16-byte multiple,
+// so it suffices to require the EFFECTIVE BASE address (data_ptr + byte_offset,
+// exactly what cptr<T>() computes) to be 16-byte aligned. The K%16 / N%8 checks
+// only align RELATIVE offsets; a sliced/as_strided view with a non-16-byte
+// byte_offset would otherwise pass the layout checks and take the fast path,
+// doing a misaligned vector load. Such inputs fall back to the (scalar-safe)
+// baseline instead.
+inline bool is_16b_aligned(const tvm::ffi::TensorView& t) {
+  const void* p = static_cast<const char*>(t.data_ptr()) + t.byte_offset();
+  return (reinterpret_cast<uintptr_t>(p) & 15u) == 0;
+}
 
 // Coverage predicate (cheap; no launch, no sync): the M==1 GEMV fast path.
 // Strict: any input outside the exact covered contract returns false -> baseline
@@ -136,6 +148,7 @@ inline bool covers_m1_gemv(
   if (b.stride(0) != 1) return false;              // B column-major (Bphys [N,K])
   if (b.stride(1) != K) return false;              // exactly-packed Bphys: the GEMV addresses B + n*K, so the leading dim must be K (rejects padded/sliced column-major B)
   if (K % kVec != 0) return false;                 // vectorized 16-fp8 loads
+  if (!is_16b_aligned(a) || !is_16b_aligned(b)) return false;  // base addr 16-byte aligned for the uint4 loads (rejects sliced/as_strided views with a non-16-byte byte_offset)
   if (!(out.size(0) == M && out.size(1) == N && out.stride(1) == 1)) return false;  // out row-major [M,N]
   if ((N * 2) % 16 != 0) return false;             // bf16 out row must be 16-byte aligned (N%8==0), matching the baseline contract
   if (!is_contig_2d(scales_a, M, 1)) return false; // scale_a [M,1] contiguous
@@ -177,6 +190,7 @@ inline bool covers_smallm_swapab(
   if (b.stride(0) != 1) return false;              // B column-major
   if (b.stride(1) != K) return false;              // exactly-packed Bphys (swap-AB uses a packed [N,K] stride)
   if (K % kVec != 0) return false;                 // 16-fp8 alignment along K
+  if (!is_16b_aligned(a) || !is_16b_aligned(b)) return false;  // base addr 16-byte aligned (CUTLASS TMA requires aligned operands; matches the GEMV contract)
   if (!(out.size(0) == M && out.size(1) == N && out.stride(1) == 1)) return false;
   if ((N * 2) % 16 != 0) return false;             // bf16 out row must be 16-byte aligned (N%8==0)
   if (!is_contig_2d(scales_a, M, 1)) return false;

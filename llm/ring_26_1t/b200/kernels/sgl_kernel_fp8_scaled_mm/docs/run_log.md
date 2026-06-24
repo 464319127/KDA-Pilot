@@ -194,3 +194,23 @@ baseline-rejected). Updated hashes: candidate
 `18f28aff1ec165333d9a4da03c4629d1cd0bf139d49caf728aff29e7588b906b`,
 `bench/correctness.py` `0cc75d647875c10dfe67157e73e804266f2d9afcb75b661974229f23a725997e`
 (swap-AB unchanged).
+
+## Round 7 — fast-path base-pointer alignment (edge-contract fix)
+
+One code-review [P2] fix (no verdict/benchmark change; no production impact):
+- The M=1 GEMV issues 16-byte `uint4` loads from A and each B column. The
+  predicate's `K%16==0` / `(N*2)%16==0` checks only align RELATIVE offsets, so a
+  sliced/`as_strided` view with a non-16-byte `byte_offset` (but valid
+  `stride(1)==1`, `b.stride(0)==1`, `b.stride(1)==K`) could take the fast path and
+  do a misaligned vector load. `covers_m1_gemv` + `covers_smallm_swapab` now require
+  the effective base address (`data_ptr()+byte_offset()`) of A and B to be 16-byte
+  aligned (`is_16b_aligned`), else fall back to the (scalar-safe) baseline.
+
+Verified on ion-b200 GPU 3+4 (idle before+after, 0% util / 0 MB): correctness
+**304/304** (290 workload rows + 14 negatives). New tests `neg_unaligned_ptr_A` and
+`neg_unaligned_ptr_B` build deliberately misaligned A/B views (self-asserted
+`data_ptr()%16!=0`) and confirm `route()==0` — checked via the launch-free route
+diagnostic, so the misaligned storage is never read on device. Updated hashes:
+candidate `e0b2ca47aab7fe52f153dd482b2256ba98a87765bc853800048c5053eaede565`,
+`bench/correctness.py` `4f0f5e7f49e88b4409df263503b0979fd16bdf2b451d8ac595fbe26b4cd8a782`
+(baseline `18f28aff…` and swap-AB `d19e004e…` unchanged).

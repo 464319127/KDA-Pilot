@@ -175,6 +175,20 @@ def negative_route_cases(device) -> list:
     # Mis-shaped (short) destination out must be rejected, never written OOB.
     out_short = torch.empty((M, N - 8), device=device, dtype=torch.bfloat16)
     expect_fallback("neg_bad_out", a, b, sa, sb, out_short, True)
+    # Misaligned base pointer (sliced/as_strided view). The GEMV issues uint4
+    # (16-byte) loads from A and B, so a view whose effective base address is not
+    # 16-byte aligned must fall back (route 0), not perform a misaligned vector
+    # load. K%16/N%8 only align RELATIVE offsets, not the base. expect_reject=False
+    # because route() reads only metadata (no launch), so this never touches the
+    # misaligned storage on the device. The asserts self-validate the setup.
+    a_mis = f8((M, K + 16))[:, 1:1 + K]  # [M,K], stride(1)==1, base offset 1 byte
+    assert a_mis.stride(1) == 1 and a_mis.data_ptr() % 16 != 0, "setup: A base must be misaligned"
+    expect_fallback("neg_unaligned_ptr_A", a_mis, b, sa, sb, out, False)
+    bflat = f8((N * K + 16,))
+    b_mis = bflat[1:1 + N * K].view(N, K).t()  # [K,N], stride (1,K), base offset 1 byte
+    assert b_mis.stride(0) == 1 and b_mis.stride(1) == K and b_mis.data_ptr() % 16 != 0, \
+        "setup: B base must be misaligned (column-major stride preserved)"
+    expect_fallback("neg_unaligned_ptr_B", a, b_mis, sa, sb, out, False)
     # CPU input must be rejected BEFORE any forced CUDA view (calls candidate, not just route).
     a_cpu = torch.randn((M, K), dtype=torch.float32).to(torch.float8_e4m3fn)  # on CPU
     expect_fallback("neg_cpu_input_A", a_cpu, b, sa, sb, out, True)

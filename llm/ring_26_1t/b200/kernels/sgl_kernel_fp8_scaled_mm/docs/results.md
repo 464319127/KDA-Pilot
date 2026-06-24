@@ -16,16 +16,17 @@ All evidence is from `ion-b200` GPU id 3 (B200 sm_100, CUDA 13.0, torch
 (`docs/run_log.md`). Timing: the unmodified `standalone_llm_benchmark_template.py`
 (template sha256 `2e1712e5…`, byte-identical), CUDA events, inner-loop
 amplification, isolated subprocess, interleaved A/B, 7 trials (25 for the
-fallback-overhead run). Correctness: **302 passed / 0 failed** (286 production +
-4 edge rows + 12 negative/edge tests: e5m2/uint8 A, e5m2 B, malformed scale
+fallback-overhead run). Correctness: **304 passed / 0 failed** (286 production +
+4 edge rows + 14 negative/edge tests: e5m2/uint8 A, e5m2 B, malformed scale
 `[M,2]`/`[N,2]`, fp16-out, CPU-input, mixed-device, padded column-major B,
-unaligned N (N%8≠0), short/mis-shaped out, and the bias edge) vs an fp32-dequant
+unaligned N (N%8≠0), short/mis-shaped out, misaligned base pointer (sliced A/B
+views), and the bias edge) vs an fp32-dequant
 oracle AND the baseline. `bench/workloads.json` holds the 286 production rows only
 (so the unmodified template `bench/benchmark.py` produces full-grid results by
 default); the 4 edge rows live in the correctness-only
 `bench/workloads_edges.json`, which `correctness.py` also reads.
-Source sha256 (HEAD): candidate `c7d4fc3f…`, baseline ABI wrapper `18f28aff…`,
-swap-AB `d19e004e…`, `bench/correctness.py` `0cc75d64…`; benchmark.py
+Source sha256 (HEAD): candidate `e0b2ca47…`, baseline ABI wrapper `18f28aff…`,
+swap-AB `d19e004e…`, `bench/correctness.py` `4f0f5e7f…`; benchmark.py
 byte-identical to the template (`2e1712e5…`).
 
 ## Final full-grid benchmark (all 286 production shapes, idle GPU 3)
@@ -160,9 +161,12 @@ path), and `candidate_bias` produces the correct biased result
 (`out=(A@B)·scale_a·scale_b+bias`) — equal to both the recovered baseline
 (`baseline_bias`) and the fp32 oracle within bf16 tol. So a biased call falls back
 to the baseline and is correct. The hardened predicate + ABI guard additionally
-reject any non-fp8_e4m3fn input, malformed scale rank, or non-CUDA/mixed-device
-tensor before any view (proven by `bench/correctness.py` negative-route tests
-incl. CPU-input and e5m2-B).
+reject any non-fp8_e4m3fn input, malformed scale rank, non-CUDA/mixed-device
+tensor (before any view), and — because the GEMV issues 16-byte `uint4` loads — any
+A/B whose effective base address is not 16-byte aligned (e.g. a sliced/`as_strided`
+view with a non-16-byte `byte_offset`), all of which fall back to the baseline
+(proven by `bench/correctness.py` negative-route tests incl. CPU-input, e5m2-B,
+and misaligned-base A/B views).
 
 ## Status of the plan's directions
 
