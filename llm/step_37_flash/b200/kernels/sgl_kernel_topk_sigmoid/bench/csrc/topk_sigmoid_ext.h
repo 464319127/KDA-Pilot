@@ -88,7 +88,7 @@ int64_t topk_sigmoid_candidate_route(
     int64_t renormalize,
     tvm::ffi::TensorView correction_bias);
 
-// No-bias variants (AC-4 missing-bias fallback verification): same destination-passing outputs and
+// No-bias variants (missing-bias fallback verification): same destination-passing outputs and
 // renormalize scalar, NO correction_bias TensorView. candidate_nobias always falls back to the
 // baseline (the fused fast path requires a bias); route_nobias always returns 0.
 void topk_sigmoid_baseline_nobias(

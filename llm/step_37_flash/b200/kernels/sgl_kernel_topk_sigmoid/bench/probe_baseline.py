@@ -1,4 +1,4 @@
-"""Runtime probe of the recovered baseline ABI (AC-1): record the actual return value, the
+"""Runtime probe of the recovered baseline ABI: record the actual return value, the
 in-place mutation set, output shape/dtype/stride/device/contiguity, and current-stream behavior —
 rather than inferring them from the op schema alone. Paste the transcript into docs/baseline_source.md.
 

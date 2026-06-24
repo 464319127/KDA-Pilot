@@ -81,9 +81,26 @@ CUDA_VISIBLE_DEVICES=1 PYTHONPATH=. python probe_baseline.py
 CUDA_VISIBLE_DEVICES=3 PYTHONPATH=. python benchmark.py --workloads workloads.json --out results.jsonl --num-trials 7 --warmup-runs 10
 ```
 
-The floor probe (empty-kernel) and NCU bottleneck attribution from Round 0 remain representative: the
-Round 1 fix changes only the argmax initialization constant (`-inf` → `-1.0f`, index 0), not the
-kernel's launch geometry, memory pattern, or instruction mix.
+## Round 2 (post-change floor/NCU rerun + code-style cleanup)
+
+The Round 1 review required the floor probe and NCU to be rerun after the kernel change (not just the
+benchmark). Done on the Round-1 (sentinel-fixed) build, idle **GPU 3** (before `3,0%,0MiB`), from a
+clean `bench/.build`:
+
+- Floor probe rerun: small-N ~8–10 µs (GPU 3; higher than the Round-0 GPU-2 ~4 µs — per-GPU/clock-state
+  difference, not a kernel change) — confirms small-N decode is launch-bound. Table in `docs/results.md`.
+- NCU rerun (`--set basic`, N=16474): candidate fused 154.88 µs, baseline moeTopK 365.41 µs / moeSigmoid
+  33.44 µs; none DRAM-bound — **confirms the Round-0 attribution** (sentinel fix changed only an init
+  constant). Table in `docs/results.md`.
+- Also removed plan-workflow `AC-` markers from implementation comments/docstrings (kept domain wording;
+  plan terms remain only in `docs/`, `.humanize/`, `prompt.md`, `config.toml`, and the vendored baseline).
+
+```bash
+# Round 2: clean rebuild + floor + NCU on the Round-1 build (idle GPU 3)
+rm -rf bench/.build
+CUDA_VISIBLE_DEVICES=3 PYTHONPATH=. python floor_probe.py
+CUDA_VISIBLE_DEVICES=3 PYTHONPATH=. ncu --set basic --launch-skip 6 --launch-count 3 -o /tmp/topk_ncu_round1 --force-overwrite python profile_ncu.py
+```
 
 ## Notes
 

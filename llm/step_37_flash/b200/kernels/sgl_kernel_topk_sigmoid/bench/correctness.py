@@ -109,7 +109,7 @@ def run_row(workload, device, errs) -> bool:
 
 
 def nobias_row(device, errs) -> bool:
-    """AC-4 missing-bias fallback: with correction_bias=None the candidate must route to the
+    """Missing-bias fallback: with correction_bias=None the candidate must route to the
     baseline (route_nobias==0) and stay correct (candidate==baseline exact + vs a no-bias oracle)."""
     n = 64
     gen = torch.Generator(device=device).manual_seed(4242)
@@ -190,7 +190,7 @@ def main() -> int:
         if run_row(w, device, errs):
             npass += 1
 
-    # AC-4 missing-bias fallback row
+    # missing-bias fallback row
     ntotal += 1
     if nobias_row(device, errs):
         npass += 1

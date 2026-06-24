@@ -101,7 +101,7 @@ void topk_sigmoid_baseline(
   topk_sigmoid(w, idx, gating, renormalize != 0, bias_opt);
 }
 
-// No-bias variants (AC-4 missing-bias fallback): the captured contract always supplies a bias and
+// No-bias variants (missing-bias fallback): the captured contract always supplies a bias and
 // the main ABI passes it as a required TensorView, so a `correction_bias=None` case is represented
 // here by separate entrypoints used for fallback verification. The candidate has no no-bias fast
 // path (it requires a bias), so candidate_nobias always routes to the baseline with c10::nullopt.

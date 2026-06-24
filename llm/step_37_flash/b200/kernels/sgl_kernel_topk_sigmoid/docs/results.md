@@ -69,33 +69,40 @@ Call-weighted context (secondary, per DEC-1): N=1 decode dominates captured call
 the aggregate captured-latency saving is weighted toward the modest decode win; the large-prefill rows
 contribute the largest per-call savings.
 
-## Controlled launch-floor probe (empty kernel @ candidate grid, idle GPU 2)
+## Controlled launch-floor probe (empty kernel @ candidate grid, idle GPU 3, Round-1 build)
+
+Rerun on the Round-1 (sentinel-fixed) build, idle GPU 3:
 
 | N | 1 | 16 | 80 | 1579 | 10207 | 16883 |
 |---|---|----|----|------|-------|-------|
-| floor median µs | 4.16 | 3.84 | 3.84 | 3.86 | 8.23 | 10.29 |
+| floor median µs | 9.36 | 8.50 | 8.88 | 8.12 | 8.23 | 10.31 |
 
-The ~3.8–4.2 µs small-N floor shows the candidate's ~12.34 µs decode latency is dominated by host-side
+The small-N floor (~8–9 µs here on GPU 3; the Round-0 GPU-2 run measured ~4 µs — a per-GPU/clock-state
+difference, not a kernel change) shows the candidate's ~12 µs decode latency is dominated by host-side
 marshalling of 5 tensor arguments (paid equally by both sides through the identical ABI); the decode
-win (1.168×) is the candidate removing the baseline's second launch + `torch::empty` workspace
-allocation. At large N the floor (≤10.3 µs) is far below the candidate's tens-to-90 µs → real work.
+win is the candidate removing the baseline's second launch + `torch::empty` workspace allocation. At
+large N the floor (≤10.3 µs) is far below the candidate's tens-to-90 µs → real work. (Floor probes the
+empty kernel, unaffected by the sentinel fix; the rerun confirms the small-N-launch-bound reading.)
 
-## NCU bottleneck attribution (`--set basic`, N=16474, idle GPU 2)
+## NCU bottleneck attribution (`--set basic`, N=16474, idle GPU 3, Round-1 build)
+
+Rerun on the Round-1 (sentinel-fixed) build — confirms the Round-0 attribution (numbers within noise):
 
 | Kernel | Duration µs | Compute (SM) % | Memory % | DRAM % | Occupancy % |
 |--------|-------------|----------------|----------|--------|-------------|
-| baseline `moeSigmoid` | 33.79 | 46.2 | 12.8 | 8.45 | 66.7 |
-| baseline `moeTopK` | **375.36** | **82.7** | 34.1 | 0.76 | 95.1 |
-| candidate fused | **160.70** | 69.0 | 43.7 | 1.78 | 93.2 |
+| baseline `moeSigmoid` | 33.44 | 45.2 | 12.6 | 8.54 | 66.0 |
+| baseline `moeTopK` | **365.41** | **82.6** | 34.1 | 0.78 | 95.1 |
+| candidate fused | **154.88** | 69.7 | 43.7 | 1.84 | 93.1 |
 
 Roofline read: **no kernel is DRAM-bandwidth-bound** (DRAM ≤ 8.5%). The baseline is dominated by
-`moeTopK` (375 µs, compute/reduction-bound at 82.7% SM — the 8 sequential `cub::BlockReduce` argmaxes
-over the global workspace). The candidate replaces **both** baseline kernels with one (161 µs vs the
-baseline's 409 µs total → ratio ~2.54×, matching the wall-clock large-N ratio) by doing the selection
-in shared memory in a single pass. (NCU absolute durations are inflated by instrumentation/replay vs
-wall-clock; ratios and bottleneck attribution are the valid signal.) Byte counts confirm the candidate
-moves ~3× less global traffic at N=16474 (~20 MB vs ~58 MB: gating read + workspace write + workspace
-read + outputs).
+`moeTopK` (365 µs, compute/reduction-bound at 82.6% SM — the 8 sequential `cub::BlockReduce` argmaxes
+over the global workspace). The candidate replaces **both** baseline kernels with one (155 µs vs the
+baseline's 399 µs total → ratio ~2.58×, matching the wall-clock large-N ratio) by doing the selection
+in shared memory in a single pass. The sentinel fix (an argmax init constant) left the bottleneck
+attribution unchanged vs Round 0 (candidate 154.88 vs 160.70 µs, moeTopK 365 vs 375 µs — within
+run-to-run noise). (NCU absolute durations are inflated by instrumentation/replay vs wall-clock; ratios
+and bottleneck attribution are the valid signal.) Byte counts confirm the candidate moves ~3× less
+global traffic at N=16474 (~20 MB vs ~58 MB: gating read + workspace write + workspace read + outputs).
 
 Warp-specialization profiling: **N/A** — the candidate is a straightforward block-reduction kernel with
 no producer/consumer warp roles (no mbarrier / named-barrier / pipeline), so the
