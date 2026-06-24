@@ -66,3 +66,8 @@ Observation: the kernel is tiny and launch/overhead-bound even at prefill (~6 us
 - Refactored `bench/correctness.py` to LOAD `bench/workloads.json` (`_load_workloads()`) and derive the entire production + edge + M=0 grid from it via the shared `adapter.build_inputs` (no hard-coded shape/edge lists). UB-safety rule preserved (oracle is the decode reference; baseline only on M>512 + off-domain).
 - `python bench/correctness.py` (GPU 4) -> **760 checks pass, 0 fail** (workload-driven).
 - Reconciled docs: single authoritative prefill geomean 1.0105 across results.md/dispatch.md (Round-0 1.0006 and Round-1 754 remain only under their historical round headers above); input-contract wording fixed to "NaN out of contract; +Inf/-Inf covered as edge rows" in results.md, benchmark_method.md, correctness.py.
+
+## Command log (round 3) — full row-metadata-driven correctness (AC-3/AC-4)
+- `bench/correctness.py` now seeds every row from its frozen `workloads.json` `seed` (production = `seed + repeat`; edge = `seed` exactly — removed the `1000*M+s` / `424242+M` constants) and consumes the FULL scalar dict (topk, num_fused_shared_experts, renormalize, routed_scaling_factor, apply_routed_scaling_factor_on_output) into `oracle` + `_run_module`, asserting `scoring_func==0` per row.
+- `python bench/correctness.py` (GPU 4) -> **829 checks pass, 0 fail** (760 -> 829: the per-row scoring_func==0 assertions are now counted).
+- Fixed `bench/adapter.py::build_inputs` docstring (±Inf logits are intentional edge inputs with finite sigmoid; NaN out of contract).

@@ -35,8 +35,9 @@ def build_inputs(generator: str, N: int, E: int, device: torch.device, gen=None)
 
     `randn` is the production default (benchmark.py seeds torch globally first, so gen=None is
     deterministic). The semantic edge generators construct the exact AC-3 regression inputs from
-    `bench/workloads.json` so that file is the authoritative frozen workload set. All generators
-    produce FINITE inputs (sigmoid of +-inf is 1/0, not NaN); NaN inputs are out of contract."""
+    `bench/workloads.json` so that file is the authoritative frozen workload set. Logits may include
+    +Inf/-Inf (the `pos_inf`/`neg_inf` edge rows); their sigmoid is finite (1/0), so candidate and
+    oracle agree. NaN inputs are out of contract (never produced by any generator here)."""
     def _randn(shape):
         return torch.randn(shape, dtype=torch.float32, device=device, generator=gen)
     def _full(shape, v):

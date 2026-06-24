@@ -190,28 +190,40 @@ def main() -> int:
     _wb = torch.randn((NUM_EXPERTS,), dtype=torch.float32, device=dev)
     _run_module(base, _wu, _wb)
 
-    def check_row(label, M, inp, bias, topk, atol, rtol):
+    def _scalars(s):
+        """Unpack the FULL scalar contract from a workload row's `scalars` dict (the frozen file is
+        authoritative). The oracle only implements sigmoid, so scoring_func must be 0."""
+        ck.check(int(s["scoring_func"]) == SCORING_SIGMOID,
+                 f"scoring_func={s['scoring_func']} unsupported (oracle implements sigmoid=0 only)")
+        return (int(s["topk"]), int(s["num_fused_shared_experts"]), bool(s["renormalize"]),
+                float(s["routed_scaling_factor"]), bool(s["apply_routed_scaling_factor_on_output"]))
+
+    def check_row(label, M, inp, bias, scalars, atol, rtol):
         """Candidate-vs-oracle on every row; baseline-vs-oracle + candidate-vs-baseline only on the
-        UB-safe large-token path (M>512). The independent oracle is the ground-truth reference."""
-        ow, oi = oracle(inp.cpu().numpy(), bias.cpu().numpy(), topk=topk)
+        UB-safe large-token path (M>512). The independent oracle is the ground-truth reference. ALL
+        scalar params are taken from the workload row, not from module defaults."""
+        topk, shared, renorm, rsf, apply_out = _scalars(scalars)
+        ow, oi = oracle(inp.cpu().numpy(), bias.cpu().numpy(), topk=topk,
+                        num_fused_shared_experts=shared, renormalize=renorm,
+                        routed_scaling_factor=rsf, apply_on_output=apply_out)
         ow_t = torch.from_numpy(ow).to(dev)
         oi_t = torch.from_numpy(oi).to(dev)
         base_safe = M > 512
         bout = bidx = None
         if base_safe:
-            bout, bidx = _run_module(base, inp, bias, topk=topk)
+            bout, bidx = _run_module(base, inp, bias, topk, shared, renorm, rsf, apply_out)
             _validate_outputs(ck, f"baseline {label}", bout, bidx, M)
             ck.exact_idx(f"baseline-vs-oracle idx {label}", bidx, oi_t)
             ck.weights_close(f"baseline-vs-oracle w {label}", bout, ow_t, atol, rtol)
         if cand is not None:
-            cout, cidx = _run_module(cand, inp, bias, topk=topk)
+            cout, cidx = _run_module(cand, inp, bias, topk, shared, renorm, rsf, apply_out)
             _validate_outputs(ck, f"candidate {label}", cout, cidx, M)
             ck.exact_idx(f"candidate-vs-oracle idx {label}", cidx, oi_t)
             ck.weights_close(f"candidate-vs-oracle w {label}", cout, ow_t, atol, rtol)
             if base_safe:
                 ck.exact_idx(f"candidate-vs-baseline idx {label}", cidx, bidx)
                 ck.weights_close(f"candidate-vs-baseline w {label}", cout, bout, atol, rtol)
-            cout2, cidx2 = _run_module(cand, inp, bias, topk=topk)
+            cout2, cidx2 = _run_module(cand, inp, bias, topk, shared, renorm, rsf, apply_out)
             ck.check(torch.equal(cidx, cidx2) and torch.equal(cout, cout2),
                      f"candidate deterministic {label}")
 
@@ -219,34 +231,39 @@ def main() -> int:
     prod = [w for w in WL if w.get("production")]
     edge = [w for w in WL if not w.get("production")]
 
-    def _row_dims(w):
+    def _row(w):
         sh = w["shapes"]
-        return (int(sh["num_tokens"]), int(sh["num_experts"]), int(w["scalars"]["topk"]),
-                w.get("generator", "randn"), float(w.get("atol", 1e-5)), float(w.get("rtol", 1e-5)))
+        return (int(sh["num_tokens"]), int(sh["num_experts"]), w.get("generator", "randn"),
+                int(w.get("seed", 0)), float(w.get("atol", 1e-5)), float(w.get("rtol", 1e-5)),
+                w["scalars"])
 
-    # 1) All PRODUCTION rows from workloads.json (18 decode + 11 prefill), 2 seeds each.
+    # 1) All PRODUCTION rows from workloads.json. The frozen row `seed` is the base; the two samples
+    #    are deterministic repeats `seed + repeat` of THAT row (no hidden M-derived seed).
     for w in prod:
-        M, E, topk, gen, atol, rtol = _row_dims(w)
-        for s in (0, 1):
-            g.manual_seed(1000 * M + s)
+        M, E, gen, seed, atol, rtol, scalars = _row(w)
+        for repeat in (0, 1):
+            g.manual_seed(seed + repeat)
             inp, bias = build_inputs(gen, M, E, dev, gen=g)
-            check_row(f"{w['regime']} {w['id']} s={s}", M, inp, bias, topk, atol, rtol)
+            check_row(f"{w['regime']} {w['id']} rep={repeat}", M, inp, bias, scalars, atol, rtol)
 
-    # 2) Frozen EDGE grid from workloads.json (generator-driven; AC-3). Built via the SAME
-    #    adapter.build_inputs the benchmark uses, so the frozen file is authoritative. M=0 is a
-    #    no-op safety check. +-Inf are covered (sigmoid(+-inf) is finite 1/0); NaN is out of contract.
+    # 2) Frozen EDGE grid from workloads.json (generator-driven; AC-3). Each row is seeded EXACTLY
+    #    from its frozen `seed`, built via the SAME adapter.build_inputs the benchmark uses, so the
+    #    frozen file is authoritative. M=0 is a no-op safety check. +-Inf are covered (sigmoid is
+    #    finite 1/0); NaN is out of contract.
     for w in edge:
-        M, E, topk, gen, atol, rtol = _row_dims(w)
-        g.manual_seed(int(w.get("seed", 0)) + 424242 + M)
+        M, E, gen, seed, atol, rtol, scalars = _row(w)
+        g.manual_seed(seed)
         inp, bias = build_inputs(gen, M, E, dev, gen=g)
         if M == 0:
+            topk, shared, renorm, rsf, apply_out = _scalars(scalars)
             try:
-                _run_module(cand if cand is not None else base, inp, bias, topk=topk)
+                _run_module(cand if cand is not None else base, inp, bias,
+                            topk, shared, renorm, rsf, apply_out)
                 ck.check(True, f"edge[{w['id']}] M=0 no-op")
             except Exception as e:  # noqa: BLE001
                 ck.check(False, f"edge[{w['id']}] M=0 raised {e!r}")
             continue
-        check_row(f"edge[{w['id']}]", M, inp, bias, topk, atol, rtol)
+        check_row(f"edge[{w['id']}]", M, inp, bias, scalars, atol, rtol)
 
     # 3) Deliberate adversarial probes NOT in the captured workload set (kept here on purpose):
     # 3a) Prefill-sized exact tie (M=1024): smaller-index-wins on the source-guaranteed large path.
