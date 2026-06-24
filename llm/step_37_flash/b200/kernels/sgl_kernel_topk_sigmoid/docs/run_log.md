@@ -17,11 +17,17 @@
 ## Source hashes (candidate + ABI)
 
 ```
-08d131b87b55f9b1740c1a78020b014a928ca812fc855cc31a37a56f21125c91  solution/topk_sigmoid_candidate.cuh
-c9cae22be6109a365c8cc386e2db0922b48d8973f3f989262878c7b012b12a74  solution/topk_sigmoid_ext.cu
-a32e5c66ed7d8a217b7a5d02455b49b92f85caa46eae7fcb91ddd17f9b034032  bench/csrc/topk_sigmoid_ext.h
+5d1a6d242731a5cbba6db018cc791c08539dd77ba07fea81d9518915cd4362b5  solution/topk_sigmoid_candidate.cuh
+d2a6e61735a14368b7394d108b2c097417017faf944969f0fb9ab7d3f75c0634  solution/topk_sigmoid_ext.cu
+ef9fb486a48ef7ae7315d4cc4b067bba65818a6fbceef9ec3050400bf7c671d9  bench/csrc/topk_sigmoid_ext.h
 4b8eadf84561c8b71c31893508caacc2c132a15510c725385616775a59e16ce3  baseline/topk_sigmoid_baseline.cu  (vendored verbatim)
 ```
+
+> Provenance note (Round 3, doc-only): these candidate/ABI hashes were corrected to match the
+> **promoted** source — the Round-1 sentinel-fixed candidate (Round-2 comment cleanup). The earlier
+> docs cited the Round-0 pre-sentinel hashes (`08d131…`/`c9cae…`/`a32e…`); no kernel/source behavior
+> changed in this correction, so the benchmark/floor/NCU evidence above is unchanged and is now
+> traceable to these hashes. The baseline hash is unchanged (vendored verbatim).
 
 ## GPU selection and idle evidence
 

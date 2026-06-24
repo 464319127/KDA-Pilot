@@ -1,7 +1,7 @@
 # Results — `sgl_kernel.topk_sigmoid` on B200
 
 Host `ion-b200` (sm_100) · baseline = upstream SGLang `main` @ `5e6d7c1615a95dc5f98e69b4b18af0ae160b10b8` ·
-candidate sha256 `08d131b8…` (`solution/topk_sigmoid_candidate.cuh`) · build `-std=c++17 -O3
+candidate sha256 `5d1a6d24…` (`solution/topk_sigmoid_candidate.cuh`, Round-1 sentinel-fixed) · build `-std=c++17 -O3
 -gencode=compute_100,sm_100`, no `--use_fast_math` · torch 2.11.0+cu130 / CUDA 13.0 / tvm_ffi 0.1.9.
 
 ## Verdict: GO
