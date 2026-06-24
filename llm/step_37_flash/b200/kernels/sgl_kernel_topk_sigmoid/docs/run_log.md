@@ -23,11 +23,11 @@ ef9fb486a48ef7ae7315d4cc4b067bba65818a6fbceef9ec3050400bf7c671d9  bench/csrc/top
 4b8eadf84561c8b71c31893508caacc2c132a15510c725385616775a59e16ce3  baseline/topk_sigmoid_baseline.cu  (vendored verbatim)
 ```
 
-> Provenance note (Round 3, doc-only): these candidate/ABI hashes were corrected to match the
-> **promoted** source — the Round-1 sentinel-fixed candidate (Round-2 comment cleanup). The earlier
-> docs cited the Round-0 pre-sentinel hashes (`08d131…`/`c9cae…`/`a32e…`); no kernel/source behavior
-> changed in this correction, so the benchmark/floor/NCU evidence above is unchanged and is now
-> traceable to these hashes. The baseline hash is unchanged (vendored verbatim).
+> Provenance note (doc-only correction): the candidate/ABI hashes above match the **promoted** source
+> — the Round-1 sentinel-fixed candidate (Round-2 comment cleanup). Earlier docs cited the Round-0
+> pre-sentinel candidate/ABI hashes; this correction replaces them with the promoted source hashes
+> shown above. No kernel/source behavior changed, so the benchmark/floor/NCU evidence is unchanged and
+> is now traceable to these hashes. The baseline hash is unchanged (vendored verbatim).
 
 ## GPU selection and idle evidence
 
