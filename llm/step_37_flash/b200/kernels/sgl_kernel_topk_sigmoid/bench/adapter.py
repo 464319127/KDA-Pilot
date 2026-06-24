@@ -12,8 +12,6 @@ default element-wise float comparator would wrongly apply atol/rtol to int32 ids
 weights use fp32 tolerance.
 """
 
-from __future__ import annotations
-
 from dataclasses import dataclass
 from typing import Any
 
