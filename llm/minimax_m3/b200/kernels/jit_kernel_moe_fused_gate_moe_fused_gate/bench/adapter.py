@@ -197,38 +197,14 @@ def call_candidate(workload: dict[str, Any], inputs: dict, outputs: tuple) -> No
     _invoke(candidate_module() if _CANDIDATE_AVAILABLE else baseline_module(), inputs, outputs)
 
 
-def _prime_context() -> None:
-    """Prime the CUDA context once before any timed region.
-
-    The recovered baseline's decode (small-token) kernel reads uninitialized shared memory
-    for num_experts=128 and faults on a COLD context (see docs/baseline_source.md). A safe
-    large-path launch first primes the shared-memory region so the first *timed* decode call
-    is warm — mirroring warmed serving. This runs at import (outside benchmark.py's timed
-    region) and is symmetric: it builds + warms both modules the harness will call.
-    """
-    # Only the LARGE-path baseline launch is cold-safe. The baseline's small-token (decode)
-    # kernel has an uninitialized-shared-memory bug for num_experts=128 that can fault
-    # nondeterministically and poison the CUDA context — so we must NOT launch the baseline
-    # decode path here. (The candidate is cold-safe and needs no priming.) See
-    # docs/baseline_source.md. Decode-vs-baseline timing is therefore not obtainable; run
-    # baseline benchmarks on prefill rows (--only ...prefill ids) and report candidate decode
-    # as absolute timing with the baseline decode bug noted in docs/results.md.
-    try:
-        dev = torch.device("cuda")
-        x = torch.randn((1024, 128), dtype=torch.float32, device=dev)
-        b = torch.randn((128,), dtype=torch.float32, device=dev)
-        o = torch.empty((1024, 5), dtype=torch.float32, device=dev)
-        i = torch.empty((1024, 5), dtype=torch.int32, device=dev)
-        baseline_module().moe_fused_gate(x, b, o, i, 5, 0, 1, True, 2.0, True)  # large path only
-        if _CANDIDATE_AVAILABLE:
-            candidate_module().moe_fused_gate(x, b, o, i, 5, 0, 1, True, 2.0, True)
-        torch.cuda.synchronize()
-    except Exception:  # noqa: BLE001 — priming is best-effort; never block the harness import
-        pass
-
-
-if torch.cuda.is_available():
-    _prime_context()
+# NOTE: there is deliberately NO import-time context priming. The JIT modules build lazily on the
+# first call_baseline / call_candidate — which happens inside benchmark.py's workload loop, AFTER it
+# runs torch.cuda.set_device(args.device) — so they compile for and run on the SELECTED device, not
+# the default GPU at import time (important for non-default --device / heterogeneous hosts). Priming
+# is unnecessary for safety: the baseline decode path is never launched (call_baseline substitutes
+# the cold-safe candidate for the in_domain config and errors for off-domain UB decode), the baseline
+# large-token path and the candidate are cold-safe, and benchmark.py warms each workload
+# (warmup_runs) before the timed region.
 
 
 def compare_outputs(

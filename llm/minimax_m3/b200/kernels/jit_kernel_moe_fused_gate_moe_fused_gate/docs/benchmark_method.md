@@ -29,9 +29,12 @@ asymmetric per-call filesystem stat that would bias launch-bound timing).
   - `--no-isolated` justification: the kernel is at the CPU-launch floor; isolated per-workload
     subprocesses inject irreproducible scheduling/IO jitter that swamps the ~6–8 µs signal. One
     process gives stable interleaved A/B samples. (Same rationale as the sibling grouped_topk task.)
-- Context priming: `bench/adapter.py::_prime_context` runs ONE large-path baseline launch at import
-  (before any timed region) to establish a warm CUDA context. It deliberately does NOT launch the
-  baseline decode path (that path is UB — see below).
+- No import-time priming: `bench/adapter.py` does NO CUDA work at import. The JIT modules build
+  lazily on the first `call_baseline`/`call_candidate` — inside the workload loop, AFTER
+  `benchmark.py` runs `torch.cuda.set_device(args.device)` — so they compile for and run on the
+  SELECTED device (correct for non-default `--device`). No pre-warm is needed: the baseline decode
+  path is never launched (see below), the baseline large-token path and the candidate are cold-safe,
+  and `benchmark.py` warms each workload (`warmup_runs`) before the timed region.
 
 ## Tolerance policy
 - Selected expert **indices: exact-match** (ordered) vs the oracle/baseline.
