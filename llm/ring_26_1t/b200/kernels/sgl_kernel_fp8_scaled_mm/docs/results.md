@@ -4,10 +4,12 @@
 
 A native-CUDA FP8 GEMV wins the **M=1 decode regime** — the single largest
 captured shape (M=1 = 38,427 calls) — with **all covered shapes significant and
-no regression**. All other shapes fall back to the recovered CUTLASS baseline.
-Per the resolved success policy (per-regime win + fallback, DEC-1), this is a
-promotion. Small-M swap-AB (M=16..64) is the **next round's** work (task10
-reopened), not part of this promotion.
+no regression**. The **small-M regime (M=2..64) is an evidence-backed no-go**: an
+SM100 swap-AB CUTLASS GEMM was implemented and is correct, but loses to the
+baseline (see "Small-M" below), so it falls back. All other shapes fall back to
+the recovered CUTLASS baseline. Per the resolved success policy (per-regime win +
+fallback, DEC-1), promoting M=1 with an evidence-backed no-go elsewhere is the
+outcome.
 
 All evidence is from `ion-b200` GPU id 3 (B200 sm_100, CUDA 13.0, torch
 2.11+cu130, CUTLASS@57e3cfb4), GPU verified idle before+after each measured run
@@ -78,6 +80,52 @@ Overhead is small (median ≈0; typical ≤~1%), attributable to the host dispat
 predicate; it never changes device behavior. The covered fast-path shapes do not
 pay it (they take the GEMV directly).
 
+## Small-M regime (M=2..64) — evidence-backed NO-GO
+
+A native-CUDA SM100 swap-AB CUTLASS FP8 scaled GEMM (`solution/fp8_swapab_smallm.cu`)
+was implemented for the hot small-M shapes (M∈{23,32,57}), following the upstream
+SM100 swap-AB pattern (KernelWiki `pr-vllm-27284`): GEMM-A=`Bphys[N,K]`,
+GEMM-B=`A^T[K,M]`, problem `{N,M,K}`, scales swapped, `LayoutD=ColumnMajor` so the
+transposed result lands in row-major `out[M,N]` with no copy. It is **correct**
+(all small-M shapes match the fp32 oracle, route diagnostic confirmed), but it
+**loses to the baseline**, so the dispatch falls back (no regression).
+
+Benchmark (idle GPU 3, 7 trials), swap-AB candidate vs baseline:
+
+| M | k1024·n8192 | k256·n8192 | k8192·n512 | k8192·n1024 | k8192·n3072 |
+|---|---|---|---|---|---|
+| 23 | 0.829× | 0.877× | 0.864× | 0.839× | 0.846× |
+| 32 | 0.860× | 0.865× | 0.870× | 0.850× | 0.859× |
+| 57 | 0.836× | 0.843× | 0.857× | 0.835× | 0.863× |
+
+Geomean **0.85×** (candidate ~20–21µs vs baseline ~17–18µs); not one shape clears
+the ≥1.10 bar.
+
+**Named active bound (NCU, m32·k1024·n8192, the swap-AB kernel):** tensor-core
+activity **1.9%**, SM throughput **6.5%**, achieved occupancy **10.7%**, DRAM read
+**10.7%** of peak. The kernel is **pipeline-fill / occupancy bound**: the tiny
+swapped-N dimension (= original M = 32) under-fills the 2-SM warp-specialized
+`tcgen05` mainloop (TMA-producer → tensor-core-consumer), so the tensor cores sit
+nearly idle. The baseline `Gemm64` (CTA-M 64) is already 36–89% M-tile-utilized
+for M=23–57, leaving too little headroom for swap-AB to overcome its
+pipeline-fill + column-major-epilogue overhead.
+
+This is a complete no-go per the bar: baseline numbers + an implemented, correct
+candidate + benchmark evidence + NCU/named bound + the dispatch decision (keep
+baseline for small-M). The kernel and predicate remain in tree
+(`kSmallMSwapAbEnabled=false`) as the documented attempt.
+
+**Warp-specialization profiling note (AC-8):** the swap-AB kernel IS warp-specialized
+(`MainloopSm100TmaUmmaWarpSpecialized`: TMA producer + `tcgen05` tensor-core
+consumer). The `warp-specialization-report-skill` (per-warp `clock()` overlap
+timeline) was not run because NCU already localizes the bound at the *grid* level:
+achieved occupancy 10.7% and tensor-core activity 1.9% mean the kernel barely
+fills the machine for swapped-N=M=32 — the issue is under-occupancy / pipeline
+fill-drain, not a producer/consumer overlap failure *within* a well-fed CTA (which
+is what the clock-stamp timeline diagnoses). The actionable lever is grid/tile
+occupancy, an NCU/roofline matter, so the warp-spec timeline would not change the
+verdict.
+
 ## Roofline / active-bound analysis (NCU on GPU 3)
 
 - **Baseline M=1**: CUTLASS sm100 uses a 64-row MMA tile even for M=1 → ~63/64 of
@@ -100,10 +148,20 @@ was removed as a metadata-only row). The hardened predicate + ABI dtype guard
 reject any non-fp8_e4m3fn input, malformed scale rank, or mixed-device tensor
 (proven by `bench/correctness.py` negative-route tests).
 
-## Follow-ups (next rounds; bounded by the plan's upper path boundary)
+## Status of the plan's directions
 
-1. **task10 (next round)**: SM100 swap-AB skinny tensor-core GEMM for the hot
-   small-M shapes (M=23,32,57; KernelWiki `pr-vllm-27284`), or an evidence-backed
-   small-M no-go. These currently fall back at parity (no regression).
-2. Higher-MLP / faster-fp8-decode GEMV to lift the latency-bound ceiling and widen
-   M=1 coverage to the excluded large-K×N shapes (K≥4096 ∧ N≥3072).
+- **M=1 decode (task8/9): PROMOTED** — native FP8 GEMV, geomean 2.78× covered, no regression.
+- **Small-M M=2..64 (task10): evidence-backed NO-GO** — swap-AB implemented + correct
+  but 0.85× (NCU: pipeline-fill / occupancy bound); falls back to baseline.
+- **Prefill / medium: baseline fallback** — beating vendor CUTLASS is not expected
+  (validated by parity in the full-grid run).
+
+## Follow-ups (optional; bounded by the plan's upper path boundary)
+
+1. Higher-MLP / faster-fp8-decode GEMV to lift the M=1 latency-bound ceiling and
+   widen M=1 coverage to the excluded large-K×N shapes (K≥4096 ∧ N≥3072), which
+   currently fall back at parity.
+2. Small-M is a no-go for the swap-AB approach as configured; a future attempt
+   would need higher swapped-N tile occupancy (multi-tile-N batching across the
+   small M, or a non-CUTLASS skinny kernel) — only if small-M throughput becomes a
+   priority. Re-enable via `kSmallMSwapAbEnabled` after a winning re-tune.

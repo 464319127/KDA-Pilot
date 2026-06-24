@@ -97,3 +97,29 @@ python bench/benchmark.py --device cuda:0 --num-trials 25 --only <6 uncovered sh
 - Fallback overhead: full-grid median +0.009% (279 uncovered shapes); dedicated
   25-trial run on 6 uncovered shapes geomean +0.88% (worst +1.67%).
 - Per-shape significance table + analysis in `docs/results.md`.
+
+## Round 2 — ABI device guard, expected-route, bias edge, small-M swap-AB no-go
+
+GPU 3 idle pre+post; correctness on GPU 3+4 (mixed-device negative). Candidate
+sha256 updated (swap-AB added); see git for the exact hash at HEAD.
+
+Commands (container):
+```
+CUDA_VISIBLE_DEVICES=3,4 python bench/correctness.py     # 299/299 (286 prod + 4 edge + 9 negatives incl. bias_edge, CPU/mixed-device)
+# small-M swap-AB benchmark (route 2 temporarily enabled):
+CUDA_VISIBLE_DEVICES=3 python bench/benchmark.py --device cuda:0 --only m{23,32,57}_k{1024,256,8192}_n{8192,512,1024,3072}
+# NCU on the swap-AB kernel:
+CUDA_VISIBLE_DEVICES=3 ncu --metrics dram__bytes_read...,sm__throughput...,sm__pipe_tensor_cycles_active...,sm__warps_active... --launch-skip 25 -c 1 python bench/prof_one.py candidate 32 1024 8192
+```
+
+### Results
+- Correctness 299/299 (adds CUDA/same-device guard tests that CALL the candidate,
+  expected-route assertions for every row, and a real bias edge vs the fp32 oracle).
+- **Small-M swap-AB benchmark** (m23/m32/m57 × 5 hot K,N): every shape 0.83–0.88×,
+  geomean **0.85×** (candidate ~20–21µs vs baseline ~17–18µs). Not one ≥1.10.
+- **NCU (swap-AB kernel, m32·k1024·n8192)**: tensor-core 1.9%, SM throughput 6.5%,
+  occupancy 10.7%, DRAM 10.7% → pipeline-fill / occupancy bound (tiny swapped-N=M
+  under-fills the 2-SM warp-specialized mainloop).
+- **Verdict**: small-M = evidence-backed no-go; route gated off
+  (`kSmallMSwapAbEnabled=false`), falls back to baseline (no regression). M=1
+  promotion unchanged. Full small-M table + bound in `docs/results.md`.

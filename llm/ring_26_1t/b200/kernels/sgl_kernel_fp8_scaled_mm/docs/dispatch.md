@@ -9,7 +9,7 @@ silent fallback can never masquerade as a candidate run.
 |---|---|---|
 | `M==1` AND column-major B AND bf16 out AND fp8e4m3 A/B AND `K%16==0` AND **NOT (`K>=4096 && N>=3072`)** | **`fp8_gemv_m1_kernel`** (native CUDA FP8 GEMV, one warp per output column) | Decode GEMV streams Bphys[n,:] coalesced; beats the baseline's 64-row MMA tile. Wins all measured covered shapes (1.14–2.97×). |
 | `M==1` AND `K>=4096 && N>=3072` | baseline (CUTLASS sm100) | Largest-work M=1 shapes: the scalar-fp8-decode GEMV is latency/instruction-bound and the baseline's tensor-core tiling wins (measured 0.73–0.86× for the GEMV), so fall back. |
-| `2 <= M <= 64` | baseline (CUTLASS sm100) | Not yet specialized. Swap-AB skinny tensor-core GEMM (KernelWiki `pr-vllm-27284`) is the documented follow-up (see results.md); falls back today at parity. |
+| `2 <= M <= 64` | baseline (CUTLASS sm100) | **Evidence-backed no-go**: an SM100 swap-AB CUTLASS GEMM (`solution/fp8_swapab_smallm.cu`, `pr-vllm-27284`) was implemented + correct but loses (geomean 0.85×; NCU pipeline-fill/occupancy bound). Route gated off (`kSmallMSwapAbEnabled=false`); falls back at parity. See results.md. |
 | `M > 64` (prefill) | baseline (CUTLASS sm100) | Compute-bound; beating vendor CUTLASS is unlikely. Fallback. |
 | Any uncovered dtype / layout / param (non-column-major B, non-bf16 out, bias, K%16!=0, bad scales) | baseline (CUTLASS sm100) | Correctness-preserving fallback; matches the upstream input contract. |
 
