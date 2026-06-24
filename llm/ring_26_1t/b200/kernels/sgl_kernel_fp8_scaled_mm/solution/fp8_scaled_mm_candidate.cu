@@ -145,6 +145,10 @@ inline bool covers_m1_gemv(
   return true;
 }
 
+// Small-M swap-AB is DISABLED (Round 2 evidence-backed no-go; see the predicate
+// body). Flip to true to re-route small-M to the swap-AB kernel.
+inline constexpr bool kSmallMSwapAbEnabled = false;
+
 // Coverage predicate for the small-M swap-AB path (M in (1,64]). Same strict
 // contract as the M=1 GEMV (exact dtypes, A row-major / B column-major / out
 // row-major, scale rank+contiguity, same CUDA device, K%16==0).
@@ -152,6 +156,15 @@ inline bool covers_smallm_swapab(
     const tvm::ffi::TensorView& a, const tvm::ffi::TensorView& b,
     const tvm::ffi::TensorView& scales_a, const tvm::ffi::TensorView& scales_b,
     const tvm::ffi::TensorView& out) {
+  // EVIDENCE-BACKED NO-GO (Round 2): the swap-AB kernel (solution/fp8_swapab_smallm.cu)
+  // is implemented and correct but LOSES on every measured small-M shape (geomean
+  // 0.85x vs baseline; NCU: tensor-core activity ~1.9%, occupancy ~11% — the tiny
+  // swapped-N dimension (=M) under-fills the 2-SM warp-specialized mainloop). The
+  // baseline Gemm64 is already 36-89% M-tile-utilized for M=23-57. So small-M falls
+  // back to the baseline (no regression). The predicate logic + kernel stay in tree
+  // as the documented attempt; flip kSmallMSwapAbEnabled to re-enable if a future
+  // tile/pipeline tuning wins. See docs/results.md (small-M no-go).
+  if (!kSmallMSwapAbEnabled) return false;
   if (a.ndim() != 2 || b.ndim() != 2 || out.ndim() != 2) return false;
   const int64_t M = a.size(0), K = a.size(1), N = b.size(1);
   if (M < 2 || M > 64) return false;               // small-M regime

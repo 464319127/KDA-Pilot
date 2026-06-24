@@ -55,8 +55,8 @@ def expected_route(wl) -> int:
         return 0  # contract violation -> baseline fallback
     if M == 1:
         return 1 if not (K >= 4096 and N >= 3072) else 0  # M=1 GEMV (route 1)
-    if 2 <= M <= 64:
-        return 2  # small-M swap-AB (route 2)
+    # Small-M swap-AB (route 2) is disabled (Round 2 evidence-backed no-go);
+    # small-M falls back to baseline (route 0).
     return 0
 
 
