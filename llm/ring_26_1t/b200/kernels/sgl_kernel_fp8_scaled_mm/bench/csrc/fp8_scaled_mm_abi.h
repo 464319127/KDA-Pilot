@@ -47,8 +47,6 @@ inline torch::Tensor view_as(const TensorView& t, torch::ScalarType dtype) {
   return torch::from_blob(ptr, sizes, strides, opts);
 }
 
-inline bool is_cuda(const TensorView& t) { return t.device().device_type == kDLCUDA; }
-
 inline bool dtype_is(const TensorView& t, DLDataTypeCode code, uint8_t bits) {
   return t.dtype().code == code && t.dtype().bits == bits && t.dtype().lanes == 1;
 }

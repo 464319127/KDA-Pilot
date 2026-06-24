@@ -214,3 +214,14 @@ diagnostic, so the misaligned storage is never read on device. Updated hashes:
 candidate `e0b2ca47aab7fe52f153dd482b2256ba98a87765bc853800048c5053eaede565`,
 `bench/correctness.py` `4f0f5e7f49e88b4409df263503b0979fd16bdf2b451d8ac595fbe26b4cd8a782`
 (baseline `18f28aff…` and swap-AB `d19e004e…` unchanged).
+
+## Finalize — dead-code cleanup (no functional change)
+
+Finalize-phase simplification pass: removed the unused `fp8abi::is_cuda` helper
+from `bench/csrc/fp8_scaled_mm_abi.h` (defined once, never called; the live device
+check is inline in `require_fp8_contract`). Pure dead-code removal — no dispatch,
+ABI, numeric, or `TORCH_CHECK` change. Because the header is included by all three
+TUs, this forced a full rebuild. Re-verified on ion-b200 GPU 3+4 (idle
+before+after, 0% util / 0 MB): **correctness 304/304**. The tracked source hashes
+(candidate `e0b2ca47…`, baseline `18f28aff…`, swap-AB `d19e004e…`,
+`bench/correctness.py` `4f0f5e7f…`) are unchanged — only the ABI header was edited.
