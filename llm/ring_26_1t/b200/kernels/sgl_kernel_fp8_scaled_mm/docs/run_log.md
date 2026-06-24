@@ -143,3 +143,19 @@ The bias edge now runs through the candidate fallback route: `route_bias=0`,
 scale_a·scale_b+bias`), `candidate==baseline`. Benchmark numbers (M=1 promotion,
 small-M no-go, fallback overhead) are unchanged from Rounds 1–2 (the candidate's
 fast-path code is unchanged; only the test-only bias entry was added).
+
+## Round 4 — code-review P2 fixes (M=1 fast path)
+
+Fixed two [P2] code-review findings in the candidate fast path (no verdict/
+benchmark change; the GEMV math is unchanged):
+- Predicates now require `b.stride(1)==K` (exactly-packed Bphys) so a padded/sliced
+  column-major B falls back to the baseline instead of the GEMV reading wrong
+  columns. New `neg_padded_B` test asserts route 0.
+- `fp8_scaled_mm_candidate` sets a `c10::cuda::CUDAGuard` to the tensors' device and
+  uses `getCurrentCUDAStream(device_id)` before the GEMV launch (right-GPU launch).
+
+Verified on ion-b200 GPU 3+4 (idle): correctness **300/300** (286 production + 4
+edge + 10 negatives). Updated source hashes: candidate
+`4a1d9a9d3700415f0a4eb18e303a994159ede9e0cfac4847ffb822c0044b636b`,
+`bench/correctness.py` `e9549c5af409110c62b8b4bb7addcdb932ae32e1b7c5207ee53028cfe6855f36`
+(baseline/swap-AB unchanged).

@@ -16,12 +16,12 @@ All evidence is from `ion-b200` GPU id 3 (B200 sm_100, CUDA 13.0, torch
 (`docs/run_log.md`). Timing: the unmodified `standalone_llm_benchmark_template.py`
 (template sha256 `2e1712e5…`, byte-identical), CUDA events, inner-loop
 amplification, isolated subprocess, interleaved A/B, 7 trials (25 for the
-fallback-overhead run). Correctness: **299 passed / 0 failed** (286 production +
-4 edge rows + 9 negative/edge tests: e5m2/uint8 A, e5m2 B, malformed scale
-`[M,2]`/`[N,2]`, fp16-out, CPU-input, mixed-device, and the bias edge) vs an
-fp32-dequant oracle AND the baseline. Source sha256 (HEAD):
-candidate `507dcce3…`, baseline ABI wrapper `69979be8…`, swap-AB `d19e004e…`,
-`bench/correctness.py` `8338da18…`; benchmark.py byte-identical to the template
+fallback-overhead run). Correctness: **300 passed / 0 failed** (286 production +
+4 edge rows + 10 negative/edge tests: e5m2/uint8 A, e5m2 B, malformed scale
+`[M,2]`/`[N,2]`, fp16-out, CPU-input, mixed-device, padded column-major B, and the
+bias edge) vs an fp32-dequant oracle AND the baseline. Source sha256 (HEAD):
+candidate `4a1d9a9d…`, baseline ABI wrapper `69979be8…`, swap-AB `d19e004e…`,
+`bench/correctness.py` `e9549c5a…`; benchmark.py byte-identical to the template
 (`2e1712e5…`).
 
 ## Final full-grid benchmark (all 286 production shapes, idle GPU 3)
