@@ -46,6 +46,26 @@ inline torch::Tensor view_as(const TensorView& t, torch::ScalarType dtype) {
 }
 
 inline bool is_cuda(const TensorView& t) { return t.device().device_type == kDLCUDA; }
+
+inline bool dtype_is(const TensorView& t, DLDataTypeCode code, uint8_t bits) {
+  return t.dtype().code == code && t.dtype().bits == bits && t.dtype().lanes == 1;
+}
+
+// Validate the captured input contract at the TensorView boundary BEFORE building
+// any forced-dtype torch view. `view_as` reinterprets bytes at a fixed torch
+// dtype, so without this guard a wrong-dtype input (e.g. float8_e5m2 / uint8 A)
+// would be silently reinterpreted as float8_e4m3fn and skip the impl's dtype
+// check. Both the baseline export and the candidate fallback call this so invalid
+// inputs are rejected (not mis-computed). Mirrors the upstream op's dtype checks.
+inline void require_fp8_contract(
+    const TensorView& a, const TensorView& b,
+    const TensorView& sa, const TensorView& sb, const TensorView& out) {
+  TORCH_CHECK(dtype_is(a, kDLFloat8_e4m3fn, 8), "fp8_scaled_mm: mat_a must be float8_e4m3fn");
+  TORCH_CHECK(dtype_is(b, kDLFloat8_e4m3fn, 8), "fp8_scaled_mm: mat_b must be float8_e4m3fn");
+  TORCH_CHECK(dtype_is(sa, kDLFloat, 32) && dtype_is(sb, kDLFloat, 32), "fp8_scaled_mm: scales must be float32");
+  TORCH_CHECK(out.dtype().code == kDLBfloat || (out.dtype().code == kDLFloat && out.dtype().bits == 16),
+              "fp8_scaled_mm: out_dtype must be bfloat16 or float16");
+}
 }  // namespace fp8abi
 
 // Recovered upstream baseline, destination-passing (writes into pre-allocated

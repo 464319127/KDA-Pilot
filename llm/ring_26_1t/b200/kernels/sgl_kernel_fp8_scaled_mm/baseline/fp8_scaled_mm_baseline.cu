@@ -90,6 +90,9 @@ void fp8_scaled_mm_baseline(
     tvm::ffi::TensorView scales_a,
     tvm::ffi::TensorView scales_b,
     tvm::ffi::TensorView out) {
+  // Reject contract-violating dtypes at the TensorView boundary before the
+  // forced-dtype view (which would otherwise reinterpret e.g. e5m2/uint8 as e4m3fn).
+  fp8abi::require_fp8_contract(a, b, scales_a, scales_b, out);
   auto out_dtype = (out.dtype().code == kDLBfloat) ? torch::kBFloat16 : torch::kHalf;
   auto ta = fp8abi::view_as(a, torch::kFloat8_e4m3fn);
   auto tb = fp8abi::view_as(b, torch::kFloat8_e4m3fn);

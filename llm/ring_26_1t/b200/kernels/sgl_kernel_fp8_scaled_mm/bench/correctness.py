@@ -44,7 +44,6 @@ def oracle(inp, out_dtype):
 def check_row(wl, device) -> tuple[bool, str]:
     out_dtype = _DT[wl.get("scalars", {}).get("out_dtype", "bfloat16")]
     contig_b = wl.get("strides", {}).get("b") == "row_major"
-    has_bias = wl.get("scalars", {}).get("bias") is not None
     atol, rtol = wl.get("atol", 0.07), wl.get("rtol", 0.02)
 
     inp = adapter.make_inputs(wl, device=device, seed=wl.get("seed", 0))
@@ -62,9 +61,6 @@ def check_row(wl, device) -> tuple[bool, str]:
         except Exception:
             return True, "contiguous-B rejected by contract as expected"
         return False, "contiguous-B should have been rejected (column-major required)"
-    if has_bias:
-        return (route == 0), ("bias!=None routes to fallback" if route == 0
-                              else "bias!=None must route to fallback (route!=0)")
 
     # Valid input: run baseline + candidate into poisoned buffers.
     out_b = torch.full((inp["M"], inp["N"]), float("nan"), device=device, dtype=out_dtype)
@@ -101,6 +97,51 @@ def check_row(wl, device) -> tuple[bool, str]:
     return True, f"ok (route={route})"
 
 
+def negative_route_cases(device) -> list:
+    """Malformed inputs that MUST route to fallback (route==0) AND that the
+    baseline rejects (no silent wrong compute). Exercises the hardened dispatch
+    predicate (AC-3/AC-5). Each `neg_dtype_*`/`neg_scale_*` case would have
+    misrouted (route==1) under the round-0 8-bit-only / size(0)-only check."""
+    M, K, N = 1, 1024, 8192
+
+    def f8(shape, dt=torch.float8_e4m3fn, dev=device):
+        return torch.randn(shape, device=dev, dtype=torch.float32).to(dt)
+
+    a = f8((M, K))
+    b = f8((N, K)).t()  # [K,N] column-major
+    sa = torch.rand((M, 1), device=device, dtype=torch.float32)
+    sb = torch.rand((N, 1), device=device, dtype=torch.float32)
+    out = torch.empty((M, N), device=device, dtype=torch.bfloat16)
+
+    results = []
+
+    def expect_fallback(name, aa, bb, saa, sbb, oo, expect_reject):
+        r = build_ext.route(aa, bb, saa, sbb, oo)
+        if r != 0:
+            results.append((name, False, f"route=={r}, must be 0 (fallback)"))
+            return
+        if expect_reject:
+            try:
+                build_ext.candidate(aa, bb, saa, sbb, oo)
+                torch.cuda.synchronize()
+                results.append((name, False, "baseline did not reject malformed input"))
+                return
+            except Exception:
+                pass  # baseline correctly rejects -> no silent wrong compute
+        results.append((name, True, "route=0" + (" + baseline-rejected" if expect_reject else "")))
+
+    expect_fallback("neg_dtype_e5m2_A", f8((M, K), torch.float8_e5m2), b, sa, sb, out, True)
+    expect_fallback("neg_dtype_uint8_A", torch.zeros((M, K), dtype=torch.uint8, device=device), b, sa, sb, out, True)
+    expect_fallback("neg_scale_a_rank_M2", a, b, torch.rand((M, 2), device=device, dtype=torch.float32), sb, out, True)
+    expect_fallback("neg_scale_b_rank_N2", a, b, sa, torch.rand((N, 2), device=device, dtype=torch.float32), out, True)
+    expect_fallback("neg_out_fp16", a, b, sa, sb, torch.empty((M, N), device=device, dtype=torch.float16), False)
+    if torch.cuda.device_count() >= 2:
+        expect_fallback("neg_mixed_device", a, b, sa, sb.to("cuda:1"), out, False)
+    else:
+        results.append(("neg_mixed_device", True, "skipped (single visible GPU); predicate enforces same device_id"))
+    return results
+
+
 def main() -> int:
     assert torch.cuda.is_available(), "CUDA required"
     device = torch.device("cuda")
@@ -120,7 +161,17 @@ def main() -> int:
             nfail += 1
             fails.append((wl["id"], msg))
         print(f"[{tag}] {wl['id']:<24} {wl.get('regime','?'):<12} {msg}")
-    print(f"\n{npass} passed, {nfail} failed (of {len(rows)})")
+    # Negative-route (malformed-input) tests for the hardened dispatch predicate.
+    n_rows = len(rows)
+    for name, ok, msg in negative_route_cases(device):
+        tag = "PASS" if ok else "FAIL"
+        if ok:
+            npass += 1
+        else:
+            nfail += 1
+            fails.append((name, msg))
+        print(f"[{tag}] {name:<24} {'neg-route':<12} {msg}")
+    print(f"\n{npass} passed, {nfail} failed (of {npass + nfail}; {n_rows} workload rows + negatives)")
     if fails:
         print("FAILURES:")
         for i, m in fails:

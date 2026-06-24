@@ -85,19 +85,40 @@ template <typename T>
 inline T* mptr(const tvm::ffi::TensorView& t) {
   return reinterpret_cast<T*>(static_cast<char*>(t.data_ptr()) + t.byte_offset());
 }
+// Exact fp8_e4m3fn (DLPack code 10 == kDLFloat8_e4m3fn), NOT just any 8-bit type:
+// uint8 (kDLUInt=1), int8 (kDLInt=0), and fp8_e5m2 (kDLFloat8_e5m2=12) must NOT
+// reach the kernel, which reinterprets bytes as __nv_fp8_e4m3.
 inline bool is_f8e4m3(const tvm::ffi::TensorView& t) {
-  // DLPack float8_e4m3 code; accept by 8-bit width (torch float8_e4m3fn).
-  return t.dtype().bits == 8 && t.dtype().lanes == 1;
+  return t.dtype().code == kDLFloat8_e4m3fn && t.dtype().bits == 8 && t.dtype().lanes == 1;
+}
+inline bool is_f32(const tvm::ffi::TensorView& t) {
+  return t.dtype().code == kDLFloat && t.dtype().bits == 32 && t.dtype().lanes == 1;
+}
+inline bool is_bf16(const tvm::ffi::TensorView& t) {
+  return t.dtype().code == kDLBfloat && t.dtype().bits == 16 && t.dtype().lanes == 1;
+}
+// Contiguous 2-D [d0,d1] with stride(0)==d1 (so flat [i] indexing on dim 0 works;
+// the scales are [M,1]/[N,1] and the kernel reads scale_b[n] from offset n).
+inline bool is_contig_2d(const tvm::ffi::TensorView& t, int64_t d0, int64_t d1) {
+  return t.ndim() == 2 && t.size(0) == d0 && t.size(1) == d1 && t.stride(0) == d1;
+}
+inline bool same_cuda_dev(const tvm::ffi::TensorView& ref, const tvm::ffi::TensorView& t) {
+  return t.device().device_type == kDLCUDA && t.device().device_type == ref.device().device_type &&
+         t.device().device_id == ref.device().device_id;
 }
 
 // Coverage predicate (cheap; no launch, no sync): the M==1 GEMV fast path.
+// Strict: any input outside the exact covered contract returns false -> baseline
+// fallback. Validates dtype CODE (not just width), 2-D shapes, A row-major /
+// B column-major / out row-major layout, scale rank+shape+contiguity, and that
+// all tensors live on one CUDA device.
 inline bool covers_m1_gemv(
     const tvm::ffi::TensorView& a, const tvm::ffi::TensorView& b,
     const tvm::ffi::TensorView& scales_a, const tvm::ffi::TensorView& scales_b,
     const tvm::ffi::TensorView& out) {
   if (a.ndim() != 2 || b.ndim() != 2 || out.ndim() != 2) return false;
   const int64_t M = a.size(0), K = a.size(1), N = b.size(1);
-  if (M != 1) return false;                       // M==1 only this round
+  if (M != 1) return false;                        // M==1 only this round
   // Measured on B200 (round 0): the scalar-fp8-decode GEMV is instruction-bound
   // for the largest-work shapes, where the baseline's tensor-core tiling wins
   // (k8192_n3072 0.86x, k8192_n4608 0.73x). Fall back when BOTH K and N are
@@ -105,21 +126,30 @@ inline bool covers_m1_gemv(
   // winners have K<4096 or N<3072. (A faster-decode / tensor-core path is the
   // follow-up to widen this.)
   if (K >= 4096 && N >= 3072) return false;
+  // dtypes (exact codes)
+  if (!is_f8e4m3(a) || !is_f8e4m3(b) || !is_bf16(out) || !is_f32(scales_a) || !is_f32(scales_b))
+    return false;
+  // shapes / layout
   if (b.size(0) != K) return false;
-  if (b.stride(0) != 1) return false;             // column-major B (Bphys [N,K])
-  if (a.stride(1) != 1) return false;             // row-major A
-  if (K % kVec != 0) return false;                // vectorized loads
-  if (out.dtype().code != kDLBfloat || out.dtype().bits != 16) return false;  // bf16 out
-  if (!is_f8e4m3(a) || !is_f8e4m3(b)) return false;
-  if (scales_a.dtype().code != kDLFloat || scales_a.dtype().bits != 32) return false;
-  if (scales_b.dtype().code != kDLFloat || scales_b.dtype().bits != 32) return false;
-  if (scales_a.size(0) != M || scales_b.size(0) != N) return false;
+  if (a.stride(1) != 1) return false;              // A row-major
+  if (b.stride(0) != 1) return false;              // B column-major (Bphys [N,K])
+  if (K % kVec != 0) return false;                 // vectorized 16-fp8 loads
+  if (!(out.size(0) == M && out.size(1) == N && out.stride(1) == 1)) return false;  // out row-major [M,N]
+  if (!is_contig_2d(scales_a, M, 1)) return false; // scale_a [M,1] contiguous
+  if (!is_contig_2d(scales_b, N, 1)) return false; // scale_b [N,1] contiguous
+  // device consistency: all tensors on the same CUDA device
+  if (!same_cuda_dev(a, b) || !same_cuda_dev(a, scales_a) ||
+      !same_cuda_dev(a, scales_b) || !same_cuda_dev(a, out))
+    return false;
   return true;
 }
 
 inline void fallback(
     tvm::ffi::TensorView a, tvm::ffi::TensorView b,
     tvm::ffi::TensorView scales_a, tvm::ffi::TensorView scales_b, tvm::ffi::TensorView out) {
+  // Validate dtypes at the TensorView boundary before the forced-dtype view, so
+  // a wrong-dtype input (e.g. e5m2/uint8) is rejected, not reinterpreted.
+  fp8abi::require_fp8_contract(a, b, scales_a, scales_b, out);
   auto out_dtype = (out.dtype().code == kDLBfloat) ? torch::kBFloat16 : torch::kHalf;
   auto ta = fp8abi::view_as(a, torch::kFloat8_e4m3fn);
   auto tb = fp8abi::view_as(b, torch::kFloat8_e4m3fn);
