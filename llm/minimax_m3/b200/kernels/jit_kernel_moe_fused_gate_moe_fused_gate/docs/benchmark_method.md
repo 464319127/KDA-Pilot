@@ -51,9 +51,14 @@ Consequently:
   rows, correctness-validated (by `captured`) and candidate-timed (below).
 - **Default-run safety:** `benchmark.py` still *executes* every row (incl. the `production:false`
   decode rows). To avoid faulting on the UB baseline decode launch, `bench/adapter.py::call_baseline`
-  detects the UB decode domain (E=128, M≤512, sigmoid) and substitutes the cold-safe candidate
-  (printing a one-time warning). Those decode rows therefore run safely but produce a **degenerate
-  A/B speedup** (candidate-vs-candidate) and are excluded from the headline anyway (`production:false`).
+  substitutes the cold-safe candidate ONLY for the candidate's EXACT `in_domain` config (E=128,
+  topk=5, sigmoid, shared=1, renorm, rsf=2.0, apply) — the only case where the candidate runs its
+  cold-safe kernel rather than its baseline fallback (one-time warning). Any OTHER UB-decode shape
+  (small-token with `warps_per_token = min(ceil(E/32),16) ∉ {8,12,16}`, e.g. off-domain E=128/topk=8,
+  where both the baseline and the candidate-fallback are UB) raises a clean Python error before any
+  CUDA launch rather than launch the UB path. All frozen `workloads.json` decode rows are `in_domain`,
+  so the default run substitutes the candidate for them — those rows produce a **degenerate A/B
+  speedup** (candidate-vs-candidate) and are excluded from the headline anyway (`production:false`).
 - **Decode correctness** is validated candidate-vs-**oracle** (the ground-truth reference), not
   candidate-vs-baseline, in `bench/correctness.py`.
 - **Decode candidate latency** is measured by the committed candidate-only script

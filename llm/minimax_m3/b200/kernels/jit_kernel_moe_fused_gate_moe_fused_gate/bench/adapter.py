@@ -127,38 +127,67 @@ def _invoke(mod, inputs: dict, outputs: tuple) -> None:
 _CANDIDATE_AVAILABLE = has_candidate()
 
 
-def _baseline_decode_is_ub(workload: dict[str, Any]) -> bool:
-    """True for the recovered baseline's small-token (decode) path at num_experts=128, which is
-    UB (uninitialized shared-memory read) and can raise CUDA illegal-memory-access on a cold
-    context — see docs/baseline_source.md. The default `python bench/benchmark.py` would otherwise
-    launch it for the dominant decode rows and poison the context."""
+def _candidate_in_domain(workload: dict[str, Any]) -> bool:
+    """Exactly the candidate kernel's `in_domain` gate — the ONLY config for which the candidate
+    runs its cold-safe warp-per-token kernel (rather than routing to the copied baseline fallback).
+    Must mirror the predicate in solution/csrc/moe/moe_fused_gate_candidate.cuh."""
     sh = workload.get("shapes", {})
     sc = workload.get("scalars", {})
     return (int(sh.get("num_experts", 0)) == 128
-            and int(sh.get("num_tokens", 1)) <= 512          # small-token (decode) dispatch path
-            and int(sc.get("scoring_func", 0)) == 0)          # sigmoid (the captured config)
+            and int(sc.get("topk", 0)) == 5
+            and int(sc.get("scoring_func", 0)) == 0
+            and int(sc.get("num_fused_shared_experts", 0)) == 1
+            and bool(sc.get("renormalize", False))
+            and float(sc.get("routed_scaling_factor", 0.0)) == 2.0
+            and bool(sc.get("apply_routed_scaling_factor_on_output", False)))
+
+
+def _baseline_decode_is_ub(workload: dict[str, Any]) -> bool:
+    """The recovered baseline's small-token (decode) kernel reads uninitialized shared memory
+    whenever it is dispatched to a warp-count template (<8>/<12>/<16>) with fewer active warps —
+    i.e. when warps_per_token = min(ceil(E/32), 16) is not exactly 8, 12, or 16. That covers E=128
+    (warps_per_token=4) and other ranges. Such a launch can raise CUDA illegal-memory-access on a
+    cold context (docs/baseline_source.md). Decode = small-token dispatch (num_rows <= 512)."""
+    sh = workload.get("shapes", {})
+    if int(sh.get("num_tokens", 1)) > 512:
+        return False
+    warps_per_token = min((int(sh.get("num_experts", 0)) + 31) // 32, 16)
+    return warps_per_token not in (8, 12, 16)
 
 
 _warned_ub_decode = False
 
 
 def call_baseline(workload: dict[str, Any], inputs: dict, outputs: tuple) -> None:
-    # Do NOT launch the UB baseline decode path (it can fault and poison the CUDA context). For
-    # those rows the only safe reference is the cold-safe candidate, so substitute it; the resulting
-    # decode A/B speedup is therefore degenerate (~1.0) and is NOT a real comparison. The
-    # authoritative evidence is: the prefill A/B (`--only <prefill ids>`, headline geomean) and the
-    # candidate-only decode latency (`bench/bench_decode_candidate.py`); see docs/results.md.
-    if _baseline_decode_is_ub(workload) and _CANDIDATE_AVAILABLE:
-        global _warned_ub_decode
-        if not _warned_ub_decode:
-            import sys
-            print("[adapter] baseline decode path is UB (E=128, M<=512); substituting the cold-safe "
-                  "candidate so the harness does not fault. Decode A/B speedups are degenerate — use "
-                  "--only <prefill ids> for the authoritative A/B and bench_decode_candidate.py for "
-                  "decode latency (see docs/results.md).", file=sys.stderr)
-            _warned_ub_decode = True
-        _invoke(candidate_module(), inputs, outputs)
-        return
+    # The baseline decode path can be UB (uninitialized shared-memory read) and unsafe to launch.
+    # Only the candidate's EXACT in_domain config has a cold-safe replacement (its warp-per-token
+    # kernel); substitute the candidate there so the harness does not fault. The resulting decode
+    # A/B speedup is degenerate (candidate-vs-candidate) and the row is `production:false` (excluded
+    # from the headline); authoritative decode evidence is candidate-only
+    # (bench/bench_decode_candidate.py, docs/results.md).
+    if _baseline_decode_is_ub(workload):
+        if _candidate_in_domain(workload) and _CANDIDATE_AVAILABLE:
+            global _warned_ub_decode
+            if not _warned_ub_decode:
+                import sys
+                print("[adapter] baseline decode path is UB; substituting the cold-safe candidate "
+                      "for the captured in_domain config. Decode A/B speedups are degenerate — use "
+                      "bench_decode_candidate.py for decode latency (see docs/results.md).",
+                      file=sys.stderr)
+                _warned_ub_decode = True
+            _invoke(candidate_module(), inputs, outputs)
+            return
+        # Off-domain UB decode: the baseline is UB AND the candidate would route to its verbatim
+        # baseline fallback (the same UB). Neither side is cold-safe, so this shape is
+        # unbenchmarkable. Refuse cleanly BEFORE any CUDA launch (no context poison) rather than
+        # crash. (No frozen workloads.json row hits this — all captured decode rows are in_domain.)
+        sh = workload.get("shapes", {})
+        raise RuntimeError(
+            f"off-domain decode shape (num_experts={sh.get('num_experts')}, "
+            f"num_tokens={sh.get('num_tokens')}, scalars outside the candidate-safe domain) is "
+            f"unbenchmarkable: the baseline small-token path is UB and the candidate falls back to "
+            f"it. Use the captured in_domain config, a prefill (M>512) shape, or an E with "
+            f"warps_per_token in {{8,12,16}}.")
     _invoke(baseline_module(), inputs, outputs)
 
 
