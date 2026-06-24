@@ -199,16 +199,25 @@ def main() -> int:
                 ow_t = torch.from_numpy(ow).to(dev)
                 oi_t = torch.from_numpy(oi).to(dev)
 
-                bout, bidx = _run_module(base, inp, bias)
-                _validate_outputs(ck, f"baseline {regime} M={M} s={s}", bout, bidx, M)
-                ck.exact_idx(f"baseline-vs-oracle idx {regime} M={M} s={s}", bidx, oi_t)
-                ck.weights_close(f"baseline-vs-oracle w {regime} M={M} s={s}", bout, ow_t)
+                # Baseline decode (small-token, M<=512) is UB and can fault on a cold
+                # context; only call the baseline on the reliable large-token path. The
+                # independent oracle is the ground-truth reference on every path.
+                base_safe = M > 512
+                bout = bidx = None
+                if base_safe:
+                    bout, bidx = _run_module(base, inp, bias)
+                    _validate_outputs(ck, f"baseline {regime} M={M} s={s}", bout, bidx, M)
+                    ck.exact_idx(f"baseline-vs-oracle idx {regime} M={M} s={s}", bidx, oi_t)
+                    ck.weights_close(f"baseline-vs-oracle w {regime} M={M} s={s}", bout, ow_t)
 
                 if cand is not None:
                     cout, cidx = _run_module(cand, inp, bias)
                     _validate_outputs(ck, f"candidate {regime} M={M} s={s}", cout, cidx, M)
-                    ck.exact_idx(f"candidate-vs-baseline idx {regime} M={M} s={s}", cidx, bidx)
-                    ck.weights_close(f"candidate-vs-baseline w {regime} M={M} s={s}", cout, bout)
+                    ck.exact_idx(f"candidate-vs-oracle idx {regime} M={M} s={s}", cidx, oi_t)
+                    ck.weights_close(f"candidate-vs-oracle w {regime} M={M} s={s}", cout, ow_t)
+                    if base_safe:
+                        ck.exact_idx(f"candidate-vs-baseline idx {regime} M={M} s={s}", cidx, bidx)
+                        ck.weights_close(f"candidate-vs-baseline w {regime} M={M} s={s}", cout, bout)
                     # determinism: repeat run must be identical
                     cout2, cidx2 = _run_module(cand, inp, bias)
                     ck.check(torch.equal(cidx, cidx2) and torch.equal(cout, cout2),
@@ -225,20 +234,22 @@ def main() -> int:
     # extreme positive logits -> sigmoid ~ 1
     edges["saturate_pos"] = (torch.full((4, NUM_EXPERTS), 60.0, device=dev),
                              torch.zeros((NUM_EXPERTS,), device=dev))
+    # Edges are decode-sized (M=4); the baseline decode path is UB, so the candidate is
+    # validated against the oracle (ground truth) and must be cold-safe.
     for name, (inp, bias) in edges.items():
         inp = inp.float().contiguous()
         bias = bias.float().contiguous()
         ow, oi = oracle(inp.cpu().numpy(), bias.cpu().numpy())
-        bout, bidx = _run_module(base, inp, bias)
-        _validate_outputs(ck, f"baseline edge[{name}]", bout, bidx, inp.shape[0])
-        ck.weights_close(f"baseline-vs-oracle w edge[{name}]", bout, torch.from_numpy(ow).to(dev))
+        ow_t = torch.from_numpy(ow).to(dev)
+        oi_t = torch.from_numpy(oi).to(dev)
         if cand is not None:
             cout, cidx = _run_module(cand, inp, bias)
-            ck.exact_idx(f"candidate-vs-baseline idx edge[{name}]", cidx, bidx)
-            ck.weights_close(f"candidate-vs-baseline w edge[{name}]", cout, bout)
+            _validate_outputs(ck, f"candidate edge[{name}]", cout, cidx, inp.shape[0])
+            ck.exact_idx(f"candidate-vs-oracle idx edge[{name}]", cidx, oi_t)
+            ck.weights_close(f"candidate-vs-oracle w edge[{name}]", cout, ow_t)
 
-    # 3) Adversarial ties (smallest-index rule). Diagnostic on decode (baseline hazard);
-    #    enforced as candidate-vs-oracle on the prefill/large path which is source-guaranteed.
+    # 3) Adversarial ties (smaller-index-wins rule) — the candidate must match the oracle on
+    #    both paths; the baseline is checked only on the source-guaranteed large path.
     for M, regime in ((1, "decode"), (1024, "prefill")):
         inp = torch.zeros((M, NUM_EXPERTS), dtype=torch.float32, device=dev)
         # force a clean tie: experts 3 and 100 share the top biased score
@@ -247,25 +258,22 @@ def main() -> int:
         bias[100] = 1.0  # tie between expert 3 and 100; smaller index (3) must win slot 0
         inp = inp.contiguous(); bias = bias.contiguous()
         ow, oi = oracle(inp.cpu().numpy(), bias.cpu().numpy())
-        bout, bidx = _run_module(base, inp, bias)
-        if regime == "prefill":
-            ck.exact_idx(f"baseline-vs-oracle tie {regime} M={M}", bidx, torch.from_numpy(oi).to(dev))
-        else:
-            same = torch.equal(bidx.cpu(), torch.from_numpy(oi))
-            print(f"  DIAG tie {regime} M={M}: baseline matches smallest-index oracle = {same} "
-                  f"(decode small-token hazard; not enforced on baseline)")
+        oi_t = torch.from_numpy(oi).to(dev)
+        if M > 512:  # baseline reliable only on the large-token path
+            _, bidx = _run_module(base, inp, bias)
+            ck.exact_idx(f"baseline-vs-oracle tie {regime} M={M}", bidx, oi_t)
         if cand is not None:
             cout, cidx = _run_module(cand, inp, bias)
-            ck.exact_idx(f"candidate-vs-oracle tie {regime} M={M}", cidx, torch.from_numpy(oi).to(dev))
+            ck.exact_idx(f"candidate-vs-oracle tie {regime} M={M}", cidx, oi_t)
 
-    # 4) M=0 no-op (must not crash, no writes needed).
+    # 4) M=0 no-op (must not crash, no writes needed). Exercise the cold-safe candidate.
     try:
         inp0 = torch.empty((0, NUM_EXPERTS), dtype=torch.float32, device=dev)
         bias0 = torch.randn((NUM_EXPERTS,), dtype=torch.float32, device=dev)
-        _run_module(base, inp0, bias0)
-        ck.check(True, "baseline M=0 no-op")
+        _run_module(cand if cand is not None else base, inp0, bias0)
+        ck.check(True, "M=0 no-op")
     except Exception as e:  # noqa: BLE001
-        ck.check(False, f"baseline M=0 raised {e!r}")
+        ck.check(False, f"M=0 raised {e!r}")
 
     print(f"\n{'PASS' if ck.failed == 0 else 'FAIL'}: {ck.passed} checks passed, {ck.failed} failed")
     return 0 if ck.failed == 0 else 1
