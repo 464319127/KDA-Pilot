@@ -18,7 +18,7 @@
 
 ```
 5d1a6d242731a5cbba6db018cc791c08539dd77ba07fea81d9518915cd4362b5  solution/topk_sigmoid_candidate.cuh
-35031d3a9cc8a0a58f35e67c179c81ba6d69dac7ccff364a74184cd4d27cfa42  solution/topk_sigmoid_ext.cu
+17c8ad8c4307e9eb98ca97acebefa6a92111ed3a2d2505b8018e2c6931c4b526  solution/topk_sigmoid_ext.cu
 ef9fb486a48ef7ae7315d4cc4b067bba65818a6fbceef9ec3050400bf7c671d9  bench/csrc/topk_sigmoid_ext.h
 4b8eadf84561c8b71c31893508caacc2c132a15510c725385616775a59e16ce3  baseline/topk_sigmoid_baseline.cu  (vendored verbatim)
 ```

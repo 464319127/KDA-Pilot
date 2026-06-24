@@ -100,8 +100,11 @@ def run_row(workload, device, errs) -> bool:
     if not torch.equal(gating, gating_clone):
         errs.append(f"[{name}] gating_output was mutated (must be read-only)"); ok = False
 
-    # independent oracle on random fp32 production rows (no ties at random -> ids exact).
-    if workload.get("production", True) and workload.get("dtype", "float32") == "float32":
+    # Independent oracle on EVERY random fp32 row — production AND fp32 fallback rows (e.g. the
+    # non-contiguous one). torch's oracle respects the real strides, so this catches a layout/dtype
+    # mis-wrap in the fallback bridge that a symmetric candidate==baseline comparison would miss
+    # (no ties at random -> ids exact).
+    if workload.get("dtype", "float32") == "float32":
         w_o, idx_o = torch_oracle(gating, bias, workload["topk"], bool(workload.get("renormalize", True)))
         if not _check_pair(name + ":cand-vs-oracle", w_o, idx_o, w_c, idx_c, 1e-4, 1e-4, errs):
             ok = False
@@ -178,6 +181,39 @@ def fp16_bias_fallback_row(device, errs) -> bool:
     return ok
 
 
+def strided_output_row(device, errs) -> bool:
+    """Fallback with NON-CONTIGUOUS output buffers: the candidate must fall back (route==0) and the
+    bridge must scatter results back into the strided output views (not into a dropped-stride dense
+    temp). Verify candidate==baseline==stride-aware oracle reading through the strided views."""
+    n = 16
+    gen = torch.Generator(device=device).manual_seed(321)
+    g = torch.randn((n, NUM_EXPERTS), dtype=torch.float32, device=device, generator=gen)
+    b = torch.randn((NUM_EXPERTS,), dtype=torch.float32, device=device, generator=gen)
+    # Strided [n, TOPK] views (stride (TOPK*2, 2)) by slicing the last axis of an [n, TOPK, 2] buffer.
+    wb = torch.empty((n, TOPK, 2), dtype=torch.float32, device=device)[..., 0]
+    ib = torch.empty((n, TOPK, 2), dtype=torch.int32, device=device)[..., 0]
+    wc = torch.empty((n, TOPK, 2), dtype=torch.float32, device=device)[..., 0]
+    ic = torch.empty((n, TOPK, 2), dtype=torch.int32, device=device)[..., 0]
+    ok = True
+    if wb.is_contiguous():
+        errs.append("[strided_output] test setup error: output view is contiguous"); ok = False
+    for t in (wb, wc):
+        t.fill_(float("nan"))
+    for t in (ib, ic):
+        t.fill_(-17)
+    if build_ext.route(wc, ic, g, 1, b) != 0:
+        errs.append("[strided_output] route != 0 (non-contiguous output must be off the fast path)"); ok = False
+    build_ext.baseline(wb, ib, g, 1, b)
+    build_ext.candidate(wc, ic, g, 1, b)
+    torch.cuda.synchronize()
+    if not _check_pair("strided_output:cand-vs-base", wb, ib, wc, ic, 1e-5, 1e-5, errs):
+        ok = False
+    w_o, idx_o = torch_oracle(g, b, TOPK, True)
+    if not _check_pair("strided_output:cand-vs-oracle", w_o, idx_o, wc, ic, 1e-4, 1e-4, errs):
+        ok = False
+    return ok
+
+
 def tie_rows(device):
     """Constructed tie/edge rows; validated against the authoritative baseline (torch.topk
     tie-break is unstable, so the baseline — not the oracle — is the reference here)."""
@@ -240,9 +276,12 @@ def main() -> int:
         if _check_pair(name, w_b, idx_b, w_c, idx_c, 1e-5, 1e-5, errs):
             npass += 1
 
-    # fp16-bias fallback safety (run last; see the function docstring)
+    # fallback-safety rows (run last; see the function docstrings)
     ntotal += 1
     if fp16_bias_fallback_row(device, errs):
+        npass += 1
+    ntotal += 1
+    if strided_output_row(device, errs):
         npass += 1
 
     print(f"correctness: {npass}/{ntotal} rows passed")

@@ -48,16 +48,21 @@ at::ScalarType dl_to_scalar_type(DLDataType d) {
               static_cast<int>(d.code), " bits=", static_cast<int>(d.bits), ")");
 }
 
-// Zero-copy torch::Tensor view over a TensorView's storage, preserving its REAL dtype (so off-domain
-// fallback inputs are never reinterpreted with the wrong element size). For calling the vendored baseline.
+// Zero-copy torch::Tensor view over a TensorView's storage, preserving its REAL dtype AND strides (so
+// off-domain fallback inputs are never reinterpreted with the wrong element size or logical layout).
+// For calling the vendored baseline; callers .contiguous() it before the contiguous-assuming kernel.
 torch::Tensor as_torch(const tvm::ffi::TensorView& t) {
-  std::vector<int64_t> sizes;
+  std::vector<int64_t> sizes, strides;
   sizes.reserve(t.ndim());
-  for (int i = 0; i < t.ndim(); ++i) sizes.push_back(t.size(i));
+  strides.reserve(t.ndim());
+  for (int i = 0; i < t.ndim(); ++i) {
+    sizes.push_back(t.size(i));
+    strides.push_back(t.stride(i));
+  }
   auto opts =
       torch::TensorOptions().dtype(dl_to_scalar_type(t.dtype())).device(torch::kCUDA, tse::device_id(t));
   void* ptr = static_cast<char*>(t.data_ptr()) + t.byte_offset();
-  return torch::from_blob(ptr, sizes, opts);
+  return torch::from_blob(ptr, sizes, strides, opts);
 }
 
 // Empty kernel launched at the candidate's grid/block to bound launch overhead.
@@ -102,12 +107,19 @@ void topk_sigmoid_baseline(
     int64_t renormalize,
     tvm::ffi::TensorView correction_bias) {
   const at::cuda::OptionalCUDAGuard guard(at::Device(at::kCUDA, tse::device_id(gating_output)));
-  torch::Tensor w = as_torch(topk_weights);
-  torch::Tensor idx = as_torch(topk_indices);
-  torch::Tensor gating = as_torch(gating_output);
-  torch::Tensor bias = as_torch(correction_bias);
+  // Strided views over the caller's storage. The vendored kernel assumes contiguous row-major, so
+  // pass .contiguous() read-only inputs and scatter results back into any strided in-place output
+  // (`.contiguous()` is the same tensor — no copy — when the view is already contiguous).
+  torch::Tensor w_view = as_torch(topk_weights);
+  torch::Tensor idx_view = as_torch(topk_indices);
+  torch::Tensor gating = as_torch(gating_output).contiguous();
+  torch::Tensor bias = as_torch(correction_bias).contiguous();
+  torch::Tensor w = w_view.contiguous();
+  torch::Tensor idx = idx_view.contiguous();
   c10::optional<torch::Tensor> bias_opt(bias);
   topk_sigmoid(w, idx, gating, renormalize != 0, bias_opt);
+  if (!w_view.is_contiguous()) w_view.copy_(w);
+  if (!idx_view.is_contiguous()) idx_view.copy_(idx);
 }
 
 // No-bias variants (missing-bias fallback): the captured contract always supplies a bias and
@@ -120,10 +132,14 @@ void topk_sigmoid_baseline_nobias(
     tvm::ffi::TensorView gating_output,
     int64_t renormalize) {
   const at::cuda::OptionalCUDAGuard guard(at::Device(at::kCUDA, tse::device_id(gating_output)));
-  torch::Tensor w = as_torch(topk_weights);
-  torch::Tensor idx = as_torch(topk_indices);
-  torch::Tensor gating = as_torch(gating_output);
+  torch::Tensor w_view = as_torch(topk_weights);
+  torch::Tensor idx_view = as_torch(topk_indices);
+  torch::Tensor gating = as_torch(gating_output).contiguous();
+  torch::Tensor w = w_view.contiguous();
+  torch::Tensor idx = idx_view.contiguous();
   topk_sigmoid(w, idx, gating, renormalize != 0, c10::nullopt);
+  if (!w_view.is_contiguous()) w_view.copy_(w);
+  if (!idx_view.is_contiguous()) idx_view.copy_(idx);
 }
 
 void topk_sigmoid_candidate_nobias(

@@ -21,9 +21,9 @@ atol/rtol 1e-5). Promotion is judged at the strict op ABI (DEC-1).
   is bit-faithful to the baseline for every input the host-only route predicate admits (any fp32
   `[N,288]` bias), not only a "realistic" bias range (Round 1 fix; see Correctness).
 
-## Correctness (functional, GPU; 36/36 + 27/27 adversarial)
+## Correctness (functional, GPU; 37/37 + 27/27 adversarial)
 
-`bench/correctness.py` → **36/36 PASS**:
+`bench/correctness.py` → **37/37 PASS**:
 - All 24 production rows: candidate == recovered baseline EXACT on selected expert ids AND within fp32
   atol/rtol 1e-5 on weights; AND == independent fp32 torch oracle (sigmoid+bias selection, unbiased
   `gather`, renormalize) — matching upstream `test_topk_sigmoid_renormalize_correction_bias`.
@@ -35,6 +35,12 @@ atol/rtol 1e-5). Promotion is judged at the strict op ABI (DEC-1).
 - **Fallback dtype safety (AC-4):** `fp16_bias_fallback` — an fp16 `correction_bias` is off-domain
   (`route==0`); the local ABI bridge preserves the real dtype, so the vendored baseline's
   `correction_bias must be float32` check raises cleanly on both sides (no out-of-bounds reinterpretation).
+- **Fallback stride safety (AC-4):** the ABI bridge preserves real TensorView strides, makes read-only
+  inputs contiguous for the contiguous-assuming baseline, and scatters results back into strided
+  in-place outputs. Verified two ways: every fp32 row (incl. the non-contiguous `fb_noncontig` gating)
+  is checked against a **stride-aware** oracle (so a dropped-stride mis-wrap cannot pass via a symmetric
+  candidate==baseline match), and a `strided_output` row exercises the copy-back into non-contiguous
+  output buffers.
 - 4 constructed tie rows (identical logits, block-tied bias, equal score / different sigmoid, forced
   sigmoid tie) match the baseline exactly (lower-index tie-break).
 - Output buffers poisoned (NaN/-17) each run; `gating_output` verified not mutated (read-only).
