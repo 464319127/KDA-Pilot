@@ -159,8 +159,9 @@ def _validate_outputs(ck: Checker, label: str, out: torch.Tensor, idx: torch.Ten
 
 
 # ----------------------------------------------------------------------------- grid
+# All captured production shapes (mirrors bench/workloads.json production rows).
 DECODE_M = [1, 7, 12, 15, 16, 18, 19, 24, 27, 32, 34, 38, 44, 53, 61, 70, 72, 79]
-PREFILL_M = [1074, 2340, 4951, 7432]   # representative prefill rows (large-token path)
+PREFILL_M = [1074, 2340, 4004, 4339, 4951, 5398, 5956, 7120, 7149, 7299, 7432]  # all 11 captured
 BOUNDARY_M = [2, 512, 513]             # small/large dispatch boundary
 
 
@@ -223,30 +224,22 @@ def main() -> int:
                     ck.check(torch.equal(cidx, cidx2) and torch.equal(cout, cout2),
                              f"candidate deterministic {regime} M={M} s={s}")
 
-    # 2) Numerical edges (baseline must match oracle; candidate must match baseline).
-    edges = {}
-    # all-equal logits -> selection decided purely by bias (+ tie-break)
-    edges["all_equal"] = (torch.full((4, NUM_EXPERTS), 0.3, device=dev),
-                          torch.randn((NUM_EXPERTS,), device=dev))
-    # extreme negative logits -> sigmoid ~ 0 -> tiny routed_sum (norm fallback path)
-    edges["saturate_neg"] = (torch.full((4, NUM_EXPERTS), -60.0, device=dev),
-                             torch.zeros((NUM_EXPERTS,), device=dev))
-    # extreme positive logits -> sigmoid ~ 1
-    edges["saturate_pos"] = (torch.full((4, NUM_EXPERTS), 60.0, device=dev),
-                             torch.zeros((NUM_EXPERTS,), device=dev))
-    # Edges are decode-sized (M=4); the baseline decode path is UB, so the candidate is
-    # validated against the oracle (ground truth) and must be cold-safe.
-    for name, (inp, bias) in edges.items():
-        inp = inp.float().contiguous()
-        bias = bias.float().contiguous()
+    # 2) Frozen semantic EDGE grid (AC-3). Built via the SAME generator functions that
+    #    bench/workloads.json + bench/adapter.py use, so the frozen workload file is authoritative
+    #    and the correctness grid cannot diverge from it. Decode-sized; baseline decode is UB so the
+    #    candidate is validated against the oracle (ground truth) and must be cold-safe. +-Inf are
+    #    covered (sigmoid(+-inf) is finite 1/0); NaN is out of contract (see module docstring).
+    from adapter import build_inputs
+    for gen_name in ("all_equal", "tie_small_index", "saturate_neg", "saturate_pos",
+                     "pos_inf", "neg_inf", "subnormal_sum"):
+        g.manual_seed(424242)
+        inp, bias = build_inputs(gen_name, 4, NUM_EXPERTS, dev, gen=g)
         ow, oi = oracle(inp.cpu().numpy(), bias.cpu().numpy())
-        ow_t = torch.from_numpy(ow).to(dev)
-        oi_t = torch.from_numpy(oi).to(dev)
         if cand is not None:
             cout, cidx = _run_module(cand, inp, bias)
-            _validate_outputs(ck, f"candidate edge[{name}]", cout, cidx, inp.shape[0])
-            ck.exact_idx(f"candidate-vs-oracle idx edge[{name}]", cidx, oi_t)
-            ck.weights_close(f"candidate-vs-oracle w edge[{name}]", cout, ow_t)
+            _validate_outputs(ck, f"candidate edge[{gen_name}]", cout, cidx, 4)
+            ck.exact_idx(f"candidate-vs-oracle idx edge[{gen_name}]", cidx, torch.from_numpy(oi).to(dev))
+            ck.weights_close(f"candidate-vs-oracle w edge[{gen_name}]", cout, torch.from_numpy(ow).to(dev))
 
     # 3) Adversarial ties (smaller-index-wins rule) — the candidate must match the oracle on
     #    both paths; the baseline is checked only on the source-guaranteed large path.
@@ -291,19 +284,6 @@ def main() -> int:
             ck.weights_close(f"offdomain-fallback candidate==baseline w E=256 M={M}", cout, bout)
             ck.exact_idx(f"offdomain-fallback candidate-vs-oracle idx E=256 M={M}", cidx,
                          torch.from_numpy(oi).to(dev))
-
-    # 6) Subnormal-stress: input ~ -85 -> sigmoid ~ 1e-37 (near fp32 subnormal) so routed_sum is
-    #    tiny-but-nonzero, exercising the exact fp32 op order of the shared-slot weight. Candidate
-    #    vs oracle (decode-sized; oracle is ground truth).
-    if cand is not None:
-        inp = torch.full((4, NUM_EXPERTS), -85.0, dtype=torch.float32, device=dev)
-        bias = torch.zeros((NUM_EXPERTS,), dtype=torch.float32, device=dev)
-        bias[7] = 1e-3; bias[40] = 5e-4  # break the tie deterministically toward small indices
-        inp = inp.contiguous(); bias = bias.contiguous()
-        ow, oi = oracle(inp.cpu().numpy(), bias.cpu().numpy())
-        cout, cidx = _run_module(cand, inp, bias)
-        ck.exact_idx("subnormal candidate-vs-oracle idx", cidx, torch.from_numpy(oi).to(dev))
-        ck.weights_close("subnormal candidate-vs-oracle w", cout, torch.from_numpy(ow).to(dev))
 
     # NOTE on input contract: all 296 captured variants are finite float32 (~randn-scale). NaN/Inf
     # inputs are OUTSIDE the supported input contract — the baseline ignores NaN in its `>`

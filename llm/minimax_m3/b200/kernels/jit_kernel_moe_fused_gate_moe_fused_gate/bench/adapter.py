@@ -30,6 +30,41 @@ def _alloc_outputs(num_tokens: int, topk: int, device: torch.device) -> tuple:
     )
 
 
+def build_inputs(generator: str, N: int, E: int, device: torch.device, gen=None):
+    """Construct (input, bias) fp32 contiguous tensors for a workload's `generator` name.
+
+    `randn` is the production default (benchmark.py seeds torch globally first, so gen=None is
+    deterministic). The semantic edge generators construct the exact AC-3 regression inputs from
+    `bench/workloads.json` so that file is the authoritative frozen workload set. All generators
+    produce FINITE inputs (sigmoid of +-inf is 1/0, not NaN); NaN inputs are out of contract."""
+    def _randn(shape):
+        return torch.randn(shape, dtype=torch.float32, device=device, generator=gen)
+    def _full(shape, v):
+        return torch.full(shape, v, dtype=torch.float32, device=device)
+
+    if generator == "randn":
+        return _randn((N, E)).contiguous(), _randn((E,)).contiguous()
+    if generator == "all_equal":          # equal logits -> selection decided by bias (+ tie-break)
+        return _full((N, E), 0.3).contiguous(), _randn((E,)).contiguous()
+    if generator == "saturate_neg":       # sigmoid ~ 0 -> routed_sum ~ 0 (norm fallback path)
+        return _full((N, E), -60.0).contiguous(), torch.zeros((E,), dtype=torch.float32, device=device).contiguous()
+    if generator == "saturate_pos":       # sigmoid ~ 1
+        return _full((N, E), 60.0).contiguous(), torch.zeros((E,), dtype=torch.float32, device=device).contiguous()
+    if generator == "pos_inf":            # sigmoid(+inf)=1 -> ties resolved by bias + smaller index
+        return _full((N, E), float("inf")).contiguous(), _randn((E,)).contiguous()
+    if generator == "neg_inf":            # sigmoid(-inf)=0 -> routed_sum=0; selection by bias
+        return _full((N, E), float("-inf")).contiguous(), _randn((E,)).contiguous()
+    if generator == "tie_small_index":    # exact tie on biased score -> smaller expert index wins
+        inp = torch.zeros((N, E), dtype=torch.float32, device=device)
+        bias = _full((E,), -1.0); bias[3] = 1.0; bias[100] = 1.0
+        return inp.contiguous(), bias.contiguous()
+    if generator == "subnormal_sum":      # sigmoid ~ 1e-37 -> tiny routed_sum (fp32 op-order stress)
+        inp = _full((N, E), -85.0)
+        bias = torch.zeros((E,), dtype=torch.float32, device=device); bias[7] = 1e-3; bias[40] = 5e-4
+        return inp.contiguous(), bias.contiguous()
+    raise ValueError(f"unknown workload generator: {generator!r}")
+
+
 def make_case(workload: dict[str, Any], *, device: torch.device, seed: int) -> dict:
     shapes = workload["shapes"]
     scalars = workload["scalars"]
@@ -37,9 +72,9 @@ def make_case(workload: dict[str, Any], *, device: torch.device, seed: int) -> d
     E = int(shapes["num_experts"])
     topk = int(scalars["topk"])
 
-    # benchmark.py seeds torch before calling make_case; randn is deterministic.
-    input_scores = torch.randn((N, E), dtype=torch.float32, device=device).contiguous()
-    bias = torch.randn((E,), dtype=torch.float32, device=device).contiguous()
+    # benchmark.py seeds torch before calling make_case; randn is deterministic. Edge rows in
+    # workloads.json carry a `generator` name that selects the exact semantic input construction.
+    input_scores, bias = build_inputs(workload.get("generator", "randn"), N, E, device)
 
     inputs = {
         "input": input_scores,

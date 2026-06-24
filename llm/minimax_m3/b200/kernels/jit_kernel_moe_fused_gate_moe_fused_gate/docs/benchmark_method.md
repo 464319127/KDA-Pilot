@@ -60,6 +60,16 @@ the baseline ignores NaN in its `>` comparisons while the candidate's packed-key
 order NaN differently, so the two are not matched on NaN/Inf. Correctness is defined on finite
 inputs (validated by `bench/correctness.py`, including a subnormal-stress row).
 
+## Aggregates reported (see docs/results.md)
+- **Prefill equal-weight geomean** of per-row `baseline_median/candidate_median` over the 11
+  prefill production rows; and **call-count-weighted geomean** (`exp(Σ cᵢ·ln sᵢ / Σ cᵢ)`). For this
+  task all prefill rows share `call_count=456`, so the two coincide (1.0105).
+- **Decode speedup = N/A** and **production-wide (decode+prefill) speedup = N/A**: the baseline
+  decode path is UB/unbenchmarkable, so any decode-containing ratio has an invalid denominator.
+  Decode is reported as candidate-absolute latency instead. (Decode is 84.2% of production calls,
+  so the absence of a production-wide ratio is a genuine limitation, stated explicitly — not a
+  silent omission.)
+
 ## Profiling
 NCU `--set basic` on the candidate (GPU 4): SM compute ~0.06 %, DRAM ~0.02 %, memory ~3 %,
 achieved occupancy ~12.5 % → launch/latency-bound. Warp-specialization-report-skill not applicable

@@ -54,3 +54,10 @@ Observation: the kernel is tiny and launch/overhead-bound even at prefill (~6 us
 - `ncu --set basic` on candidate -> SM 0.06% / DRAM 0.02% / mem ~3% / occ 12.5% -> launch/latency-bound. Raw report at remote `/tmp/k05_cand_ncu.ncu-rep` (kept local, NOT staged).
 - Reproduced baseline decode M=1 cold: ran OK on one probe, crashed (`illegal memory access`) on the correctness-grid cold first-launch -> nondeterministic UB.
 - Independent Codex review (gpt-5.5:high) -> NEEDS-CHANGES (overclaimed fallback safety + evidence scope); applied all 5 must-fix items (dispatch safety scope, 490-check scope, decode command, off-domain + subnormal tests, NaN/Inf out-of-contract). Re-validated 490/490.
+
+## Command log (round 1) — close loop-review gaps (AC-3/AC-4/AC-6)
+- Regenerated `bench/workloads.json` with the semantic edge grid (8 `generator`-tagged edge rows: all_equal, tie_small_index, saturate_neg/pos, pos_inf, neg_inf, subnormal_sum, m0) + 3 boundary rows; production rows unchanged (29; 31686 calls).
+- Added `bench/adapter.py::build_inputs(generator,...)` consumed by `make_case`; `bench/correctness.py` now loads `workloads.json`, covers all 18 decode + 11 prefill production rows (was 4 prefill), and builds the edge grid via the same `build_inputs`.
+- `python bench/correctness.py` (GPU 4) -> **754 checks pass, 0 fail**.
+- Re-ran prefill benchmark (num_trials=9, --no-isolated, idle GPU 4): prefill equal-weight = call-count-weighted geomean **1.0105** (range 0.982–1.135; m4951 1.135 is variance, R0 had 1.022). Aggregates: production-wide N/A + decode N/A (baseline decode UB); decode candidate-absolute ~4.1us. Recorded in docs/results.md.
+- Narrowed the candidate `.cuh` fallback-safety comment to match docs/dispatch.md.

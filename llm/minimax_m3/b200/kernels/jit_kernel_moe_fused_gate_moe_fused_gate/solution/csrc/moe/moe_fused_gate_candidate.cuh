@@ -24,11 +24,13 @@
  *   - In the captured production domain (num_experts=128, topk=5, scoring_func=0,
  *     num_fused_shared_experts=1, renormalize, routed_scaling_factor=2, apply on
  *     output) -> the cold-safe warp-per-token candidate kernel below.
- *   - Every other supported configuration -> the recovered baseline behaviour,
- *     bit-identical. The baseline kernels are copied verbatim into the `fallback`
- *     namespace; the buggy E=128 decode path is never reached through the fallback
- *     because E=128 is owned by the safe candidate kernel, and off-domain configs
- *     (e.g. E=256) run the baseline with enough warps to be safe.
+ *   - Every other (off-domain) configuration -> the recovered baseline behaviour,
+ *     BIT-IDENTICAL (baseline kernels copied verbatim into the `fallback` namespace).
+ *     The fallback is NOT a general UB fix: it reproduces the baseline's decode bug for
+ *     off-domain small-token configs with num_experts<=224 (e.g. E=128 with non-captured
+ *     scalars such as topk!=5). The candidate removes the UB only for the captured
+ *     production config, which is always handled by the cold-safe kernel above. See
+ *     docs/dispatch.md for the scoped safety statement.
  */
 #include <sgl_kernel/tensor.h>
 #include <sgl_kernel/utils.h>

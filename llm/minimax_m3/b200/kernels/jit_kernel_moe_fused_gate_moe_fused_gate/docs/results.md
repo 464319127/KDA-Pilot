@@ -1,17 +1,21 @@
 # Results — `moe_fused_gate` candidate vs baseline (B200)
 
 ## Headline
-- **Correctness:** candidate passes the full grid — **490 checks, 0 failures** (`bench/correctness.py`):
-  candidate-vs-**oracle** on every decode+prefill+boundary shape; candidate-vs-baseline on prefill;
-  baseline-vs-oracle on prefill; ties; numerical edges; subnormal-stress; **off-domain (E=256)
-  fallback** (candidate==baseline==oracle); M=0; determinism. The candidate is **cold-safe** (runs
-  correctly as the first launch on a cold context). NB: the grid does **not** run the baseline
-  decode path (it is UB); the decode correctness reference is the independent oracle. That the
-  *warmed* baseline decode also matches the oracle (M=1/32/79/512) was confirmed by a separate
-  one-off probe and only demonstrates state-dependent UB — not that the baseline decode is safe.
-- **Performance (prefill, candidate vs baseline):** equal-weight **geometric-mean speedup = 1.0006**
-  over the 11 prefill production rows (range 0.992–1.022) — **parity, no material measured
-  regression** (worst row ~0.8% slower, within run-to-run noise for a ~6 µs launch-bound kernel).
+- **Correctness:** candidate passes the full grid — **754 checks, 0 failures** (`bench/correctness.py`,
+  which loads `bench/workloads.json`): candidate-vs-**oracle** on **all 18 decode + 11 prefill**
+  production rows (×2 seeds) + boundary; candidate-vs-baseline + baseline-vs-oracle on prefill; the
+  frozen **semantic edge grid** (all-equal, tie-smaller-index, saturate ±, **+Inf/-Inf**,
+  subnormal-sum, M=0) built via the same `generator` field as `workloads.json`; **off-domain (E=256)
+  fallback** (candidate==baseline==oracle); determinism. The candidate is **cold-safe** (correct as
+  the first launch on a cold context). NB: the grid does **not** run the baseline decode path (UB);
+  the decode reference is the independent oracle. The *warmed* baseline decode also matching the
+  oracle (M=1/32/79/512) was a separate one-off probe and only shows state-dependent UB — not that
+  the baseline decode is safe.
+- **Performance (prefill, candidate vs baseline):** equal-weight (= call-count-weighted, since all
+  prefill rows share call_count=456) **geometric-mean speedup = 1.0105** over the 11 prefill rows
+  (range 0.982–1.135) — **parity within run-to-run noise** for a ~6–8 µs launch-bound kernel (the
+  1.135 row is a variance outlier; Round 0 measured it at 1.022). No material repeatable regression
+  or win.
 - **Performance (decode):** the recovered **baseline decode path is unsafe (latent UB, see below)
   and not safely benchmarkable**; the candidate runs correctly at the kernel-launch floor (~4.1 µs
   at M=1), measured by the candidate-only `bench/bench_decode_candidate.py`. No speed ratio is
@@ -29,23 +33,39 @@
 | Regime | Rows | Baseline | Candidate | Result |
 |---|---|---|---|---|
 | Decode (M≤512, small-token) | 18 production (M=1..79) | **UB — nondeterministic illegal access; not benchmarkable** | correct + cold-safe, ~4.1–6.1 µs | correctness/safety **win** (categorical) |
-| Prefill (M>512, large-token) | 11 production (M=1074..7432) | correct, ~6–8 µs | correct, ~6–8 µs | **parity** (geomean 1.0006, no regression) |
+| Prefill (M>512, large-token) | 11 production (M=1074..7432) | correct, ~6–8 µs | correct, ~6–8 µs | **parity** (geomean 1.0105, within noise) |
 
-## Per-shape table — prefill (candidate vs baseline, CUDA-event median, num_trials=9, --no-isolated)
+## Aggregate table (the decode baseline is UB, so production-wide/decode ratios are N/A)
+| Aggregate | Value | Notes |
+|---|---|---|
+| Production-wide speedup (decode+prefill) | **N/A** | baseline decode path is UB/unbenchmarkable → invalid denominator |
+| Decode speedup | **N/A** | baseline decode unbenchmarkable; candidate absolute latency reported below |
+| Decode candidate absolute latency | 4.10 µs (M=1) … 6.14 µs (M=512) | `bench/bench_decode_candidate.py`; baseline cannot run there |
+| Prefill equal-weight geomean | **1.0105** | 11 rows |
+| Prefill call-count-weighted geomean | **1.0105** | identical — all prefill rows have equal call_count (456) |
+| Prefill per-row range | 0.982 – 1.135 | spread is run-to-run variance on a ~6–8 µs launch-bound kernel |
+| Decode share of production calls | 84.2% | 26670 / 31686 — the dominant regime, where the baseline is unsafe |
+
+The prefill aggregate is **parity within noise** (geomean ≈ 1.01; the m4951 row's 1.135 is a
+variance outlier on a sub-µs-body launch-bound kernel, not a repeatable win — Round 0 measured the
+same row at 1.022). The candidate is neither materially faster nor slower than the baseline on
+prefill.
+
+## Per-shape table — prefill (candidate vs baseline, CUDA-event median, num_trials=9, --no-isolated, idle GPU 4)
 | M (E=128, topk=5) | baseline µs | candidate µs | speedup |
 |---|---|---|---|
-| 1074 | 5.802 | 5.846 | 0.992 |
-| 2340 | 6.007 | 6.043 | 0.994 |
-| 4004 | 6.520 | 6.560 | 0.994 |
-| 4339 | 7.283 | 7.328 | 0.994 |
-| 4951 | 8.217 | 8.036 | 1.022 |
-| 5398 | 8.239 | 8.234 | 1.001 |
-| 5956 | 8.234 | 8.238 | 0.999 |
-| 7120 | 8.243 | 8.240 | 1.000 |
-| 7149 | 8.243 | 8.243 | 1.000 |
-| 7299 | 8.309 | 8.239 | 1.008 |
-| 7432 | 8.256 | 8.243 | 1.002 |
-| **geomean** | | | **1.0006** |
+| 1074 | 6.516 | 6.634 | 0.982 |
+| 2340 | 6.533 | 6.655 | 0.982 |
+| 4004 | 6.628 | 6.697 | 0.990 |
+| 4339 | 6.621 | 6.673 | 0.992 |
+| 4951 | 8.220 | 7.243 | 1.135 |
+| 5398 | 8.252 | 8.182 | 1.009 |
+| 5956 | 8.243 | 8.231 | 1.001 |
+| 7120 | 8.279 | 8.241 | 1.005 |
+| 7149 | 8.272 | 8.257 | 1.002 |
+| 7299 | 8.438 | 8.260 | 1.022 |
+| 7432 | 8.322 | 8.280 | 1.005 |
+| **equal-weight geomean** | | | **1.0105** |
 
 ## Candidate decode latency (candidate-only; baseline decode is UB/unbenchmarkable)
 | M | candidate µs/call |
@@ -96,7 +116,7 @@ using **zero shared memory** (all reductions are intra-warp `__shfl`), so it is 
 the first launch on a cold context. Full analysis in `docs/baseline_source.md`.
 
 ## Correctness
-- 490/490 checks pass (see `bench/correctness.py`). Indices exact-match the **oracle** on all paths;
+- 754/754 checks pass (see `bench/correctness.py`, which loads `bench/workloads.json`). Indices exact-match the **oracle** on all paths;
   weights within `atol=rtol=1e-5`. Adversarial ties resolve to the smaller index on both paths;
   subnormal-stress and M=0 covered. The grid does NOT run the baseline decode path (UB); the oracle
   is the decode reference. The warmed-baseline-decode==oracle result (M=1/32/79/512) came from a
@@ -124,7 +144,7 @@ prefill (geomean 1.0006, no material measured regression) and at the launch-late
 **PROMOTE** on correctness/safety grounds. As a *speed* optimization the task is a well-evidenced
 **NO-GO** for this standalone op — it is launch/latency-bound (NCU ~0% compute / ~0% DRAM), so no
 standalone-kernel speedup is achievable under the fixed ABI; this conclusion rests on recovered
-baseline numbers, a reasoned native-CUDA candidate, full correctness (490 checks), benchmark deltas,
+baseline numbers, a reasoned native-CUDA candidate, full correctness (754 checks), benchmark deltas,
 NCU evidence, and a named active bound (launch/scheduling latency). Scope: the candidate is not a
 general fix for the upstream `moe_fused_gate` bug on arbitrary off-domain E=128 configs (see
 `docs/dispatch.md`).

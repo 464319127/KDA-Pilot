@@ -45,6 +45,6 @@ baseline behavior including the UB. Fixing the upstream kernel generally is out 
 
 ## Verification
 - `bench/correctness.py` exercises the in-domain path on all captured + boundary + edge + tie
-  shapes (482 checks pass) and the candidate is gate-selected for them.
+  shapes (754 checks pass) and the candidate is gate-selected for them.
 - Off-domain fallback equivalence is guaranteed by construction (the baseline kernels are copied
   verbatim into `namespace fallback`), not merely by numerical comparison.
