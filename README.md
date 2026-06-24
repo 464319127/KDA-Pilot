@@ -14,6 +14,7 @@ and RLCR-style agent iteration in one place.
 [![Last commit](https://img.shields.io/github/last-commit/BBuf/KDA-Pilot?style=flat-square)](https://github.com/BBuf/KDA-Pilot/commits/main)
 [![B200 diffusion](https://img.shields.io/badge/B200_diffusion-7_kernel_tasks-2ea44f?style=flat-square)](#b200-diffusion-results)
 [![AI Infra Skills](https://img.shields.io/badge/sibling-AI--Infra--Auto--Driven--SKILLS-2f80ed?style=flat-square)](https://github.com/BBuf/AI-Infra-Auto-Driven-SKILLS)
+[![Kernel Design Agents](https://img.shields.io/badge/built_on-Kernel--Design--Agents-ff6f00?style=flat-square)](https://github.com/mit-han-lab/kernel-design-agents)
 
 </div>
 
@@ -208,6 +209,16 @@ only count when the correctness contract and run logs agree.
 - **Open frontier:** compute-bound kernels such as FA4/MHA and GEMM-like paths
   remain harder; this repo keeps the failed and partial attempts visible so the
   next loop can start from evidence instead of folklore.
+
+## Acknowledgments
+
+The "KDA" in KDA-Pilot stands for **Kernel Design Agents** — the agent methodology these
+campaigns build on. Credit to the original project from MIT Han Lab:
+[mit-han-lab/kernel-design-agents](https://github.com/mit-han-lab/kernel-design-agents).
+The SGLang serving-kernel tasks here are driven by a fork,
+[BBuf/kernel-design-agents](https://github.com/BBuf/kernel-design-agents) (wired into each
+task's `prompt.md`), and the bundled [`external/KernelWiki`](external/KernelWiki) knowledge
+base likewise credits the original KDA project.
 
 ## Star History
 
