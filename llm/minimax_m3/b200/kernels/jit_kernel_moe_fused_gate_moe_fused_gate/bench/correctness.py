@@ -275,6 +275,42 @@ def main() -> int:
     except Exception as e:  # noqa: BLE001
         ck.check(False, f"M=0 raised {e!r}")
 
+    # 5) Off-domain fallback: E=256, topk=8 fails the production gate, so the candidate must
+    #    route to its verbatim-copied baseline fallback. E=256 -> warps_per_token=8, so the
+    #    baseline small-token path is safe here (the UB is E<256-specific). The candidate must
+    #    be bit-identical to the baseline AND match the oracle on this off-domain config.
+    if cand is not None:
+        for M in (64, 600):  # small-token + large-token off-domain
+            g.manual_seed(7777 + M)
+            inp = torch.randn((M, 256), dtype=torch.float32, device=dev, generator=g).contiguous()
+            bias = torch.randn((256,), dtype=torch.float32, device=dev, generator=g).contiguous()
+            ow, oi = oracle(inp.cpu().numpy(), bias.cpu().numpy(), topk=8)
+            cout, cidx = _run_module(cand, inp, bias, topk=8)
+            bout, bidx = _run_module(base, inp, bias, topk=8)
+            ck.exact_idx(f"offdomain-fallback candidate==baseline idx E=256 M={M}", cidx, bidx)
+            ck.weights_close(f"offdomain-fallback candidate==baseline w E=256 M={M}", cout, bout)
+            ck.exact_idx(f"offdomain-fallback candidate-vs-oracle idx E=256 M={M}", cidx,
+                         torch.from_numpy(oi).to(dev))
+
+    # 6) Subnormal-stress: input ~ -85 -> sigmoid ~ 1e-37 (near fp32 subnormal) so routed_sum is
+    #    tiny-but-nonzero, exercising the exact fp32 op order of the shared-slot weight. Candidate
+    #    vs oracle (decode-sized; oracle is ground truth).
+    if cand is not None:
+        inp = torch.full((4, NUM_EXPERTS), -85.0, dtype=torch.float32, device=dev)
+        bias = torch.zeros((NUM_EXPERTS,), dtype=torch.float32, device=dev)
+        bias[7] = 1e-3; bias[40] = 5e-4  # break the tie deterministically toward small indices
+        inp = inp.contiguous(); bias = bias.contiguous()
+        ow, oi = oracle(inp.cpu().numpy(), bias.cpu().numpy())
+        cout, cidx = _run_module(cand, inp, bias)
+        ck.exact_idx("subnormal candidate-vs-oracle idx", cidx, torch.from_numpy(oi).to(dev))
+        ck.weights_close("subnormal candidate-vs-oracle w", cout, torch.from_numpy(ow).to(dev))
+
+    # NOTE on input contract: all 296 captured variants are finite float32 (~randn-scale). NaN/Inf
+    # inputs are OUTSIDE the supported input contract — the baseline ignores NaN in its `>`
+    # comparisons while the candidate's packed-key comparison may order NaN differently, so their
+    # behavior on NaN/Inf is intentionally not matched here. Production correctness is defined on
+    # finite inputs only (see docs/benchmark_method.md).
+
     print(f"\n{'PASS' if ck.failed == 0 else 'FAIL'}: {ck.passed} checks passed, {ck.failed} failed")
     return 0 if ck.failed == 0 else 1
 

@@ -25,11 +25,23 @@ multi-bucket split is needed inside the fast path; `grid = div_ceil(num_rows, 8)
 M=1 (1 block) to M=7432 (929 blocks). The fallback exists only for off-domain safety/correctness
 and is never exercised by the captured workloads.
 
-## Why the fallback never re-introduces the baseline decode UB
-The baseline decode UB is specific to `num_experts == 128` (which makes `warps_per_token=4 < 8`).
-`num_experts == 128` is always `in_domain` and is therefore handled by the cold-safe candidate
-kernel, never by the fallback. Off-domain configs that reach the fallback (e.g. `num_experts==256`
-→ `warps_per_token=8`) do not trigger the uninitialized read, so the fallback is safe.
+## Fallback safety scope (the fallback is bit-identical to the baseline, NOT a UB fix)
+The fallback is a **verbatim copy** of the recovered baseline, so it reproduces baseline behavior
+exactly — **including the latent decode UB**. The UB affects the small-token (`num_rows<=512`) path
+whenever `div_ceil(num_experts,32) < 8` (i.e. `num_experts <= 224`, notably `num_experts==128`).
+
+The candidate's cold-safe kernel covers **only the exact captured production config** (`in_domain`).
+Therefore:
+- **Captured MiniMax-M3 config (E=128 + the exact scalars):** always `in_domain` → cold-safe
+  candidate kernel → UB removed. This is the only config in the captured workload set.
+- **Off-domain `E=128` with non-captured scalars** (e.g. `topk!=5`, `scoring_func=1`, `rsf!=2.0`):
+  fails the gate → fallback → baseline E=128 small-token → **same UB on a cold context**. The
+  fallback does NOT make these safe; they are simply not part of this task's captured workloads.
+- **Off-domain `E in {256,512}`:** `warps_per_token>=8` → the baseline small-token path is safe.
+
+In short, the candidate **removes the decode UB for the captured config**; it does not (and is not
+scoped to) fix the upstream baseline bug for arbitrary off-domain `E=128` configs, which inherit
+baseline behavior including the UB. Fixing the upstream kernel generally is out of scope here.
 
 ## Verification
 - `bench/correctness.py` exercises the in-domain path on all captured + boundary + edge + tie

@@ -46,4 +46,11 @@ Observation: the kernel is tiny and launch/overhead-bound even at prefill (~6 us
 - Recover source: sparse-checkout `python/sglang/jit_kernel/{include,csrc/moe}` @ 34dd9c28 -> baseline/.
 - Sync workspace -> remote task dir; build baseline; run correctness.py (cold decode -> illegal access; warmed decode -> matches oracle).
 - Capture baseline prefill numbers (above).
-- (pending) build candidate; candidate-vs-oracle correctness; candidate benchmark + NCU.
+- Build candidate (warp-per-token, cold-safe); smoke test M=1 as cold first launch -> correct (no crash).
+- `python bench/correctness.py` -> **490 checks pass, 0 fail** (candidate-vs-oracle all paths;
+  candidate-vs-baseline prefill; off-domain E=256 fallback candidate==baseline==oracle; subnormal; ties; M=0; determinism).
+- `python benchmark.py --only <11 prefill ids> --num-trials 9 --no-isolated` -> candidate-vs-baseline geomean 1.0006 (parity).
+- `python bench/bench_decode_candidate.py` -> candidate decode ~4.10us (M=1..12), ~4.6us (M=79), 6.14us (M=512); baseline decode UB (not benchmarkable).
+- `ncu --set basic` on candidate -> SM 0.06% / DRAM 0.02% / mem ~3% / occ 12.5% -> launch/latency-bound. Raw report at remote `/tmp/k05_cand_ncu.ncu-rep` (kept local, NOT staged).
+- Reproduced baseline decode M=1 cold: ran OK on one probe, crashed (`illegal memory access`) on the correctness-grid cold first-launch -> nondeterministic UB.
+- Independent Codex review (gpt-5.5:high) -> NEEDS-CHANGES (overclaimed fallback safety + evidence scope); applied all 5 must-fix items (dispatch safety scope, 490-check scope, decode command, off-domain + subnormal tests, NaN/Inf out-of-contract). Re-validated 490/490.

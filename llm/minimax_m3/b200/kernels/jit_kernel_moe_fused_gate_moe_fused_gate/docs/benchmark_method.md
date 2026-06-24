@@ -47,10 +47,18 @@ Consequently:
 - Baseline-vs-candidate speed ratios are reported on the **prefill** rows only (baseline reliable).
 - **Decode correctness** is validated candidate-vs-**oracle** (the ground-truth reference), not
   candidate-vs-baseline, in `bench/correctness.py`.
-- **Decode candidate latency** is reported as candidate-absolute (`docs/results.md`), with the
-  baseline decode bug noted; no speed ratio is fabricated for a path the baseline cannot run.
+- **Decode candidate latency** is measured by the committed candidate-only script
+  `CUDA_VISIBLE_DEVICES=4 python bench/bench_decode_candidate.py` (same CUDA-event + inner-loop
+  amplification + median-over-trials methodology as the template), reported candidate-absolute in
+  `docs/results.md`. No speed ratio is fabricated for a path the baseline cannot run.
 This is the only deviation from a uniform candidate-vs-baseline comparison, and it is forced by a
 genuine baseline bug rather than a methodology choice.
+
+## Input contract
+All 296 captured variants are finite float32 (~randn-scale). **NaN/Inf inputs are out of contract**:
+the baseline ignores NaN in its `>` comparisons while the candidate's packed-key comparison may
+order NaN differently, so the two are not matched on NaN/Inf. Correctness is defined on finite
+inputs (validated by `bench/correctness.py`, including a subnormal-stress row).
 
 ## Profiling
 NCU `--set basic` on the candidate (GPU 4): SM compute ~0.06 %, DRAM ~0.02 %, memory ~3 %,

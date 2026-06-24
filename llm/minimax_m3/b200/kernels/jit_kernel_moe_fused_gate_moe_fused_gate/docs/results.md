@@ -1,10 +1,29 @@
 # Results — `moe_fused_gate` candidate vs baseline (B200)
 
 ## Headline
-- **Correctness:** candidate passes the full grid — **482 checks, 0 failures** (candidate-vs-oracle on every decode+prefill+boundary shape; candidate-vs-baseline on prefill; ties/edges/M=0/determinism). The candidate is **cold-safe** (runs correctly as the first launch on a cold context).
-- **Performance (prefill, candidate vs baseline):** equal-weight **geometric-mean speedup = 1.0006** over the 11 prefill production rows (range 0.992–1.022) — **parity, no regression**.
-- **Performance (decode):** the recovered **baseline decode path is unsafe (latent UB, see below) and not benchmarkable**; the candidate runs correctly at the kernel-launch floor (~4.1 µs at M=1). No fair speed ratio exists because the baseline cannot be reliably timed there.
-- **Verdict:** **PROMOTE the candidate as a correctness + safety fix at performance parity.** A *pure-speed* optimization is an evidence-backed **NO-GO**: the op is launch/latency-bound with ~0% compute and ~0% DRAM utilization, so a standalone kernel has no headroom to win. The candidate's value is that it is correct and cold-safe on the dominant decode regime where the baseline has a latent illegal-memory-access bug, with zero regression elsewhere (satisfies the directional + no-regression bar, DEC-1).
+- **Correctness:** candidate passes the full grid — **490 checks, 0 failures** (`bench/correctness.py`):
+  candidate-vs-**oracle** on every decode+prefill+boundary shape; candidate-vs-baseline on prefill;
+  baseline-vs-oracle on prefill; ties; numerical edges; subnormal-stress; **off-domain (E=256)
+  fallback** (candidate==baseline==oracle); M=0; determinism. The candidate is **cold-safe** (runs
+  correctly as the first launch on a cold context). NB: the grid does **not** run the baseline
+  decode path (it is UB); the decode correctness reference is the independent oracle. That the
+  *warmed* baseline decode also matches the oracle (M=1/32/79/512) was confirmed by a separate
+  one-off probe and only demonstrates state-dependent UB — not that the baseline decode is safe.
+- **Performance (prefill, candidate vs baseline):** equal-weight **geometric-mean speedup = 1.0006**
+  over the 11 prefill production rows (range 0.992–1.022) — **parity, no material measured
+  regression** (worst row ~0.8% slower, within run-to-run noise for a ~6 µs launch-bound kernel).
+- **Performance (decode):** the recovered **baseline decode path is unsafe (latent UB, see below)
+  and not safely benchmarkable**; the candidate runs correctly at the kernel-launch floor (~4.1 µs
+  at M=1), measured by the candidate-only `bench/bench_decode_candidate.py`. No speed ratio is
+  reported for decode because the baseline cannot be reliably timed there.
+- **Verdict (scoped to this standalone ABI + the captured MiniMax-M3 config):** **PROMOTE the
+  candidate as a correctness + safety fix at performance parity.** A *pure-speed* optimization is an
+  evidence-backed **NO-GO** for this standalone op: NCU shows ~0% compute and ~0% DRAM utilization,
+  so it is launch/latency-bound and a standalone kernel (fixed ABI, no host-side batching/PDL) has
+  no headroom to win. The candidate's value is that it is correct and cold-safe on the dominant
+  captured decode config, where the baseline has a latent illegal-memory-access bug, with no
+  material measured regression on the prefill rows (satisfies the directional + no-regression bar,
+  DEC-1).
 
 ## Per-regime summary
 | Regime | Rows | Baseline | Candidate | Result |
@@ -67,8 +86,9 @@ reconcile. (Recorded per the task requirement.)
 The recovered upstream jit_kernel `moe_fused_gate` small-token (decode) kernel reads
 **uninitialized shared memory** for `num_experts=128`: it computes `warps_per_token =
 div_ceil(128,32) = 4` yet is dispatched to the `<8>`-warp template, so warp 0's final cross-warp
-reduction reads the never-written `warp_maxs[4..7]` / `warp_experts[4..7]`; a garbage expert index
-becomes an out-of-bounds `shared_scores[selected] = -FLT_MAX` write. On B200/GPU 4 the decode path
+reduction reads the never-written `warp_maxs[4..7]` / `warp_experts[4..7]`; when an uninitialized
+slot exceeds the real max, a garbage expert index can propagate to an out-of-bounds
+`shared_scores[selected] = -FLT_MAX` write. On B200/GPU 4 the decode path
 **raised `CUDA error: an illegal memory access` on some cold-context runs and ran (matching the
 oracle) on others** — classic nondeterministic uninitialized-memory UB. The prefill (large-token)
 path has no such read and matches the oracle exactly. The candidate avoids the bug entirely by
@@ -76,11 +96,18 @@ using **zero shared memory** (all reductions are intra-warp `__shfl`), so it is 
 the first launch on a cold context. Full analysis in `docs/baseline_source.md`.
 
 ## Correctness
-- 482/482 checks pass (see `bench/correctness.py`). Indices exact-match the oracle on all paths;
-  weights within `atol=rtol=1e-5`. Adversarial ties resolve to the smaller index on both paths.
-  Independent oracle validated against the warmed baseline (decode + prefill).
-- Off-domain inputs (E≠128, other params, non-fp32) route to the verbatim-copied baseline fallback
-  (bit-identical), via a host-side gate with no device sync — see `docs/dispatch.md`.
+- 490/490 checks pass (see `bench/correctness.py`). Indices exact-match the **oracle** on all paths;
+  weights within `atol=rtol=1e-5`. Adversarial ties resolve to the smaller index on both paths;
+  subnormal-stress and M=0 covered. The grid does NOT run the baseline decode path (UB); the oracle
+  is the decode reference. The warmed-baseline-decode==oracle result (M=1/32/79/512) came from a
+  separate probe and only shows state-dependent UB.
+- Off-domain (E=256, topk=8) is exercised: the candidate routes to the verbatim-copied baseline
+  fallback and is candidate==baseline==oracle (small- and large-token). The fallback is bit-identical
+  to the baseline (incl. its UB for off-domain E≤224 small-token) — see `docs/dispatch.md` for the
+  scoped safety statement.
+- Input contract: all 296 captures are finite fp32; **NaN/Inf inputs are out of contract** (baseline
+  ignores NaN in `>` reductions, the candidate's packed key may order it differently) — see
+  `docs/benchmark_method.md`.
 
 ## Provenance
 - GPU: NVIDIA B200, host `ion-b200`, `REMOTE_GPU_ID=4`; idle before measurement (0%/0 MiB), only
@@ -91,10 +118,13 @@ the first launch on a cold context. Full analysis in `docs/baseline_source.md`.
   amplification, interleaved A/B, num_trials≥7.
 
 ## Conclusion
-The candidate is a **correct, cold-safe, native-CUDA drop-in** that **eliminates the baseline's
-decode-path UB** at **performance parity** on prefill (geomean 1.0006, no regression) and at the
-launch-latency floor on decode. **PROMOTE** on correctness/safety grounds. As a *speed*
-optimization the task is a well-evidenced **NO-GO** — the op is launch/latency-bound (NCU ~0%
-compute / ~0% DRAM), so no standalone-kernel speedup is achievable; this conclusion rests on
-recovered baseline numbers, a reasoned native-CUDA candidate, full correctness, benchmark deltas,
-NCU evidence, and a named active bound (launch/scheduling latency).
+For the captured MiniMax-M3 config, the candidate is a **correct, cold-safe, native-CUDA drop-in**
+that **eliminates the baseline's decode-path UB for that config** at **performance parity** on
+prefill (geomean 1.0006, no material measured regression) and at the launch-latency floor on decode.
+**PROMOTE** on correctness/safety grounds. As a *speed* optimization the task is a well-evidenced
+**NO-GO** for this standalone op — it is launch/latency-bound (NCU ~0% compute / ~0% DRAM), so no
+standalone-kernel speedup is achievable under the fixed ABI; this conclusion rests on recovered
+baseline numbers, a reasoned native-CUDA candidate, full correctness (490 checks), benchmark deltas,
+NCU evidence, and a named active bound (launch/scheduling latency). Scope: the candidate is not a
+general fix for the upstream `moe_fused_gate` bug on arbitrary off-domain E=128 configs (see
+`docs/dispatch.md`).
