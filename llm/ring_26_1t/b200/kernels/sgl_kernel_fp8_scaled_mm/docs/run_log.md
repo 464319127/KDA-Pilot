@@ -177,3 +177,20 @@ Verified on ion-b200 GPU 3 (idle): default `bench/benchmark.py` runs clean
 `bench/correctness.py` `19d0b19a2e1273efa993bc190418daf716ae33303b58b878b3fc65614db6310f`,
 `bench/gen_workloads.py` `02b86df01ef74e9c91e28a286f8561c529b50fb9c9d3904acb612ea6c139000e`
 (candidate/baseline/swap-AB unchanged).
+
+## Round 6 — destination-out validation + N-row alignment (edge-contract fixes)
+
+Two code-review [P2] fixes (no verdict/benchmark change; no production impact):
+- `fp8_scaled_mm_baseline_impl` validates the caller-provided `out` (shape
+  [M,N], row-major, 16-byte-aligned row) before the CUTLASS dispatch (packed D
+  strides) — a short/strided out is now rejected, not written OOB.
+- `covers_m1_gemv` + `covers_smallm_swapab` require `(N*2)%16==0` (N%8==0 for bf16),
+  so an unaligned-N M=1 shape (which the upstream rejects) falls back to baseline.
+
+Verified on ion-b200 GPU 3+4 (idle): correctness **302/302** (290 workload rows +
+12 negatives, incl. `neg_unaligned_N` + `neg_bad_out`, both route 0 +
+baseline-rejected). Updated hashes: candidate
+`c7d4fc3f05caff28ba63e1c93edf3f21f217aae891989a0de97174faf324d1df`, baseline
+`18f28aff1ec165333d9a4da03c4629d1cd0bf139d49caf728aff29e7588b906b`,
+`bench/correctness.py` `0cc75d647875c10dfe67157e73e804266f2d9afcb75b661974229f23a725997e`
+(swap-AB unchanged).
