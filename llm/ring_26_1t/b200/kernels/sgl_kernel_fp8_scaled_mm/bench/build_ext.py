@@ -128,6 +128,16 @@ def baseline_bias(*args) -> None:
     get_ext().fp8_scaled_mm_baseline_bias(*args)
 
 
+# Test-only bias-capable candidate fallback + its route (AC-3.1): proves a biased
+# call routes to baseline (route 0) and is correct. Args: a, b, scale_a, scale_b, bias, out.
+def candidate_bias(*args) -> None:
+    get_ext().fp8_scaled_mm_candidate_bias(*args)
+
+
+def route_bias(*args) -> int:
+    return int(get_ext().fp8_scaled_mm_candidate_bias_route(*args))
+
+
 # Dispatch-route diagnostic: 1 = candidate fast path, 0 = baseline fallback (no launch).
 def route(*args) -> int:
     return int(get_ext().fp8_scaled_mm_candidate_route(*args))

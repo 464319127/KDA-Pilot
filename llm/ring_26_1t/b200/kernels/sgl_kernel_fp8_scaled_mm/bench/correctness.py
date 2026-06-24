@@ -173,29 +173,33 @@ def negative_route_cases(device) -> list:
 
 
 def bias_edge_test(device):
-    """AC-3.1 bias edge: the recovered baseline handles bias!=None correctly
-    (out=(A@B)*scale_a*scale_b+bias), verified vs the fp32 oracle. The production
-    ABI is bias-free and the candidate fast path is bias-unaware, so any biased
-    call routes to this baseline (the candidate route stays 0)."""
-    # M=512 is outside the candidate's covered regime, so the candidate route is 0
-    # (a biased call would go through the baseline, which is the bias-capable path).
-    M, K, N = 512, 1024, 8192
+    """AC-3.1 bias edge, exercised through the CANDIDATE fallback route. Uses an
+    otherwise-covered M=1 winner (M=1,K=1024,N=8192): a biased call must NOT take
+    the bias-unaware M=1 GEMV fast path — route_bias==0 — and must route to the
+    recovered baseline with bias and be numerically correct
+    (out=(A@B)*scale_a*scale_b+bias). Verifies candidate_bias vs the fp32 oracle,
+    baseline_bias vs the oracle, and candidate==baseline."""
+    M, K, N = 1, 1024, 8192
     wl = {"shapes": {"M": M, "K": K, "N": N}, "strides": {"b": "column_major"},
           "scalars": {"out_dtype": "bfloat16"}, "seed": 0}
     inp = adapter.make_inputs(wl, device=device, seed=0)
     bias = torch.randn((N,), device=device, dtype=torch.bfloat16)
-    out = torch.full((M, N), float("nan"), device=device, dtype=torch.bfloat16)
-    build_ext.baseline_bias(inp["a"], inp["b"], inp["scale_a"], inp["scale_b"], bias, out)
+    out_b = torch.full((M, N), float("nan"), device=device, dtype=torch.bfloat16)
+    out_c = torch.full((M, N), float("nan"), device=device, dtype=torch.bfloat16)
+    # A biased call must route to baseline (the M=1 GEMV/swap-AB fast paths are bias-unaware).
+    r = build_ext.route_bias(inp["a"], inp["b"], inp["scale_a"], inp["scale_b"], bias, out_c)
+    build_ext.baseline_bias(inp["a"], inp["b"], inp["scale_a"], inp["scale_b"], bias, out_b)
+    build_ext.candidate_bias(inp["a"], inp["b"], inp["scale_a"], inp["scale_b"], bias, out_c)
     torch.cuda.synchronize()
     ref = oracle(inp, torch.bfloat16, bias=bias).float()
-    of = out.float()
-    if torch.isnan(of).any() or torch.isinf(of).any():
-        return ("bias_edge", False, "baseline_bias produced NaN/Inf")
-    tol_ok = bool(((of - ref).abs() <= 0.07 + 0.02 * ref.abs()).all())
-    r = build_ext.route(inp["a"], inp["b"], inp["scale_a"], inp["scale_b"], out)
-    ok = tol_ok and (r == 0)
+    bf, cf = out_b.float(), out_c.float()
+    if torch.isnan(cf).any() or torch.isinf(cf).any():
+        return ("bias_edge", False, "candidate_bias NaN/Inf (poison not overwritten)")
+    tol = lambda x, y: bool(((x - y).abs() <= 0.07 + 0.02 * y.abs()).all())
+    base_ok, cand_ok, eq_ok = tol(bf, ref), tol(cf, ref), tol(cf, bf)
+    ok = (r == 0) and base_ok and cand_ok and eq_ok
     return ("bias_edge", ok,
-            f"biased baseline vs oracle within_tol={tol_ok}; candidate route={r} (bias-unaware -> baseline)")
+            f"route_bias={r}; baseline_vs_oracle={base_ok}; candidate_bias_vs_oracle={cand_ok}; candidate==baseline={eq_ok}")
 
 
 def main() -> int:

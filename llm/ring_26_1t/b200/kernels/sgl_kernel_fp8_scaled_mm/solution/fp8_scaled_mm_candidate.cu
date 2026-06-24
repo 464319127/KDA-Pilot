@@ -239,3 +239,46 @@ int64_t fp8_scaled_mm_candidate_route(
 
 TVM_FFI_DLL_EXPORT_TYPED_FUNC(fp8_scaled_mm_candidate, fp8_scaled_mm_candidate);
 TVM_FFI_DLL_EXPORT_TYPED_FUNC(fp8_scaled_mm_candidate_route, fp8_scaled_mm_candidate_route);
+
+// --- Test-only bias-capable candidate fallback (AC-3.1 `bias!=None` edge) ---
+// The captured production workload is 100% bias=None, so the main candidate ABI
+// carries no bias. This 6-arg entry proves the required safety property: a biased
+// call on an otherwise-covered shape does NOT enter the bias-unaware M=1 GEMV /
+// swap-AB fast paths — it routes to the recovered baseline (route 0) and is
+// numerically correct (out = (A@B)*scale_a*scale_b + bias). It is exercised by
+// bench/correctness.py:bias_edge_test().
+void fp8_scaled_mm_candidate_bias(
+    tvm::ffi::TensorView a, tvm::ffi::TensorView b,
+    tvm::ffi::TensorView scales_a, tvm::ffi::TensorView scales_b,
+    tvm::ffi::TensorView bias, tvm::ffi::TensorView out) {
+  fp8abi::require_fp8_contract(a, b, scales_a, scales_b, out);
+  const int64_t N = b.size(1);
+  int64_t bias_numel = 1;
+  for (int i = 0; i < bias.ndim(); ++i) bias_numel *= bias.size(i);
+  TORCH_CHECK(bias_numel == N, "fp8_scaled_mm: bias numel must equal N");
+  TORCH_CHECK(bias.device().device_type == kDLCUDA &&
+                  bias.device().device_id == a.device().device_id,
+              "fp8_scaled_mm: bias must be on the same CUDA device");
+  const bool out_bf16 = (out.dtype().code == kDLBfloat);
+  auto out_dtype = out_bf16 ? torch::kBFloat16 : torch::kHalf;
+  TORCH_CHECK(bias.dtype().bits == 16 && bias.dtype().code == out.dtype().code,
+              "fp8_scaled_mm: bias dtype must match out_dtype");
+  // Bias-unaware fast paths are skipped entirely: unconditional baseline fallback.
+  auto ta = fp8abi::view_as(a, torch::kFloat8_e4m3fn);
+  auto tb = fp8abi::view_as(b, torch::kFloat8_e4m3fn);
+  auto tsa = fp8abi::view_as(scales_a, torch::kFloat32);
+  auto tsb = fp8abi::view_as(scales_b, torch::kFloat32);
+  auto tbias = fp8abi::view_as(bias, out_dtype);
+  auto tout = fp8abi::view_as(out, out_dtype);
+  fp8_scaled_mm_baseline_impl(tout, ta, tb, tsa, tsb, tbias);
+}
+
+// Route for a biased call: always 0 (no fast path is bias-aware -> baseline).
+int64_t fp8_scaled_mm_candidate_bias_route(
+    tvm::ffi::TensorView, tvm::ffi::TensorView, tvm::ffi::TensorView,
+    tvm::ffi::TensorView, tvm::ffi::TensorView, tvm::ffi::TensorView) {
+  return 0;
+}
+
+TVM_FFI_DLL_EXPORT_TYPED_FUNC(fp8_scaled_mm_candidate_bias, fp8_scaled_mm_candidate_bias);
+TVM_FFI_DLL_EXPORT_TYPED_FUNC(fp8_scaled_mm_candidate_bias_route, fp8_scaled_mm_candidate_bias_route);
