@@ -12,8 +12,8 @@ evidence_json = "docs/evidence.json"
 
 [build]
 language = "python/cuda"
-baseline_entry_point = "baseline/<copied_sglang_interface>::baseline"
-candidate_entry_point = "solution/<candidate_interface>::candidate"
+baseline_entry_point = "baseline/csrc/moe/moe_fused_gate.cuh::MoEFusedGateKernel::run"
+candidate_entry_point = "solution/csrc/moe/moe_fused_gate_candidate.cuh::MoEFusedGateKernel::run"
 
 [benchmark]
 warmup_runs = 10
@@ -27,3 +27,13 @@ method = "SGLANG_KERNEL_API_LOGLEVEL=3"
 policy = "runtime SGLang kernel Python interface args/kwargs/result, not torch profiler CPU-op context"
 total_call_count = 31686
 variant_count = 296
+
+[result]
+status = "completed"
+outcome = "no_go"
+promoted = false
+candidate_correct = true              # 829/829 grid (bench/correctness.py vs independent fp32 oracle): all 18 decode + 11 prefill captured rows (x2 seeds) + semantic edge grid (ties / all-equal / saturate-+- / +-Inf / subnormal-sum / M=0) + off-domain E=256 fallback (candidate==baseline==oracle); cold-safe
+headline_geomean_speedup = 1.0105     # prefill production rows (n=11, all call_count=456), CUDA-event GPU time, idle B200 GPU 4; equal-weight == call-count-weighted; per-row range 0.982-1.135 (1.135 is a variance outlier, R0 measured 1.022); parity within run-to-run noise
+active_bound = "kernel-launch / device-scheduling latency (NCU --set basic: SM ~0.06%, DRAM ~0.02%, memory ~3%, occupancy ~12.5%; ~4-8us per-call floor, kernel body is a sub-us sliver under the fixed standalone ABI)"
+baseline_commit = "34dd9c28caf4f7dd185e58e462a1344b52568e2e"
+note = "Pure-speed NO-GO for this standalone op: launch/latency-bound (NCU ~0% compute / ~0% DRAM), a fixed-ABI single op (no host-side batching/PDL) has no headroom to win; prefill is parity (geomean 1.0105, within noise, 0 clean wins). BUT the candidate fixes a real latent bug in the recovered upstream baseline: the small-token (decode) kernel for num_experts=128 computes warps_per_token=4 yet is dispatched to the <8>-warp template, so it reads never-written shared memory (warp_maxs[4..7]/warp_experts[4..7]) -> garbage expert index -> out-of-bounds shared write -> nondeterministic 'CUDA illegal memory access' on a cold context (confirmed on B200 GPU 4). The candidate uses ZERO shared memory (all reductions are intra-warp __shfl), so it is correct and cold-safe as the first launch -- a correctness/safety promote on its own merits, independent of speed. Decode is 84.2% of captured calls (26670/31686) and the baseline is UB there, so production-wide and decode speed ratios are N/A (invalid denominator); decode is reported as candidate-absolute latency (4.10-6.14 us). Recommendation: adopt the candidate for the captured MiniMax-M3 config on correctness/safety grounds; baseline retained for the speed comparison (no speed regression). SCOPE: not a general fix for arbitrary off-domain E=128 configs (only the exact captured in_domain config; off-domain routes to a verbatim baseline fallback that preserves upstream behavior incl. its UB). Detail in docs/results.md, docs/baseline_source.md, docs/dispatch.md, docs/benchmark_method.md."
