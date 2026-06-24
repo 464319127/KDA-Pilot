@@ -51,7 +51,13 @@ def expected_route(wl) -> int:
     M, K, N = s["M"], s["K"], s["N"]
     contig_b = wl.get("strides", {}).get("b") == "row_major"
     out_bf16 = wl.get("scalars", {}).get("out_dtype", "bfloat16") == "bfloat16"
-    return 1 if (M == 1 and not (K >= 4096 and N >= 3072) and not contig_b and out_bf16) else 0
+    if contig_b or not out_bf16 or K % 16 != 0:
+        return 0  # contract violation -> baseline fallback
+    if M == 1:
+        return 1 if not (K >= 4096 and N >= 3072) else 0  # M=1 GEMV (route 1)
+    if 2 <= M <= 64:
+        return 2  # small-M swap-AB (route 2)
+    return 0
 
 
 def check_row(wl, device) -> tuple[bool, str]:
@@ -171,7 +177,9 @@ def bias_edge_test(device):
     (out=(A@B)*scale_a*scale_b+bias), verified vs the fp32 oracle. The production
     ABI is bias-free and the candidate fast path is bias-unaware, so any biased
     call routes to this baseline (the candidate route stays 0)."""
-    M, K, N = 32, 1024, 8192
+    # M=512 is outside the candidate's covered regime, so the candidate route is 0
+    # (a biased call would go through the baseline, which is the bias-capable path).
+    M, K, N = 512, 1024, 8192
     wl = {"shapes": {"M": M, "K": K, "N": N}, "strides": {"b": "column_major"},
           "scalars": {"out_dtype": "bfloat16"}, "seed": 0}
     inp = adapter.make_inputs(wl, device=device, seed=0)
@@ -183,11 +191,11 @@ def bias_edge_test(device):
     of = out.float()
     if torch.isnan(of).any() or torch.isinf(of).any():
         return ("bias_edge", False, "baseline_bias produced NaN/Inf")
-    ok = bool(((of - ref).abs() <= 0.07 + 0.02 * ref.abs()).all())
+    tol_ok = bool(((of - ref).abs() <= 0.07 + 0.02 * ref.abs()).all())
     r = build_ext.route(inp["a"], inp["b"], inp["scale_a"], inp["scale_b"], out)
-    ok = ok and (r == 0)
+    ok = tol_ok and (r == 0)
     return ("bias_edge", ok,
-            f"biased baseline vs oracle within tol={ok}; candidate route={r} (bias-unaware -> baseline)")
+            f"biased baseline vs oracle within_tol={tol_ok}; candidate route={r} (bias-unaware -> baseline)")
 
 
 def main() -> int:

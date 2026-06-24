@@ -24,6 +24,7 @@
 #include <torch/all.h>
 
 #include "fp8_scaled_mm_abi.h"
+#include "fp8_swapab_smallm.h"
 
 namespace {
 
@@ -144,6 +145,31 @@ inline bool covers_m1_gemv(
   return true;
 }
 
+// Coverage predicate for the small-M swap-AB path (M in (1,64]). Same strict
+// contract as the M=1 GEMV (exact dtypes, A row-major / B column-major / out
+// row-major, scale rank+contiguity, same CUDA device, K%16==0).
+inline bool covers_smallm_swapab(
+    const tvm::ffi::TensorView& a, const tvm::ffi::TensorView& b,
+    const tvm::ffi::TensorView& scales_a, const tvm::ffi::TensorView& scales_b,
+    const tvm::ffi::TensorView& out) {
+  if (a.ndim() != 2 || b.ndim() != 2 || out.ndim() != 2) return false;
+  const int64_t M = a.size(0), K = a.size(1), N = b.size(1);
+  if (M < 2 || M > 64) return false;               // small-M regime
+  if (!is_f8e4m3(a) || !is_f8e4m3(b) || !is_bf16(out) || !is_f32(scales_a) || !is_f32(scales_b))
+    return false;
+  if (b.size(0) != K) return false;
+  if (a.stride(1) != 1) return false;              // A row-major
+  if (b.stride(0) != 1) return false;              // B column-major
+  if (K % kVec != 0) return false;                 // 16-fp8 alignment along K
+  if (!(out.size(0) == M && out.size(1) == N && out.stride(1) == 1)) return false;
+  if (!is_contig_2d(scales_a, M, 1)) return false;
+  if (!is_contig_2d(scales_b, N, 1)) return false;
+  if (!same_cuda_dev(a, b) || !same_cuda_dev(a, scales_a) ||
+      !same_cuda_dev(a, scales_b) || !same_cuda_dev(a, out))
+    return false;
+  return true;
+}
+
 inline void fallback(
     tvm::ffi::TensorView a, tvm::ffi::TensorView b,
     tvm::ffi::TensorView scales_a, tvm::ffi::TensorView scales_b, tvm::ffi::TensorView out) {
@@ -164,25 +190,38 @@ inline void fallback(
 void fp8_scaled_mm_candidate(
     tvm::ffi::TensorView a, tvm::ffi::TensorView b,
     tvm::ffi::TensorView scales_a, tvm::ffi::TensorView scales_b, tvm::ffi::TensorView out) {
-  if (!covers_m1_gemv(a, b, scales_a, scales_b, out)) {
-    fallback(a, b, scales_a, scales_b, out);
+  if (covers_m1_gemv(a, b, scales_a, scales_b, out)) {
+    const int K = static_cast<int>(a.size(1));
+    const int N = static_cast<int>(b.size(1));
+    const int grid = (N + kWarps - 1) / kWarps;
+    const size_t smem = static_cast<size_t>(K) * sizeof(__nv_fp8_e4m3);
+    auto stream = at::cuda::getCurrentCUDAStream();
+    fp8_gemv_m1_kernel<<<grid, kBlock, smem, stream>>>(
+        cptr<__nv_fp8_e4m3>(a), cptr<__nv_fp8_e4m3>(b),
+        cptr<float>(scales_a), cptr<float>(scales_b),
+        mptr<__nv_bfloat16>(out), K, N);
     return;
   }
-  const int K = static_cast<int>(a.size(1));
-  const int N = static_cast<int>(b.size(1));
-  const int grid = (N + kWarps - 1) / kWarps;
-  const size_t smem = static_cast<size_t>(K) * sizeof(__nv_fp8_e4m3);
-  auto stream = at::cuda::getCurrentCUDAStream();
-  fp8_gemv_m1_kernel<<<grid, kBlock, smem, stream>>>(
-      cptr<__nv_fp8_e4m3>(a), cptr<__nv_fp8_e4m3>(b),
-      cptr<float>(scales_a), cptr<float>(scales_b),
-      mptr<__nv_bfloat16>(out), K, N);
+  if (covers_smallm_swapab(a, b, scales_a, scales_b, out)) {
+    auto ta = fp8abi::view_as(a, torch::kFloat8_e4m3fn);
+    auto tb = fp8abi::view_as(b, torch::kFloat8_e4m3fn);
+    auto tsa = fp8abi::view_as(scales_a, torch::kFloat32);
+    auto tsb = fp8abi::view_as(scales_b, torch::kFloat32);
+    auto tout = fp8abi::view_as(out, torch::kBFloat16);
+    fp8_scaled_mm_swapab_smallm(tout, ta, tb, tsa, tsb);
+    return;
+  }
+  fallback(a, b, scales_a, scales_b, out);
 }
 
+// Route diagnostic: 1 = M=1 GEMV fast path, 2 = small-M swap-AB fast path,
+// 0 = baseline fallback. Launches nothing.
 int64_t fp8_scaled_mm_candidate_route(
     tvm::ffi::TensorView a, tvm::ffi::TensorView b,
     tvm::ffi::TensorView scales_a, tvm::ffi::TensorView scales_b, tvm::ffi::TensorView out) {
-  return covers_m1_gemv(a, b, scales_a, scales_b, out) ? 1 : 0;
+  if (covers_m1_gemv(a, b, scales_a, scales_b, out)) return 1;
+  if (covers_smallm_swapab(a, b, scales_a, scales_b, out)) return 2;
+  return 0;
 }
 
 TVM_FFI_DLL_EXPORT_TYPED_FUNC(fp8_scaled_mm_candidate, fp8_scaled_mm_candidate);

@@ -27,6 +27,7 @@ _HERE = pathlib.Path(__file__).resolve().parent
 _ROOT = _HERE.parent  # the kernel task folder
 _BASELINE_CU = _ROOT / "baseline" / "fp8_scaled_mm_baseline.cu"
 _CANDIDATE_CU = _ROOT / "solution" / "fp8_scaled_mm_candidate.cu"
+_SWAPAB_CU = _ROOT / "solution" / "fp8_swapab_smallm.cu"  # small-M swap-AB CUTLASS TU
 _BASELINE_INCLUDE = _ROOT / "baseline"      # math.hpp, utils.h, cutlass_extensions/
 _ABI_INCLUDE = _HERE / "csrc"               # fp8_scaled_mm_abi.h
 
@@ -101,7 +102,7 @@ def get_ext():
 
     return load(
         "fp8_scaled_mm_ext",
-        cuda_files=[str(_BASELINE_CU), str(_CANDIDATE_CU)],
+        cuda_files=[str(_BASELINE_CU), str(_CANDIDATE_CU), str(_SWAPAB_CU)],
         extra_cflags=flags["extra_cflags"],
         extra_cuda_cflags=flags["extra_cuda_cflags"],
         extra_ldflags=ldflags,
