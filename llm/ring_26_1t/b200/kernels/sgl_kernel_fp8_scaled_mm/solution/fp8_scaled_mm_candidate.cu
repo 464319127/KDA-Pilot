@@ -137,6 +137,7 @@ inline bool covers_m1_gemv(
   if (b.stride(1) != K) return false;              // exactly-packed Bphys: the GEMV addresses B + n*K, so the leading dim must be K (rejects padded/sliced column-major B)
   if (K % kVec != 0) return false;                 // vectorized 16-fp8 loads
   if (!(out.size(0) == M && out.size(1) == N && out.stride(1) == 1)) return false;  // out row-major [M,N]
+  if ((N * 2) % 16 != 0) return false;             // bf16 out row must be 16-byte aligned (N%8==0), matching the baseline contract
   if (!is_contig_2d(scales_a, M, 1)) return false; // scale_a [M,1] contiguous
   if (!is_contig_2d(scales_b, N, 1)) return false; // scale_b [N,1] contiguous
   // device consistency: all tensors on the same CUDA device
@@ -177,6 +178,7 @@ inline bool covers_smallm_swapab(
   if (b.stride(1) != K) return false;              // exactly-packed Bphys (swap-AB uses a packed [N,K] stride)
   if (K % kVec != 0) return false;                 // 16-fp8 alignment along K
   if (!(out.size(0) == M && out.size(1) == N && out.stride(1) == 1)) return false;
+  if ((N * 2) % 16 != 0) return false;             // bf16 out row must be 16-byte aligned (N%8==0)
   if (!is_contig_2d(scales_a, M, 1)) return false;
   if (!is_contig_2d(scales_b, N, 1)) return false;
   if (!same_cuda_dev(a, b) || !same_cuda_dev(a, scales_a) ||

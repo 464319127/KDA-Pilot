@@ -166,6 +166,15 @@ def negative_route_cases(device) -> list:
     # wrong columns. (Bphys [N,K+16] contiguous, sliced to [N,K], transposed.)
     b_pad = f8((N, K + 16))[:, :K].t()
     expect_fallback("neg_padded_B", a, b_pad, sa, sb, out, False)
+    # Unaligned N (M=1, K%16==0 but N%8!=0): the baseline rejects this (output row
+    # not 16-byte aligned), so the GEMV fast path must not claim it.
+    b_n12 = f8((12, K)).t()  # [K,12] column-major, stride(1)=K
+    sb_n12 = torch.rand((12, 1), device=device, dtype=torch.float32)
+    out_n12 = torch.empty((M, 12), device=device, dtype=torch.bfloat16)
+    expect_fallback("neg_unaligned_N", a, b_n12, sa, sb_n12, out_n12, True)
+    # Mis-shaped (short) destination out must be rejected, never written OOB.
+    out_short = torch.empty((M, N - 8), device=device, dtype=torch.bfloat16)
+    expect_fallback("neg_bad_out", a, b, sa, sb, out_short, True)
     # CPU input must be rejected BEFORE any forced CUDA view (calls candidate, not just route).
     a_cpu = torch.randn((M, K), dtype=torch.float32).to(torch.float8_e4m3fn)  # on CPU
     expect_fallback("neg_cpu_input_A", a_cpu, b, sa, sb, out, True)

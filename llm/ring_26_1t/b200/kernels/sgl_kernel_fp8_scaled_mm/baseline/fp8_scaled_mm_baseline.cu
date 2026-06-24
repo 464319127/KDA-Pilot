@@ -43,6 +43,14 @@ void fp8_scaled_mm_baseline_impl(
   TORCH_CHECK(b.scalar_type() == torch::kFloat8_e4m3fn, "mat_b must be Float8_e4m3fn");
   TORCH_CHECK(out.scalar_type() == torch::kHalf || out.scalar_type() == torch::kBFloat16,
               "out_dtype must be Half or BFloat16");
+  // Destination-passing: validate the caller-provided out. The sm100 CUTLASS args
+  // build packed D strides from a/b dims, so a mis-shaped/strided out would be
+  // written out of bounds or in the wrong layout; reject it like the upstream op.
+  TORCH_CHECK(out.dim() == 2 && out.size(0) == a.size(0) && out.size(1) == b.size(1),
+              "out must be a [M, N] tensor");
+  TORCH_CHECK(out.stride(1) == 1 && out.stride(0) == b.size(1), "out must be row-major contiguous");
+  TORCH_CHECK((out.size(1) * out.element_size()) % 16 == 0,
+              "out row must be a multiple of 16 bytes for memory alignment");
   TORCH_CHECK(scales_a.numel() == a.size(0) && scales_b.numel() == b.size(1), "scale size mismatch");
   TORCH_CHECK(scales_a.is_contiguous() && scales_b.is_contiguous(), "scales must be contiguous");
   TORCH_CHECK(scales_a.scalar_type() == torch::kFloat32 && scales_b.scalar_type() == torch::kFloat32,
