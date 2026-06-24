@@ -12,8 +12,8 @@ evidence_json = "docs/evidence.json"
 
 [build]
 language = "python/cuda"
-baseline_entry_point = "baseline/<copied_sglang_interface>::baseline"
-candidate_entry_point = "solution/<candidate_interface>::candidate"
+baseline_entry_point = "baseline/fp8_scaled_mm_baseline.cu::fp8_scaled_mm_baseline"
+candidate_entry_point = "solution/fp8_scaled_mm_candidate.cu::fp8_scaled_mm_candidate"
 
 [benchmark]
 warmup_runs = 10
