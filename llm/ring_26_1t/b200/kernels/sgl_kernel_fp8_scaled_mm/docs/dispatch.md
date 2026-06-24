@@ -18,3 +18,18 @@ GEMV losers (k8192_n3072 0.86×, k8192_n4608 0.73×) satisfy it; all measured
 winners (k8192_n512, k8192_n1024, k8192_n2112, k2304_n8192, k1024_n8192,
 k256_n8192, k1536_n1536) do not. Re-tune if the kernel's decode-efficiency
 improves (see results.md follow-ups).
+
+## Predicate safety (hardened in Round 1)
+
+`covers_m1_gemv` validates, before returning route 1: exact fp8_e4m3fn DLPack
+dtype code (`kDLFloat8_e4m3fn`, not just any 8-bit type — excludes uint8/int8/
+e5m2), bf16 out + fp32 scales, A row-major / B column-major / out row-major
+layout, `K % 16 == 0`, scale_a `[M,1]` and scale_b `[N,1]` contiguous, out `[M,N]`,
+and all tensors on one CUDA device. Additionally, both the baseline export and the
+candidate fallback re-validate dtypes at the TensorView boundary
+(`require_fp8_contract`) so a contract-violating input is rejected, never
+reinterpreted. `bench/correctness.py:negative_route_cases()` proves route==0 (and
+baseline rejection) for e5m2/uint8 A, malformed scale ranks `[M,2]`/`[N,2]`,
+fp16-out, and mixed-device inputs — each would have misrouted before the Round 1
+hardening. Fallback median overhead is +0.009% over 279 uncovered shapes
+(host-side predicate only; identical device code).

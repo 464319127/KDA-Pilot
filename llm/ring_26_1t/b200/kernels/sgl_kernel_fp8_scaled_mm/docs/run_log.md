@@ -68,3 +68,32 @@ the decode regime is far from bandwidth-bound-efficient. A bandwidth-optimal FP8
 skinny-GEMV that streams B once is the primary candidate direction (to be
 confirmed with NCU). (Estimate from wall-clock; NCU `dram__bytes_read.sum.*` to
 follow.)
+
+## Round 1 — hardened dispatch, candidate, full-grid evidence
+
+GPU 3 idle pre+post (`nvidia-smi -i 3`: util 0%, mem 0–4 MiB) for every measured
+run. Candidate source sha256 `1580070dd641f3f049a02824210c18e5d3ce153287abba5802f7d3cb71c7d950`;
+baseline ABI wrapper `07d0403b2382530660e31cd6d0f2ee8047dc3748d78aff1422c0b5880ab7947c`;
+benchmark.py byte-identical to the template (sha256 `2e1712e567b50ba19340f62314f13e122fc3b547775bd06ed6c4d284d144ee13`).
+
+Exact commands (container, `CUDA_VISIBLE_DEVICES=3`, except correctness uses `3,4`
+so the mixed-device negative test runs):
+```
+python -c "import build_ext; build_ext.get_ext()"                # rebuild (hardened predicate + ABI guard)
+CUDA_VISIBLE_DEVICES=3,4 python bench/correctness.py             # full grid + edges + negatives
+python bench/benchmark.py --device cuda:0 --workloads bench/workloads_prod.json --out bench/results_full.jsonl  # all 286
+python bench/analyze_results.py bench/results_full.jsonl         # geomeans + significance + overhead
+python bench/benchmark.py --device cuda:0 --num-trials 25 --only <6 uncovered shapes>  # fallback overhead
+```
+
+### Results
+- Correctness: 296 passed / 0 failed (286 production + 4 edge + 6 negative-route:
+  e5m2/uint8 A, scale [M,2]/[N,2], fp16-out, mixed-device → all route 0 and
+  baseline-rejected where applicable).
+- Full-grid (286 production): equal-weight geomean 1.0228, call-weighted 1.1667,
+  time-weighted 1.1346. Covered M=1 geomean 2.78× (7/7 significant, candidate p90
+  < baseline p10; 0 regressions). Per-regime: decode_tiny 1.117, decode_small
+  0.997, medium 0.990, prefill 1.000.
+- Fallback overhead: full-grid median +0.009% (279 uncovered shapes); dedicated
+  25-trial run on 6 uncovered shapes geomean +0.88% (worst +1.67%).
+- Per-shape significance table + analysis in `docs/results.md`.
