@@ -19,10 +19,13 @@ amplification, isolated subprocess, interleaved A/B, 7 trials (25 for the
 fallback-overhead run). Correctness: **300 passed / 0 failed** (286 production +
 4 edge rows + 10 negative/edge tests: e5m2/uint8 A, e5m2 B, malformed scale
 `[M,2]`/`[N,2]`, fp16-out, CPU-input, mixed-device, padded column-major B, and the
-bias edge) vs an fp32-dequant oracle AND the baseline. Source sha256 (HEAD):
-candidate `4a1d9a9d…`, baseline ABI wrapper `69979be8…`, swap-AB `d19e004e…`,
-`bench/correctness.py` `e9549c5a…`; benchmark.py byte-identical to the template
-(`2e1712e5…`).
+bias edge) vs an fp32-dequant oracle AND the baseline. `bench/workloads.json` holds
+the 286 production rows only (so the unmodified template `bench/benchmark.py`
+produces full-grid results by default); the 4 edge rows live in the
+correctness-only `bench/workloads_edges.json`, which `correctness.py` also reads.
+Source sha256 (HEAD): candidate `4a1d9a9d…`, baseline ABI wrapper `69979be8…`,
+swap-AB `d19e004e…`, `bench/correctness.py` `19d0b19a…`; benchmark.py
+byte-identical to the template (`2e1712e5…`).
 
 ## Final full-grid benchmark (all 286 production shapes, idle GPU 3)
 

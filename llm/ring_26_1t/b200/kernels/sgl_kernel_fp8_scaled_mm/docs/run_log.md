@@ -159,3 +159,21 @@ edge + 10 negatives). Updated source hashes: candidate
 `4a1d9a9d3700415f0a4eb18e303a994159ede9e0cfac4847ffb822c0044b636b`,
 `bench/correctness.py` `e9549c5af409110c62b8b4bb7addcdb932ae32e1b7c5207ee53028cfe6855f36`
 (baseline/swap-AB unchanged).
+
+## Round 5 — production-only workloads.json (benchmark harness fix)
+
+Code-review [P2]: the default `python bench/benchmark.py` ran every row in
+workloads.json, including the row-major `edge_contigB`, which the baseline rejects
+(raise) -> the benchmark exited ERROR before producing full-grid results. Fix:
+`workloads.json` is now the 286 production rows only; the 4 edge rows moved to the
+correctness-only `workloads_edges.json` (read by `correctness.py`). The full-grid
+benchmark can now run on the default input directly:
+```
+CUDA_VISIBLE_DEVICES=3 python bench/benchmark.py --device cuda:0   # default workloads.json = 286 production
+```
+Verified on ion-b200 GPU 3 (idle): default `bench/benchmark.py` runs clean
+(workloads.json has no non-production / no row-major B); correctness 300/300
+(edge_contigB still rejected, now via workloads_edges.json). Updated hashes:
+`bench/correctness.py` `19d0b19a2e1273efa993bc190418daf716ae33303b58b878b3fc65614db6310f`,
+`bench/gen_workloads.py` `02b86df01ef74e9c91e28a286f8561c529b50fb9c9d3904acb612ea6c139000e`
+(candidate/baseline/swap-AB unchanged).
