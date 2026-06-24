@@ -44,7 +44,16 @@ The recovered baseline **decode** (small-token, `num_experts=128`) kernel reads 
 shared memory and faults nondeterministically (`CUDA illegal memory access`) — see
 `docs/baseline_source.md` and `docs/results.md`. It is therefore **not reliably benchmarkable**.
 Consequently:
-- Baseline-vs-candidate speed ratios are reported on the **prefill** rows only (baseline reliable).
+- **Decode rows are `production:false`** in `bench/workloads.json` (still `captured:true`, regime
+  `decode`). The verbatim `benchmark.py` headline is the equal-weight geomean over `production:true`
+  rows, so the headline is **prefill-only** by construction — `python bench/benchmark.py` with NO
+  args headlines exactly the 11 prefill rows. Decode shapes are not dropped: they remain captured
+  rows, correctness-validated (by `captured`) and candidate-timed (below).
+- **Default-run safety:** `benchmark.py` still *executes* every row (incl. the `production:false`
+  decode rows). To avoid faulting on the UB baseline decode launch, `bench/adapter.py::call_baseline`
+  detects the UB decode domain (E=128, M≤512, sigmoid) and substitutes the cold-safe candidate
+  (printing a one-time warning). Those decode rows therefore run safely but produce a **degenerate
+  A/B speedup** (candidate-vs-candidate) and are excluded from the headline anyway (`production:false`).
 - **Decode correctness** is validated candidate-vs-**oracle** (the ground-truth reference), not
   candidate-vs-baseline, in `bench/correctness.py`.
 - **Decode candidate latency** is measured by the committed candidate-only script
@@ -52,7 +61,8 @@ Consequently:
   amplification + median-over-trials methodology as the template), reported candidate-absolute in
   `docs/results.md`. No speed ratio is fabricated for a path the baseline cannot run.
 This is the only deviation from a uniform candidate-vs-baseline comparison, and it is forced by a
-genuine baseline bug rather than a methodology choice.
+genuine baseline bug rather than a methodology choice. (`--only <11 prefill ids>` additionally skips
+*executing* the degenerate decode rows; either way the headline is the prefill A/B.)
 
 ## Input contract
 All 296 captured variants are finite float32 (~randn-scale). **+Inf/-Inf are covered** as explicit

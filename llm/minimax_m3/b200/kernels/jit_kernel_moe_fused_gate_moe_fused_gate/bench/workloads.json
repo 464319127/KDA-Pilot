@@ -1,7 +1,7 @@
 [
   {
     "id": "moe_fused_gate_m1_e128_f32",
-    "production": true,
+    "production": false,
     "captured": true,
     "regime": "decode",
     "call_count": 9342,
@@ -33,11 +33,11 @@
     "atol": 1e-05,
     "rtol": 1e-05,
     "seed": 0,
-    "headline": true
+    "headline": false
   },
   {
     "id": "moe_fused_gate_m7_e128_f32",
-    "production": true,
+    "production": false,
     "captured": true,
     "regime": "decode",
     "call_count": 456,
@@ -69,11 +69,11 @@
     "atol": 1e-05,
     "rtol": 1e-05,
     "seed": 0,
-    "headline": true
+    "headline": false
   },
   {
     "id": "moe_fused_gate_m12_e128_f32",
-    "production": true,
+    "production": false,
     "captured": true,
     "regime": "decode",
     "call_count": 456,
@@ -105,11 +105,11 @@
     "atol": 1e-05,
     "rtol": 1e-05,
     "seed": 0,
-    "headline": true
+    "headline": false
   },
   {
     "id": "moe_fused_gate_m15_e128_f32",
-    "production": true,
+    "production": false,
     "captured": true,
     "regime": "decode",
     "call_count": 1824,
@@ -141,11 +141,11 @@
     "atol": 1e-05,
     "rtol": 1e-05,
     "seed": 0,
-    "headline": true
+    "headline": false
   },
   {
     "id": "moe_fused_gate_m16_e128_f32",
-    "production": true,
+    "production": false,
     "captured": true,
     "regime": "decode",
     "call_count": 912,
@@ -177,11 +177,11 @@
     "atol": 1e-05,
     "rtol": 1e-05,
     "seed": 0,
-    "headline": true
+    "headline": false
   },
   {
     "id": "moe_fused_gate_m18_e128_f32",
-    "production": true,
+    "production": false,
     "captured": true,
     "regime": "decode",
     "call_count": 456,
@@ -213,11 +213,11 @@
     "atol": 1e-05,
     "rtol": 1e-05,
     "seed": 0,
-    "headline": true
+    "headline": false
   },
   {
     "id": "moe_fused_gate_m19_e128_f32",
-    "production": true,
+    "production": false,
     "captured": true,
     "regime": "decode",
     "call_count": 456,
@@ -249,11 +249,11 @@
     "atol": 1e-05,
     "rtol": 1e-05,
     "seed": 0,
-    "headline": true
+    "headline": false
   },
   {
     "id": "moe_fused_gate_m24_e128_f32",
-    "production": true,
+    "production": false,
     "captured": true,
     "regime": "decode",
     "call_count": 456,
@@ -285,11 +285,11 @@
     "atol": 1e-05,
     "rtol": 1e-05,
     "seed": 0,
-    "headline": true
+    "headline": false
   },
   {
     "id": "moe_fused_gate_m27_e128_f32",
-    "production": true,
+    "production": false,
     "captured": true,
     "regime": "decode",
     "call_count": 912,
@@ -321,11 +321,11 @@
     "atol": 1e-05,
     "rtol": 1e-05,
     "seed": 0,
-    "headline": true
+    "headline": false
   },
   {
     "id": "moe_fused_gate_m32_e128_f32",
-    "production": true,
+    "production": false,
     "captured": true,
     "regime": "decode",
     "call_count": 3648,
@@ -357,11 +357,11 @@
     "atol": 1e-05,
     "rtol": 1e-05,
     "seed": 0,
-    "headline": true
+    "headline": false
   },
   {
     "id": "moe_fused_gate_m34_e128_f32",
-    "production": true,
+    "production": false,
     "captured": true,
     "regime": "decode",
     "call_count": 456,
@@ -393,11 +393,11 @@
     "atol": 1e-05,
     "rtol": 1e-05,
     "seed": 0,
-    "headline": true
+    "headline": false
   },
   {
     "id": "moe_fused_gate_m38_e128_f32",
-    "production": true,
+    "production": false,
     "captured": true,
     "regime": "decode",
     "call_count": 1368,
@@ -429,11 +429,11 @@
     "atol": 1e-05,
     "rtol": 1e-05,
     "seed": 0,
-    "headline": true
+    "headline": false
   },
   {
     "id": "moe_fused_gate_m44_e128_f32",
-    "production": true,
+    "production": false,
     "captured": true,
     "regime": "decode",
     "call_count": 456,
@@ -465,11 +465,11 @@
     "atol": 1e-05,
     "rtol": 1e-05,
     "seed": 0,
-    "headline": true
+    "headline": false
   },
   {
     "id": "moe_fused_gate_m53_e128_f32",
-    "production": true,
+    "production": false,
     "captured": true,
     "regime": "decode",
     "call_count": 456,
@@ -501,11 +501,11 @@
     "atol": 1e-05,
     "rtol": 1e-05,
     "seed": 0,
-    "headline": true
+    "headline": false
   },
   {
     "id": "moe_fused_gate_m61_e128_f32",
-    "production": true,
+    "production": false,
     "captured": true,
     "regime": "decode",
     "call_count": 456,
@@ -537,11 +537,11 @@
     "atol": 1e-05,
     "rtol": 1e-05,
     "seed": 0,
-    "headline": true
+    "headline": false
   },
   {
     "id": "moe_fused_gate_m70_e128_f32",
-    "production": true,
+    "production": false,
     "captured": true,
     "regime": "decode",
     "call_count": 456,
@@ -573,11 +573,11 @@
     "atol": 1e-05,
     "rtol": 1e-05,
     "seed": 0,
-    "headline": true
+    "headline": false
   },
   {
     "id": "moe_fused_gate_m72_e128_f32",
-    "production": true,
+    "production": false,
     "captured": true,
     "regime": "decode",
     "call_count": 456,
@@ -609,11 +609,11 @@
     "atol": 1e-05,
     "rtol": 1e-05,
     "seed": 0,
-    "headline": true
+    "headline": false
   },
   {
     "id": "moe_fused_gate_m79_e128_f32",
-    "production": true,
+    "production": false,
     "captured": true,
     "regime": "decode",
     "call_count": 3648,
@@ -645,7 +645,7 @@
     "atol": 1e-05,
     "rtol": 1e-05,
     "seed": 0,
-    "headline": true
+    "headline": false
   },
   {
     "id": "moe_fused_gate_m1074_e128_f32",

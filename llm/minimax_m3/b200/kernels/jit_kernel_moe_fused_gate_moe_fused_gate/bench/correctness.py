@@ -228,8 +228,11 @@ def main() -> int:
                      f"candidate deterministic {label}")
 
     WL = _load_workloads()
-    prod = [w for w in WL if w.get("production")]
-    edge = [w for w in WL if not w.get("production")]
+    # Correctness covers every CAPTURED shape (18 decode + 11 prefill), independent of the
+    # `production` flag — that flag governs only benchmark.py's A/B headline (prefill-only, because
+    # the baseline decode path is UB and unbenchmarkable). The edge grid is the non-captured rows.
+    captured = [w for w in WL if w.get("captured")]
+    edge = [w for w in WL if not w.get("captured")]
 
     def _row(w):
         sh = w["shapes"]
@@ -237,9 +240,9 @@ def main() -> int:
                 int(w.get("seed", 0)), float(w.get("atol", 1e-5)), float(w.get("rtol", 1e-5)),
                 w["scalars"])
 
-    # 1) All PRODUCTION rows from workloads.json. The frozen row `seed` is the base; the two samples
-    #    are deterministic repeats `seed + repeat` of THAT row (no hidden M-derived seed).
-    for w in prod:
+    # 1) All CAPTURED shapes from workloads.json (18 decode + 11 prefill). The frozen row `seed` is
+    #    the base; the two samples are deterministic repeats `seed + repeat` of THAT row.
+    for w in captured:
         M, E, gen, seed, atol, rtol, scalars = _row(w)
         for repeat in (0, 1):
             g.manual_seed(seed + repeat)

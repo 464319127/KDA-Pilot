@@ -545,6 +545,13 @@ struct MoEFusedGateKernel {
     RuntimeCheck(num_experts <= fallback::kMaxExperts, "num_experts exceeds maximum supported value");
     RuntimeCheck(scoring_func <= 1, "scoring_func must be 0 (sigmoid) or 1 (sqrtsoftplus)");
     RuntimeCheck(topk > num_fused_shared_experts, "topk must be greater than num_fused_shared_experts");
+    // Fixed-storage / output-slot limits shared by the candidate and the copied fallback kernels:
+    // selected_experts[] holds at most kMaxTopK routed picks, and both small/large-token kernels
+    // write output through a single 32-lane warp. Without these, off-domain shapes with very large
+    // topk overflow shared memory or leave output columns unwritten instead of erroring cleanly.
+    RuntimeCheck(topk <= 32u, "topk exceeds the 32-lane output-slot limit");
+    RuntimeCheck(topk - num_fused_shared_experts <= fallback::kMaxTopK,
+                 "routed top-k (topk - num_fused_shared_experts) exceeds the kMaxTopK selection limit");
 
     const auto params = fallback::MoEFusedGateParams{
         .input = static_cast<const float*>(input.data_ptr()),

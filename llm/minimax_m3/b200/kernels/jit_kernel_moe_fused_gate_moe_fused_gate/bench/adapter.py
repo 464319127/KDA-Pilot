@@ -127,7 +127,38 @@ def _invoke(mod, inputs: dict, outputs: tuple) -> None:
 _CANDIDATE_AVAILABLE = has_candidate()
 
 
+def _baseline_decode_is_ub(workload: dict[str, Any]) -> bool:
+    """True for the recovered baseline's small-token (decode) path at num_experts=128, which is
+    UB (uninitialized shared-memory read) and can raise CUDA illegal-memory-access on a cold
+    context — see docs/baseline_source.md. The default `python bench/benchmark.py` would otherwise
+    launch it for the dominant decode rows and poison the context."""
+    sh = workload.get("shapes", {})
+    sc = workload.get("scalars", {})
+    return (int(sh.get("num_experts", 0)) == 128
+            and int(sh.get("num_tokens", 1)) <= 512          # small-token (decode) dispatch path
+            and int(sc.get("scoring_func", 0)) == 0)          # sigmoid (the captured config)
+
+
+_warned_ub_decode = False
+
+
 def call_baseline(workload: dict[str, Any], inputs: dict, outputs: tuple) -> None:
+    # Do NOT launch the UB baseline decode path (it can fault and poison the CUDA context). For
+    # those rows the only safe reference is the cold-safe candidate, so substitute it; the resulting
+    # decode A/B speedup is therefore degenerate (~1.0) and is NOT a real comparison. The
+    # authoritative evidence is: the prefill A/B (`--only <prefill ids>`, headline geomean) and the
+    # candidate-only decode latency (`bench/bench_decode_candidate.py`); see docs/results.md.
+    if _baseline_decode_is_ub(workload) and _CANDIDATE_AVAILABLE:
+        global _warned_ub_decode
+        if not _warned_ub_decode:
+            import sys
+            print("[adapter] baseline decode path is UB (E=128, M<=512); substituting the cold-safe "
+                  "candidate so the harness does not fault. Decode A/B speedups are degenerate — use "
+                  "--only <prefill ids> for the authoritative A/B and bench_decode_candidate.py for "
+                  "decode latency (see docs/results.md).", file=sys.stderr)
+            _warned_ub_decode = True
+        _invoke(candidate_module(), inputs, outputs)
+        return
     _invoke(baseline_module(), inputs, outputs)
 
 

@@ -3,7 +3,7 @@
 ## Headline
 - **Correctness:** candidate passes the full grid — **829 checks, 0 failures** (`bench/correctness.py`,
   which loads `bench/workloads.json`): candidate-vs-**oracle** on **all 18 decode + 11 prefill**
-  production rows (×2 seeds) + boundary; candidate-vs-baseline + baseline-vs-oracle on prefill; the
+  captured rows (×2 seeds) + boundary; candidate-vs-baseline + baseline-vs-oracle on prefill; the
   frozen **semantic edge grid** (all-equal, tie-smaller-index, saturate ±, **+Inf/-Inf**,
   subnormal-sum, M=0) built via the same `generator` field as `workloads.json`; **off-domain (E=256)
   fallback** (candidate==baseline==oracle); determinism. The candidate is **cold-safe** (correct as
@@ -32,7 +32,7 @@
 ## Per-regime summary
 | Regime | Rows | Baseline | Candidate | Result |
 |---|---|---|---|---|
-| Decode (M≤512, small-token) | 18 production (M=1..79) | **UB — nondeterministic illegal access; not benchmarkable** | correct + cold-safe, ~4.1–6.1 µs | correctness/safety **win** (categorical) |
+| Decode (M≤512, small-token) | 18 captured (M=1..79; `production:false` — unbenchmarkable) | **UB — nondeterministic illegal access; not A/B-benchmarkable** | correct + cold-safe, ~4.1–6.1 µs | correctness/safety **win** (categorical) |
 | Prefill (M>512, large-token) | 11 production (M=1074..7432) | correct, ~6–8 µs | correct, ~6–8 µs | **parity** (geomean 1.0105, within noise) |
 
 ## Aggregate table (the decode baseline is UB, so production-wide/decode ratios are N/A)
