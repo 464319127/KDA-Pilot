@@ -1,0 +1,144 @@
+// Local TVM-FFI ABI binding for the topk_sigmoid baseline + candidate. Compiled in ONE
+// module with baseline/topk_sigmoid_baseline.cu (symmetric flags) so both sides share an
+// identical export/build style and entry path. Exports:
+//   topk_sigmoid_baseline        — bridges TensorView -> torch::Tensor and calls the vendored
+//                                  upstream topk_sigmoid(...) (recovered baseline, verbatim kernels)
+//   topk_sigmoid_candidate       — fused native-CUDA fast path on the validated contract;
+//                                  falls back to the baseline for any other combination
+//   topk_sigmoid_candidate_route — host-side route diagnostic (1=fast path, 0=fallback; no launch)
+//   topk_sigmoid_noop            — empty-kernel launch-floor probe (candidate's grid/block)
+// All outputs are destination-passing (topk_weights/topk_indices written in place);
+// gating_output is read-only; every launch uses at::cuda::getCurrentCUDAStream().
+
+#include <ATen/cuda/CUDAContext.h>
+#include <c10/cuda/CUDAGuard.h>
+#include <torch/all.h>
+
+#include <cuda_runtime.h>
+#include <vector>
+
+#include <tvm/ffi/function.h>
+
+#include "topk_sigmoid_ext.h"
+#include "topk_sigmoid_candidate.cuh"
+
+// Forward declaration of the vendored upstream baseline
+// (defined in baseline/topk_sigmoid_baseline.cu, compiled into the same module).
+void topk_sigmoid(
+    torch::Tensor& topk_weights,
+    torch::Tensor& topk_indices,
+    torch::Tensor& gating_output,
+    const bool renormalize,
+    const c10::optional<torch::Tensor>& correction_bias);
+
+namespace {
+
+// Zero-copy torch::Tensor view over a TensorView's storage (for calling the vendored baseline).
+torch::Tensor as_torch(const tvm::ffi::TensorView& t, at::ScalarType dtype) {
+  std::vector<int64_t> sizes;
+  sizes.reserve(t.ndim());
+  for (int i = 0; i < t.ndim(); ++i) sizes.push_back(t.size(i));
+  auto opts = torch::TensorOptions().dtype(dtype).device(torch::kCUDA, tse::device_id(t));
+  void* ptr = static_cast<char*>(t.data_ptr()) + t.byte_offset();
+  return torch::from_blob(ptr, sizes, opts);
+}
+
+// Empty kernel launched at the candidate's grid/block to bound launch overhead.
+__global__ void noop_kernel() {}
+
+// Host-side fast-path predicate (no device reads, no host sync). The fused candidate covers
+// exactly the captured Step-3.7 contract: gating [N,288] fp32 contiguous CUDA, topk_weights
+// [N,8] fp32, topk_indices [N,8] i32, correction_bias [288] fp32, renormalize=True. Anything
+// off-domain is rejected so the dispatcher falls back to the recovered baseline.
+inline bool candidate_eligible(
+    const tvm::ffi::TensorView& topk_weights,
+    const tvm::ffi::TensorView& topk_indices,
+    const tvm::ffi::TensorView& gating_output,
+    int64_t renormalize,
+    const tvm::ffi::TensorView& correction_bias) {
+  if (gating_output.ndim() != 2 || topk_weights.ndim() != 2 || topk_indices.ndim() != 2 ||
+      correction_bias.ndim() != 1) {
+    return false;
+  }
+  const int64_t N = gating_output.size(0);
+  const int64_t E = gating_output.size(1);
+  const int64_t K = topk_weights.size(1);
+  const bool shapes_ok = E == topk_sigmoid_candidate::kNumExperts &&
+      K == topk_sigmoid_candidate::kTopK && topk_weights.size(0) == N &&
+      topk_indices.size(0) == N && topk_indices.size(1) == K && correction_bias.size(0) == E;
+  const bool dtypes_ok = tse::is_f32(gating_output.dtype()) && tse::is_f32(topk_weights.dtype()) &&
+      tse::is_i32(topk_indices.dtype()) && tse::is_f32(correction_bias.dtype());
+  const bool contig_ok = tse::is_contiguous(gating_output) && tse::is_contiguous(topk_weights) &&
+      tse::is_contiguous(topk_indices) && tse::is_contiguous(correction_bias);
+  const bool device_ok = tse::is_cuda(gating_output) && tse::is_cuda(topk_weights) &&
+      tse::is_cuda(topk_indices) && tse::is_cuda(correction_bias);
+  const bool scalars_ok = renormalize != 0;  // captured contract is renormalize=True
+  return shapes_ok && dtypes_ok && contig_ok && device_ok && scalars_ok;
+}
+
+}  // namespace
+
+void topk_sigmoid_baseline(
+    tvm::ffi::TensorView topk_weights,
+    tvm::ffi::TensorView topk_indices,
+    tvm::ffi::TensorView gating_output,
+    int64_t renormalize,
+    tvm::ffi::TensorView correction_bias) {
+  const at::cuda::OptionalCUDAGuard guard(at::Device(at::kCUDA, tse::device_id(gating_output)));
+  torch::Tensor w = as_torch(topk_weights, at::kFloat);
+  torch::Tensor idx = as_torch(topk_indices, at::kInt);
+  torch::Tensor gating = as_torch(gating_output, at::kFloat);
+  torch::Tensor bias = as_torch(correction_bias, at::kFloat);
+  c10::optional<torch::Tensor> bias_opt(bias);
+  topk_sigmoid(w, idx, gating, renormalize != 0, bias_opt);
+}
+
+void topk_sigmoid_candidate(
+    tvm::ffi::TensorView topk_weights,
+    tvm::ffi::TensorView topk_indices,
+    tvm::ffi::TensorView gating_output,
+    int64_t renormalize,
+    tvm::ffi::TensorView correction_bias) {
+  if (!candidate_eligible(topk_weights, topk_indices, gating_output, renormalize, correction_bias)) {
+    topk_sigmoid_baseline(topk_weights, topk_indices, gating_output, renormalize, correction_bias);
+    return;
+  }
+  const int64_t N = gating_output.size(0);
+  if (N <= 0) return;
+  const at::cuda::OptionalCUDAGuard guard(at::Device(at::kCUDA, tse::device_id(gating_output)));
+  const cudaStream_t stream = at::cuda::getCurrentCUDAStream();
+  topk_sigmoid_candidate::launch_topk_sigmoid_candidate(
+      tse::dptr<float>(gating_output),
+      tse::dptr<float>(correction_bias),
+      tse::mptr<float>(topk_weights),
+      tse::mptr<int>(topk_indices),
+      static_cast<int>(N),
+      renormalize != 0,
+      stream);
+}
+
+void topk_sigmoid_noop(tvm::ffi::TensorView gating_output) {
+  const int64_t N = gating_output.size(0);
+  if (N <= 0) return;
+  const at::cuda::OptionalCUDAGuard guard(at::Device(at::kCUDA, tse::device_id(gating_output)));
+  const cudaStream_t stream = at::cuda::getCurrentCUDAStream();
+  dim3 grid(static_cast<unsigned>(N));
+  dim3 block(topk_sigmoid_candidate::kBlockThreads);
+  noop_kernel<<<grid, block, 0, stream>>>();
+}
+
+int64_t topk_sigmoid_candidate_route(
+    tvm::ffi::TensorView topk_weights,
+    tvm::ffi::TensorView topk_indices,
+    tvm::ffi::TensorView gating_output,
+    int64_t renormalize,
+    tvm::ffi::TensorView correction_bias) {
+  return candidate_eligible(topk_weights, topk_indices, gating_output, renormalize, correction_bias)
+             ? 1
+             : 0;
+}
+
+TVM_FFI_DLL_EXPORT_TYPED_FUNC(topk_sigmoid_baseline, topk_sigmoid_baseline);
+TVM_FFI_DLL_EXPORT_TYPED_FUNC(topk_sigmoid_candidate, topk_sigmoid_candidate);
+TVM_FFI_DLL_EXPORT_TYPED_FUNC(topk_sigmoid_candidate_route, topk_sigmoid_candidate_route);
+TVM_FFI_DLL_EXPORT_TYPED_FUNC(topk_sigmoid_noop, topk_sigmoid_noop);
