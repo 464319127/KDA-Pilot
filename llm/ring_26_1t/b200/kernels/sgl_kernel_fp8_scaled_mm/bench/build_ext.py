@@ -122,6 +122,11 @@ def candidate(*args) -> None:
     get_ext().fp8_scaled_mm_candidate(*args)
 
 
+# Test-only bias-capable baseline (AC-3.1 bias edge): a, b, scale_a, scale_b, bias, out.
+def baseline_bias(*args) -> None:
+    get_ext().fp8_scaled_mm_baseline_bias(*args)
+
+
 # Dispatch-route diagnostic: 1 = candidate fast path, 0 = baseline fallback (no launch).
 def route(*args) -> int:
     return int(get_ext().fp8_scaled_mm_candidate_route(*args))

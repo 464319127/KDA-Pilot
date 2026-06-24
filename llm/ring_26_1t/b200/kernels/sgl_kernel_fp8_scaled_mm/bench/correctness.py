@@ -35,10 +35,23 @@ WORKLOADS = _HERE / "workloads.json"
 _DT = {"bfloat16": torch.bfloat16, "float16": torch.float16}
 
 
-def oracle(inp, out_dtype):
+def oracle(inp, out_dtype, bias=None):
     acc = inp["a"].float() @ inp["b"].float()            # [M,N] fp32
     acc = acc * inp["scale_a"].float() * inp["scale_b"].float().t()
+    if bias is not None:
+        acc = acc + bias.float().reshape(1, -1)
     return acc.to(out_dtype)
+
+
+def expected_route(wl) -> int:
+    """The intended dispatch route for a workload, mirroring the candidate's
+    covers_m1_gemv predicate. Asserted in check_row so a silent fallback can never
+    masquerade as a promoted route (AC-5)."""
+    s = wl["shapes"]
+    M, K, N = s["M"], s["K"], s["N"]
+    contig_b = wl.get("strides", {}).get("b") == "row_major"
+    out_bf16 = wl.get("scalars", {}).get("out_dtype", "bfloat16") == "bfloat16"
+    return 1 if (M == 1 and not (K >= 4096 and N >= 3072) and not contig_b and out_bf16) else 0
 
 
 def check_row(wl, device) -> tuple[bool, str]:
@@ -49,6 +62,12 @@ def check_row(wl, device) -> tuple[bool, str]:
     inp = adapter.make_inputs(wl, device=device, seed=wl.get("seed", 0))
     route = build_ext.route(inp["a"], inp["b"], inp["scale_a"], inp["scale_b"],
                             torch.empty((inp["M"], inp["N"]), device=device, dtype=out_dtype))
+
+    # AC-5: the actual route must match the intended dispatch table for EVERY row,
+    # so a covered M=1 winner can never silently degrade to the baseline (or vice versa).
+    exp = expected_route(wl)
+    if route != exp:
+        return False, f"route {route} != expected {exp} (dispatch-table mismatch)"
 
     # Contract-boundary edge rows (the recovered ABI rejects / does not carry these):
     # the candidate must NOT claim a fast path for them.
@@ -134,12 +153,41 @@ def negative_route_cases(device) -> list:
     expect_fallback("neg_dtype_uint8_A", torch.zeros((M, K), dtype=torch.uint8, device=device), b, sa, sb, out, True)
     expect_fallback("neg_scale_a_rank_M2", a, b, torch.rand((M, 2), device=device, dtype=torch.float32), sb, out, True)
     expect_fallback("neg_scale_b_rank_N2", a, b, sa, torch.rand((N, 2), device=device, dtype=torch.float32), out, True)
+    expect_fallback("neg_dtype_e5m2_B", a, f8((N, K), torch.float8_e5m2).t(), sa, sb, out, True)
     expect_fallback("neg_out_fp16", a, b, sa, sb, torch.empty((M, N), device=device, dtype=torch.float16), False)
+    # CPU input must be rejected BEFORE any forced CUDA view (calls candidate, not just route).
+    a_cpu = torch.randn((M, K), dtype=torch.float32).to(torch.float8_e4m3fn)  # on CPU
+    expect_fallback("neg_cpu_input_A", a_cpu, b, sa, sb, out, True)
+    # mixed-device: scale_b on a second GPU must be rejected by the device guard (calls candidate).
     if torch.cuda.device_count() >= 2:
-        expect_fallback("neg_mixed_device", a, b, sa, sb.to("cuda:1"), out, False)
+        expect_fallback("neg_mixed_device", a, b, sa, sb.to("cuda:1"), out, True)
     else:
-        results.append(("neg_mixed_device", True, "skipped (single visible GPU); predicate enforces same device_id"))
+        results.append(("neg_mixed_device", True, "skipped (single visible GPU); device guard enforced in require_fp8_contract"))
     return results
+
+
+def bias_edge_test(device):
+    """AC-3.1 bias edge: the recovered baseline handles bias!=None correctly
+    (out=(A@B)*scale_a*scale_b+bias), verified vs the fp32 oracle. The production
+    ABI is bias-free and the candidate fast path is bias-unaware, so any biased
+    call routes to this baseline (the candidate route stays 0)."""
+    M, K, N = 32, 1024, 8192
+    wl = {"shapes": {"M": M, "K": K, "N": N}, "strides": {"b": "column_major"},
+          "scalars": {"out_dtype": "bfloat16"}, "seed": 0}
+    inp = adapter.make_inputs(wl, device=device, seed=0)
+    bias = torch.randn((N,), device=device, dtype=torch.bfloat16)
+    out = torch.full((M, N), float("nan"), device=device, dtype=torch.bfloat16)
+    build_ext.baseline_bias(inp["a"], inp["b"], inp["scale_a"], inp["scale_b"], bias, out)
+    torch.cuda.synchronize()
+    ref = oracle(inp, torch.bfloat16, bias=bias).float()
+    of = out.float()
+    if torch.isnan(of).any() or torch.isinf(of).any():
+        return ("bias_edge", False, "baseline_bias produced NaN/Inf")
+    ok = bool(((of - ref).abs() <= 0.07 + 0.02 * ref.abs()).all())
+    r = build_ext.route(inp["a"], inp["b"], inp["scale_a"], inp["scale_b"], out)
+    ok = ok and (r == 0)
+    return ("bias_edge", ok,
+            f"biased baseline vs oracle within tol={ok}; candidate route={r} (bias-unaware -> baseline)")
 
 
 def main() -> int:
@@ -161,9 +209,11 @@ def main() -> int:
             nfail += 1
             fails.append((wl["id"], msg))
         print(f"[{tag}] {wl['id']:<24} {wl.get('regime','?'):<12} {msg}")
-    # Negative-route (malformed-input) tests for the hardened dispatch predicate.
+    # Negative-route (malformed-input) tests for the hardened dispatch predicate,
+    # plus the AC-3.1 bias edge.
     n_rows = len(rows)
-    for name, ok, msg in negative_route_cases(device):
+    extra = negative_route_cases(device) + [bias_edge_test(device)]
+    for name, ok, msg in extra:
         tag = "PASS" if ok else "FAIL"
         if ok:
             npass += 1

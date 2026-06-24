@@ -33,6 +33,8 @@ using tvm::ffi::TensorView;
 // verbatim from the TensorView, so the captured column-major B (stride (1,K)) is
 // preserved and the upstream `b.stride(0)==1` check passes.
 inline torch::Tensor view_as(const TensorView& t, torch::ScalarType dtype) {
+  // Defensive: never fabricate a CUDA view over non-CUDA memory.
+  TORCH_CHECK(t.device().device_type == kDLCUDA, "fp8_scaled_mm: all tensors must be CUDA");
   std::vector<int64_t> sizes, strides;
   sizes.reserve(t.ndim());
   strides.reserve(t.ndim());
@@ -60,6 +62,14 @@ inline bool dtype_is(const TensorView& t, DLDataTypeCode code, uint8_t bits) {
 inline void require_fp8_contract(
     const TensorView& a, const TensorView& b,
     const TensorView& sa, const TensorView& sb, const TensorView& out) {
+  // Device first: all tensors must be CUDA and on the same device, BEFORE any
+  // view_as fabricates a CUDA tensor over the pointer. A CPU input or mixed-device
+  // scales/out must be rejected here, not silently re-wrapped as CUDA.
+  const int dev = a.device().device_id;
+  for (const TensorView* t : {&a, &b, &sa, &sb, &out}) {
+    TORCH_CHECK(t->device().device_type == kDLCUDA, "fp8_scaled_mm: all tensors must be CUDA");
+    TORCH_CHECK(t->device().device_id == dev, "fp8_scaled_mm: all tensors must be on the same CUDA device");
+  }
   TORCH_CHECK(dtype_is(a, kDLFloat8_e4m3fn, 8), "fp8_scaled_mm: mat_a must be float8_e4m3fn");
   TORCH_CHECK(dtype_is(b, kDLFloat8_e4m3fn, 8), "fp8_scaled_mm: mat_b must be float8_e4m3fn");
   TORCH_CHECK(dtype_is(sa, kDLFloat, 32) && dtype_is(sb, kDLFloat, 32), "fp8_scaled_mm: scales must be float32");

@@ -103,3 +103,31 @@ void fp8_scaled_mm_baseline(
 }
 
 TVM_FFI_DLL_EXPORT_TYPED_FUNC(fp8_scaled_mm_baseline, fp8_scaled_mm_baseline);
+
+// Test-only bias-capable baseline export (AC-3.1 bias edge). The captured
+// production workload is 100% bias=None, so the main ABI carries no bias; this
+// extra entry lets bench/correctness.py prove the recovered baseline handles
+// bias!=None correctly (out = (A@B)*scale_a*scale_b + bias) — the case that, in
+// production, the bias-unaware candidate fast path would route to this baseline.
+// bias is [N] (or [N,1]) in the output dtype (bf16/half), per the upstream contract.
+void fp8_scaled_mm_baseline_bias(
+    tvm::ffi::TensorView a,
+    tvm::ffi::TensorView b,
+    tvm::ffi::TensorView scales_a,
+    tvm::ffi::TensorView scales_b,
+    tvm::ffi::TensorView bias,
+    tvm::ffi::TensorView out) {
+  fp8abi::require_fp8_contract(a, b, scales_a, scales_b, out);
+  auto out_dtype = (out.dtype().code == kDLBfloat) ? torch::kBFloat16 : torch::kHalf;
+  TORCH_CHECK(bias.device().device_type == kDLCUDA, "fp8_scaled_mm: bias must be CUDA");
+  TORCH_CHECK(bias.device().device_id == a.device().device_id, "fp8_scaled_mm: bias device mismatch");
+  auto ta = fp8abi::view_as(a, torch::kFloat8_e4m3fn);
+  auto tb = fp8abi::view_as(b, torch::kFloat8_e4m3fn);
+  auto tsa = fp8abi::view_as(scales_a, torch::kFloat32);
+  auto tsb = fp8abi::view_as(scales_b, torch::kFloat32);
+  auto tbias = fp8abi::view_as(bias, out_dtype);
+  auto tout = fp8abi::view_as(out, out_dtype);
+  fp8_scaled_mm_baseline_impl(tout, ta, tb, tsa, tsb, tbias);
+}
+
+TVM_FFI_DLL_EXPORT_TYPED_FUNC(fp8_scaled_mm_baseline_bias, fp8_scaled_mm_baseline_bias);
