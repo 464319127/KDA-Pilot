@@ -78,7 +78,7 @@ and pos_inf/neg_inf edge rows).
   task all prefill rows share `call_count=456`, so the two coincide (1.0105).
 - **Decode speedup = N/A** and **production-wide (decode+prefill) speedup = N/A**: the baseline
   decode path is UB/unbenchmarkable, so any decode-containing ratio has an invalid denominator.
-  Decode is reported as candidate-absolute latency instead. (Decode is 84.2% of production calls,
+  Decode is reported as candidate-absolute latency instead. (Decode is 84.2% of captured calls,
   so the absence of a production-wide ratio is a genuine limitation, stated explicitly — not a
   silent omission.)
 

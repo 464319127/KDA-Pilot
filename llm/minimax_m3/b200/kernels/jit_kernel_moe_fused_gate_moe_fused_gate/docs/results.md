@@ -44,7 +44,7 @@
 | Prefill equal-weight geomean | **1.0105** | 11 rows |
 | Prefill call-count-weighted geomean | **1.0105** | identical — all prefill rows have equal call_count (456) |
 | Prefill per-row range | 0.982 – 1.135 | spread is run-to-run variance on a ~6–8 µs launch-bound kernel |
-| Decode share of production calls | 84.2% | 26670 / 31686 — the dominant regime, where the baseline is unsafe |
+| Decode share of captured calls | 84.2% | 26670 / 31686 — the dominant serving regime, where the baseline is unsafe |
 
 The prefill aggregate is **parity within noise** (geomean ≈ 1.01; the m4951 row's 1.135 is a
 variance outlier on a sub-µs-body launch-bound kernel, not a repeatable win — Round 0 measured the
