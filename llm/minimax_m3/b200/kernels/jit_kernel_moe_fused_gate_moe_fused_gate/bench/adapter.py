@@ -110,19 +110,22 @@ def _prime_context() -> None:
     is warm — mirroring warmed serving. This runs at import (outside benchmark.py's timed
     region) and is symmetric: it builds + warms both modules the harness will call.
     """
+    # Only the LARGE-path baseline launch is cold-safe. The baseline's small-token (decode)
+    # kernel has an uninitialized-shared-memory bug for num_experts=128 that can fault
+    # nondeterministically and poison the CUDA context — so we must NOT launch the baseline
+    # decode path here. (The candidate is cold-safe and needs no priming.) See
+    # docs/baseline_source.md. Decode-vs-baseline timing is therefore not obtainable; run
+    # baseline benchmarks on prefill rows (--only ...prefill ids) and report candidate decode
+    # as absolute timing with the baseline decode bug noted in docs/results.md.
     try:
         dev = torch.device("cuda")
         x = torch.randn((1024, 128), dtype=torch.float32, device=dev)
         b = torch.randn((128,), dtype=torch.float32, device=dev)
         o = torch.empty((1024, 5), dtype=torch.float32, device=dev)
         i = torch.empty((1024, 5), dtype=torch.int32, device=dev)
-        xs = torch.randn((64, 128), dtype=torch.float32, device=dev)
-        os_ = torch.empty((64, 5), dtype=torch.float32, device=dev)
-        is_ = torch.empty((64, 5), dtype=torch.int32, device=dev)
-        mods = [baseline_module()] + ([candidate_module()] if _CANDIDATE_AVAILABLE else [])
-        for m in mods:
-            m.moe_fused_gate(x, b, o, i, 5, 0, 1, True, 2.0, True)   # large path (cold-safe)
-            m.moe_fused_gate(xs, b, os_, is_, 5, 0, 1, True, 2.0, True)  # small path (now warm)
+        baseline_module().moe_fused_gate(x, b, o, i, 5, 0, 1, True, 2.0, True)  # large path only
+        if _CANDIDATE_AVAILABLE:
+            candidate_module().moe_fused_gate(x, b, o, i, 5, 0, 1, True, 2.0, True)
         torch.cuda.synchronize()
     except Exception:  # noqa: BLE001 — priming is best-effort; never block the harness import
         pass
