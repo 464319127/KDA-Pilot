@@ -88,3 +88,17 @@ def noop(gating_output) -> None:
 # Same 5-arg signature as baseline/candidate.
 def route(*args) -> int:
     return int(get_ext().topk_sigmoid_candidate_route(*args))
+
+
+# ---- No-bias variants (AC-4 missing-bias fallback): 4-arg signature, no correction_bias ----
+# args: topk_weights, topk_indices, gating_output, renormalize (int 0/1) -> None (in place)
+def baseline_nobias(*args) -> None:
+    get_ext().topk_sigmoid_baseline_nobias(*args)
+
+
+def candidate_nobias(*args) -> None:
+    get_ext().topk_sigmoid_candidate_nobias(*args)
+
+
+def route_nobias(*args) -> int:
+    return int(get_ext().topk_sigmoid_candidate_route_nobias(*args))

@@ -33,8 +33,25 @@ gating_output, renormalize=False, correction_bias=None) -> None`; it forwards to
 `([N,8] f32, [N,8] i32, [N,288] f32)`. The op truly returns `None`; the "tuple" is a logging
 artifact — the capture tool dumped the relevant tensors after the call (arg0/arg1 written in
 place, arg2 unchanged). **Conclusion: outputs are the in-place writes to arg0 (topk_weights)
-and arg1 (topk_indices); arg2 (gating_output) is not mutated.** This will be re-confirmed by a
-runtime data_ptr/poison probe when the ABI is built on B200.
+and arg1 (topk_indices); arg2 (gating_output) is not mutated.**
+
+### Recorded runtime probe (AC-1; `bench/probe_baseline.py`, ion-b200 GPU 1, N=4)
+
+```
+python_return: None  (is None: True)
+arg0 topk_weights  data_ptr unchanged: True; contents changed vs poison: True
+arg1 topk_indices  data_ptr unchanged: True; contents changed vs poison: True; all valid experts [0,288): True
+arg2 gating_output data_ptr unchanged: True; contents MUTATED: False  (read-only, as the schema implies)
+out topk_weights:  shape (4,8) torch.float32 stride (8,1) cuda:0 contiguous=True
+out topk_indices:  shape (4,8) torch.int32   stride (8,1) cuda:0 contiguous=True
+non-default-stream event complete after only that stream's sync: True  (launch uses the current CUDA stream)
+```
+
+This confirms — by running the copied baseline ABI, not by schema inference alone — that the op
+returns `None`, writes `topk_weights`/`topk_indices` in place (same data_ptr, poison overwritten,
+valid expert ids), leaves `gating_output` unmodified, produces contiguous fp32/int32 outputs, and
+launches on the current CUDA stream (`at::cuda::getCurrentCUDAStream()`). The candidate ABI mirrors
+this exact contract.
 
 ## Files inspected upstream (at the resolved commit)
 

@@ -108,6 +108,44 @@ def run_row(workload, device, errs) -> bool:
     return ok
 
 
+def nobias_row(device, errs) -> bool:
+    """AC-4 missing-bias fallback: with correction_bias=None the candidate must route to the
+    baseline (route_nobias==0) and stay correct (candidate==baseline exact + vs a no-bias oracle)."""
+    n = 64
+    gen = torch.Generator(device=device).manual_seed(4242)
+    g = torch.randn((n, NUM_EXPERTS), dtype=torch.float32, device=device, generator=gen)
+    wb = torch.empty((n, TOPK), dtype=torch.float32, device=device)
+    ib = torch.empty((n, TOPK), dtype=torch.int32, device=device)
+    wc = torch.empty_like(wb)
+    ic = torch.empty_like(ib)
+    _poison(wb, ib)
+    _poison(wc, ic)
+    ok = True
+
+    r = build_ext.route_nobias(wb, ib, g, 1)
+    if r != 0:
+        errs.append(f"[fb_missing_bias] route_nobias={r}, expected 0 (no fast path without bias)")
+        ok = False
+
+    build_ext.baseline_nobias(wb, ib, g, 1)
+    build_ext.candidate_nobias(wc, ic, g, 1)
+    torch.cuda.synchronize()
+    if not _check_pair("fb_missing_bias:cand-vs-base", wb, ib, wc, ic, 1e-5, 1e-5, errs):
+        ok = False
+    if not torch.isfinite(wc).all().item():
+        errs.append("[fb_missing_bias] candidate left NaN/Inf in weights"); ok = False
+    if (ic < 0).any().item() or (ic >= NUM_EXPERTS).any().item():
+        errs.append("[fb_missing_bias] candidate left invalid expert ids"); ok = False
+
+    # Independent no-bias oracle: sigmoid top-k (no bias add/subtract), renormalized.
+    sig = torch.sigmoid(g.float())
+    w_o, idx_o = torch.topk(sig, TOPK, dim=-1)
+    w_o = w_o / w_o.sum(dim=-1, keepdim=True)
+    if not _check_pair("fb_missing_bias:cand-vs-oracle", w_o.float(), idx_o.to(torch.int32), wc, ic, 1e-4, 1e-4, errs):
+        ok = False
+    return ok
+
+
 def tie_rows(device):
     """Constructed tie/edge rows; validated against the authoritative baseline (torch.topk
     tie-break is unstable, so the baseline — not the oracle — is the reference here)."""
@@ -151,6 +189,11 @@ def main() -> int:
         ntotal += 1
         if run_row(w, device, errs):
             npass += 1
+
+    # AC-4 missing-bias fallback row
+    ntotal += 1
+    if nobias_row(device, errs):
+        npass += 1
 
     for name, g, b in tie_rows(device):
         ntotal += 1

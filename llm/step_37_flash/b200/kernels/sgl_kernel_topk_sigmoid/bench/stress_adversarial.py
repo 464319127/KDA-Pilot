@@ -1,10 +1,10 @@
 """Adversarial randomized correctness stress for the candidate vs the recovered baseline.
 
-Closes the gap flagged by the independent Codex cross-check: the baseline moeTopK uses a `-1.f`
-sentinel as the initial argmax value, so if a token's `sigmoid(logit)+bias` scores fall below -1
-for nearly all experts, the baseline degenerates (the sentinel wins), while the candidate (genuine
-top-k) does not. This sweeps bias scales and extreme logits to show candidate==baseline across the
-realistic range, and probes the pathological all-scores-<-1 corner to document the exact boundary.
+The candidate replicates upstream moeTopK's `-1.f`/index-0 argmax sentinel, so it must match the
+recovered baseline EXACTLY on every row here — including the degenerate all-scores-<-1 corner where
+the sentinel wins (this input is inside the host-only route predicate, which cannot inspect bias
+values, so bit-faithfulness is mandatory, not range-restricted). Sweeps bias scales, extreme logits,
+and the sentinel corner; all rows are required passes.
 
 Run on the GPU: CUDA_VISIBLE_DEVICES=<id> PYTHONPATH=. python stress_adversarial.py
 """
@@ -45,11 +45,13 @@ def main() -> int:
     gen = torch.Generator(device=DEVICE).manual_seed(99)
     configs.append(("extreme_logits_x30", torch.randn((N, E), dtype=torch.float32, device=DEVICE, generator=gen) * 30.0,
                     torch.randn((E,), dtype=torch.float32, device=DEVICE, generator=gen), True))
-    # Pathological corner: all scores < -1 -> baseline's -1.f sentinel degenerates. Expected to
-    # diverge; this row documents the boundary and is NOT in the realistic Step-3.7 bias range.
-    configs.append(("all_neg_bias_-5 (sentinel corner, expected DIFF)",
+    # Sentinel corner: all scores < -1, so upstream moeTopK's -1.f/index-0 sentinel wins every
+    # round. The candidate replicates that sentinel exactly, so it MUST match the baseline here too
+    # (required pass) — not a documented divergence. This input is inside the host-only route
+    # predicate (which cannot inspect bias values), so bit-faithfulness here is mandatory.
+    configs.append(("all_neg_bias_-5 (sentinel corner, required)",
                     torch.randn((N, E), dtype=torch.float32, device=DEVICE, generator=gen),
-                    torch.full((E,), -5.0, dtype=torch.float32, device=DEVICE), False))
+                    torch.full((E,), -5.0, dtype=torch.float32, device=DEVICE), True))
 
     realistic_pass = realistic_total = 0
     for name, g, b, realistic in configs:

@@ -60,6 +60,31 @@ CUDA_VISIBLE_DEVICES=2 PYTHONPATH=. ncu --set basic --launch-skip 6 --launch-cou
   -o /tmp/topk_ncu --force-overwrite python profile_ncu.py
 ```
 
+## Round 1 (review-remediation reruns)
+
+After the Round 0 review (NOT COMPLETE: sentinel bit-faithfulness, missing probe, missing-bias
+fallback), the candidate kernel + ABI changed, so all evidence was re-run.
+
+- Correctness `35/35` PASS + adversarial `27/27` PASS (incl. the now-required `all_neg_bias_-5`
+  sentinel corner) on GPU 1 (functional).
+- Runtime baseline probe recorded on GPU 1 (transcript in `docs/baseline_source.md`).
+- Benchmark re-run on **idle GPU 3** (GPU 1 and GPU 2 both busy at the time — GPU 1 at 99% util, GPU 2
+  with an 85 GB resident neighbor): production geomean **1.4754×** (consistent with the Round 0 GPU-2
+  1.4381×). GPU 3 idle evidence: `3, 0 %, 0 MiB` before → `3, 0 %, 4 MiB` after.
+
+```bash
+# Round 1: rebuild + correctness (35/35) + stress (27/27) + probe (GPU 1)
+CUDA_VISIBLE_DEVICES=1 PYTHONPATH=. python correctness.py
+CUDA_VISIBLE_DEVICES=1 PYTHONPATH=. python stress_adversarial.py
+CUDA_VISIBLE_DEVICES=1 PYTHONPATH=. python probe_baseline.py
+# Round 1: benchmark rerun (idle GPU 3) -> geomean 1.4754x
+CUDA_VISIBLE_DEVICES=3 PYTHONPATH=. python benchmark.py --workloads workloads.json --out results.jsonl --num-trials 7 --warmup-runs 10
+```
+
+The floor probe (empty-kernel) and NCU bottleneck attribution from Round 0 remain representative: the
+Round 1 fix changes only the argmax initialization constant (`-inf` → `-1.0f`, index 0), not the
+kernel's launch geometry, memory pattern, or instruction mix.
+
 ## Notes
 
 - The local toolchain (macOS) has no CUDA; all build/correctness/benchmark/profile work is remote.

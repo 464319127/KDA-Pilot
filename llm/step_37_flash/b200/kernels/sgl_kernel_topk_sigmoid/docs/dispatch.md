@@ -19,6 +19,14 @@ condition → `route==1`, asserted per row in `bench/correctness.py`. The 6 regr
 `route==0`, also asserted. This proves the fast path genuinely covers production and a silent
 fallback cannot masquerade as a candidate run.
 
+**Missing-bias path (AC-4):** the captured contract always supplies `correction_bias` and the main
+ABI passes it as a required `tvm::ffi::TensorView`, so a `correction_bias=None` case is represented by
+separate no-bias entrypoints (`topk_sigmoid_baseline_nobias` / `topk_sigmoid_candidate_nobias` /
+`topk_sigmoid_candidate_route_nobias`). The candidate has no no-bias fast path, so `candidate_nobias`
+always falls back to the recovered baseline with `c10::nullopt` and `route_nobias==0`. The
+`fb_missing_bias` correctness row asserts `route_nobias==0`, candidate==baseline, and a no-bias
+sigmoid-topk oracle.
+
 ## Per-bucket measured behavior (idle B200 GPU 2)
 
 | Regime | N | baseline median µs | candidate median µs | speedup |

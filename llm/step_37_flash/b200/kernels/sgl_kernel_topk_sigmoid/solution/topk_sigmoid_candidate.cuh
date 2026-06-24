@@ -13,10 +13,12 @@
 //   if renormalize: weight[i] /= sum_{j} weight[j]   (sum accumulated in selection order)
 //
 // One block processes one token row. The block does k sequential argmax reductions over the
-// num_experts scores held in shared memory, masking each selected expert with -inf. For the
-// realistic Step-3.7 bias range this reproduces the baseline's genuine top-k selection
-// (the baseline's -1.f sentinel in moeTopK only diverges when fewer than topk experts have
-// score > -1, which does not occur for realistic router biases; see docs/baseline_source.md).
+// num_experts scores held in shared memory, masking each selected expert so it cannot be
+// reselected. To stay bit-faithful to the baseline for ANY fp32 bias admitted by the host-only
+// route predicate (which cannot inspect bias values), each round is seeded with upstream
+// moeTopK's sentinel (value = -1.0f, index = 0): if no unselected expert has score > -1, the
+// sentinel wins (index 0, weight = -1 - bias[0], and index 0 may repeat across rounds), exactly
+// reproducing the baseline's behavior when sigmoid+bias < -1 for (nearly) all experts.
 #pragma once
 
 #include <cuda_runtime.h>
@@ -75,8 +77,12 @@ __global__ void __launch_bounds__(BLOCK_THREADS) topk_sigmoid_fused_kernel(
 
   // Pass 2: k sequential argmax reductions with lower-index tie-break, masking selected.
   for (int k = 0; k < TOPK; ++k) {
-    float best_v = -CUDART_INF_F;
-    int best_i = NUM_EXPERTS;  // sentinel index (never beats a real expert on tie)
+    // Seed with upstream moeTopK's sentinel: value -1.0f at index 0. A masked (selected) expert
+    // is set to -inf below and so always loses to this sentinel; an unselected expert wins only
+    // if its score > -1. This matches the baseline bit-for-bit, including the degenerate corner
+    // where the sentinel wins (and index 0 repeats).
+    float best_v = -1.0f;
+    int best_i = 0;
     for (int e = tid; e < NUM_EXPERTS; e += BLOCK_THREADS) {
       argmax_combine(best_v, best_i, s_score[e], e);
     }

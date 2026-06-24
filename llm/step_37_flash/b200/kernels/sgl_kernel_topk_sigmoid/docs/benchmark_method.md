@@ -16,7 +16,9 @@ Baseline (`topk_sigmoid_baseline`) and candidate (`topk_sigmoid_candidate`) are 
 module compiled together; both receive the identical 5-argument TensorView signature and go
 through the same `bench/adapter.py` call path, so wrapper/marshalling overhead is symmetric. The
 baseline export bridges TensorView → `torch::Tensor` (`torch::from_blob`, no copy) and calls the
-vendored `topk_sigmoid(...)`; no live SGLang is imported at runtime.
+vendored `topk_sigmoid(...)`; no live SGLang is imported at runtime. Test-only no-bias variants
+(`topk_sigmoid_{baseline,candidate,candidate_route}_nobias`, 4-arg, no `correction_bias`) exist to
+verify the AC-4 missing-bias (`correction_bias=None`) fallback; they are not part of the timed path.
 
 ## Compile flags (symmetric; recorded for provenance)
 

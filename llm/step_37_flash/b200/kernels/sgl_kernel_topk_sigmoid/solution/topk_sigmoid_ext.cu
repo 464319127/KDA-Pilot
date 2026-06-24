@@ -43,6 +43,14 @@ torch::Tensor as_torch(const tvm::ffi::TensorView& t, at::ScalarType dtype) {
   return torch::from_blob(ptr, sizes, opts);
 }
 
+// gating_output may be fp32/fp16/bf16 (the recovered baseline supports all three); map the
+// TensorView's actual dtype so the bytes are not reinterpreted.
+at::ScalarType gating_scalar_type(DLDataType gdt) {
+  if (gdt.code == kDLFloat && gdt.bits == 16) return at::kHalf;
+  if (gdt.code == kDLBfloat && gdt.bits == 16) return at::kBFloat16;
+  return at::kFloat;
+}
+
 // Empty kernel launched at the candidate's grid/block to bound launch overhead.
 __global__ void noop_kernel() {}
 
@@ -87,19 +95,40 @@ void topk_sigmoid_baseline(
   const at::cuda::OptionalCUDAGuard guard(at::Device(at::kCUDA, tse::device_id(gating_output)));
   torch::Tensor w = as_torch(topk_weights, at::kFloat);
   torch::Tensor idx = as_torch(topk_indices, at::kInt);
-  // gating_output may be fp32/fp16/bf16 (the recovered baseline supports all three); map the
-  // TensorView's actual dtype so the bytes are not reinterpreted as fp32.
-  at::ScalarType gating_dtype = at::kFloat;
-  const DLDataType gdt = gating_output.dtype();
-  if (gdt.code == kDLFloat && gdt.bits == 16) {
-    gating_dtype = at::kHalf;
-  } else if (gdt.code == kDLBfloat && gdt.bits == 16) {
-    gating_dtype = at::kBFloat16;
-  }
-  torch::Tensor gating = as_torch(gating_output, gating_dtype);
+  torch::Tensor gating = as_torch(gating_output, gating_scalar_type(gating_output.dtype()));
   torch::Tensor bias = as_torch(correction_bias, at::kFloat);
   c10::optional<torch::Tensor> bias_opt(bias);
   topk_sigmoid(w, idx, gating, renormalize != 0, bias_opt);
+}
+
+// No-bias variants (AC-4 missing-bias fallback): the captured contract always supplies a bias and
+// the main ABI passes it as a required TensorView, so a `correction_bias=None` case is represented
+// here by separate entrypoints used for fallback verification. The candidate has no no-bias fast
+// path (it requires a bias), so candidate_nobias always routes to the baseline with c10::nullopt.
+void topk_sigmoid_baseline_nobias(
+    tvm::ffi::TensorView topk_weights,
+    tvm::ffi::TensorView topk_indices,
+    tvm::ffi::TensorView gating_output,
+    int64_t renormalize) {
+  const at::cuda::OptionalCUDAGuard guard(at::Device(at::kCUDA, tse::device_id(gating_output)));
+  torch::Tensor w = as_torch(topk_weights, at::kFloat);
+  torch::Tensor idx = as_torch(topk_indices, at::kInt);
+  torch::Tensor gating = as_torch(gating_output, gating_scalar_type(gating_output.dtype()));
+  topk_sigmoid(w, idx, gating, renormalize != 0, c10::nullopt);
+}
+
+void topk_sigmoid_candidate_nobias(
+    tvm::ffi::TensorView topk_weights,
+    tvm::ffi::TensorView topk_indices,
+    tvm::ffi::TensorView gating_output,
+    int64_t renormalize) {
+  // No bias -> off the fused fast-path contract -> always fall back to the recovered baseline.
+  topk_sigmoid_baseline_nobias(topk_weights, topk_indices, gating_output, renormalize);
+}
+
+int64_t topk_sigmoid_candidate_route_nobias(
+    tvm::ffi::TensorView, tvm::ffi::TensorView, tvm::ffi::TensorView, int64_t) {
+  return 0;  // missing bias is never on the candidate fast path
 }
 
 void topk_sigmoid_candidate(
@@ -151,3 +180,6 @@ TVM_FFI_DLL_EXPORT_TYPED_FUNC(topk_sigmoid_baseline, topk_sigmoid_baseline);
 TVM_FFI_DLL_EXPORT_TYPED_FUNC(topk_sigmoid_candidate, topk_sigmoid_candidate);
 TVM_FFI_DLL_EXPORT_TYPED_FUNC(topk_sigmoid_candidate_route, topk_sigmoid_candidate_route);
 TVM_FFI_DLL_EXPORT_TYPED_FUNC(topk_sigmoid_noop, topk_sigmoid_noop);
+TVM_FFI_DLL_EXPORT_TYPED_FUNC(topk_sigmoid_baseline_nobias, topk_sigmoid_baseline_nobias);
+TVM_FFI_DLL_EXPORT_TYPED_FUNC(topk_sigmoid_candidate_nobias, topk_sigmoid_candidate_nobias);
+TVM_FFI_DLL_EXPORT_TYPED_FUNC(topk_sigmoid_candidate_route_nobias, topk_sigmoid_candidate_route_nobias);
