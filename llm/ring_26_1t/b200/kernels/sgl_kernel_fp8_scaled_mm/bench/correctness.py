@@ -210,7 +210,10 @@ def bias_edge_test(device):
 def main() -> int:
     assert torch.cuda.is_available(), "CUDA required"
     device = torch.device("cuda")
-    rows = json.loads(WORKLOADS.read_text())
+    rows = json.loads(WORKLOADS.read_text())  # production-only (benchmark input)
+    edges_path = _HERE / "workloads_edges.json"  # correctness-only edge rows
+    if edges_path.exists():
+        rows += json.loads(edges_path.read_text())
     build_ext.get_ext()  # build once before timing any row
     npass = nfail = 0
     fails = []

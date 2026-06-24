@@ -30,7 +30,8 @@ from collections import defaultdict
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 EVIDENCE = os.path.join(HERE, "..", "docs", "evidence.json")
-OUT = os.path.join(HERE, "workloads.json")
+OUT = os.path.join(HERE, "workloads.json")            # production-only (default benchmark input)
+OUT_EDGES = os.path.join(HERE, "workloads_edges.json")  # correctness-only edge rows (the template benchmark cannot run the malformed ones)
 
 ATOL, RTOL, SEED = 0.07, 0.02, 0  # bf16 tolerance per llm_correctness_contract.md
 HEADLINE_M = {1, 23, 32, 57}
@@ -59,11 +60,11 @@ def main() -> None:
         k, n = t[1]["shape"][0], t[1]["shape"][1]  # B = [K, N]
         calls[(m, k, n)] += v.get("call_count", 0)
 
-    rows = []
+    prod_rows = []
     # Production rows: every distinct captured (M, K, N), sorted by calls desc.
     for (m, k, n), c in sorted(calls.items(), key=lambda kv: -kv[1]):
         headline = (m in HEADLINE_M) and ((k, n) in HEADLINE_KN)
-        rows.append({
+        prod_rows.append({
             "id": f"m{m}_k{k}_n{n}",
             "production": True,
             "headline": headline,
@@ -96,11 +97,12 @@ def main() -> None:
         ("edge_m2_k8192_n512", 2, 8192, 512, {}, "small even M not in captured set (route robustness, fall back)"),
         ("edge_m512_k512_n2048", 512, 512, 2048, {}, "rare (K,N)=512x2048 at a boundary M (fall back)"),
     ]
+    edge_rows = []
     for rid, m, k, n, extra_scalars, why in edge_specs:
         b_contig = extra_scalars.get("b_contiguous", False)
         out_dt = extra_scalars.get("out_dtype", "bfloat16")
         bias = extra_scalars.get("bias", None)
-        rows.append({
+        edge_rows.append({
             "id": rid,
             "production": False,
             "headline": False,
@@ -117,20 +119,26 @@ def main() -> None:
             "note": why,
         })
 
+    # workloads.json holds ONLY the production rows so the unmodified template
+    # `bench/benchmark.py` (which runs every row in its input) produces full-grid
+    # results when run with the default input. The edge rows — including the
+    # intentionally-malformed contiguous-B row that the baseline rejects — live in a
+    # correctness-only file that bench/correctness.py reads in addition.
     with open(OUT, "w") as f:
-        json.dump(rows, f, indent=2)
+        json.dump(prod_rows, f, indent=2)
+        f.write("\n")
+    with open(OUT_EDGES, "w") as f:
+        json.dump(edge_rows, f, indent=2)
         f.write("\n")
 
-    prod = [r for r in rows if r["production"]]
-    head = [r for r in prod if r["headline"]]
-    total_calls = sum(r["calls"] for r in prod)
+    head = [r for r in prod_rows if r["headline"]]
+    total_calls = sum(r["calls"] for r in prod_rows)
     by_regime = defaultdict(int)
-    for r in prod:
+    for r in prod_rows:
         by_regime[r["regime"]] += 1
-    print(f"wrote {OUT}")
-    print(f"  production rows : {len(prod)} (covering {total_calls} captured calls)")
+    print(f"wrote {OUT} ({len(prod_rows)} production rows, covering {total_calls} captured calls)")
+    print(f"wrote {OUT_EDGES} ({len(edge_rows)} correctness-only edge rows)")
     print(f"  headline rows   : {len(head)}")
-    print(f"  edge rows       : {len(rows) - len(prod)}")
     print(f"  by regime       : {dict(by_regime)}")
     head_calls = sum(r['calls'] for r in head)
     print(f"  headline covers : {head_calls} calls ({100*head_calls/total_calls:.1f}% of production)")
