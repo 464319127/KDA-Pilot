@@ -22,7 +22,8 @@
 #include <cuda_runtime.h>
 #include <math_constants.h>  // CUDART_INF_F
 
-namespace topk_sigmoid_candidate {
+namespace tsc {  // topk_sigmoid candidate fused kernel (namespace kept distinct from the
+                 // exported ABI function topk_sigmoid_candidate in topk_sigmoid_ext.cu)
 
 // Compile-time contract for the fused fast path.
 constexpr int kNumExperts = 288;
@@ -148,4 +149,4 @@ inline bool candidate_covers(
          weights_contiguous && indices_contiguous && has_bias;
 }
 
-}  // namespace topk_sigmoid_candidate
+}  // namespace tsc

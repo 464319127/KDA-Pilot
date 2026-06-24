@@ -63,8 +63,8 @@ inline bool candidate_eligible(
   const int64_t N = gating_output.size(0);
   const int64_t E = gating_output.size(1);
   const int64_t K = topk_weights.size(1);
-  const bool shapes_ok = E == topk_sigmoid_candidate::kNumExperts &&
-      K == topk_sigmoid_candidate::kTopK && topk_weights.size(0) == N &&
+  const bool shapes_ok = E == tsc::kNumExperts &&
+      K == tsc::kTopK && topk_weights.size(0) == N &&
       topk_indices.size(0) == N && topk_indices.size(1) == K && correction_bias.size(0) == E;
   const bool dtypes_ok = tse::is_f32(gating_output.dtype()) && tse::is_f32(topk_weights.dtype()) &&
       tse::is_i32(topk_indices.dtype()) && tse::is_f32(correction_bias.dtype());
@@ -87,7 +87,16 @@ void topk_sigmoid_baseline(
   const at::cuda::OptionalCUDAGuard guard(at::Device(at::kCUDA, tse::device_id(gating_output)));
   torch::Tensor w = as_torch(topk_weights, at::kFloat);
   torch::Tensor idx = as_torch(topk_indices, at::kInt);
-  torch::Tensor gating = as_torch(gating_output, at::kFloat);
+  // gating_output may be fp32/fp16/bf16 (the recovered baseline supports all three); map the
+  // TensorView's actual dtype so the bytes are not reinterpreted as fp32.
+  at::ScalarType gating_dtype = at::kFloat;
+  const DLDataType gdt = gating_output.dtype();
+  if (gdt.code == kDLFloat && gdt.bits == 16) {
+    gating_dtype = at::kHalf;
+  } else if (gdt.code == kDLBfloat && gdt.bits == 16) {
+    gating_dtype = at::kBFloat16;
+  }
+  torch::Tensor gating = as_torch(gating_output, gating_dtype);
   torch::Tensor bias = as_torch(correction_bias, at::kFloat);
   c10::optional<torch::Tensor> bias_opt(bias);
   topk_sigmoid(w, idx, gating, renormalize != 0, bias_opt);
@@ -107,7 +116,7 @@ void topk_sigmoid_candidate(
   if (N <= 0) return;
   const at::cuda::OptionalCUDAGuard guard(at::Device(at::kCUDA, tse::device_id(gating_output)));
   const cudaStream_t stream = at::cuda::getCurrentCUDAStream();
-  topk_sigmoid_candidate::launch_topk_sigmoid_candidate(
+  tsc::launch_topk_sigmoid_candidate(
       tse::dptr<float>(gating_output),
       tse::dptr<float>(correction_bias),
       tse::mptr<float>(topk_weights),
@@ -123,7 +132,7 @@ void topk_sigmoid_noop(tvm::ffi::TensorView gating_output) {
   const at::cuda::OptionalCUDAGuard guard(at::Device(at::kCUDA, tse::device_id(gating_output)));
   const cudaStream_t stream = at::cuda::getCurrentCUDAStream();
   dim3 grid(static_cast<unsigned>(N));
-  dim3 block(topk_sigmoid_candidate::kBlockThreads);
+  dim3 block(tsc::kBlockThreads);
   noop_kernel<<<grid, block, 0, stream>>>();
 }
 
