@@ -17,7 +17,7 @@ shape — decode M=1..79 and prefill M=1074..7432 — takes the candidate fast p
 ## Buckets
 | Condition | Kernel | Mapping | Cold-safe | Result |
 |---|---|---|---|---|
-| `in_domain` (all captured shapes) | candidate `moe_fused_gate_warp_per_token_kernel` | 1 warp / token, 8 warps/block, 4 experts/lane, intra-warp `__shfl` only (no shared mem) | **yes** | correct; prefill parity (geomean 1.0006); decode at launch floor ~4.1 µs |
+| `in_domain` (all captured shapes) | candidate `moe_fused_gate_warp_per_token_kernel` | 1 warp / token, 8 warps/block, 4 experts/lane, intra-warp `__shfl` only (no shared mem) | **yes** | correct; prefill parity (geomean 1.0105, within noise); decode at launch floor ~4.1 µs |
 | anything else (E≠128, other params, scoring_func=1 off-domain, etc.) | verbatim-copied baseline (`namespace fallback`) — small-token (≤512) / large-token (>512) | as upstream | n/a (baseline) | bit-identical to the recovered baseline |
 
 A single warp-per-token kernel covers BOTH captured regimes (decode and prefill), so no
@@ -45,6 +45,6 @@ baseline behavior including the UB. Fixing the upstream kernel generally is out 
 
 ## Verification
 - `bench/correctness.py` exercises the in-domain path on all captured + boundary + edge + tie
-  shapes (754 checks pass) and the candidate is gate-selected for them.
+  shapes (760 checks pass) and the candidate is gate-selected for them.
 - Off-domain fallback equivalence is guaranteed by construction (the baseline kernels are copied
   verbatim into `namespace fallback`), not merely by numerical comparison.

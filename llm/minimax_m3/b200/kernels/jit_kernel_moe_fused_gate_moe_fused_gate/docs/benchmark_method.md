@@ -55,10 +55,12 @@ This is the only deviation from a uniform candidate-vs-baseline comparison, and 
 genuine baseline bug rather than a methodology choice.
 
 ## Input contract
-All 296 captured variants are finite float32 (~randn-scale). **NaN/Inf inputs are out of contract**:
-the baseline ignores NaN in its `>` comparisons while the candidate's packed-key comparison may
-order NaN differently, so the two are not matched on NaN/Inf. Correctness is defined on finite
-inputs (validated by `bench/correctness.py`, including a subnormal-stress row).
+All 296 captured variants are finite float32 (~randn-scale). **+Inf/-Inf are covered** as explicit
+edge rows (`pos_inf`/`neg_inf`) — sigmoid(±inf) is finite (1/0), so candidate and oracle agree.
+**Only NaN is out of contract**: the baseline ignores NaN in its `>` comparisons while the
+candidate's packed-key comparison may order NaN differently, so NaN is not matched. Correctness is
+defined on finite + ±Inf inputs (validated by `bench/correctness.py`, including the subnormal-stress
+and pos_inf/neg_inf edge rows).
 
 ## Aggregates reported (see docs/results.md)
 - **Prefill equal-weight geomean** of per-row `baseline_median/candidate_median` over the 11

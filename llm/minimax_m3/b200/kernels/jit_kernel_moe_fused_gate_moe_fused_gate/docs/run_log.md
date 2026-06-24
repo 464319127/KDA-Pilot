@@ -61,3 +61,8 @@ Observation: the kernel is tiny and launch/overhead-bound even at prefill (~6 us
 - `python bench/correctness.py` (GPU 4) -> **754 checks pass, 0 fail**.
 - Re-ran prefill benchmark (num_trials=9, --no-isolated, idle GPU 4): prefill equal-weight = call-count-weighted geomean **1.0105** (range 0.982–1.135; m4951 1.135 is variance, R0 had 1.022). Aggregates: production-wide N/A + decode N/A (baseline decode UB); decode candidate-absolute ~4.1us. Recorded in docs/results.md.
 - Narrowed the candidate `.cuh` fallback-safety comment to match docs/dispatch.md.
+
+## Command log (round 2) — make correctness workload-driven + reconcile docs (AC-4/AC-6/AC-7)
+- Refactored `bench/correctness.py` to LOAD `bench/workloads.json` (`_load_workloads()`) and derive the entire production + edge + M=0 grid from it via the shared `adapter.build_inputs` (no hard-coded shape/edge lists). UB-safety rule preserved (oracle is the decode reference; baseline only on M>512 + off-domain).
+- `python bench/correctness.py` (GPU 4) -> **760 checks pass, 0 fail** (workload-driven).
+- Reconciled docs: single authoritative prefill geomean 1.0105 across results.md/dispatch.md (Round-0 1.0006 and Round-1 754 remain only under their historical round headers above); input-contract wording fixed to "NaN out of contract; +Inf/-Inf covered as edge rows" in results.md, benchmark_method.md, correctness.py.

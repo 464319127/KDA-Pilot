@@ -1,7 +1,7 @@
 # Results — `moe_fused_gate` candidate vs baseline (B200)
 
 ## Headline
-- **Correctness:** candidate passes the full grid — **754 checks, 0 failures** (`bench/correctness.py`,
+- **Correctness:** candidate passes the full grid — **760 checks, 0 failures** (`bench/correctness.py`,
   which loads `bench/workloads.json`): candidate-vs-**oracle** on **all 18 decode + 11 prefill**
   production rows (×2 seeds) + boundary; candidate-vs-baseline + baseline-vs-oracle on prefill; the
   frozen **semantic edge grid** (all-equal, tie-smaller-index, saturate ±, **+Inf/-Inf**,
@@ -116,7 +116,7 @@ using **zero shared memory** (all reductions are intra-warp `__shfl`), so it is 
 the first launch on a cold context. Full analysis in `docs/baseline_source.md`.
 
 ## Correctness
-- 754/754 checks pass (see `bench/correctness.py`, which loads `bench/workloads.json`). Indices exact-match the **oracle** on all paths;
+- 760/760 checks pass (see `bench/correctness.py`, which loads `bench/workloads.json`). Indices exact-match the **oracle** on all paths;
   weights within `atol=rtol=1e-5`. Adversarial ties resolve to the smaller index on both paths;
   subnormal-stress and M=0 covered. The grid does NOT run the baseline decode path (UB); the oracle
   is the decode reference. The warmed-baseline-decode==oracle result (M=1/32/79/512) came from a
@@ -125,9 +125,10 @@ the first launch on a cold context. Full analysis in `docs/baseline_source.md`.
   fallback and is candidate==baseline==oracle (small- and large-token). The fallback is bit-identical
   to the baseline (incl. its UB for off-domain E≤224 small-token) — see `docs/dispatch.md` for the
   scoped safety statement.
-- Input contract: all 296 captures are finite fp32; **NaN/Inf inputs are out of contract** (baseline
-  ignores NaN in `>` reductions, the candidate's packed key may order it differently) — see
-  `docs/benchmark_method.md`.
+- Input contract: all 296 captures are finite fp32. **+Inf/-Inf are covered** as explicit edge rows
+  (`pos_inf`/`neg_inf`; sigmoid(±inf) is finite 1/0, so candidate and oracle agree). **Only NaN is
+  out of contract** (baseline ignores NaN in `>` reductions; the candidate's packed key may order it
+  differently) — see `docs/benchmark_method.md`.
 
 ## Provenance
 - GPU: NVIDIA B200, host `ion-b200`, `REMOTE_GPU_ID=4`; idle before measurement (0%/0 MiB), only
@@ -140,11 +141,11 @@ the first launch on a cold context. Full analysis in `docs/baseline_source.md`.
 ## Conclusion
 For the captured MiniMax-M3 config, the candidate is a **correct, cold-safe, native-CUDA drop-in**
 that **eliminates the baseline's decode-path UB for that config** at **performance parity** on
-prefill (geomean 1.0006, no material measured regression) and at the launch-latency floor on decode.
+prefill (geomean 1.0105, within run-to-run noise; no material repeatable regression) and at the launch-latency floor on decode.
 **PROMOTE** on correctness/safety grounds. As a *speed* optimization the task is a well-evidenced
 **NO-GO** for this standalone op — it is launch/latency-bound (NCU ~0% compute / ~0% DRAM), so no
 standalone-kernel speedup is achievable under the fixed ABI; this conclusion rests on recovered
-baseline numbers, a reasoned native-CUDA candidate, full correctness (754 checks), benchmark deltas,
+baseline numbers, a reasoned native-CUDA candidate, full correctness (760 checks), benchmark deltas,
 NCU evidence, and a named active bound (launch/scheduling latency). Scope: the candidate is not a
 general fix for the upstream `moe_fused_gate` bug on arbitrary off-domain E=128 configs (see
 `docs/dispatch.md`).

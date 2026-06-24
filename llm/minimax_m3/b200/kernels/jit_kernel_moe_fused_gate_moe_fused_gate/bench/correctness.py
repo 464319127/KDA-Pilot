@@ -159,16 +159,23 @@ def _validate_outputs(ck: Checker, label: str, out: torch.Tensor, idx: torch.Ten
 
 
 # ----------------------------------------------------------------------------- grid
-# All captured production shapes (mirrors bench/workloads.json production rows).
-DECODE_M = [1, 7, 12, 15, 16, 18, 19, 24, 27, 32, 34, 38, 44, 53, 61, 70, 72, 79]
-PREFILL_M = [1074, 2340, 4004, 4339, 4951, 5398, 5956, 7120, 7149, 7299, 7432]  # all 11 captured
-BOUNDARY_M = [2, 512, 513]             # small/large dispatch boundary
+def _load_workloads() -> list:
+    """Load the frozen workload set — the AUTHORITATIVE source for the production + edge grid.
+    Correctness derives every captured/edge row from this file (no hard-coded shape lists), so the
+    grid cannot silently diverge from what the benchmark freezes."""
+    import json
+    import pathlib
+    return json.loads((pathlib.Path(__file__).resolve().parent / "workloads.json").read_text())
 
 
 def main() -> int:
     if not torch.cuda.is_available():
         print("CUDA not available; correctness must run on the target GPU.")
         return 2
+    # Shared input constructor — the same one bench/adapter.py + benchmark.py use, so workloads.json
+    # is the single source of truth for input construction. (Candidate cold-safety is verified
+    # separately by the fresh-process probe / bench_decode_candidate.py; here we validate numerics.)
+    from adapter import build_inputs
     dev = torch.device("cuda")
     g = torch.Generator(device=dev)
     ck = Checker()
@@ -176,97 +183,85 @@ def main() -> int:
     cand = candidate_module() if has_candidate() else None
     print(f"candidate present: {cand is not None}")
 
-    # Warmup: the recovered baseline's small-token (decode) kernel reads uninitialized
-    # warp_maxs[4..7] for num_experts=128 and faults on a COLD context (see
-    # docs/baseline_source.md). Prime with a safe large-path launch first so the warmed
-    # baseline can be validated against the oracle, mirroring warmed serving. The candidate
-    # is additionally checked for cold-safety below.
+    # Warmup: the recovered baseline's decode (small-token) kernel reads uninitialized shared memory
+    # for num_experts=128 and faults on a COLD context (docs/baseline_source.md). Prime with a safe
+    # large-path launch so the baseline is usable on the large-token path it is validated on.
     _wu = torch.randn((1024, NUM_EXPERTS), dtype=torch.float32, device=dev)
     _wb = torch.randn((NUM_EXPERTS,), dtype=torch.float32, device=dev)
     _run_module(base, _wu, _wb)
-    if cand is not None:
-        _run_module(cand, _wu, _wb)
 
-    # 1) Baseline vs independent oracle + candidate vs baseline on production/boundary shapes.
-    for regime, ms, seeds in (("decode", DECODE_M, (0, 1)),
-                              ("prefill", PREFILL_M, (0, 1)),
-                              ("boundary", BOUNDARY_M, (0,))):
-        for M in ms:
-            for s in seeds:
-                g.manual_seed(1000 * M + s)
-                inp = torch.randn((M, NUM_EXPERTS), dtype=torch.float32, device=dev, generator=g).contiguous()
-                bias = torch.randn((NUM_EXPERTS,), dtype=torch.float32, device=dev, generator=g).contiguous()
-                ow, oi = oracle(inp.cpu().numpy(), bias.cpu().numpy())
-                ow_t = torch.from_numpy(ow).to(dev)
-                oi_t = torch.from_numpy(oi).to(dev)
-
-                # Baseline decode (small-token, M<=512) is UB and can fault on a cold
-                # context; only call the baseline on the reliable large-token path. The
-                # independent oracle is the ground-truth reference on every path.
-                base_safe = M > 512
-                bout = bidx = None
-                if base_safe:
-                    bout, bidx = _run_module(base, inp, bias)
-                    _validate_outputs(ck, f"baseline {regime} M={M} s={s}", bout, bidx, M)
-                    ck.exact_idx(f"baseline-vs-oracle idx {regime} M={M} s={s}", bidx, oi_t)
-                    ck.weights_close(f"baseline-vs-oracle w {regime} M={M} s={s}", bout, ow_t)
-
-                if cand is not None:
-                    cout, cidx = _run_module(cand, inp, bias)
-                    _validate_outputs(ck, f"candidate {regime} M={M} s={s}", cout, cidx, M)
-                    ck.exact_idx(f"candidate-vs-oracle idx {regime} M={M} s={s}", cidx, oi_t)
-                    ck.weights_close(f"candidate-vs-oracle w {regime} M={M} s={s}", cout, ow_t)
-                    if base_safe:
-                        ck.exact_idx(f"candidate-vs-baseline idx {regime} M={M} s={s}", cidx, bidx)
-                        ck.weights_close(f"candidate-vs-baseline w {regime} M={M} s={s}", cout, bout)
-                    # determinism: repeat run must be identical
-                    cout2, cidx2 = _run_module(cand, inp, bias)
-                    ck.check(torch.equal(cidx, cidx2) and torch.equal(cout, cout2),
-                             f"candidate deterministic {regime} M={M} s={s}")
-
-    # 2) Frozen semantic EDGE grid (AC-3). Built via the SAME generator functions that
-    #    bench/workloads.json + bench/adapter.py use, so the frozen workload file is authoritative
-    #    and the correctness grid cannot diverge from it. Decode-sized; baseline decode is UB so the
-    #    candidate is validated against the oracle (ground truth) and must be cold-safe. +-Inf are
-    #    covered (sigmoid(+-inf) is finite 1/0); NaN is out of contract (see module docstring).
-    from adapter import build_inputs
-    for gen_name in ("all_equal", "tie_small_index", "saturate_neg", "saturate_pos",
-                     "pos_inf", "neg_inf", "subnormal_sum"):
-        g.manual_seed(424242)
-        inp, bias = build_inputs(gen_name, 4, NUM_EXPERTS, dev, gen=g)
-        ow, oi = oracle(inp.cpu().numpy(), bias.cpu().numpy())
-        if cand is not None:
-            cout, cidx = _run_module(cand, inp, bias)
-            _validate_outputs(ck, f"candidate edge[{gen_name}]", cout, cidx, 4)
-            ck.exact_idx(f"candidate-vs-oracle idx edge[{gen_name}]", cidx, torch.from_numpy(oi).to(dev))
-            ck.weights_close(f"candidate-vs-oracle w edge[{gen_name}]", cout, torch.from_numpy(ow).to(dev))
-
-    # 3) Adversarial ties (smaller-index-wins rule) — the candidate must match the oracle on
-    #    both paths; the baseline is checked only on the source-guaranteed large path.
-    for M, regime in ((1, "decode"), (1024, "prefill")):
-        inp = torch.zeros((M, NUM_EXPERTS), dtype=torch.float32, device=dev)
-        # force a clean tie: experts 3 and 100 share the top biased score
-        bias = torch.full((NUM_EXPERTS,), -1.0, device=dev, dtype=torch.float32)
-        bias[3] = 1.0
-        bias[100] = 1.0  # tie between expert 3 and 100; smaller index (3) must win slot 0
-        inp = inp.contiguous(); bias = bias.contiguous()
-        ow, oi = oracle(inp.cpu().numpy(), bias.cpu().numpy())
+    def check_row(label, M, inp, bias, topk, atol, rtol):
+        """Candidate-vs-oracle on every row; baseline-vs-oracle + candidate-vs-baseline only on the
+        UB-safe large-token path (M>512). The independent oracle is the ground-truth reference."""
+        ow, oi = oracle(inp.cpu().numpy(), bias.cpu().numpy(), topk=topk)
+        ow_t = torch.from_numpy(ow).to(dev)
         oi_t = torch.from_numpy(oi).to(dev)
-        if M > 512:  # baseline reliable only on the large-token path
-            _, bidx = _run_module(base, inp, bias)
-            ck.exact_idx(f"baseline-vs-oracle tie {regime} M={M}", bidx, oi_t)
+        base_safe = M > 512
+        bout = bidx = None
+        if base_safe:
+            bout, bidx = _run_module(base, inp, bias, topk=topk)
+            _validate_outputs(ck, f"baseline {label}", bout, bidx, M)
+            ck.exact_idx(f"baseline-vs-oracle idx {label}", bidx, oi_t)
+            ck.weights_close(f"baseline-vs-oracle w {label}", bout, ow_t, atol, rtol)
         if cand is not None:
-            cout, cidx = _run_module(cand, inp, bias)
-            ck.exact_idx(f"candidate-vs-oracle tie {regime} M={M}", cidx, oi_t)
+            cout, cidx = _run_module(cand, inp, bias, topk=topk)
+            _validate_outputs(ck, f"candidate {label}", cout, cidx, M)
+            ck.exact_idx(f"candidate-vs-oracle idx {label}", cidx, oi_t)
+            ck.weights_close(f"candidate-vs-oracle w {label}", cout, ow_t, atol, rtol)
+            if base_safe:
+                ck.exact_idx(f"candidate-vs-baseline idx {label}", cidx, bidx)
+                ck.weights_close(f"candidate-vs-baseline w {label}", cout, bout, atol, rtol)
+            cout2, cidx2 = _run_module(cand, inp, bias, topk=topk)
+            ck.check(torch.equal(cidx, cidx2) and torch.equal(cout, cout2),
+                     f"candidate deterministic {label}")
 
-    # 4) M=0 no-op (must not crash, no writes needed). Exercise the cold-safe candidate.
-    try:
-        inp0 = torch.empty((0, NUM_EXPERTS), dtype=torch.float32, device=dev)
-        bias0 = torch.randn((NUM_EXPERTS,), dtype=torch.float32, device=dev)
-        _run_module(cand if cand is not None else base, inp0, bias0)
-        ck.check(True, "M=0 no-op")
-    except Exception as e:  # noqa: BLE001
-        ck.check(False, f"M=0 raised {e!r}")
+    WL = _load_workloads()
+    prod = [w for w in WL if w.get("production")]
+    edge = [w for w in WL if not w.get("production")]
+
+    def _row_dims(w):
+        sh = w["shapes"]
+        return (int(sh["num_tokens"]), int(sh["num_experts"]), int(w["scalars"]["topk"]),
+                w.get("generator", "randn"), float(w.get("atol", 1e-5)), float(w.get("rtol", 1e-5)))
+
+    # 1) All PRODUCTION rows from workloads.json (18 decode + 11 prefill), 2 seeds each.
+    for w in prod:
+        M, E, topk, gen, atol, rtol = _row_dims(w)
+        for s in (0, 1):
+            g.manual_seed(1000 * M + s)
+            inp, bias = build_inputs(gen, M, E, dev, gen=g)
+            check_row(f"{w['regime']} {w['id']} s={s}", M, inp, bias, topk, atol, rtol)
+
+    # 2) Frozen EDGE grid from workloads.json (generator-driven; AC-3). Built via the SAME
+    #    adapter.build_inputs the benchmark uses, so the frozen file is authoritative. M=0 is a
+    #    no-op safety check. +-Inf are covered (sigmoid(+-inf) is finite 1/0); NaN is out of contract.
+    for w in edge:
+        M, E, topk, gen, atol, rtol = _row_dims(w)
+        g.manual_seed(int(w.get("seed", 0)) + 424242 + M)
+        inp, bias = build_inputs(gen, M, E, dev, gen=g)
+        if M == 0:
+            try:
+                _run_module(cand if cand is not None else base, inp, bias, topk=topk)
+                ck.check(True, f"edge[{w['id']}] M=0 no-op")
+            except Exception as e:  # noqa: BLE001
+                ck.check(False, f"edge[{w['id']}] M=0 raised {e!r}")
+            continue
+        check_row(f"edge[{w['id']}]", M, inp, bias, topk, atol, rtol)
+
+    # 3) Deliberate adversarial probes NOT in the captured workload set (kept here on purpose):
+    # 3a) Prefill-sized exact tie (M=1024): smaller-index-wins on the source-guaranteed large path.
+    inp = torch.zeros((1024, NUM_EXPERTS), dtype=torch.float32, device=dev)
+    bias = torch.full((NUM_EXPERTS,), -1.0, device=dev, dtype=torch.float32)
+    bias[3] = 1.0
+    bias[100] = 1.0  # tie between experts 3 and 100; smaller index (3) must win slot 0
+    inp = inp.contiguous(); bias = bias.contiguous()
+    _, oi = oracle(inp.cpu().numpy(), bias.cpu().numpy())
+    oi_t = torch.from_numpy(oi).to(dev)
+    _, bidx = _run_module(base, inp, bias)
+    ck.exact_idx("baseline-vs-oracle tie prefill M=1024", bidx, oi_t)
+    if cand is not None:
+        _, cidx = _run_module(cand, inp, bias)
+        ck.exact_idx("candidate-vs-oracle tie prefill M=1024", cidx, oi_t)
 
     # 5) Off-domain fallback: E=256, topk=8 fails the production gate, so the candidate must
     #    route to its verbatim-copied baseline fallback. E=256 -> warps_per_token=8, so the
@@ -285,11 +280,11 @@ def main() -> int:
             ck.exact_idx(f"offdomain-fallback candidate-vs-oracle idx E=256 M={M}", cidx,
                          torch.from_numpy(oi).to(dev))
 
-    # NOTE on input contract: all 296 captured variants are finite float32 (~randn-scale). NaN/Inf
-    # inputs are OUTSIDE the supported input contract — the baseline ignores NaN in its `>`
-    # comparisons while the candidate's packed-key comparison may order NaN differently, so their
-    # behavior on NaN/Inf is intentionally not matched here. Production correctness is defined on
-    # finite inputs only (see docs/benchmark_method.md).
+    # NOTE on input contract: all 296 captured variants are finite float32 (~randn-scale).
+    # +Inf/-Inf ARE covered as explicit edge rows (pos_inf/neg_inf) — sigmoid(+-inf) is finite (1/0),
+    # so candidate and oracle agree. Only NaN is OUT OF CONTRACT (the baseline ignores NaN in its
+    # `>` comparisons while the candidate's packed-key comparison may order NaN differently), so NaN
+    # behavior is intentionally not matched. See docs/benchmark_method.md.
 
     print(f"\n{'PASS' if ck.failed == 0 else 'FAIL'}: {ck.passed} checks passed, {ck.failed} failed")
     return 0 if ck.failed == 0 else 1
