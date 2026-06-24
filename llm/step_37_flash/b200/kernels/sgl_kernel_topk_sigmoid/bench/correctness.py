@@ -49,6 +49,17 @@ def _poison(weights: torch.Tensor, indices: torch.Tensor) -> None:
     indices.fill_(-17)
 
 
+def raises_cleanly(fn) -> bool:
+    """True iff fn() raises a RuntimeError (a clean rejection) instead of running — used by the
+    off-domain fallback-safety rows to assert the bridge rejects rather than OOB/illegal-accesses."""
+    try:
+        fn()
+        torch.cuda.synchronize()
+        return False
+    except RuntimeError:
+        return True
+
+
 def _check_pair(name, w_b, idx_b, w_c, idx_c, atol, rtol, errs):
     if not torch.equal(idx_b.to(torch.int64), idx_c.to(torch.int64)):
         ndiff = int((idx_b.to(torch.int64) != idx_c.to(torch.int64)).sum().item())
@@ -166,14 +177,6 @@ def fp16_bias_fallback_row(device, errs) -> bool:
     if build_ext.route(w, idx, g, 1, bias16) != 0:
         errs.append("[fp16_bias_fallback] route != 0 (fp16 bias must be off the fast path)"); ok = False
 
-    def raises_cleanly(fn) -> bool:
-        try:
-            fn()
-            torch.cuda.synchronize()
-            return False
-        except RuntimeError:
-            return True
-
     if not raises_cleanly(lambda: build_ext.baseline(w, idx, g, 1, bias16)):
         errs.append("[fp16_bias_fallback] baseline did not reject fp16 bias (expected dtype TORCH_CHECK)"); ok = False
     if not raises_cleanly(lambda: build_ext.candidate(w, idx, g, 1, bias16)):
@@ -228,14 +231,6 @@ def fp16_output_fallback_row(device, errs) -> bool:
     if build_ext.route(w16, idx, g, 1, b) != 0:
         errs.append("[fp16_output] route != 0 (fp16 topk_weights must be off the fast path)"); ok = False
 
-    def raises_cleanly(fn) -> bool:
-        try:
-            fn()
-            torch.cuda.synchronize()
-            return False
-        except RuntimeError:
-            return True
-
     if not raises_cleanly(lambda: build_ext.baseline(w16, idx, g, 1, b)):
         errs.append("[fp16_output] baseline did not reject fp16 topk_weights cleanly"); ok = False
     if not raises_cleanly(lambda: build_ext.candidate(w16, idx, g, 1, b)):
@@ -260,14 +255,6 @@ def cross_device_row(errs) -> bool:
     if build_ext.route(w, idx, g, 1, b) != 0:
         errs.append("[cross_device] route != 0 (mixed-device tensors must be off the fast path)"); ok = False
 
-    def raises_cleanly(fn) -> bool:
-        try:
-            fn()
-            torch.cuda.synchronize()
-            return False
-        except RuntimeError:
-            return True
-
     if not raises_cleanly(lambda: build_ext.candidate(w, idx, g, 1, b)):
         errs.append("[cross_device] candidate did not reject mixed-device tensors cleanly"); ok = False
     return ok
@@ -286,14 +273,6 @@ def cpu_tensor_fallback_row(device, errs) -> bool:
     ok = True
     if build_ext.route(w_cpu, idx, g, 1, b) != 0:
         errs.append("[cpu_tensor] route != 0 (a CPU tensor must be off the fast path)"); ok = False
-
-    def raises_cleanly(fn) -> bool:
-        try:
-            fn()
-            torch.cuda.synchronize()
-            return False
-        except RuntimeError:
-            return True
 
     if not raises_cleanly(lambda: build_ext.baseline(w_cpu, idx, g, 1, b)):
         errs.append("[cpu_tensor] baseline did not reject a CPU tensor cleanly (host pointer as CUDA?)"); ok = False
