@@ -134,6 +134,7 @@ inline bool covers_m1_gemv(
   if (b.size(0) != K) return false;
   if (a.stride(1) != 1) return false;              // A row-major
   if (b.stride(0) != 1) return false;              // B column-major (Bphys [N,K])
+  if (b.stride(1) != K) return false;              // exactly-packed Bphys: the GEMV addresses B + n*K, so the leading dim must be K (rejects padded/sliced column-major B)
   if (K % kVec != 0) return false;                 // vectorized 16-fp8 loads
   if (!(out.size(0) == M && out.size(1) == N && out.stride(1) == 1)) return false;  // out row-major [M,N]
   if (!is_contig_2d(scales_a, M, 1)) return false; // scale_a [M,1] contiguous
@@ -173,6 +174,7 @@ inline bool covers_smallm_swapab(
   if (b.size(0) != K) return false;
   if (a.stride(1) != 1) return false;              // A row-major
   if (b.stride(0) != 1) return false;              // B column-major
+  if (b.stride(1) != K) return false;              // exactly-packed Bphys (swap-AB uses a packed [N,K] stride)
   if (K % kVec != 0) return false;                 // 16-fp8 alignment along K
   if (!(out.size(0) == M && out.size(1) == N && out.stride(1) == 1)) return false;
   if (!is_contig_2d(scales_a, M, 1)) return false;
@@ -204,11 +206,15 @@ void fp8_scaled_mm_candidate(
     tvm::ffi::TensorView a, tvm::ffi::TensorView b,
     tvm::ffi::TensorView scales_a, tvm::ffi::TensorView scales_b, tvm::ffi::TensorView out) {
   if (covers_m1_gemv(a, b, scales_a, scales_b, out)) {
+    // Pin the current device to the tensors' device so getCurrentCUDAStream() and
+    // the launch target the right GPU even if the caller's current device differs
+    // (covers_m1_gemv already requires all tensors share this CUDA device).
+    const c10::cuda::CUDAGuard device_guard(static_cast<c10::DeviceIndex>(a.device().device_id));
     const int K = static_cast<int>(a.size(1));
     const int N = static_cast<int>(b.size(1));
     const int grid = (N + kWarps - 1) / kWarps;
     const size_t smem = static_cast<size_t>(K) * sizeof(__nv_fp8_e4m3);
-    auto stream = at::cuda::getCurrentCUDAStream();
+    auto stream = at::cuda::getCurrentCUDAStream(static_cast<c10::DeviceIndex>(a.device().device_id));
     fp8_gemv_m1_kernel<<<grid, kBlock, smem, stream>>>(
         cptr<__nv_fp8_e4m3>(a), cptr<__nv_fp8_e4m3>(b),
         cptr<float>(scales_a), cptr<float>(scales_b),

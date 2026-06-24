@@ -161,6 +161,11 @@ def negative_route_cases(device) -> list:
     expect_fallback("neg_scale_b_rank_N2", a, b, sa, torch.rand((N, 2), device=device, dtype=torch.float32), out, True)
     expect_fallback("neg_dtype_e5m2_B", a, f8((N, K), torch.float8_e5m2).t(), sa, sb, out, True)
     expect_fallback("neg_out_fp16", a, b, sa, sb, torch.empty((M, N), device=device, dtype=torch.float16), False)
+    # Padded/sliced column-major B: stride(0)==1 but stride(1)=K+16 != K. The GEMV
+    # hardcodes leading dim K, so this must fall back (route 0), not silently read
+    # wrong columns. (Bphys [N,K+16] contiguous, sliced to [N,K], transposed.)
+    b_pad = f8((N, K + 16))[:, :K].t()
+    expect_fallback("neg_padded_B", a, b_pad, sa, sb, out, False)
     # CPU input must be rejected BEFORE any forced CUDA view (calls candidate, not just route).
     a_cpu = torch.randn((M, K), dtype=torch.float32).to(torch.float8_e4m3fn)  # on CPU
     expect_fallback("neg_cpu_input_A", a_cpu, b, sa, sb, out, True)
