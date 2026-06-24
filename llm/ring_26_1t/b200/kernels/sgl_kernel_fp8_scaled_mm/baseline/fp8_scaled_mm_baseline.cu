@@ -29,6 +29,24 @@ void fp8_scaled_mm_baseline_impl(
     const torch::Tensor& scales_b,
     const c10::optional<torch::Tensor>& bias) {
   const at::cuda::OptionalCUDAGuard device_guard(device_of(a));
+  // Mirror the upstream fp8_scaled_mm entry's input contract (the entry's
+  // TORCH_CHECKs are bypassed because we call the dispatch directly for
+  // destination passing). Faithful + fair: both sides pay these cheap checks,
+  // and invalid inputs (e.g. a contiguous/row-major B) are rejected exactly as
+  // the upstream public op rejects them, instead of silently mis-computing.
+  TORCH_CHECK(a.is_cuda() && b.is_cuda(), "a, b must be CUDA tensors");
+  TORCH_CHECK(a.dim() == 2 && b.dim() == 2, "a, b must be 2D");
+  TORCH_CHECK(a.stride(1) == 1, "mat_a must be row major");
+  TORCH_CHECK(b.stride(0) == 1, "mat_b must be column major");
+  TORCH_CHECK(a.size(1) == b.size(0), "a, b shapes cannot be multiplied");
+  TORCH_CHECK(a.scalar_type() == torch::kFloat8_e4m3fn, "mat_a must be Float8_e4m3fn");
+  TORCH_CHECK(b.scalar_type() == torch::kFloat8_e4m3fn, "mat_b must be Float8_e4m3fn");
+  TORCH_CHECK(out.scalar_type() == torch::kHalf || out.scalar_type() == torch::kBFloat16,
+              "out_dtype must be Half or BFloat16");
+  TORCH_CHECK(scales_a.numel() == a.size(0) && scales_b.numel() == b.size(1), "scale size mismatch");
+  TORCH_CHECK(scales_a.is_contiguous() && scales_b.is_contiguous(), "scales must be contiguous");
+  TORCH_CHECK(scales_a.scalar_type() == torch::kFloat32 && scales_b.scalar_type() == torch::kFloat32,
+              "scales must be Float32");
   auto sm_version = getSMVersion();
 #if defined CUDA_VERSION && CUDA_VERSION >= 12080
   if (sm_version >= 120) {
