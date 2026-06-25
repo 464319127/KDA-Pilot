@@ -1,0 +1,39 @@
+{
+  "model": "zai-org/GLM-5.2-FP8",
+  "model_slug": "glm_52",
+  "cookbook_cmd": "python -m sglang.launch_server --model-path zai-org/GLM-5.2-FP8 --tp 8 --trust-remote-code --mem-fraction-static 0.8",
+  "tp": "8",
+  "python_interface": "<confirm via capture; profiler family=per_token_group_quant>",
+  "kernel_family": "per_token_group_quant",
+  "profiler_op_provenance": [
+    "aten::_local_scalar_dense",
+    "aten::copy_",
+    "aten::empty",
+    "aten::squeeze",
+    "sglang::k_cache_and_topk_result",
+    "sglang::unified_attention_with_output"
+  ],
+  "category": "quant_gemm",
+  "gpu_kernels": [
+    "void (anonymous namespace)::per_token_group_quant_8bit_v2_kernel<(anonymous namespace)::Na"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 10.92,
+    "random_high": 5.25,
+    "sharegpt_low": 10.74,
+    "sharegpt_mid": 5.52,
+    "sharegpt_high": 8.78
+  },
+  "max_pct_of_gpu": 10.92,
+  "best_scenario": "random_low",
+  "input_shapes": [
+    "[[16, 1, 8, 512], [16, 1, 8, 512], []]",
+    "[[16, 8, 512], [16, 1, 512], [16, 1, 512], [16, 4096], [], [], [16, 8, 64], [16,",
+    "[[48, 8, 512], [48, 1, 512], [48, 1, 512], [48, 4096], [], [], [48, 8, 64], [48,",
+    "[[], [144, 128], [144, 32, 128], [144, 32, 1], [144, 2048]]",
+    "[[], [16, 128], [16, 32, 128], [16, 32, 1], [16, 2048]]",
+    "[[], [48, 128], [48, 32, 128], [48, 32, 1], [48, 2048]]",
+    "[[], [], [], [], [], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}
