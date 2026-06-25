@@ -1,0 +1,42 @@
+{
+  "model": "nvidia/GLM-4.7-NVFP4",
+  "model_slug": "glm_47",
+  "cookbook_cmd": "python -m sglang.launch_server --model nvidia/GLM-4.7-NVFP4 --tp 8 --quantization modelopt_fp4 --reasoning-parser glm45 --trust-remote-code",
+  "tp": "8",
+  "python_interface": "sglang.unified_attention_with_output",
+  "kernel_family": "attention",
+  "profiler_op_provenance": [
+    "aten::add",
+    "aten::as_strided",
+    "aten::copy_",
+    "aten::permute",
+    "aten::resolve_neg",
+    "aten::to"
+  ],
+  "category": "attention",
+  "gpu_kernels": [
+    "fmhaSm100fKernel_QkvE4m3OBfloat16H128PagedKvCausalP64MultiCtasKvVarSeqQ16Kv128StaticSwapsA",
+    "fmhaSm100fKernel_QkvE4m3OBfloat16H128PagedKvCausalP64VarSeqQ128Kv128PersistentContext"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 4.64,
+    "random_high": 3.69,
+    "sharegpt_low": 4.87,
+    "sharegpt_mid": 3.32,
+    "sharegpt_high": 4.34
+  },
+  "max_pct_of_gpu": 4.87,
+  "best_scenario": "sharegpt_low",
+  "input_shapes": [
+    "[[1024, 1536], [1024, 1, 128], [1024, 1, 128], [1024, 1536], [], [], [], [], [],",
+    "[[1], [1], []]",
+    "[[1], [], []]",
+    "[[1], []]",
+    "[[5299776, 1, 128], []]",
+    "[[64], [64], []]",
+    "[[704], [], [], [], []]",
+    "[[82809, 1, 64, 128], [], [], []]",
+    "[[82809, 64, 1, 128], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}
