@@ -1,0 +1,26 @@
+{
+  "model": "XiaomiMiMo/MiMo-V2.5",
+  "model_slug": "mimo_v25",
+  "cookbook_cmd": "python -m sglang.launch_server --model-path XiaomiMiMo/MiMo-V2.5 --tp 4 --trust-remote-code --attention-backend fa4 --mm-attention-backend fa4 --moe-runner-backend flashinfer_trtllm --mem-fraction-static 0.65 --chunked-prefill-size 16384",
+  "tp": "4",
+  "python_interface": "<confirm via capture; profiler family=rmsnorm>",
+  "kernel_family": "rmsnorm",
+  "profiler_op_provenance": [
+    "aten::_local_scalar_dense",
+    "aten::empty_strided",
+    "aten::resolve_neg"
+  ],
+  "category": "gemm",
+  "gpu_kernels": [
+    "kernel_cutlass_kernel_flashinfernormkernelsrmsnormRMSNormKernel_object_at__tensorptrbf16gm"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 3.85
+  },
+  "max_pct_of_gpu": 3.85,
+  "best_scenario": "random_low",
+  "input_shapes": [
+    "[[], [], [], [], [], []]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}
