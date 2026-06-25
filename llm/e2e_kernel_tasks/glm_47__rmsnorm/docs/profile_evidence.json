@@ -1,0 +1,29 @@
+{
+  "model": "nvidia/GLM-4.7-NVFP4",
+  "model_slug": "glm_47",
+  "cookbook_cmd": "python -m sglang.launch_server --model nvidia/GLM-4.7-NVFP4 --tp 8 --quantization modelopt_fp4 --reasoning-parser glm45 --trust-remote-code",
+  "tp": "8",
+  "python_interface": "<confirm via capture; profiler family=rmsnorm>",
+  "kernel_family": "rmsnorm",
+  "profiler_op_provenance": [
+    "aten::copy_",
+    "aten::view",
+    "sglang::unified_attention_with_output"
+  ],
+  "category": "norm",
+  "gpu_kernels": [
+    "void flashinfer::norm::FusedAddRMSNormKernel<8u, __nv_bfloat16>(__nv_bfloat16*, __nv_bfloa"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_mid": 4.32,
+    "sharegpt_mid": 4.37
+  },
+  "max_pct_of_gpu": 4.37,
+  "best_scenario": "sharegpt_mid",
+  "input_shapes": [
+    "[[5672, 1536], []]",
+    "[[6586, 1536], [6586, 1536], []]",
+    "[[6656, 1536], [6656, 1, 128], [6656, 1, 128], [6656, 1536], [], [], [], [], [],"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}
