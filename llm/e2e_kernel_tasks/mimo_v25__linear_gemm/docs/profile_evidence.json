@@ -1,0 +1,46 @@
+{
+  "model": "XiaomiMiMo/MiMo-V2.5",
+  "model_slug": "mimo_v25",
+  "cookbook_cmd": "python -m sglang.launch_server --model-path XiaomiMiMo/MiMo-V2.5 --tp 4 --trust-remote-code --attention-backend fa4 --mm-attention-backend fa4 --moe-runner-backend flashinfer_trtllm --mem-fraction-static 0.65 --chunked-prefill-size 16384",
+  "tp": "4",
+  "python_interface": "<confirm via capture; profiler family=linear_gemm>",
+  "kernel_family": "linear_gemm",
+  "profiler_op_provenance": [
+    "aten::_index_put_impl_",
+    "aten::_local_scalar_dense",
+    "aten::add",
+    "aten::detach",
+    "aten::empty_like",
+    "aten::mm"
+  ],
+  "category": "gemm",
+  "gpu_kernels": [
+    "cutlass3x_sm100_simt_sgemm_f32_f32_f32_f32_f32_64x32x16_1x1x1_3_tnn_align1_bias_f32_relu",
+    "cutlass3x_sm100_simt_sgemm_f32_f32_f32_f32_f32_64x64x16_1x1x1_3_tnn_align1_bias_f32_relu",
+    "void cutlass::Kernel2<cutlass_80_simt_sgemm_64x64_8x5_tn_align1>(cutlass_80_simt_sgemm_64x",
+    "void deep_gemm::sm100_fp8_fp4_gemm_1d1d_impl<(cute::UMMA::Major)0, (cute::UMMA::Major)0, 1"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_mid": 8.79,
+    "random_high": 5.91,
+    "sharegpt_low": 2.07,
+    "sharegpt_mid": 9.17,
+    "sharegpt_high": 2.61
+  },
+  "max_pct_of_gpu": 9.17,
+  "best_scenario": "sharegpt_mid",
+  "input_shapes": [
+    "[[10096], []]",
+    "[[103], []]",
+    "[[10724, 4096], [4096, 256]]",
+    "[[170, 4096], [4096, 256]]",
+    "[[196, 4096], [4096, 256]]",
+    "[[1], [], []]",
+    "[[2049, 1048580], [], [], [], []]",
+    "[[32], []]",
+    "[[5674, 4096], [4096, 256]]",
+    "[[89, 4096], [4096, 256]]",
+    "[[]]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}
