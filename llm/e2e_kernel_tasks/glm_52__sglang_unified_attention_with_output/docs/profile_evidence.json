@@ -1,0 +1,40 @@
+{
+  "model": "zai-org/GLM-5.2-FP8",
+  "model_slug": "glm_52",
+  "cookbook_cmd": "python -m sglang.launch_server --model-path zai-org/GLM-5.2-FP8 --tp 8 --trust-remote-code --mem-fraction-static 0.8",
+  "tp": "8",
+  "python_interface": "sglang.unified_attention_with_output",
+  "kernel_family": "attention",
+  "profiler_op_provenance": [
+    "aten::_local_scalar_dense",
+    "aten::add",
+    "aten::copy_",
+    "aten::mm",
+    "aten::to",
+    "aten::view"
+  ],
+  "category": "attention",
+  "gpu_kernels": [
+    "fmhaSm100fKernel_QkvE4m3OBfloat16HQk576HV512HVPerCta128PagedKvDenseStaticTokenSparseP1Mult",
+    "fmhaSm100fKernel_QkvE4m3OBfloat16HQk576HV512PagedKvDenseStaticTokenSparseP1VarSeqQ8Kv128Pe"
+  ],
+  "pct_of_gpu_by_scenario": {
+    "random_low": 2.76,
+    "random_high": 4.33,
+    "sharegpt_low": 3.28,
+    "sharegpt_mid": 14.21,
+    "sharegpt_high": 4.6
+  },
+  "max_pct_of_gpu": 14.21,
+  "best_scenario": "sharegpt_mid",
+  "input_shapes": [
+    "[[1536, 8, 512], [1536, 1, 512], [1536, 1, 512], [1536, 4096], [], [], [1536, 8,",
+    "[[1], [1], []]",
+    "[[1], [], [], [], []]",
+    "[[1], []]",
+    "[[2048, 8, 512], [2048, 1, 512], [2048, 1, 512], [2048, 4096], [], [], [2048, 8,",
+    "[[9137, 1, 8, 576], []]",
+    "[[]]"
+  ],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+}
