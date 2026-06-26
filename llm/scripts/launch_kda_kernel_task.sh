@@ -12,7 +12,7 @@ the kernel directory so official Humanize hooks stay local to that task's
 .humanize state.
 
 <kernel-task-dir> must be repo-relative, e.g.
-  llm/<model>/<arch>/kernels/<kernel>
+  llm/<model_slug>__<op_slug>      (flat e2e task; usually launched via its own launch.sh)
 
 Environment overrides:
   KDA_BASE_BRANCH       Base branch/ref for the worktree
@@ -77,8 +77,11 @@ DEFAULT_WORKTREE_BASE="$(cd "$REPO_ROOT/.." && pwd)/KDA-Pilot-worktrees"
 WORKTREE_BASE="${KDA_WORKTREE_BASE:-$DEFAULT_WORKTREE_BASE}"
 RUN_ID="${KDA_RUN_ID:-$(date +%Y%m%d-%H%M%S)-$$}"
 TASK_SLUG="${TASK_DIR##*/}"
-# Model slug = 2nd path component (llm/<model>/<arch>/kernels/<kernel>).
+# Flat layout: task dir is llm/<model_slug>__<op_slug>. Model slug is the 2nd path
+# component up to the "__" op separator (older layout llm/<model>/<arch>/... has no "__",
+# so this is a no-op for it).
 MODEL_SLUG="$(printf '%s' "$TASK_DIR" | awk -F/ '{print $2}')"
+MODEL_SLUG="${MODEL_SLUG%%__*}"
 [[ -z "$MODEL_SLUG" ]] && MODEL_SLUG="LLM"
 LAUNCHER_NAME="${KDA_LAUNCHER_NAME:-direct}"
 TASK_LABEL="${KDA_TASK_LABEL:-${LAUNCHER_NAME%.sh}}"
@@ -94,14 +97,16 @@ CLAUDE_BIN="${CLAUDE_BIN:-claude}"
 CLAUDE_MODEL="${CLAUDE_MODEL:-opus}"
 CLAUDE_EFFORT="${CLAUDE_EFFORT:-max}"
 
-# Task dirs are named by kernel (e.g. sgl_kernel_rmsnorm); the target arch lives
-# in the task path (llm/<model>/<arch>/kernels/...). Detect from path.
-case "/$TASK_DIR/" in
-  */b200/*)
+# Target arch: flat tasks record it in config.toml (arch = "b200"); the older
+# layout encodes it in the path (llm/<model>/<arch>/kernels/...). Prefer config.toml,
+# fall back to the path.
+TASK_ARCH="$(sed -n 's/^[[:space:]]*arch[[:space:]]*=[[:space:]]*"\([^"]*\)".*/\1/p' "$REPO_ROOT/$TASK_DIR/config.toml" 2>/dev/null | head -1)"
+case "${TASK_ARCH}::/$TASK_DIR/" in
+  b200::*|*/b200/*)
     TARGET_GPU_LABEL="B200"
     REMOTE_HOST_HINT="ion-b200"
     ;;
-  */h200/*)
+  h200::*|*/h200/*)
     TARGET_GPU_LABEL="H200"
     REMOTE_HOST_HINT="ion8-h200 or ion9-h200"
     ;;
