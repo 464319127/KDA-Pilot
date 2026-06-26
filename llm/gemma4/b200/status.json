@@ -1,8 +1,0 @@
-{
-  "detail": "google/gemma-4-26B-A4B-it kernel-interface tasks generated",
-  "model": "google/gemma-4-26B-A4B-it",
-  "model_slug": "gemma4",
-  "run_dir": "/data/bbuf/kda-pilot/llm/gemma4/b200",
-  "stage": "completed",
-  "updated_at": "2026-06-21 07:14:34 UTC"
-}

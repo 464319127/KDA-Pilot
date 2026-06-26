@@ -1,8 +1,0 @@
-{
-  "detail": "nvidia/DeepSeek-V3.2-NVFP4 kernel-interface tasks generated",
-  "model": "nvidia/DeepSeek-V3.2-NVFP4",
-  "model_slug": "deepseek_v3_2",
-  "run_dir": "/data/bbuf/kda-pilot/llm/deepseek_v3_2/b200",
-  "stage": "completed",
-  "updated_at": "2026-06-21 06:38:01 UTC"
-}
