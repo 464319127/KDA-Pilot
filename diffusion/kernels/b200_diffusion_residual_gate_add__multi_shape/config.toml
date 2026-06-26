@@ -12,13 +12,15 @@ entry_points = [
 [build]
 language = "cuda"
 destination_passing_style = true
-# The upstream "kernel" is PyTorch-eager elementwise math (residual + update*gate
-# and a 4D broadcast add), not a CUDA/Triton kernel. Per the standalone contract
-# (and the b200_diffusion_fuse_scale_shift precedent for non-CUDA upstreams), the
-# baseline is exposed through local destination-passing Python launchers in
-# baseline/binding.py with the same ABI as the candidate (outputs passed last);
-# the candidate is the fused CUDA module from solution/kernel.cu. One entry per
-# public op. (Reconciled from the generator's singular kernel.cu default to the binding.py baseline.)
+# residual_gate_add baseline: SGLang's Triton fuse_scale_shift_kernel
+# (scale_constant=0 -> residual + update*gate), the production serving path that
+# SGLang PR #29361 benchmarks its native-CUDA fast path against. The kernel is
+# vendored standalone in baseline/sglang_scale_shift_triton.py (no sglang import)
+# and exposed via baseline/binding.py. broadcast_add_4d has no upstream Triton
+# kernel and stays a single eager torch.add. Both baselines go through local
+# destination-passing Python launchers with the same ABI as the candidate
+# (outputs passed last); the candidate is the fused CUDA module from
+# solution/kernel.cu. One entry per public op.
 baseline_entry_points = [
   "baseline/binding.py::residual_gate_add",
   "baseline/binding.py::broadcast_add_4d",

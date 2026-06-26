@@ -15,6 +15,15 @@ show up repeatedly in recent diffusion DiT blocks on B200.
 This is a standalone CUDA task. It should not try to replace GEMM, attention,
 RMSNorm, QKNorm+RoPE, or the existing CuTe DSL norm/scale/shift kernels.
 
+Baseline to beat: the `residual_gate_add` baseline is SGLang's Triton
+`fuse_scale_shift_kernel` (the production serving path for `residual + update*gate`,
+invoked as `fuse_scale_shift_kernel(update, gate, residual, scale_constant=0)`),
+vendored standalone in `baseline/sglang_scale_shift_triton.py`. SGLang PR #29361
+adds a native-CUDA fast path for this exact pattern and benchmarks it against this
+same Triton kernel — so beating eager `mul`+`add` is not enough; the candidate must
+beat the Triton kernel. `broadcast_add_4d` has no upstream Triton kernel and its
+baseline is a single eager `torch.add`.
+
 Before writing an optimized kernel, read and follow:
 
 - `../../docs/standalone_diffusion_benchmark.md`
@@ -91,8 +100,11 @@ Required first milestone:
 
 1. Copy the relevant upstream SGLang source snippets into `baseline/` and
    record the exact source commit in `docs/baseline_source.md`.
-2. Implement local baseline adapters that reproduce PyTorch
-   `residual + update * gate` and broadcast-add behavior for the workload rows.
+2. The `residual_gate_add` baseline is SGLang's Triton `fuse_scale_shift_kernel`,
+   vendored standalone in `baseline/sglang_scale_shift_triton.py` and exposed via
+   `baseline/binding.py` (`scale_constant=0` -> `residual + update*gate`); the
+   `broadcast_add_4d` baseline is a single eager `torch.add`. Both go through the
+   destination-passing launchers in `baseline/binding.py`.
 3. Expose the candidate through the exact same ABI in `solution/`.
 4. Create `bench/workloads.json`, copy the standard template to
    `bench/benchmark.py`, implement `bench/adapter.py`, and create

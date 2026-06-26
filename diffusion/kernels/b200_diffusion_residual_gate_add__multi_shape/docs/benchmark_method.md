@@ -29,21 +29,24 @@ Both ops are batch-1 only (every production row is B=1); a true B>1 broadcast is
 deliberately out of scope and rejected symmetrically on both sides (see
 `docs/baseline_source.md`).
 
-Baseline (`baseline/binding.py`) is the faithful PyTorch-eager path:
-`residual_gate_add` runs `torch.mul(update, gate, out=scratch)` then
-`torch.add(residual, scratch, out=out)` — the profiled two-launch `mul`+`add`
-pattern — with a cached, preallocated scratch buffer so the timed steady state
-contains only the two real kernel launches; `broadcast_add_4d` is a single eager
-`torch.add`. Candidate (`solution/kernel.cu`, built by `solution/build.py` via
-`tvm_ffi.cpp.load`) fuses each into a single CUDA pass. Every launch uses
+Baseline (`baseline/binding.py`): `residual_gate_add` runs SGLang's Triton
+`fuse_scale_shift_kernel` (`scale_constant=0` -> `residual + update*gate`),
+vendored standalone in `baseline/sglang_scale_shift_triton.py` — the production
+serving path that SGLang PR #29361 benchmarks its native-CUDA fast path against —
+writing into the preallocated `out` (one Triton launch, no allocation in the
+timed steady state); `broadcast_add_4d` is a single eager `torch.add`. Candidate
+(`solution/kernel.cu`, built by `solution/build.py` via `tvm_ffi.cpp.load`) fuses
+each into a single CUDA pass. Every launch uses
 `at::cuda::getCurrentCUDAStream()`.
 
 ## Compile flags (symmetric)
 - Candidate CUDA: `-std=c++17 -O3` and the device's native gencode
   (`-gencode=arch=compute_100,code=sm_100` on B200). No `--use_fast_math` (the
   eager baseline does not use fast math, so the candidate must not either).
-- Baseline: pure torch eager ops; no extra compile flags. Both sides are invoked
-  through one Python adapter dispatch with matched overhead.
+- Baseline: SGLang's Triton `fuse_scale_shift_kernel` (JIT-compiled by Triton at
+  first call; autotuned configs are warmed before timing). `broadcast_add_4d`
+  stays pure-torch eager. Both sides are invoked through one Python adapter
+  dispatch with matched overhead.
 
 ## Workloads
 `bench/workloads.json` is the frozen source of truth (8 production rows matching

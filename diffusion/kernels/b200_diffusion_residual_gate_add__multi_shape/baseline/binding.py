@@ -1,44 +1,41 @@
-"""Local baseline adapters reproducing the profiled PyTorch-eager elementwise
-patterns, exposed through the same destination-passing ABI as the candidate.
+"""Local baseline adapters exposed through the same destination-passing ABI as
+the candidate.
 
-Faithful baseline: the production callsites run
-``out = residual + update * gate`` in eager mode, which the torch profiler shows
-as a separate ``aten::mul`` then ``aten::add`` (two launches plus an
-intermediate tensor). We reproduce exactly that two-op path, but write the
-intermediate into a cached, preallocated scratch buffer (keyed by
-shape/dtype/device) so the timed steady state contains only the two real kernel
-launches and their memory traffic -- never a caching-allocator call. The 4D
-broadcast add is a single eager ``torch.add`` (one launch).
+``residual_gate_add``: the production-faithful baseline is SGLang's Triton fused
+scale-shift kernel. ``out = residual + update * gate`` is served upstream by
+``fuse_scale_shift_kernel(x=update, scale=gate, shift=residual,
+scale_constant=0)`` -> ``update * (0 + gate) + residual``. SGLang PR #29361 adds
+a native-CUDA fast path for exactly this pattern and benchmarks it against this
+same Triton kernel as the reference, so the Triton kernel -- not the naive
+two-launch eager ``mul``+``add`` -- is the right baseline. The kernel source is
+vendored standalone in ``sglang_scale_shift_triton.py`` (see
+``docs/baseline_source.md``).
 
-No sglang import: these are pure torch ops reproducing the recovered semantics
-(see docs/baseline_source.md). Output tensors are passed last and written
-in-place; nothing is allocated in the timed path.
+``broadcast_add_4d``: the LTX 4D broadcast add is a single eager ``torch.add``
+(one launch); there is no upstream Triton kernel for it.
+
+No sglang import: the Triton kernel is vendored locally. Output tensors are
+passed last and written in-place; nothing is allocated in the timed path.
 """
 
 from __future__ import annotations
 
 import torch
 
-# Cache of scratch buffers for the two-op residual-gate path, keyed by the
-# (shape, dtype, device) of the `update * gate` intermediate (== update's shape).
-_SCRATCH: dict[tuple, torch.Tensor] = {}
+from .sglang_scale_shift_triton import fuse_scale_shift_kernel
 
 
-def _scratch_like(t: torch.Tensor) -> torch.Tensor:
-    key = (tuple(t.shape), t.dtype, t.device)
-    buf = _SCRATCH.get(key)
-    if buf is None:
-        buf = torch.empty(t.shape, dtype=t.dtype, device=t.device)
-        _SCRATCH[key] = buf
-    return buf
+def residual_gate_add(
+    residual: torch.Tensor, update: torch.Tensor, gate: torch.Tensor, out: torch.Tensor
+) -> None:
+    """out = residual + update * gate, via SGLang's Triton fuse_scale_shift_kernel.
 
-
-def residual_gate_add(residual: torch.Tensor, update: torch.Tensor,
-                      gate: torch.Tensor, out: torch.Tensor) -> None:
-    """out = residual + update * gate (faithful two-launch eager path)."""
-    scratch = _scratch_like(update)
-    torch.mul(update, gate, out=scratch)   # aten::mul  (broadcasts a [.,1,D] gate)
-    torch.add(residual, scratch, out=out)  # aten::add
+    Maps x=update, scale=gate, shift=residual, scale_constant=0, so the kernel
+    computes ``update * (0 + gate) + residual``. A [.,1,D] gate broadcasts over
+    the sequence dim via a stride-0 expand. Writes into the preallocated ``out``
+    (no allocation in the timed path).
+    """
+    fuse_scale_shift_kernel(update, gate, residual, scale_constant=0.0, out=out)
 
 
 def broadcast_add_4d(a: torch.Tensor, b: torch.Tensor, out: torch.Tensor) -> None:

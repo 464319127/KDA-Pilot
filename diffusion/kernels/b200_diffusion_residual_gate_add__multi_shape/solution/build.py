@@ -7,8 +7,8 @@ jit stack uses) plus torch's include and library paths for
 ``at::cuda::getCurrentCUDAStream``. No sglang import.
 
 Compile flags (recorded in docs/benchmark_method.md): ``-std=c++17 -O3`` and the
-device's native gencode. No ``--use_fast_math`` (the eager baseline does not use
-it, so the candidate must not either).
+device's native gencode. No ``--use_fast_math`` (the baseline does not use it, so
+the candidate must not either).
 """
 
 from __future__ import annotations

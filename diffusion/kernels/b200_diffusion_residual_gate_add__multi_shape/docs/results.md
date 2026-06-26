@@ -1,6 +1,17 @@
 # Results — b200_diffusion_residual_gate_add__multi_shape
 
-## Conclusion: GO
+> **⚠️ SUPERSEDED — baseline changed, re-benchmark required.** The numbers below
+> were measured against the faithful PyTorch-**eager** `mul`+`add` baseline. The
+> `residual_gate_add` baseline has since been replaced with SGLang's **Triton**
+> `fuse_scale_shift_kernel` (the production serving path; see
+> `docs/baseline_source.md` and SGLang PR #29361). The Triton kernel is far faster
+> than eager, so the eager-relative geomean (~2.19x) below no longer reflects the
+> GO margin — SGLang PR #29361 measures the native-CUDA fast path at ≈1.11x over
+> this Triton kernel on the LTX-2 broadcast row. Both gates (correctness +
+> benchmark) must be re-run on idle B200 against the new baseline before this
+> verdict stands. `broadcast_add_4d` (eager `torch.add`) is unaffected.
+
+## Conclusion: GO (against the old eager baseline; pending re-benchmark vs Triton)
 The fused candidate is correctness-clean on B200 and faster than the faithful
 PyTorch-eager production path on every production row. Headline equal-weight
 geomean **2.193x** (all rows >= 1.18x). NCU + roofline confirm the result is

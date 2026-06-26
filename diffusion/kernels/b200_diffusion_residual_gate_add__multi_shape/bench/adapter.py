@@ -6,8 +6,9 @@ helper over pre-resolved function tables, so both sides pay byte-identical
 adapter overhead. Neither call allocates output tensors: outputs are
 preallocated in ``make_case`` and poisoned/timed by the benchmark template.
 
-The baseline side calls the faithful PyTorch-eager launchers in
-baseline/binding.py; the candidate side calls the CUDA module built from
+The baseline side calls the launchers in baseline/binding.py (SGLang's Triton
+fuse_scale_shift_kernel for residual_gate_add, eager torch.add for
+broadcast_add_4d); the candidate side calls the CUDA module built from
 solution/kernel.cu via tvm-ffi. No sglang import anywhere in this process
 (asserted below).
 """
@@ -115,7 +116,7 @@ _FLOAT_DTYPES = {torch.bfloat16, torch.float16, torch.float32}
 
 def _validate(fn: str, inputs: dict, outputs) -> None:
     """Shared ABI contract enforced before either implementation runs, so the
-    baseline (eager) and candidate (CUDA host checks) reject the same malformed
+    baseline and candidate (CUDA host checks) reject the same malformed
     inputs with identical adapter overhead. Mirrors solution/kernel.cu's host
     checks: CUDA device, shared float dtype, contiguous, out distinct from
     inputs, full [.,L,D] or same-rank row-broadcast [.,1,D] gate, B=1 4D add."""
