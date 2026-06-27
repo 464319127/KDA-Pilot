@@ -12,7 +12,7 @@ and RLCR-style agent iteration in one place.
 [![GitHub stars](https://img.shields.io/github/stars/BBuf/KDA-Pilot?style=social)](https://github.com/BBuf/KDA-Pilot/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/BBuf/KDA-Pilot?style=social)](https://github.com/BBuf/KDA-Pilot/forks)
 [![Last commit](https://img.shields.io/github/last-commit/BBuf/KDA-Pilot?style=flat-square)](https://github.com/BBuf/KDA-Pilot/commits/main)
-[![B200 diffusion](https://img.shields.io/badge/B200_diffusion-7_kernel_tasks-2ea44f?style=flat-square)](#b200-diffusion-results)
+[![B200 diffusion](https://img.shields.io/badge/B200_diffusion-10_tracked_tasks-2ea44f?style=flat-square)](#b200-diffusion-results)
 [![AI Infra Skills](https://img.shields.io/badge/sibling-AI--Infra--Auto--Driven--SKILLS-2f80ed?style=flat-square)](https://github.com/BBuf/AI-Infra-Auto-Driven-SKILLS)
 [![Kernel Design Agents](https://img.shields.io/badge/built_on-Kernel--Design--Agents-ff6f00?style=flat-square)](https://github.com/mit-han-lab/kernel-design-agents)
 
@@ -43,12 +43,15 @@ repo to watch.
 
 ## B200 Diffusion Results
 
-These are wall geomean speedups against the corresponding SGLang/Triton/CuTe-DSL
-baselines on B200. The measurements include dispatch and synchronization
-overheads, so they are closer to what a user sees from the public kernel path.
+These are B200 task outcomes against the corresponding SGLang/Triton/CuTe-DSL
+baselines where the task has a stable production-relative baseline. The
+measurements include dispatch and synchronization overheads, so they are closer
+to what a user sees from the public kernel path. Rows marked `review` are kept
+visible because they turned into SGLang-facing fast paths, but their original
+task headline changed after the baseline moved.
 
-| Kernel task | B200 wall geomean | Representative wins |
-| --- | ---: | --- |
+| Kernel task | B200 evidence | Representative wins |
+| --- | --- | --- |
 | `qknorm_rope` | 1.1341x | large rows 1.145-1.279x |
 | `norm_infer` | 1.3523x | RMS small 1.634-1.641x |
 | `rotary_embedding` | 1.4912x | HunyuanVideo 2.087x; LTX2 1.133-1.622x |
@@ -56,6 +59,9 @@ overheads, so they are closer to what a user sees from the public kernel path.
 | `cutedsl_norm_scale_shift` | 1.3201x | Hunyuan 1.388-1.516x; JoyAI 1.477-1.495x |
 | `fuse_scale_shift` | 2.7499x | small broadcast rows 7.365-7.891x |
 | `group_norm_silu` | 2.3118x | small/mid C rows 1.369-4.982x; NC rows up to 3.648x |
+| `attention_concat_copy` | 1.30x | head-sliced copy 1.39-2.61x; 24 workloads bit-exact |
+| `causal_conv3d_cat_pad` | 2.06x | production rows 1.60-2.45x; bitwise-exact B200 gate |
+| `residual_gate_add` | review | old eager geomean 2.19x is superseded; SGLang Triton-row follow-up is about 1.11x |
 
 ## KernelWiki-Guided Highlights
 
@@ -68,6 +74,9 @@ overheads, so they are closer to what a user sees from the public kernel path.
 | `cutedsl_norm_scale_shift` | **SGLang PR-14717 CuTe-DSL norm/scale/shift fusion; vectorized-loads; register-budgeting** | Operand-class dispatch, 16B/32B vectors, two-pass variance |
 | `fuse_scale_shift` | **SGLang PR-14717 fused norm/scale/shift family; vectorized-loads; cache-policy; memory-bound pattern** | Rowgrid/flatvec/exact-C paths, cache hints, one-pass reduction |
 | `group_norm_silu` | **SGLang PR-22814/23148/23938 GroupNorm+SiLU; memory-bound pattern; vectorized-loads** | Split-group stats, generation counters, channels-last transpose |
+| `attention_concat_copy` | **SGLang USP attention concat/copy path; memory-bound head-sliced copy; A/A harness validation** | Single-launch region copy, pitched 16B block gather, strict layout/device rejection |
+| `causal_conv3d_cat_pad` | **SGLang causal Conv3D cat/pad Triton baseline; instruction-bound B200 NCU evidence** | Flat chunking, 16B vectorized stores, stride-aware fallback, bitwise-exact gate |
+| `residual_gate_add` | **SGLang residual/gate/add serving row; baseline migration to Triton `fuse_scale_shift_kernel`; PR #29361 follow-up** | One-pass CUDA fusion, pinned-GPU correctness, explicit re-benchmark note after baseline swap |
 
 The companion write-up records the benchmark interpretation, kernel-specific
 optimization paths, KernelWiki/reference links, and AKO4X comparison:
@@ -82,8 +91,8 @@ diffusion/    SGLang diffusion-operator kernel tasks.
 
 llm/          SGLang autoregressive-model kernel-workflow campaign.
               Serve priority models on B200/H200, benchmark low/mid/high
-              concurrency, profile forward passes, and turn >=1% non-attention
-              kernels into optimization task cards.
+              concurrency, profile forward passes, and turn >=1% kernel
+              interfaces into flat task directories with per-task launchers.
 
 external/     Optional shared knowledge submodules.
               KernelWiki/         Blackwell/Hopper kernel design references
@@ -202,10 +211,12 @@ only count when the correctness contract and run logs agree.
 ## Current Campaigns
 
 - **Diffusion kernels:** qk norm + RoPE, norm inference, rotary embedding,
-  fused scale/shift, group norm + SiLU, CuTe-DSL norm/tanh/mul/add, and
-  CuTe-DSL norm/scale/shift across B200 and H200 task folders.
+  fused scale/shift, group norm + SiLU, attention concat/copy, causal Conv3D
+  cat/pad, residual gate/add, CuTe-DSL norm/tanh/mul/add, and CuTe-DSL
+  norm/scale/shift across B200 and H200 task folders.
 - **LLM kernel workflow:** model-level serving commands, benchmark sweeps,
-  torch profiler traces, and kernel inventories for future optimization tasks.
+  kernel API logs, and 200+ flat task directories with per-task launchers for
+  future optimization loops.
 - **Open frontier:** compute-bound kernels such as FA4/MHA and GEMM-like paths
   remain harder; this repo keeps the failed and partial attempts visible so the
   next loop can start from evidence instead of folklore.
