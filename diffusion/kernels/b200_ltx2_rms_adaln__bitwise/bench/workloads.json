@@ -70,5 +70,41 @@
     "atol": 0.0,
     "rtol": 0.0,
     "source": {"host": "ion-b200", "container": "sglang_bbuf_pr29315", "model": "Lightricks/LTX-2.3", "capture_date": "2026-06-28", "sglang_commit": "828411e6f1"}
+  },
+  {
+    "id": "ltx23_hq_pr29396_stage1_video_s8160_d4096_full",
+    "production": true,
+    "preset": "ltx23-hq-pr29392-29396-29399-single-gpu-original",
+    "function": "rms_adaln",
+    "sites": ["video_msa", "video_prompt_q", "video_mlp"],
+    "shapes": {
+      "x": {"shape": [1, 8160, 4096], "dtype": "bfloat16", "stride": [33423360, 4096, 1]},
+      "scale": {"shape": [1, 8160, 4096], "dtype": "bfloat16", "stride": [33423360, 4096, 1]},
+      "shift": {"shape": [1, 8160, 4096], "dtype": "bfloat16", "stride": [33423360, 4096, 1]}
+    },
+    "eps": 1e-6,
+    "seed": 2939611,
+    "comparison": "torch_equal",
+    "atol": 0.0,
+    "rtol": 0.0,
+    "source": {"host": "ion-b200", "model": "Lightricks/LTX-2.3", "capture_date": "2026-06-28/2026-06-29", "pipeline": "LTX2TwoStageHQPipeline", "command_source": "sgl-project/sglang#29396 speed test; same command family as #29392 and #29399", "resolution": "1920x1088x121", "stage": "stage1_half_resolution", "derivation": "HQ halves 1920x1088 to 960x544 before stage1; token count scales from logged 768x512 stage2 6144 by 960*544/(768*512)=2.65625"}
+  },
+  {
+    "id": "ltx23_hq_pr29396_stage2_video_s32640_d4096_full",
+    "production": true,
+    "preset": "ltx23-hq-pr29392-29396-29399-single-gpu-original",
+    "function": "rms_adaln",
+    "sites": ["video_msa", "video_prompt_q", "video_mlp"],
+    "shapes": {
+      "x": {"shape": [1, 32640, 4096], "dtype": "bfloat16", "stride": [133693440, 4096, 1]},
+      "scale": {"shape": [1, 32640, 4096], "dtype": "bfloat16", "stride": [133693440, 4096, 1]},
+      "shift": {"shape": [1, 32640, 4096], "dtype": "bfloat16", "stride": [133693440, 4096, 1]}
+    },
+    "eps": 1e-6,
+    "seed": 2939612,
+    "comparison": "torch_equal",
+    "atol": 0.0,
+    "rtol": 0.0,
+    "source": {"host": "ion-b200", "model": "Lightricks/LTX-2.3", "capture_date": "2026-06-28/2026-06-29", "pipeline": "LTX2TwoStageHQPipeline", "command_source": "sgl-project/sglang#29396 speed test; same command family as #29392 and #29399", "resolution": "1920x1088x121", "stage": "stage2_full_resolution", "log_evidence": "/home/sglang-omni/bbuf/ltx2_kda_eval_20260629/logs/pr29399_cmd_main.log: Packed video latents for Stage 2: [1, 32640, 128]"}
   }
 ]

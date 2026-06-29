@@ -1,6 +1,6 @@
 # Bit-Exact Numerics Spec — LTX2 Dual Modulation
 
-Source: task3 (`analyze`) — Codex `gpt-5.5:high`, Round 0. This pins the exact
+Source: task3 (`analyze`) — Codex `gpt-5.5:xhigh`, Round 0. This pins the exact
 operation/rounding decomposition the candidate must reproduce for `torch.equal`
 parity with the PyTorch eager baseline. Empirically re-verify on the B200 against
 the installed torch build (bitwise parity is torch-version-sensitive).

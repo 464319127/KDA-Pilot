@@ -150,5 +150,81 @@
     "atol": 0.0,
     "rtol": 0.0,
     "source": {"host": "ion-b200", "container": "sglang_bbuf_pr29315", "model": "Lightricks/LTX-2.3", "capture_date": "2026-06-28", "sglang_commit": "828411e6f1"}
+  },
+  {
+    "id": "ltx23_hq_pr29392_stage1_video_explicit_s8160_d4096_bcast1",
+    "production": true,
+    "preset": "ltx23-hq-pr29392-29396-29399-single-gpu-original",
+    "function": "dual_modulate",
+    "site": "video_av_ca",
+    "shapes": {
+      "x": {"shape": [1, 8160, 4096], "dtype": "bfloat16", "stride": [33423360, 4096, 1]},
+      "scale0": {"shape": [1, 1, 4096], "dtype": "bfloat16", "stride": [16384, 16384, 1]},
+      "shift0": {"shape": [1, 1, 4096], "dtype": "bfloat16", "stride": [16384, 16384, 1]},
+      "scale1": {"shape": [1, 1, 4096], "dtype": "bfloat16", "stride": [16384, 16384, 1]},
+      "shift1": {"shape": [1, 1, 4096], "dtype": "bfloat16", "stride": [16384, 16384, 1]}
+    },
+    "eps": 1e-6,
+    "seed": 2939211,
+    "comparison": "torch_equal",
+    "atol": 0.0,
+    "rtol": 0.0,
+    "source": {"host": "ion-b200", "model": "Lightricks/LTX-2.3", "capture_date": "2026-06-28/2026-06-29", "pipeline": "LTX2TwoStageHQPipeline", "command_source": "sgl-project/sglang#29392 speed test; same command family as #29396 and #29399", "resolution": "1920x1088x121", "stage": "stage1_half_resolution", "derivation": "HQ halves 1920x1088 to 960x544 before stage1; token count 8160"}
+  },
+  {
+    "id": "ltx23_hq_pr29392_stage2_video_explicit_s32640_d4096_bcast1",
+    "production": true,
+    "preset": "ltx23-hq-pr29392-29396-29399-single-gpu-original",
+    "function": "dual_modulate",
+    "site": "video_av_ca",
+    "shapes": {
+      "x": {"shape": [1, 32640, 4096], "dtype": "bfloat16", "stride": [133693440, 4096, 1]},
+      "scale0": {"shape": [1, 1, 4096], "dtype": "bfloat16", "stride": [16384, 16384, 1]},
+      "shift0": {"shape": [1, 1, 4096], "dtype": "bfloat16", "stride": [16384, 16384, 1]},
+      "scale1": {"shape": [1, 1, 4096], "dtype": "bfloat16", "stride": [16384, 16384, 1]},
+      "shift1": {"shape": [1, 1, 4096], "dtype": "bfloat16", "stride": [16384, 16384, 1]}
+    },
+    "eps": 1e-6,
+    "seed": 2939212,
+    "comparison": "torch_equal",
+    "atol": 0.0,
+    "rtol": 0.0,
+    "source": {"host": "ion-b200", "model": "Lightricks/LTX-2.3", "capture_date": "2026-06-28/2026-06-29", "pipeline": "LTX2TwoStageHQPipeline", "command_source": "sgl-project/sglang#29392 speed test; same command family as #29396 and #29399", "resolution": "1920x1088x121", "stage": "stage2_full_resolution", "log_evidence": "/home/sglang-omni/bbuf/ltx2_kda_eval_20260629/logs/pr29399_cmd_main.log: Packed video latents for Stage 2: [1, 32640, 128]"}
+  },
+  {
+    "id": "ltx23_hq_pr29392_stage1_video_temb_s8160_d4096_bcast1",
+    "production": true,
+    "preset": "ltx23-hq-pr29392-29396-29399-single-gpu-original",
+    "function": "ca_dual_modulate_from_temb",
+    "site": "video_av_ca",
+    "shapes": {
+      "x": {"shape": [1, 8160, 4096], "dtype": "bfloat16", "stride": [33423360, 4096, 1]},
+      "temb_scale_shift": {"shape": [1, 1, 16384], "dtype": "bfloat16", "stride": [16384, 16384, 1]},
+      "scale_shift_table": {"shape": [4, 4096], "dtype": "bfloat16", "stride": [4096, 1]}
+    },
+    "eps": 1e-6,
+    "seed": 2939213,
+    "comparison": "torch_equal",
+    "atol": 0.0,
+    "rtol": 0.0,
+    "source": {"host": "ion-b200", "model": "Lightricks/LTX-2.3", "capture_date": "2026-06-28/2026-06-29", "pipeline": "LTX2TwoStageHQPipeline", "command_source": "sgl-project/sglang#29392 speed test; same command family as #29396 and #29399", "resolution": "1920x1088x121", "stage": "stage1_half_resolution", "derivation": "HQ halves 1920x1088 to 960x544 before stage1; token count 8160"}
+  },
+  {
+    "id": "ltx23_hq_pr29392_stage2_video_temb_s32640_d4096_bcast1",
+    "production": true,
+    "preset": "ltx23-hq-pr29392-29396-29399-single-gpu-original",
+    "function": "ca_dual_modulate_from_temb",
+    "site": "video_av_ca",
+    "shapes": {
+      "x": {"shape": [1, 32640, 4096], "dtype": "bfloat16", "stride": [133693440, 4096, 1]},
+      "temb_scale_shift": {"shape": [1, 1, 16384], "dtype": "bfloat16", "stride": [16384, 16384, 1]},
+      "scale_shift_table": {"shape": [4, 4096], "dtype": "bfloat16", "stride": [4096, 1]}
+    },
+    "eps": 1e-6,
+    "seed": 2939214,
+    "comparison": "torch_equal",
+    "atol": 0.0,
+    "rtol": 0.0,
+    "source": {"host": "ion-b200", "model": "Lightricks/LTX-2.3", "capture_date": "2026-06-28/2026-06-29", "pipeline": "LTX2TwoStageHQPipeline", "command_source": "sgl-project/sglang#29392 speed test; same command family as #29396 and #29399", "resolution": "1920x1088x121", "stage": "stage2_full_resolution", "log_evidence": "/home/sglang-omni/bbuf/ltx2_kda_eval_20260629/logs/pr29399_cmd_main.log: Packed video latents for Stage 2: [1, 32640, 128]"}
   }
 ]

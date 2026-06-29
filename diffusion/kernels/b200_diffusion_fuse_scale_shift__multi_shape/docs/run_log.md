@@ -40,7 +40,7 @@ Actions:
 
 GPU state: no GPU work yet (local scaffold only; macOS host has no CUDA).
 
-## 2026-06-04 — Pre-GPU contract review (Codex, gpt-5.5:high)
+## 2026-06-04 — Pre-GPU contract review (Codex, gpt-5.5:xhigh)
 
 - Verdict: READY_FOR_GPU, no P0 blockers. Response archived under the local
   loop state directory.
@@ -191,7 +191,7 @@ Bound attribution per row class:
   the EP2 attribution is partly inferred from the kernel structure (one row
   per block, two block-wide reductions) on top of the SOL counters; explicit
   stall-barrier counters were not separately extracted.
-- Independent review of this interpretation (Codex, gpt-5.5:high, archived in
+- Independent review of this interpretation (Codex, gpt-5.5:xhigh, archived in
   the local loop state dir): ATTRIBUTION_VERDICT SOUND, INVERSION_VERDICT
   ACCEPTABLE, STOP_DECISION AGREE ("stop decision defensible under bounded
   attempts; gate met on every production row").
