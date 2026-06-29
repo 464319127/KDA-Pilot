@@ -1,5 +1,13 @@
 # Benchmark Method & Compile Flags
 
+> **Reconciled (RLCR run 2026-06-29).** This run re-derived the candidate (`solution/`) and
+> reproduced an eager-replacement **geomean 2.128×** with **no per-shape regression**, bit-exact on
+> all 14 production rows — the verified headline is in `docs/results.md` and `bench/results.jsonl`
+> (GPU id 5, ion-b200, torch 2.11.0+cu130 / CUDA 13.0). The older figures mentioned below
+> (~1.96× / ~2.56×) and the "Round 1" validation-cache anecdote are from PRIOR work and are
+> **superseded** by this run's verified numbers; cite `docs/results.md`, not those. The
+> methodology and compile-flags sections below remain the intended approach and match what was used.
+
 ## Compile flags (symmetric numerics; recorded for provenance)
 
 The candidate is built by `solution/build.py` via `tvm_ffi.cpp.load`:
