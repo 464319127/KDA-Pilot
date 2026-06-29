@@ -16,6 +16,7 @@
 #include <cuda_bf16.h>
 #include <cuda_runtime.h>
 #include <ATen/cuda/CUDAContext.h>
+#include <c10/cuda/CUDAGuard.h>
 #include <tvm/ffi/container/tensor.h>
 #include <tvm/ffi/function.h>
 
@@ -66,6 +67,9 @@ __global__ void ltx2_split_rope_kernel(
 }
 
 void ltx2_split_rope_candidate(TensorView x, TensorView cos, TensorView sin, TensorView out) {
+  // Guard the launch to the input tensor's CUDA device so the stream and the kernel launch target
+  // the device the data lives on, even if it differs from the process's current device (multi-GPU).
+  const c10::cuda::CUDAGuard device_guard(static_cast<c10::DeviceIndex>(x.device().device_id));
   long B = x.size(0);
   long S = x.size(1);
   long num_heads = cos.size(1);
