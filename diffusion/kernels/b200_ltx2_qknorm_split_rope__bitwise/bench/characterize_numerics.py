@@ -201,9 +201,10 @@ def rope_variants(x, cos, sin, num_heads, head_dim):
     # A1: fp32 mul then fp32 add, single bf16 cast
     out["A1_fp32_muladd"] = assemble(
         (c1 - sinf * sf).to(BF16), (c2 + sinf * ff).to(BF16))
-    # A2: fmaf (single fp32 FMA): c +/- (sin*x) fused
+    # A2: c +/- (sin*x), multiply written as (-sinf)*sf. (Not a true single-rounded fmaf, which
+    # torch does not expose directly; A2b below uses double precision as the exact-fma reference.)
     out["A2_fmaf"] = assemble(
-        torch.addcmul(c1, -sinf, sf).to(BF16) if False else (c1 + (-sinf) * sf).to(BF16),
+        (c1 + (-sinf) * sf).to(BF16),
         (c2 + sinf * ff).to(BF16))
     # A2 proper fmaf via torch: emulate single-rounded fma is not directly exposed;
     # approximate with double precision to detect if eager used a single rounding.

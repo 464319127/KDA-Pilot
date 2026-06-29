@@ -473,7 +473,6 @@ def _cmd_line(cmd: list[str], match: str | None = None) -> str:
 
 
 def _candidate_source_hash() -> str:
-    import hashlib
     h = hashlib.sha256()
     sol = ROOT / "solution"
     for name in ("kernel.cu", "build.py", "candidate.py", "__init__.py"):
@@ -521,7 +520,6 @@ def _tvm_ffi_version() -> str:
 
 
 def _provenance(args: argparse.Namespace, workloads: list[dict[str, Any]]) -> dict[str, Any]:
-    import os
     return {
         "task_dir": str(ROOT),
         "command": " ".join(sys.argv),
