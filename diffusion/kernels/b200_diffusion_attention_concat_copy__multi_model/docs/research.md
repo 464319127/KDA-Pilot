@@ -2,7 +2,7 @@
 
 Kept/rejected optimization ideas for the attention concat/copy/slice kernels,
 from Codex Analysis v1 (gen-plan) and a dedicated Codex direction-ranking pass
-(`gpt-5.5:high`). These are evidence priorities; final claims require B200 A/B
+(`gpt-5.5:xhigh`). These are evidence priorities; final claims require B200 A/B
 numbers (see `docs/results.md`).
 
 ## Ranking (Codex, integrated)

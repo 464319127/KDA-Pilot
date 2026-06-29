@@ -165,7 +165,7 @@ manual review comment blocks such as `CMT:` / `ENDCMT`, `<cmt>` / `</cmt>`, or
 Start RLCR with the review-base branch printed by the launcher:
 
 ```text
-/humanize:start-rlcr-loop diffusion/kernels/<kernel-folder>/.humanize/kernel-agent/refined-plan.md --skip-quiz --claude-answer-codex --max 12 --codex-model gpt-5.5:high --codex-timeout 5400 --base-branch <printed-kda-base-branch>
+/humanize:start-rlcr-loop diffusion/kernels/<kernel-folder>/.humanize/kernel-agent/refined-plan.md --skip-quiz --claude-answer-codex --max 12 --codex-model gpt-5.5:xhigh --codex-timeout 5400 --base-branch <printed-kda-base-branch>
 ```
 
 After RLCR starts, continue from the generated

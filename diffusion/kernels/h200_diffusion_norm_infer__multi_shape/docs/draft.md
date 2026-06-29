@@ -60,7 +60,7 @@ skip-copy lever (all captured shapes are contiguous); any shape outside the six.
 
 ## 5. Prior-art notes (KernelWiki / upstream)
 
-Analyze pass (Codex gpt-5.5:high + KernelWiki; full output in
+Analyze pass (Codex gpt-5.5:xhigh + KernelWiki; full output in
 `.humanize/skill/2026-06-02_00-08-20-94442-b639113c/output.md`). Note: the
 `external/KernelWiki` submodule is NOT initialized in this worktree (run
 `git submodule update --init --recursive` to populate it); Codex used a fallback

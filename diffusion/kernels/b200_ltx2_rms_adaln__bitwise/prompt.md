@@ -57,12 +57,16 @@ boundaries.
 ## Required Workload Rows
 
 Use real model shapes, not synthetic shape guesses. Include these rows in
-`bench/workloads.json` and correctness tests. They were captured from
+`bench/workloads.json` and correctness tests. The task already contains an
+initial `bench/workloads.json` seeded with the rows below; keep that file and
+this section consistent.
+
+Source A: SGLang CI / comparison-config shape. These rows were captured from
 `Lightricks/LTX-2.3` with `LTX2TwoStagePipeline`, `width=768`, `height=512`,
 `num_frames=121`, `num_gpus=2`, `cfg_parallel_size=2`,
-`num_inference_steps=1` on `ion-b200` on 2026-06-28.
-The task already contains an initial `bench/workloads.json` seeded with these
-rows; keep that file and this section consistent.
+`num_inference_steps=1` on `ion-b200` on 2026-06-28. This corresponds to the
+`scripts/ci/utils/diffusion/comparison_configs.json`
+`ltx2.3_twostage_ti2v_2gpus` command family.
 
 The captured RMS AdaLN production rows all use full-shape bf16 modulation
 tensors with the same shape as `x`:
@@ -75,6 +79,54 @@ tensors with the same shape as `x`:
   `x=[1,6144,4096]`, `scale/shift=[1,6144,4096]`, `eps=1e-6`.
 - second stage audio self-attention / prompt-Q / MLP:
   `x=[1,126,2048]`, `scale/shift=[1,126,2048]`, `eps=1e-6`.
+
+Source B: the closed SGLang PR benchmark command family used by
+`sgl-project/sglang#29392`, `#29396`, and `#29399`:
+
+```bash
+sglang generate \
+  --backend=sglang \
+  --model-path=Lightricks/LTX-2.3 \
+  --pipeline-class-name=LTX2TwoStageHQPipeline \
+  --ltx2-two-stage-device-mode original \
+  --width=1920 --height=1088 --num-frames=121 \
+  --num-inference-steps=15 \
+  --save-output --warmup
+```
+
+The HQ command is single-GPU, has `enable_cfg_parallel=false`, and does not use
+torch compile. Its Stage 2 video latent shape was logged on `ion-b200` as
+`[1,32640,128]` before transformer projection. `LTX2TwoStageHQPipeline` halves
+resolution before Stage 1, so the corresponding Stage 1 video token count is
+`8160`. Required RMS AdaLN rows from this command family:
+
+- HQ first stage video self-attention / prompt-Q / MLP:
+  `x=[1,8160,4096]`, `scale/shift=[1,8160,4096]`, `eps=1e-6`.
+- HQ second stage video self-attention / prompt-Q / MLP:
+  `x=[1,32640,4096]`, `scale/shift=[1,32640,4096]`, `eps=1e-6`.
+- HQ audio rows use the same single-GPU audio shape already listed above:
+  `x=[1,126,2048]`, `scale/shift=[1,126,2048]`, `eps=1e-6`.
+
+Source C: SGLang LTX2.3 cookbook/API commands. The documented one-stage and
+two-stage default commands use `Lightricks/LTX-2.3`, `768x512`, `121` frames.
+Their RMS AdaLN shape coverage is already represented by the unique
+`[1,6144,4096]` / `[1,126,2048]` full-resolution rows and the CI two-stage
+rows above. Do not add duplicate benchmark rows unless a live model run proves a
+new tensor shape or stride.
+
+## Shape-Specialized Dispatch Requirement
+
+The final optimized solution may use different kernels, template parameters,
+or launch policies for different `(B, S, D, scale_layout, shift_layout)` rows.
+In fact, prefer an explicit shape table or dispatcher when a single generic
+kernel loses on either the CI rows or the HQ PR rows. It is acceptable to
+dispatch separately for video `S in {1536,6144,8160,32640}` and audio
+`S=126`, and for `D in {4096,2048}`, as long as every selected path is
+bit-wise equal to the PyTorch baseline and unsupported shapes fail closed or
+fall back to the exact eager implementation.
+
+Do not claim success from an average speedup if one of the production shape
+families regresses. Report per-shape timings and explain the dispatcher choice.
 
 If a support-gate unit test uses a non-production negative row, keep it out of
 the benchmark workload list and require fallback or bit-wise exact behavior.

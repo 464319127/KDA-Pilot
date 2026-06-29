@@ -35,5 +35,5 @@ The staged candidate must be bit-identical to PyTorch eager
   canonicalize. A targeted NaN-payload row would be added only if NaNs were in
   scope (production rows are finite; `correctness.py` rejects any NaN/Inf output).
 
-Source: Codex (gpt-5.5:high) analysis; NVIDIA CUDA Math API bf16 docs; PyTorch
+Source: Codex (gpt-5.5:xhigh) analysis; NVIDIA CUDA Math API bf16 docs; PyTorch
 `torch/headeronly/util/BFloat16.h`.

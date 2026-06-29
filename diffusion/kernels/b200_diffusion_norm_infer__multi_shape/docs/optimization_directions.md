@@ -1,6 +1,6 @@
 # Optimization Directions (ranked) — round 0 prior-art + Codex analysis
 
-Source: `/humanize:ask-codex` (gpt-5.5:high), informed by the recovered SGLang baselines and KernelWiki (`wiki/patterns/memory-bound.md`, `wiki/hardware/pdl-gdc.md`, `sources/docs/nvidia-blackwell-tuning-guide.md`). These guide the round-1+ optimization (tasks 9–10); they are NOT commitments.
+Source: `/humanize:ask-codex` (gpt-5.5:xhigh), informed by the recovered SGLang baselines and KernelWiki (`wiki/patterns/memory-bound.md`, `wiki/hardware/pdl-gdc.md`, `sources/docs/nvidia-blackwell-tuning-guide.md`). These guide the round-1+ optimization (tasks 9–10); they are NOT commitments.
 
 Correction carried from baseline recovery: the Triton `_norm_infer_kernel` already loads each row **once** into registers and reduces twice — there is no second DRAM read to remove. The roofline floor for LN is read-x-once + write-y-once + cached w/b.
 

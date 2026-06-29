@@ -36,7 +36,7 @@ Native CUDA, built+exported through SGLang `jit_kernel`/tvm-ffi (no `torch.utils
 | cuda-v3 | standard drops shared-mem `__syncthreads`; vectorized fp32 cos/sin (L2) | bit-exact 11/11 | 1.349× | standard 1.76× (DRAM SOL 48→59%) | keep |
 | **cuda-v4** | LTX-2 block size matched to per-row work (half32→128 threads) | bit-exact 11/11 | **1.383×** | standard 1.80×, ltx2-small/med 1.66–1.71×, occ 73.6→86% | **promote** |
 
-## Prior Art / Lever Analysis (Codex `analyze`, gpt-5.5:high)
+## Prior Art / Lever Analysis (Codex `analyze`, gpt-5.5:xhigh)
 Independent review concurred with the active-bound diagnosis and "promote, no blocker". Levers ranked:
 1. Multi-row-per-CTA / warp-density — **applied in cuda-v4** (block-size match; the top lever).
 2. Cache-policy / read-only tuning — modest, fragile; not pursued (diminishing returns past 128-bit BW).
@@ -135,7 +135,7 @@ cuda-v6 = D3 (only if post-v5 NCU still shows compute/issue pressure on standard
 cuda-v7 = D4 (single bounded attempt, decomposition required). D5 only on D1 underperformance.
 PDL re-trial: WAIVED this round — prior A/B showed PDL hurting isolated-launch latency on this exact task (docs above); no new evidence to revisit.
 
-## Codex triage review integration (2026-06-04, gpt-5.5:high)
+## Codex triage review integration (2026-06-04, gpt-5.5:xhigh)
 
 Codex reviewed the D1-D5 ranking (full text in the loop workspace). Verdicts applied:
 - **D1 re-ranked: bounded experiment, uncertain payoff** (was: top win). Codex: half32 already
