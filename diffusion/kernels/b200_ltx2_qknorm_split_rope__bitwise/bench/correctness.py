@@ -253,6 +253,26 @@ def _candidate_reject_tests(device):
     except Exception as exc:  # noqa: BLE001
         results.append(("reject_odd_head_dim", "FAIL", f"wrong exception {type(exc).__name__}: {exc}"))
 
+    # Exact torch.nn.RMSNorm with elementwise_affine=False has weight=None: must reject with
+    # ValueError BEFORE launch (not AttributeError from dereferencing weight), poison preserved.
+    naw = adapter.make_case(wl, device=device, seed=131)
+    naw_in, naw_out = naw["inputs"], naw["candidate_outputs"]
+    naw_in["q_norm"] = torch.nn.RMSNorm(hidden, eps=1e-6, elementwise_affine=False,
+                                        dtype=torch.bfloat16, device=device)
+    poison_naw = 5.0
+    for o in naw_out:
+        o.fill_(poison_naw)
+    try:
+        adapter.call_candidate(wl, naw_in, naw_out)
+        results.append(("reject_norm_no_weight", "FAIL", "no ValueError for weight=None RMSNorm"))
+    except ValueError as exc:
+        torch.cuda.synchronize()
+        untouched = all(torch.equal(o, torch.full_like(o, poison_naw)) for o in naw_out)
+        results.append(("reject_norm_no_weight", "PASS" if untouched else "FAIL",
+                        f"{str(exc)[:60]}; outputs {'untouched' if untouched else 'MODIFIED before reject'}"))
+    except Exception as exc:  # noqa: BLE001
+        results.append(("reject_norm_no_weight", "FAIL", f"wrong exception {type(exc).__name__}: {exc}"))
+
     # mutate-after-accept: the SAME inputs/outputs objects, mutated in place into an
     # unsupported config, must still reject (proves validation is not bypassed by a
     # per-call-skipping cache; validation must run on every call).

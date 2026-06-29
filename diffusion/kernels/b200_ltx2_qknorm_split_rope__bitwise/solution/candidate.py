@@ -42,6 +42,8 @@ def _validate(inputs, outputs):
         if m.eps is None or float(m.eps) != eps:
             _reject(f"{name}.eps {m.eps} != {eps}")
         w = m.weight
+        if not torch.is_tensor(w):
+            _reject(f"{name}.weight is missing (elementwise_affine=False?)")
         if w.dtype != _BF16:
             _reject(f"{name}.weight dtype {w.dtype} != torch.bfloat16")
         if tuple(m.normalized_shape) != (x.shape[-1],):
