@@ -33,11 +33,18 @@ single-outlier, boundary tiles) and boundary-targeted weights.
 - That 1-ULP rstd difference flips ~25 / 2.41M output bf16 values (where
   `x*rstd*weight` sits on a bf16 midpoint). `rsqrt` vs `sqrt`+reciprocal: rsqrt is
   closer (25 vs 49 mismatches); reduction method (mean vs sum/N) did not change the count.
-- **Conclusion:** a fully-custom CUDA RMSNorm is NOT yet bit-exact — it would need to
-  replicate PyTorch's exact mean-square reduction + rsqrt to 0 ULP. Until that is
-  cracked, use **ATen RMSNorm** (PyTorch itself) for the norm stage; it is exact by
-  construction. Matching PyTorch's rstd for a fully-fused kernel is a later-round
-  optimization (DEC-4: staged fallback is acceptable).
+- **Conclusion:** a fully-custom CUDA RMSNorm is NOT bit-exact. Use **ATen RMSNorm**
+  (PyTorch itself) for the norm stage; it is exact by construction.
+- **Direct fused-kernel test (Round 1, decisive).** A fully-fused custom-RMSNorm + split-RoPE
+  CUDA kernel (one block per row, natural fp32 block reduction with `__fadd_rn`/`__fmul_rn`,
+  `rsqrtf`, V1 affine, A1 RoPE) was built and compared to the eager oracle on the production
+  shapes: **793 mismatched bf16 elements** (471 on the 32640-token d4096 row, 142 on 8160, 82 on
+  6144, 49 on 1536; 0 on the small d2048 rows). Mismatches scale with H and token count — exactly
+  the bf16-midpoint flips from the ~1-ULP `rstd` gap. A custom block reduction has its own
+  summation order and cannot match `aten._fused_rms_norm` to 0 ULP without replicating torch's
+  exact internal reduction (warp-shuffle order / vectorization), which is fragile and
+  version-locked. Therefore the staged ATen RMSNorm is the correct bit-exact path (DEC-4), not a
+  deferral of convenience.
 
 ## (B) split-RoPE (the addcmul_ rounding sequence)
 

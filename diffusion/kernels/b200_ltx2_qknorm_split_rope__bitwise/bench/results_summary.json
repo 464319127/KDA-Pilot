@@ -1,0 +1,385 @@
+{
+  "provenance": {
+    "task_dir": "/tmp/ltx2_qknorm_task",
+    "command": "bench/benchmark.py --device cuda:0",
+    "python": "3.12.3 (main, Mar 23 2026, 19:04:32) [GCC 13.3.0]",
+    "platform": "Linux-6.8.0-111-generic-x86_64-with-glibc2.39",
+    "torch": "2.11.0+cu130",
+    "torch_cuda": "13.0",
+    "cuda_available": true,
+    "gpu": "NVIDIA B200",
+    "gpu_uuid": "8b907ca0-c8de-1118-00b6-070c288bdd6f",
+    "cuda_visible_devices": "5",
+    "remote_gpu_id": "5",
+    "cuda_current_device": 0,
+    "nvcc": "Cuda compilation tools, release 13.0, V13.0.88",
+    "host_compiler": "c++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "tvm_ffi": "0.1.9",
+    "candidate_source_sha256": "5b5c85d9a80570c618a65873e2c51f16035c6a363308522c4e3150993895c133",
+    "baseline_commit": "aaa31eb0a11e09f9511bade5e815907ec0b91fa0",
+    "git": {
+      "commit_local_worktree": "0066a824ee616f20e5ae7ed2201e6cc2b2420118",
+      "dirty_at_run": true,
+      "note": "benchmark ran on a tar-synced copy of the local worktree; git resolved from the local checkout (remote /tmp has no .git)"
+    },
+    "nvidia_smi_before": "0, NVIDIA B200, 100 %, 115786 MiB, 183359 MiB\n1, NVIDIA B200, 0 %, 0 MiB, 183359 MiB\n2, NVIDIA B200, 0 %, 0 MiB, 183359 MiB\n3, NVIDIA B200, 0 %, 0 MiB, 183359 MiB\n4, NVIDIA B200, 0 %, 0 MiB, 183359 MiB\n5, NVIDIA B200, 0 %, 4 MiB, 183359 MiB\n6, NVIDIA B200, 0 %, 0 MiB, 183359 MiB\n7, NVIDIA B200, 48 %, 115782 MiB, 183359 MiB",
+    "workload_count": 14,
+    "settings": {
+      "warmup_runs": 10,
+      "num_trials": 7,
+      "inner_iterations_min": 1,
+      "inner_iterations_max": 4096,
+      "target_sample_us": 1000.0,
+      "timeout_seconds": 600,
+      "isolated": true
+    }
+  },
+  "headline": {
+    "production_workloads": 14,
+    "geomean_speedup": 2.1543652065197136,
+    "arithmetic_mean_speedup": 2.2858524285050494,
+    "min_speedup": 1.4138061218204248,
+    "max_speedup": 3.6347744562738784
+  },
+  "passed": 14,
+  "total": 14,
+  "nvidia_smi_after": "0, NVIDIA B200, 8 %, 115786 MiB, 183359 MiB\n1, NVIDIA B200, 0 %, 0 MiB, 183359 MiB\n2, NVIDIA B200, 0 %, 0 MiB, 183359 MiB\n3, NVIDIA B200, 0 %, 0 MiB, 183359 MiB\n4, NVIDIA B200, 0 %, 0 MiB, 183359 MiB\n5, NVIDIA B200, 0 %, 4 MiB, 183359 MiB\n6, NVIDIA B200, 0 %, 0 MiB, 183359 MiB\n7, NVIDIA B200, 7 %, 115782 MiB, 183359 MiB",
+  "workloads": [
+    {
+      "id": "ltx23_stage1_video_self_q1536_k1536_d4096",
+      "status": "PASSED",
+      "speedup": 1.5231269317862142,
+      "production": true,
+      "baseline": {
+        "median_us": 226.95200145244598,
+        "mean_us": 225.46000140053886,
+        "std_us": 3.4524867477578067,
+        "min_us": 221.111997961998,
+        "p10_us": 221.4024007320404,
+        "p90_us": 229.0744036436081,
+        "inner_iterations": 8
+      },
+      "candidate": {
+        "median_us": 149.0039974451065,
+        "mean_us": 149.04914157731193,
+        "std_us": 0.43484571692483304,
+        "min_us": 148.4680026769638,
+        "p10_us": 148.5016018152237,
+        "p90_us": 149.49199855327606,
+        "inner_iterations": 8
+      }
+    },
+    {
+      "id": "ltx23_stage1_audio_self_q126_k126_d2048",
+      "status": "PASSED",
+      "speedup": 3.2840541625572235,
+      "production": true,
+      "baseline": {
+        "median_us": 206.85599744319916,
+        "mean_us": 212.77428737708502,
+        "std_us": 9.584551520570017,
+        "min_us": 205.1600068807602,
+        "p10_us": 205.3328037261963,
+        "p90_us": 224.69280064105988,
+        "inner_iterations": 8
+      },
+      "candidate": {
+        "median_us": 62.98799812793732,
+        "mean_us": 63.83085676601955,
+        "std_us": 2.1705171732617714,
+        "min_us": 61.68400123715401,
+        "p10_us": 61.913200467824936,
+        "p90_us": 65.96399992704391,
+        "inner_iterations": 16
+      }
+    },
+    {
+      "id": "ltx23_stage1_audio_to_video_q1536_k126_d2048",
+      "status": "PASSED",
+      "speedup": 3.4805100177122066,
+      "production": true,
+      "baseline": {
+        "median_us": 206.7040055990219,
+        "mean_us": 210.1571432181767,
+        "std_us": 7.629909006181843,
+        "min_us": 203.11200618743896,
+        "p10_us": 204.64800000190735,
+        "p90_us": 220.14960050582886,
+        "inner_iterations": 8
+      },
+      "candidate": {
+        "median_us": 59.38899889588356,
+        "mean_us": 59.61157115442412,
+        "std_us": 0.7009658669650761,
+        "min_us": 58.94700065255165,
+        "p10_us": 58.969200402498245,
+        "p90_us": 60.557399690151215,
+        "inner_iterations": 32
+      }
+    },
+    {
+      "id": "ltx23_stage1_video_to_audio_q126_k1536_d2048",
+      "status": "PASSED",
+      "speedup": 3.6347744562738784,
+      "production": true,
+      "baseline": {
+        "median_us": 234.55199599266052,
+        "mean_us": 290.2434297970363,
+        "std_us": 157.02104008967885,
+        "min_us": 219.04000639915466,
+        "p10_us": 221.9128042459488,
+        "p90_us": 404.099202156067,
+        "inner_iterations": 8
+      },
+      "candidate": {
+        "median_us": 64.53000009059906,
+        "mean_us": 64.40685795886176,
+        "std_us": 1.0753535409858306,
+        "min_us": 62.99799680709839,
+        "p10_us": 63.24999928474426,
+        "p90_us": 65.67160338163376,
+        "inner_iterations": 16
+      }
+    },
+    {
+      "id": "ltx23_stage2_video_self_q6144_k6144_d4096",
+      "status": "PASSED",
+      "speedup": 1.512261606894484,
+      "production": true,
+      "baseline": {
+        "median_us": 416.8640077114105,
+        "mean_us": 415.3074324131012,
+        "std_us": 4.146619651542241,
+        "min_us": 406.72001242637634,
+        "p10_us": 410.6464087963104,
+        "p90_us": 418.10880303382874,
+        "inner_iterations": 4
+      },
+      "candidate": {
+        "median_us": 275.6560146808624,
+        "mean_us": 276.50286044393266,
+        "std_us": 3.308315019007786,
+        "min_us": 271.6880142688751,
+        "p10_us": 273.25279712677,
+        "p90_us": 280.0607979297638,
+        "inner_iterations": 4
+      }
+    },
+    {
+      "id": "ltx23_stage2_audio_self_q126_k126_d2048",
+      "status": "PASSED",
+      "speedup": 3.267933379379844,
+      "production": true,
+      "baseline": {
+        "median_us": 207.73600041866302,
+        "mean_us": 209.7617153610502,
+        "std_us": 7.248469130895472,
+        "min_us": 202.9999941587448,
+        "p10_us": 203.80399525165558,
+        "p90_us": 218.12400221824646,
+        "inner_iterations": 8
+      },
+      "candidate": {
+        "median_us": 63.568003475666046,
+        "mean_us": 63.17057141235897,
+        "std_us": 0.9014402110906968,
+        "min_us": 61.92399933934212,
+        "p10_us": 62.14120015501976,
+        "p90_us": 64.02799934148788,
+        "inner_iterations": 16
+      }
+    },
+    {
+      "id": "ltx23_stage2_audio_to_video_q6144_k126_d2048",
+      "status": "PASSED",
+      "speedup": 2.4863712370105593,
+      "production": true,
+      "baseline": {
+        "median_us": 207.61199295520782,
+        "mean_us": 208.16285695348466,
+        "std_us": 2.573230505904548,
+        "min_us": 204.1040062904358,
+        "p10_us": 205.70960342884064,
+        "p90_us": 210.9279990196228,
+        "inner_iterations": 8
+      },
+      "candidate": {
+        "median_us": 83.49999785423279,
+        "mean_us": 83.45657161303929,
+        "std_us": 0.27471603267604927,
+        "min_us": 82.93800055980682,
+        "p10_us": 83.15639942884445,
+        "p90_us": 83.69759917259216,
+        "inner_iterations": 16
+      }
+    },
+    {
+      "id": "ltx23_stage2_video_to_audio_q126_k6144_d2048",
+      "status": "PASSED",
+      "speedup": 2.484718259801992,
+      "production": true,
+      "baseline": {
+        "median_us": 208.12000334262848,
+        "mean_us": 212.27600106171198,
+        "std_us": 8.642518527096128,
+        "min_us": 204.09999787807465,
+        "p10_us": 204.73120212554932,
+        "p90_us": 221.8528002500534,
+        "inner_iterations": 8
+      },
+      "candidate": {
+        "median_us": 83.76000076532364,
+        "mean_us": 83.71257036924362,
+        "std_us": 0.26049896367047687,
+        "min_us": 83.187997341156,
+        "p10_us": 83.45679938793182,
+        "p90_us": 83.92679840326309,
+        "inner_iterations": 16
+      }
+    },
+    {
+      "id": "ltx23_hq_pr29399_stage1_video_self_q8160_k8160_d4096",
+      "status": "PASSED",
+      "speedup": 1.5307997190163407,
+      "production": true,
+      "baseline": {
+        "median_us": 539.7599935531616,
+        "mean_us": 546.8754427773612,
+        "std_us": 12.232176106894531,
+        "min_us": 536.0640287399292,
+        "p10_us": 536.7072224617004,
+        "p90_us": 559.7856163978577,
+        "inner_iterations": 2
+      },
+      "candidate": {
+        "median_us": 352.60000824928284,
+        "mean_us": 352.56228702408924,
+        "std_us": 2.526734521173497,
+        "min_us": 347.7360010147095,
+        "p10_us": 350.0447928905487,
+        "p90_us": 354.800009727478,
+        "inner_iterations": 4
+      }
+    },
+    {
+      "id": "ltx23_hq_pr29399_stage1_audio_to_video_q8160_k126_d2048",
+      "status": "PASSED",
+      "speedup": 2.1765517377308794,
+      "production": true,
+      "baseline": {
+        "median_us": 227.0839959383011,
+        "mean_us": 233.9159995317459,
+        "std_us": 21.781758636600543,
+        "min_us": 213.9279991388321,
+        "p10_us": 214.18000161647797,
+        "p90_us": 260.47279834747314,
+        "inner_iterations": 8
+      },
+      "candidate": {
+        "median_us": 104.33200001716614,
+        "mean_us": 104.87257157053266,
+        "std_us": 1.0284770714312836,
+        "min_us": 104.18999940156937,
+        "p10_us": 104.19720113277435,
+        "p90_us": 106.21559917926788,
+        "inner_iterations": 16
+      }
+    },
+    {
+      "id": "ltx23_hq_pr29399_stage1_video_to_audio_q126_k8160_d2048",
+      "status": "PASSED",
+      "speedup": 2.0559309063582463,
+      "production": true,
+      "baseline": {
+        "median_us": 213.6400043964386,
+        "mean_us": 215.04971810749598,
+        "std_us": 7.2833965929430216,
+        "min_us": 206.3000053167343,
+        "p10_us": 206.4728021621704,
+        "p90_us": 222.8912055492401,
+        "inner_iterations": 8
+      },
+      "candidate": {
+        "median_us": 103.91400009393692,
+        "mean_us": 103.92314195632935,
+        "std_us": 0.25903891338564555,
+        "min_us": 103.45999896526337,
+        "p10_us": 103.65079790353775,
+        "p90_us": 104.15879786014557,
+        "inner_iterations": 16
+      }
+    },
+    {
+      "id": "ltx23_hq_pr29399_stage2_video_self_q32640_k32640_d4096",
+      "status": "PASSED",
+      "speedup": 1.4138061218204248,
+      "production": true,
+      "baseline": {
+        "median_us": 1909.7919464111328,
+        "mean_us": 1912.9051310675484,
+        "std_us": 9.477722975593613,
+        "min_us": 1901.1839628219604,
+        "p10_us": 1904.908800125122,
+        "p90_us": 1925.7984161376953,
+        "inner_iterations": 1
+      },
+      "candidate": {
+        "median_us": 1350.816011428833,
+        "mean_us": 1352.374860218593,
+        "std_us": 14.038216601931166,
+        "min_us": 1334.3360424041748,
+        "p10_us": 1336.0447883605957,
+        "p90_us": 1368.614411354065,
+        "inner_iterations": 1
+      }
+    },
+    {
+      "id": "ltx23_hq_pr29399_stage2_audio_to_video_q32640_k126_d2048",
+      "status": "PASSED",
+      "speedup": 1.5227317916201377,
+      "production": true,
+      "baseline": {
+        "median_us": 543.6639785766602,
+        "mean_us": 543.4399928365435,
+        "std_us": 4.686395055107553,
+        "min_us": 537.3759865760803,
+        "p10_us": 538.5663866996765,
+        "p90_us": 548.2752084732056,
+        "inner_iterations": 2
+      },
+      "candidate": {
+        "median_us": 357.03200101852417,
+        "mean_us": 357.1691470486777,
+        "std_us": 1.0873193159314818,
+        "min_us": 355.19200563430786,
+        "p10_us": 356.26240372657776,
+        "p90_us": 358.1712007522583,
+        "inner_iterations": 4
+      }
+    },
+    {
+      "id": "ltx23_hq_pr29399_stage2_video_to_audio_q126_k32640_d2048",
+      "status": "PASSED",
+      "speedup": 1.628363671108263,
+      "production": true,
+      "baseline": {
+        "median_us": 589.1680121421814,
+        "mean_us": 591.6068724223545,
+        "std_us": 9.397695517016695,
+        "min_us": 579.8079967498779,
+        "p10_us": 582.803201675415,
+        "p90_us": 601.6736268997192,
+        "inner_iterations": 2
+      },
+      "candidate": {
+        "median_us": 361.8159890174866,
+        "mean_us": 363.02742787769864,
+        "std_us": 3.5212119174445218,
+        "min_us": 359.49599742889404,
+        "p10_us": 359.6928000450134,
+        "p90_us": 366.57599210739136,
+        "inner_iterations": 4
+      }
+    }
+  ]
+}

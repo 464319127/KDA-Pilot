@@ -226,6 +226,33 @@ def _candidate_reject_tests(device):
     noncontig_out = torch.empty(2, 16, hidden * 2, dtype=torch.bfloat16, device=device)[..., ::2]
     expect_reject("reject_out_noncontig", base_in, [noncontig_out, base_out[1]])
 
+    # norm-module device / normalized_shape (must reject up front, not raise ATen RuntimeError)
+    expect_reject("reject_norm_weight_cpu",
+                  mut(q_norm=torch.nn.RMSNorm(hidden, eps=1e-6, dtype=torch.bfloat16, device=cpu)), base_out)
+    expect_reject("reject_norm_wrong_normshape",
+                  mut(q_norm=torch.nn.RMSNorm(hidden // 2, eps=1e-6, dtype=torch.bfloat16, device=device)), base_out)
+
+    # Odd head_dim is an unsupported split-RoPE shape: must reject BEFORE any launch and leave the
+    # (poisoned) outputs untouched. Without the guard the kernel launches num_heads*(head_dim//2)
+    # pairs and leaves the final element of each head unwritten.
+    odd_wl = {"id": "reject_odd_head_dim", "num_heads": 1, "head_dim": 65, "eps": 1e-6, "seed": 77,
+              "shapes": {"q": {"shape": [1, 8, 65], "dtype": "bfloat16"},
+                         "k": {"shape": [1, 8, 65], "dtype": "bfloat16"}}}
+    odd = adapter.make_case(odd_wl, device=device, seed=77)
+    poison = 7.0
+    for o in odd["candidate_outputs"]:
+        o.fill_(poison)
+    try:
+        adapter.call_candidate(odd_wl, odd["inputs"], odd["candidate_outputs"])
+        results.append(("reject_odd_head_dim", "FAIL", "no ValueError raised for odd head_dim"))
+    except ValueError as exc:
+        torch.cuda.synchronize()
+        untouched = all(torch.equal(o, torch.full_like(o, poison)) for o in odd["candidate_outputs"])
+        results.append(("reject_odd_head_dim", "PASS" if untouched else "FAIL",
+                        f"{str(exc)[:60]}; outputs {'untouched' if untouched else 'MODIFIED before reject'}"))
+    except Exception as exc:  # noqa: BLE001
+        results.append(("reject_odd_head_dim", "FAIL", f"wrong exception {type(exc).__name__}: {exc}"))
+
     # mutate-after-accept: the SAME inputs/outputs objects, mutated in place into an
     # unsupported config, must still reject (proves validation is not bypassed by a
     # per-call-skipping cache; validation must run on every call).

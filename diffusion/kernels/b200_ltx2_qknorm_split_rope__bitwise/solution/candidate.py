@@ -28,16 +28,28 @@ def _validate(inputs, outputs):
     eps = float(inputs["eps"])
     num_heads = int(inputs["num_heads"])
     head_dim = int(inputs["head_dim"])
+    if num_heads <= 0:
+        _reject(f"num_heads {num_heads} must be positive")
+    if head_dim <= 0 or head_dim % 2 != 0:
+        _reject(f"head_dim {head_dim} must be a positive even number (split RoPE rotates pairs)")
 
-    # Norm modules: EXACT torch.nn.RMSNorm (subclasses rejected), matching eps, bf16 weight.
-    for name in ("q_norm", "k_norm"):
+    # Norm modules: EXACT torch.nn.RMSNorm (subclasses rejected), matching eps and bf16 weight,
+    # with normalized_shape / weight shape / device matching the corresponding q or k tensor.
+    for name, x in (("q_norm", q), ("k_norm", k)):
         m = inputs[name]
         if type(m) is not torch.nn.RMSNorm:
             _reject(f"{name} is {type(m).__name__}, not torch.nn.RMSNorm")
         if m.eps is None or float(m.eps) != eps:
             _reject(f"{name}.eps {m.eps} != {eps}")
-        if m.weight.dtype != _BF16:
-            _reject(f"{name}.weight dtype {m.weight.dtype} != torch.bfloat16")
+        w = m.weight
+        if w.dtype != _BF16:
+            _reject(f"{name}.weight dtype {w.dtype} != torch.bfloat16")
+        if tuple(m.normalized_shape) != (x.shape[-1],):
+            _reject(f"{name}.normalized_shape {tuple(m.normalized_shape)} != ({x.shape[-1]},)")
+        if tuple(w.shape) != (x.shape[-1],):
+            _reject(f"{name}.weight shape {tuple(w.shape)} != ({x.shape[-1]},)")
+        if w.device != x.device:
+            _reject(f"{name}.weight device {w.device} != {x.device}")
 
     # q/k tensors.
     for name, x in (("q", q), ("k", k)):

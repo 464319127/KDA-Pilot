@@ -459,7 +459,69 @@ def _nvidia_smi() -> str:
         return f"unavailable: {exc}"
 
 
+def _cmd_line(cmd: list[str], match: str | None = None) -> str:
+    try:
+        out = subprocess.check_output(cmd, text=True, stderr=subprocess.STDOUT, timeout=10).strip()
+        lines = [ln.strip() for ln in out.splitlines() if ln.strip()]
+        if match:
+            for ln in lines:
+                if match.lower() in ln.lower():
+                    return ln
+        return lines[-1] if match else (lines[0] if lines else "")
+    except Exception as exc:
+        return f"unavailable: {exc}"
+
+
+def _candidate_source_hash() -> str:
+    import hashlib
+    h = hashlib.sha256()
+    sol = ROOT / "solution"
+    for name in ("kernel.cu", "build.py", "candidate.py", "__init__.py"):
+        p = sol / name
+        if p.exists():
+            h.update(name.encode())
+            h.update(p.read_bytes())
+    return h.hexdigest()
+
+
+def _git_info() -> dict[str, Any]:
+    try:
+        commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=str(ROOT),
+                                         text=True, stderr=subprocess.STDOUT, timeout=10).strip()
+        dirty = bool(subprocess.check_output(["git", "status", "--porcelain"], cwd=str(ROOT),
+                                             text=True, stderr=subprocess.STDOUT, timeout=10).strip())
+        return {"commit": commit, "dirty": dirty}
+    except Exception as exc:
+        return {"commit": f"unavailable: {exc}", "dirty": None}
+
+
+def _baseline_commit() -> str:
+    import re
+    try:
+        text = (ROOT / "docs" / "baseline_source.md").read_text()
+        m = re.search(r"Resolved commit SHA[:`* ]+([0-9a-f]{7,40})", text)
+        return m.group(1) if m else "unknown"
+    except Exception:
+        return "unknown"
+
+
+def _gpu_uuid() -> str:
+    try:
+        return str(torch.cuda.get_device_properties(torch.cuda.current_device()).uuid)
+    except Exception:
+        return "unavailable"
+
+
+def _tvm_ffi_version() -> str:
+    try:
+        import tvm_ffi
+        return getattr(tvm_ffi, "__version__", "unknown")
+    except Exception as exc:
+        return f"unavailable: {exc}"
+
+
 def _provenance(args: argparse.Namespace, workloads: list[dict[str, Any]]) -> dict[str, Any]:
+    import os
     return {
         "task_dir": str(ROOT),
         "command": " ".join(sys.argv),
@@ -469,6 +531,16 @@ def _provenance(args: argparse.Namespace, workloads: list[dict[str, Any]]) -> di
         "torch_cuda": torch.version.cuda,
         "cuda_available": torch.cuda.is_available(),
         "gpu": _gpu_name(),
+        "gpu_uuid": _gpu_uuid(),
+        "cuda_visible_devices": os.environ.get("CUDA_VISIBLE_DEVICES"),
+        "remote_gpu_id": os.environ.get("REMOTE_GPU_ID"),
+        "cuda_current_device": (torch.cuda.current_device() if torch.cuda.is_available() else None),
+        "nvcc": _cmd_line(["nvcc", "--version"], match="release"),
+        "host_compiler": _cmd_line(["c++", "--version"]),
+        "tvm_ffi": _tvm_ffi_version(),
+        "candidate_source_sha256": _candidate_source_hash(),
+        "baseline_commit": _baseline_commit(),
+        "git": _git_info(),
         "nvidia_smi_before": _nvidia_smi(),
         "workload_count": len(workloads),
         "settings": {
@@ -570,6 +642,27 @@ def main() -> int:
             "nvidia_smi_after": _nvidia_smi(),
         }
         f.write(json.dumps(summary) + "\n")
+
+    # Compact, committable evidence artifact (provenance + per-row stats + headline; no raw samples,
+    # so it satisfies the provenance requirement without committing a large raw JSONL).
+    def _compact(r: dict[str, Any]) -> dict[str, Any]:
+        out = {k: r[k] for k in ("id", "status", "speedup", "production") if k in r}
+        for side in ("baseline", "candidate"):
+            d = r.get(side)
+            if isinstance(d, dict):
+                out[side] = {k: v for k, v in d.items() if isinstance(v, (int, float))}
+        return out
+
+    summary_path = args.out.parent / "results_summary.json"
+    summary_path.write_text(json.dumps({
+        "provenance": provenance,
+        "headline": summary["headline"],
+        "passed": summary["passed"],
+        "total": summary["total"],
+        "nvidia_smi_after": summary["nvidia_smi_after"],
+        "workloads": [_compact(r) for r in results],
+    }, indent=2) + "\n")
+    print(f"compact summary -> {summary_path}")
 
     print(json.dumps(summary, indent=2))
     return 0 if summary["passed"] == summary["total"] else 1
