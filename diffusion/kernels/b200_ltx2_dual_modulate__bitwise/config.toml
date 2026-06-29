@@ -11,8 +11,20 @@ entry_points = [
 [build]
 language = "cuda"
 destination_passing_style = true
-baseline_entry_point = "baseline/kernel.cu::ltx2_dual_modulate_baseline"
-candidate_entry_point = "solution/kernel.cu::ltx2_dual_modulate_candidate"
+# Both baseline and candidate are full-operation TVM-FFI CUDA entries taking
+# (x, params/temb/table, double eps, outputs last). The baseline runs the eager
+# semantics via ATen (at::rms_norm + dual affine); the candidate computes the same
+# at::rms_norm inside the call path and fuses the dual affine. Validation is shared
+# (ltx2_dual_modulate_common.cuh) so both sides reject identically. Built via
+# tvm_ffi.cpp.load with identical flags (no --use_fast_math).
+baseline_entry_points = [
+  "baseline/kernel.cu::ltx2_dual_modulate_baseline",
+  "baseline/kernel.cu::ltx2_ca_dual_modulate_from_temb_baseline",
+]
+candidate_entry_points = [
+  "solution/kernel.cu::ltx2_dual_modulate_candidate",
+  "solution/kernel.cu::ltx2_ca_dual_modulate_from_temb_candidate",
+]
 
 [correctness]
 bitwise_required = true
