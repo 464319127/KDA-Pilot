@@ -4,6 +4,20 @@ Target GPU: NVIDIA B200. Optimize the SGLang kernel behind:
 
 - `<confirm via capture; profiler family=per_token_group_quant>`
 
+## Environment And Runner
+
+Use the `ion-b200` remote GPU environment for all B200 work. All CUDA, Python,
+pip, nvcc, build, test, benchmark, and profiling commands must run inside the
+existing `sglang_bbuf` Docker container on `ion-b200`.
+
+Before GPU work, inspect `nvidia-smi` and choose a B200 GPU with no active
+compute processes and no meaningful memory occupancy. Export that id as
+`REMOTE_GPU_ID` and use it consistently for baseline, candidate, benchmark,
+profiler, and NCU commands in the current run. Do not run measurements on busy
+cards or directly on the `ion-b200` host.
+
+Launch this task with `CLAUDE_MODEL=fable5`.
+
 **10.9% of total GPU time** on `zai-org/GLM-5.2-FP8` (cookbook-aligned profile, peak
 `random_low`) — a genuine end-to-end target selected by profiler e2e share. Family
 `per_token_group_quant`, category `quant_gemm`.
