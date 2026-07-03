@@ -5,7 +5,7 @@ throughput project** (repo `BBuf/mini-sglang`, branch `glm5.2-support`,
 baseline commit `a26fd6f`). Unlike `llm/` (shapes harvested from live serving
 at mixed concurrency), every task here has a **single fixed decode
 configuration**, so kernels can be specialized aggressively (constant shapes,
-persistent kernels, full-占卡 tuning).
+persistent kernels, whole-GPU tuning).
 
 ## Deployment being optimized
 
