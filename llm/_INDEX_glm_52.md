@@ -2,6 +2,9 @@
 
 - Model: `zai-org/GLM-5.2-FP8` (tp=8)
 - Cookbook cmd: `python -m sglang.launch_server --model-path zai-org/GLM-5.2-FP8 --tp 8 --trust-remote-code --mem-fraction-static 0.8`
+- Runner: `ion-b200` / `sglang_bbuf`; select a verified-idle B200 GPU before
+  any CUDA, Python, build, test, benchmark, or profiling command.
+- Agent model: `fable5` (`launch.sh` defaults `CLAUDE_MODEL=fable5`)
 - Kept: max GPU-time share `>= 3.0%`, non-comm, non-trtllm-MoE
 
 | task | category | family | max % GPU | peak scenario | clean op |
