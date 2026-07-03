@@ -6,14 +6,17 @@
   kernels only, fixed decode shapes.
 - Tier = accept-preservation tier (A bitwise / B accept-gated), see README rule 3.
 
-| pri | task | family | round share | tier | headroom (est.) |
-|---|---|---|---:|---|---|
-| P0 | `glm52_bs1__fused_moe_decode_fp8` | moe | ~23% | B | ~1.3 ms/round → +20 tok/s |
-| P0 | `glm52_bs1__oneshot_allreduce_bf16` | comm | ~11% | B (comm reorder ≈ NVLS band, validate) | ~0.9 ms → +15 tok/s |
-| P1 | `glm52_bs1__skinny_gemm_bf16_tc` | quant_gemm | ~14% | B | ~0.6 ms → +10 tok/s |
-| P1 | `glm52_bs1__mtp_chain_megakernel` | spec_decode | ~11% | B (MTP side: safe) | ~0.8 ms → +13 tok/s |
-| P2 | `glm52_bs1__mla_decode_bs_consistent` | attention | ~8% | B + consistency unlock | ~0.4 ms → +7; bs-consistency could unlock k>7 (+8-10%) |
-| P2 | `glm52_bs1__silu_mul_quant_fp8_bitwise` | moe glue | ~2% | A (bitwise required) | ~0.25 ms → +4 tok/s |
+Priorities re-ranked for the NVFP4 base config (routed experts already run
+the TileRT-class trtllm fp4 kernel; dense/attention/comm are now the round):
+
+| pri | task | family | tier | notes |
+|---|---|---|---|---|
+| P0 | `glm52_bs1__skinny_gemm_bf16_tc` | quant_gemm | B | NVFP4 keeps ALL dense projections bf16 → biggest single-GPU share now |
+| P0 | `glm52_bs1__oneshot_allreduce_bf16` | comm | B (validate) | unchanged: 2 ARs/layer, NCCL NVLS 12.1 µs → target ≤8 µs |
+| P1 | `glm52_bs1__mtp_chain_megakernel` | spec_decode | B (draft side: safe) | MTP layer is all-bf16 under NVFP4 → cleaner megakernel target |
+| P1 | `glm52_bs1__mla_decode_bs_consistent` | attention | B + consistency unlock | unchanged; bs-consistency may unlock k>6/7 |
+| P2 | `glm52_bs1__fused_moe_decode_fp8` | moe | B | **fp8-config only** (NVFP4 MoE = trtllm fp4 kernel, ~21 µs-class already) |
+| P3 | `glm52_bs1__silu_mul_quant_fp8_bitwise` | moe glue | A | **fp8-config only** (triton path unused under NVFP4) |
 
 ## Known results to not repeat (all measured on this exact setup)
 

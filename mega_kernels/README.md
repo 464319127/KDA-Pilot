@@ -9,8 +9,15 @@ persistent kernels, whole-GPU tuning).
 
 ## Deployment being optimized
 
-- Model `zai-org/GLM-5.2-FP8` (751B MoE, 78 layers + 1 MTP layer), TP=8 on
-  8x NVIDIA B300 SXM6 (sm_103), NVLink NVLS.
+- Model **`nvidia/GLM-5.2-NVFP4`** (751B MoE, 78 layers + 1 MTP layer), TP=8.
+  NVFP4 quantizes ONLY the routed experts of layers 3-77 (W4A4, block-16 +
+  per-expert global scales); attention, dense layers 0-2, shared experts,
+  lm_head and the whole MTP draft layer stay **bf16** — which moves the
+  optimization weight toward dense GEMMs / attention / comm and away from
+  the MoE GEMMs (trtllm fp4 block-scale kernel is already TileRT-class).
+  The FP8 checkpoint (`zai-org/GLM-5.2-FP8`) remains a supported config;
+  fp8-specific tasks below are marked as such. Dev/benchmark hardware:
+  B300 (sm_103) primary, B200 (sm_100) devbox acceptable for kernel work.
 - MTP speculative decode via cookbook-compatible flags (mini-sglang
   `7a747ee`): `--speculative-algorithm EAGLE` with the project default
   **k=6 / 7 draft tokens** (`--speculative-num-steps 6
