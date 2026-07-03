@@ -18,7 +18,4 @@ if [[ -z "${KDA_BASE_BRANCH:-}" ]]; then
     fi
   fi
 fi
-# Round-robin GPU assignment across the 8 B200 cards (override by exporting KDA_GPU_ID).
-KDA_GPU_ID="${KDA_GPU_ID:-0}"
-export KDA_GPU_ID
 exec "$SCRIPT_DIR/../launch_kda_kernel_task.sh" "$TASK_DIR" "$@"

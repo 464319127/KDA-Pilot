@@ -32,6 +32,9 @@ Environment overrides:
   KDA_LAUNCHER_NAME     Friendly launcher/task-card name, normally set by
                         scripts/launch_kernels/kXX_*.sh
   KDA_TASK_LABEL        Override the friendly label used for branch/worktree names
+  KDA_GPU_ID            Optional explicit remote GPU id to pin.
+                        Leave unset to let the task autonomously select a
+                        completely idle GPU on the matching remote host.
   KDA_BOOTSTRAP_DRAFT=0 Skip automatic .humanize/kernel-agent/draft.md creation
   KDA_NO_CLAUDE=1       Create the worktree and print commands without launching Claude
   IS_SANDBOX            Forwarded to the spawned Claude process (default: 1).
@@ -102,6 +105,17 @@ case "$TASK_SLUG" in
     REMOTE_HOST_HINT="the task prompt's target host"
     ;;
 esac
+
+# Optional pinned GPU. Leave KDA_GPU_ID unset for the default autonomous idle-GPU
+# selection policy; set it only when the user explicitly wants a fixed GPU id.
+GPU_PIN_DESC=""
+if [[ -n "${KDA_GPU_ID:-}" ]]; then
+  if [[ ! "$KDA_GPU_ID" =~ ^[0-9]+$ ]]; then
+    echo "error: KDA_GPU_ID must be a non-negative integer GPU id: $KDA_GPU_ID" >&2
+    exit 2
+  fi
+  GPU_PIN_DESC=" id=$KDA_GPU_ID"
+fi
 
 bash_is_kda_safe() {
   local candidate="$1"
@@ -189,6 +203,7 @@ echo "repo:      $REPO_ROOT"
 echo "launcher:  $LAUNCHER_NAME"
 echo "label:     $TASK_LABEL"
 echo "task:      $TASK_DIR"
+echo "gpu:       $TARGET_GPU_LABEL$GPU_PIN_DESC ($REMOTE_HOST_HINT)"
 echo "base:      $BASE_BRANCH"
 echo "review:    $REVIEW_BASE"
 echo "branch:    $BRANCH"
@@ -205,6 +220,15 @@ git -C "$WORKTREE_ROOT" submodule update --init --recursive \
   || echo "warning: submodule init failed; run 'git submodule update --init --recursive' in the worktree" >&2
 
 cd "$WORKTREE_ROOT/$TASK_DIR"
+
+if [[ -n "${KDA_GPU_ID:-}" ]]; then
+  GPU_SELECTION_POLICY="- This task is explicitly pinned to ${TARGET_GPU_LABEL} GPU id ${KDA_GPU_ID}. Export REMOTE_GPU_ID=${KDA_GPU_ID} and use exactly that GPU for baseline, candidate, benchmark, profiler, and NCU commands in this run.
+- Before measuring, verify GPU ${KDA_GPU_ID} is completely idle: no active compute processes, utilization around 0-1%, and memory at the driver baseline / near empty. If it is busy, keep polling that exact GPU until it becomes completely idle. Do not ask the user, do not measure on another GPU, and do not run on a busy card unless the user explicitly changes KDA_GPU_ID."
+else
+  GPU_SELECTION_POLICY="- Before any GPU work, autonomously inspect the matching remote host and select a completely idle ${TARGET_GPU_LABEL} GPU: no active compute processes, utilization around 0-1%, and memory at the driver baseline / near empty. Export that id as REMOTE_GPU_ID and use it consistently for baseline, candidate, benchmark, profiler, and NCU commands in the current run.
+- If no completely idle ${TARGET_GPU_LABEL} GPU is available, keep polling with short reconnecting nvidia-smi checks until one appears. Do not ask the user, do not switch hosts, and do not run measurements on a busy GPU.
+- Re-check the selected GPU immediately before and after every correctness, benchmark, profiler, or NCU run. Discard performance data from any run whose before/after checks are not completely idle except for the current task process itself."
+fi
 
 if [[ "${KDA_BOOTSTRAP_DRAFT:-1}" != "0" ]]; then
   mkdir -p .humanize/kernel-agent
@@ -299,14 +323,7 @@ into the plan unless the source prompt explicitly says otherwise:
   to the remote GPU phase autonomously.
 - Use the matching remote host (${REMOTE_HOST_HINT}) unless the source prompt
   provides a stricter host choice.
-- Before GPU work, inspect the remote GPU state and select a
-  ${TARGET_GPU_LABEL} GPU with no active compute processes and no meaningful
-  memory occupancy. Export that id as \`REMOTE_GPU_ID\` and use it consistently
-  for baseline, candidate, benchmark, profiler, and NCU commands in the current
-  run.
-- If no idle ${TARGET_GPU_LABEL} GPU is available, wait or retry briefly. Ask
-  before changing the benchmark environment or running measurements on a busy
-  GPU.
+${GPU_SELECTION_POLICY}
 - Treat minimal, reversible, task-owned setup work as approved: creating remote
   workspaces, checking out commits, building inside the task workspace,
   installing local editable packages there, collecting profiler traces, and

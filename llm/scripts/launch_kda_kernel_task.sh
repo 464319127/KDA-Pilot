@@ -117,8 +117,8 @@ case "${TASK_ARCH}::/$TASK_DIR/" in
     ;;
 esac
 
-# Optional pinned GPU. Per-kernel wrappers set KDA_GPU_ID to a round-robin id so
-# kernels spread across GPUs 0-7; unset means the task auto-selects an idle GPU.
+# Optional pinned GPU. Leave KDA_GPU_ID unset for the default autonomous idle-GPU
+# selection policy; set it only when the user explicitly wants a fixed GPU id.
 GPU_PIN_DESC=""
 if [[ -n "${KDA_GPU_ID:-}" ]]; then
   if [[ ! "$KDA_GPU_ID" =~ ^[0-9]+$ ]]; then
@@ -233,11 +233,12 @@ git -C "$WORKTREE_ROOT" submodule update --init --recursive \
 cd "$WORKTREE_ROOT/$TASK_DIR"
 
 if [[ -n "${KDA_GPU_ID:-}" ]]; then
-  GPU_SELECTION_POLICY="- This task is pinned to ${TARGET_GPU_LABEL} GPU id ${KDA_GPU_ID} (the launchers assign the kernels across GPUs 0-7 in a round robin). Export REMOTE_GPU_ID=${KDA_GPU_ID} and use exactly that GPU for baseline, candidate, benchmark, profiler, and NCU commands in this run.
-- Before measuring, verify GPU ${KDA_GPU_ID} is idle (no active compute processes, no meaningful memory occupancy). If it is busy, wait or retry briefly; ask before measuring on a different GPU or changing the benchmark environment."
+  GPU_SELECTION_POLICY="- This task is explicitly pinned to ${TARGET_GPU_LABEL} GPU id ${KDA_GPU_ID}. Export REMOTE_GPU_ID=${KDA_GPU_ID} and use exactly that GPU for baseline, candidate, benchmark, profiler, and NCU commands in this run.
+- Before measuring, verify GPU ${KDA_GPU_ID} is completely idle: no active compute processes, utilization around 0-1%, and memory at the driver baseline / near empty. If it is busy, keep polling that exact GPU until it becomes completely idle. Do not ask the user, do not measure on another GPU, and do not run on a busy card unless the user explicitly changes KDA_GPU_ID."
 else
-  GPU_SELECTION_POLICY="- Before GPU work, inspect the remote GPU state and select a ${TARGET_GPU_LABEL} GPU with no active compute processes and no meaningful memory occupancy. Export that id as REMOTE_GPU_ID and use it consistently for baseline, candidate, benchmark, profiler, and NCU commands in the current run.
-- If no idle ${TARGET_GPU_LABEL} GPU is available, wait or retry briefly. Ask before changing the benchmark environment or running measurements on a busy GPU."
+  GPU_SELECTION_POLICY="- Before any GPU work, autonomously inspect the matching remote host and select a completely idle ${TARGET_GPU_LABEL} GPU: no active compute processes, utilization around 0-1%, and memory at the driver baseline / near empty. Export that id as REMOTE_GPU_ID and use it consistently for baseline, candidate, benchmark, profiler, and NCU commands in the current run.
+- If no completely idle ${TARGET_GPU_LABEL} GPU is available, keep polling with short reconnecting nvidia-smi checks until one appears. Do not ask the user, do not switch hosts, and do not run measurements on a busy GPU.
+- Re-check the selected GPU immediately before and after every correctness, benchmark, profiler, or NCU run. Discard performance data from any run whose before/after checks are not completely idle except for the current task process itself."
 fi
 
 if [[ "${KDA_BOOTSTRAP_DRAFT:-1}" != "0" ]]; then
