@@ -34,7 +34,7 @@ use_isolated_runner = true
 required_matched_ratio = 1.0
 graph_timed = true
 multi_process = 8
-targets_us = { M6 = 8.0, M8 = 8.0, M1 = 6.0 }
+targets_us = { M7 = 8.0, M8 = 8.0, M1 = 6.0 }
 
 [deploy]
 tier = "B"

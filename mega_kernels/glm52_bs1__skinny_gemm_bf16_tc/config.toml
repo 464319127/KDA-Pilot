@@ -18,7 +18,7 @@ concurrency = "1"
 
 [shapes]
 dtype = "bfloat16"
-M = [1, 6, 8]
+M = [1, 7, 8]
 KN = [[6144, 2112], [1536, 960], [640, 6144], [6144, 512], [256, 6144], [12288, 6144], [6144, 18944]]
 
 [build]
@@ -33,7 +33,7 @@ num_trials = 7
 use_isolated_runner = true
 required_matched_ratio = 1.0
 graph_timed = true
-target_geomean_speedup = { M6 = 1.25, M8 = 1.25, M1 = 1.15 }
+target_geomean_speedup = { M7 = 1.25, M8 = 1.25, M1 = 1.15 }
 oracle_rel_err_max = 2e-3
 
 [deploy]
