@@ -11,14 +11,19 @@ persistent kernels, whole-GPU tuning).
 
 - Model `zai-org/GLM-5.2-FP8` (751B MoE, 78 layers + 1 MTP layer), TP=8 on
   8x NVIDIA B300 SXM6 (sm_103), NVLink NVLS.
-- MTP speculative decode, cookbook-aligned (sglang GLM-5.2 FP8 cookbook uses
+- MTP speculative decode, **cookbook-aligned as of mini-sglang `6e642b7`**:
   `--speculative-algorithm EAGLE --speculative-num-steps 5
-  --speculative-eagle-topk 1 --speculative-num-draft-tokens 6`; mini-sglang
-  equivalent `MINISGL_SPEC_STEPS=5..7`, chain topk 1, verify batch = steps+1).
-- Reference config for all shapes below: **k=7 drafts, verify batch M=8,
-  chain steps M=1**, page_size 64, greedy.
-- Baseline end-to-end: **292.6 tok/s decode** (accept 5.16, round ≈ 17.6 ms).
-  TileRT (closed reference) ≈ 500 tok/s on the same hardware class.
+  --speculative-eagle-topk 1 --speculative-num-draft-tokens 6`
+  (chain topk 1, verify batch = steps+1 = 6). The same flags accept 7/8 for
+  the tuned k=7 config.
+- Reference config for shapes: **k=5 drafts → verify batch M=6 is the hot
+  shape**, chain steps M=1, page_size 64, greedy. Kernels must still handle
+  M ≤ 8 (k=7 config, MTP extend after full accepts) — benchmark M=6 as the
+  primary point and report M ∈ {1, 6, 8}.
+- Baseline end-to-end: **292.6 tok/s** at k=7 (accept 5.16, round ≈ 17.6 ms);
+  cookbook k=5 expected ~268-275 tok/s (measured k-sweep interpolation;
+  exact number pending node access). TileRT (closed reference) ≈ 500 tok/s
+  on the same hardware class.
 
 ## Fixed shapes (memorize; every task pins a subset)
 
@@ -28,7 +33,7 @@ persistent kernels, whole-GPU tuning).
 | E | 256 | routed experts per rank (TP slices the FFN dim) |
 | I | 256 | routed expert intermediate per rank |
 | topk | 8 | experts per token (noaux_tc sigmoid gate, routed_scaling folded in weights) |
-| M | 1..8 | decode rows: verify=8, MTP extend=1..8, chain=1 |
+| M | 1..8 | decode rows: verify=6 (cookbook k=5; 8 at k=7), MTP extend=1..M_verify, chain=1 |
 | kv_lora / rope | 512 / 64 | MLA compressed KV + rope dims (combined pool, page 64) |
 | q heads (rank) | 16 | q heads per rank after TP=8 |
 

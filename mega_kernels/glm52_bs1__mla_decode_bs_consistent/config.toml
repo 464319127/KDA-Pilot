@@ -17,7 +17,7 @@ dataset = "greedy essay 256 tok"
 concurrency = "1"
 
 [shapes]
-B = [1, 8, 9, 10]
+B = [1, 6, 8, 9, 10]  # verify B=6 at cookbook k=5; consistency set still spans 1..10
 heads = 16
 head_dim_ckv = 512
 head_dim_kpe = 64

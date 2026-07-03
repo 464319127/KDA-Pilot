@@ -24,7 +24,7 @@ H = 6144
 E = 256
 I = 256
 topk = 8
-M = [1, 2, 3, 4, 5, 6, 7, 8]
+M = [1, 2, 3, 4, 5, 6, 7, 8]  # verify M=6 at cookbook k=5 is the hot shape; keep M<=8 support
 weight_dtype = "float8_e4m3fn"
 scale_block = [128, 128]
 
@@ -40,7 +40,7 @@ num_trials = 7
 use_isolated_runner = true
 required_matched_ratio = 1.0
 graph_timed = true
-targets_us = { M1 = 14.0, M8 = 48.0 }
+targets_us = { M1 = 14.0, M6 = 40.0, M8 = 48.0 }
 oracle_rel_err_max = 5e-3
 
 [deploy]
