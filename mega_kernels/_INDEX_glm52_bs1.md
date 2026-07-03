@@ -18,6 +18,19 @@ the TileRT-class trtllm fp4 kernel; dense/attention/comm are now the round):
 | P2 | `glm52_bs1__fused_moe_decode_fp8` | moe | B | **fp8-config only** (NVFP4 MoE = trtllm fp4 kernel, ~21 µs-class already) |
 | P3 | `glm52_bs1__silu_mul_quant_fp8_bitwise` | moe glue | A | **fp8-config only** (triton path unused under NVFP4) |
 
+## B200 critical-path profile (2026-07-03, fp4 k=5, torch timeline)
+
+Main stream 94% util (compute-bound, not launch-bound). GPU-time split:
+NCCL AR 42% (mostly cross-GPU sync spin — swapping AR impl saved only 6%,
+NOT the lever), dense nvjet GEMM 18% (near-roofline: lm_head 6.37 TB/s,
+eh_proj 5.87 — little headroom, DEMOTES skinny_gemm on B200), fp4 MoE 8%
+(trtllm, done), MLA 7%, glue copy/cat/elem 6% (23k tiny kernels — fusion
+target), rmsnorm 5.5%, router_gemv 3.9% (sm_100 penalty, ~5x worse than
+B300). The 1.7x gap to sglang lives in draft/verify OVERLAP (EAGLE hides
+draft behind verify; mini runs them serial) + glue/norm fusion, not dense
+GEMM or AR. Re-prioritize: mtp_chain_megakernel + a glue/norm fusion task
+over skinny_gemm for the NVFP4/B200 config.
+
 ## Known results to not repeat (all measured on this exact setup)
 
 - CUDA-core skinny GEMV loses to cuBLAS/nvjet at every decode dense shape
