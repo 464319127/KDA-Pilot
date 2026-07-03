@@ -48,6 +48,20 @@ the full shape grid and random seeds, poison-buffer included.
   (pattern proven by `tiny_align`, see mini-sglang
   `python/minisgl/kernel/moe_glue.py`).
 
+## Hardware access (B300)
+
+Full runbook: `../docs/b300_access.md`. Single idle GPU suffices; the bitwise
+check runs anywhere with sgl_kernel, the perf target is B300-specific:
+
+```bash
+export PATH="$HOME/.local/bin:$PATH"; export RADIX_API=https://nodes.sglang.io
+radix assign verda-b300-fin-03-3       # free re-assign whenever the 4h lease lapses
+ssh -i ~/.ssh/id_ed25519 -J ubuntu@95.133.252.66 bbuf@light-face-hides-fin-03-3
+docker exec -it sglang_new bash        # CUDA_VISIBLE_DEVICES=7; sgl_kernel baselines preinstalled
+```
+
+Sync via base64-over-ssh; check `nvidia-smi` for the glm_pd tenant first.
+
 Follow `../../llm/docs/llm_kernel_optimization_rules.md` +
 `../../llm/docs/llm_correctness_contract.md`. Baseline = sglang's
 `silu_and_mul` + `sglang_per_token_group_quant_fp8` sources (copy, record

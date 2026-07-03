@@ -79,6 +79,15 @@ subtree-specific overrides:
    sufficient; real-checkpoint scales vary ~1e-4..1e-1 so sample block scales
    log-uniformly in that range, not uniform-narrow.
 
+## Getting the hardware
+
+Every task's `prompt.md` has a "Hardware access (B300)" section with the
+inline commands; the full runbook (lease mechanics, bastion quirks, tenant
+contention, file sync, GPU budget per task type) is `docs/b300_access.md`.
+TL;DR: `radix assign verda-b300-fin-03-3` (free, 4h leases, re-assign on
+every lapse) → `ssh -J ubuntu@95.133.252.66 bbuf@light-face-hides-fin-03-3`
+→ `docker exec -it sglang_new bash`.
+
 ## Task index
 
 See `_INDEX_glm52_bs1.md` for the ranked list with evidence.

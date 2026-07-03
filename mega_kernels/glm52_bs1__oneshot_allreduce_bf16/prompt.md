@@ -53,6 +53,24 @@ o_proj/MoE output directly into it — design the API as
 Correctness oracle: torch.distributed all_reduce fp32 reference, plus a
 determinism check (two replays, bitwise-equal outputs).
 
+## Hardware access (B300)
+
+Full runbook: `../docs/b300_access.md`. **This task needs the WHOLE 8-GPU node**
+(NVLink NVLS + 8 processes):
+
+```bash
+export PATH="$HOME/.local/bin:$PATH"; export RADIX_API=https://nodes.sglang.io
+radix assign verda-b300-fin-03-3       # free re-assign on every lease lapse (4h, no extend possible)
+ssh -i ~/.ssh/id_ed25519 -J ubuntu@95.133.252.66 bbuf@light-face-hides-fin-03-3
+nvidia-smi                              # ALL 8 GPUs must be free (glm_pd tenant grabs them at times -> use fin-03-2/-4)
+docker exec sglang_new bash -c 'pkill -9 -f "minisg[l]"; pkill -9 -f "spawn_mai[n]"'  # stop our server first
+docker exec -it sglang_new bash        # torchrun --nproc_per_node 8 bench/...
+```
+
+Long multi-process benches die with the SSH session — always `docker exec -d`
++ log file, and re-assign the lease before the 4h mark. File sync is
+base64-over-ssh (no push creds on the node).
+
 Follow `../../llm/docs/llm_kernel_optimization_rules.md` and
 `../../llm/docs/llm_correctness_contract.md`. Prior-art autopsy of the failed
 LD/ST version: mini-sglang `python/minisgl/distributed/impl.py`

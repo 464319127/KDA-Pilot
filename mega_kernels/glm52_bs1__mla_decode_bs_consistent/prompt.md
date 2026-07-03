@@ -59,5 +59,22 @@ row-output equality for the same (q, kv_len) across B = 1, 8, 9, 10.
   (`_bind_capture_buffers`, lean decode metadata) — the candidate slots in
   behind `MINISGL_MLA_BACKEND`.
 
+## Hardware access (B300)
+
+Full runbook: `../docs/b300_access.md`. Kernel loop fits on ONE idle GPU
+(attention is per-rank; the heads-per-rank geometry is already in the shapes):
+
+```bash
+export PATH="$HOME/.local/bin:$PATH"; export RADIX_API=https://nodes.sglang.io
+radix assign verda-b300-fin-03-3       # free re-assign after every 4h lease lapse
+ssh -i ~/.ssh/id_ed25519 -J ubuntu@95.133.252.66 bbuf@light-face-hides-fin-03-3
+docker exec -it sglang_new bash        # CUDA_VISIBLE_DEVICES=7; flashinfer with sm_100f cubins preinstalled
+```
+
+Do not "upgrade" flashinfer casually in `sglang_new` — the
+flashinfer/flashinfer-cubin pair must match, and TGV / cutlass_mla have no
+sm_103 image. The k>7 unlock validation is a full 8-GPU server A/B
+(see `docs/profile_evidence.md`).
+
 Tier B. Follow `../../llm/docs/llm_kernel_optimization_rules.md` +
 `../../llm/docs/llm_correctness_contract.md`.

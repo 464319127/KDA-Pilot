@@ -52,6 +52,24 @@ bitwise hidden match NOT required — draft side).
   this in-graph already; keep it on-GPU).
 - KV append is 576 bf16 per step — trivial store, keep it in the kernel.
 
+## Hardware access (B300)
+
+Full runbook: `../docs/b300_access.md`. **Whole 8-GPU node required** (TP=8
+weights + 2 all-reduces per chain step):
+
+```bash
+export PATH="$HOME/.local/bin:$PATH"; export RADIX_API=https://nodes.sglang.io
+radix assign verda-b300-fin-03-3       # free re-assign on lease lapse (4h, cannot extend)
+ssh -i ~/.ssh/id_ed25519 -J ubuntu@95.133.252.66 bbuf@light-face-hides-fin-03-3
+nvidia-smi                              # all 8 free? (glm_pd tenant; fall back to fin-03-2/-4)
+docker exec -it sglang_new bash        # weights /data/bbuf/glm52_real, repo /data/bbuf/repos/mini-sglang
+```
+
+The baseline chain graph only exists inside a live mini-sglang server — for
+isolated timing, replay the captured chain via the harness you build in
+`bench/` (extract the MTP layer weights once from the rank shards). Launch
+servers detached (`docker exec -d`, log to /data/bbuf), never via ssh `&`.
+
 Follow `../../llm/docs/llm_kernel_optimization_rules.md` +
 `../../llm/docs/llm_correctness_contract.md`. Baseline source = mini-sglang
 `python/minisgl/engine/graph.py::_capture_mtp_chain` + the layer modules it

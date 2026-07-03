@@ -47,6 +47,20 @@ template specialized per shape (constexpr K/N) is fine — shapes never change.
 - tcgen05 MMA with bf16 → fp32 TMEM accumulate, or wgmma sm_90 path if
   simpler — both compile for sm_103.
 
+## Hardware access (B300)
+
+Full runbook: `../docs/b300_access.md`. Single idle GPU suffices:
+
+```bash
+export PATH="$HOME/.local/bin:$PATH"; export RADIX_API=https://nodes.sglang.io
+radix assign verda-b300-fin-03-3       # free re-assign whenever SSH says Permission denied (4h leases)
+ssh -i ~/.ssh/id_ed25519 -J ubuntu@95.133.252.66 bbuf@light-face-hides-fin-03-3
+docker exec -it sglang_new bash        # CUDA_VISIBLE_DEVICES=7 python3 bench/gemv_sweep.py  (adapt for the cuBLAS table)
+```
+
+Sync sources via base64-over-ssh; mind the glm_pd tenant (`nvidia-smi` first);
+`/data/bbuf` survives lease lapses — just re-assign and continue.
+
 Tier B (accept-gated for main-model deploy; lm_head/eh_proj/MTP-internal
 shapes are draft/head-side and safer). Follow
 `../../llm/docs/llm_kernel_optimization_rules.md` +
