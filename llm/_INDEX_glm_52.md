@@ -4,8 +4,8 @@
 - Cookbook cmd: `python -m sglang.launch_server --model-path zai-org/GLM-5.2-FP8 --tp 8 --trust-remote-code --mem-fraction-static 0.8`
 - Runner: `ion-b200` / `sglang_bbuf`; select a verified-idle B200 GPU before
   any CUDA, Python, build, test, benchmark, or profiling command.
-- Agent model: not hard-coded; use the launcher default or export a valid
-  `CLAUDE_MODEL` before launch.
+- Agent model: Fable (`CLAUDE_MODEL=fable` in each task launcher; override by
+  exporting a different valid `CLAUDE_MODEL` before launch).
 - Kept: max GPU-time share `>= 3.0%`, non-comm, non-trtllm-MoE
 
 | task | category | family | max % GPU | peak scenario | clean op |
