@@ -16,8 +16,6 @@ compute processes and no meaningful memory occupancy. Export that id as
 profiler, and NCU commands in the current run. Do not run measurements on busy
 cards or directly on the `ion-b200` host.
 
-Launch this task with `CLAUDE_MODEL=fable5`.
-
 **25.0% of total GPU time** on `zai-org/GLM-5.2-FP8` (cookbook-aligned profile, peak
 `sharegpt_mid`) — a genuine end-to-end target selected by profiler e2e share. Family
 `fp8_bmm`, category `quant_gemm`.
