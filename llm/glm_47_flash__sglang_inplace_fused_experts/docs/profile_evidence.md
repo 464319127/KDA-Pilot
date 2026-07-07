@@ -1,13 +1,11 @@
-# Profile evidence — glm_47_flash__sglang_inplace_fused_experts
+# Profile evidence - glm_47_flash__sglang_inplace_fused_experts
 
 **Standalone kernel target: 30.4% of total serving GPU time** (max across scenarios) on
-`zai-org/GLM-4.7-Flash`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Clean Python interface (profiler provenance).
-
-> Triton MoE expert-GEMM (sglang's own fused_experts/fused_moe kernel) — single-GPU optimizable; NOT the comm-fused trtllm MoE path (excluded).
+`zai-org/GLM-4.7-Flash`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Kernel API shapes below are frozen from a one-time real `zai-org/GLM-4.7-Flash` production-path capture and replace the old noisy profiler shape strings.
 
 - Model: `zai-org/GLM-4.7-Flash` (slug `glm_47_flash`, tp=1)
-- Python interface: `sglang.inplace_fused_experts`
-- Kernel family: `fused_moe_triton`  ·  Category: `moe`
+- Python interface(s): `sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe._fused_moe_kernel_sequence`, `sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe.fused_experts_impl`, `sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe.inplace_fused_experts`, `sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe_triton_kernels.invoke_fused_moe_kernel`
+- Kernel family: `fused_moe_triton`  .  Category: `moe`
 - GPU kernel(s): `fused_moe_kernel`
 
 ## % of GPU time by scenario
@@ -21,19 +19,27 @@
 | sharegpt | conc 32 | 12.17% |
 | sharegpt | conc 100 | 29.47% |
 
-**Peak: 30.4% in `random_mid` (random, concurrency 32).**
+**Peak: 30.4% in `random_mid`.**
 
-## Input shapes (profiler)
-- `[[1163106], [], [], [], []]`
-- `[[1], []]`
-- `[[5102, 2048], [65, 3072, 2048], [65, 2048, 1536], [5102, 5], [5102, 5], [], [],`
-- `[[5528, 2048], [65, 3072, 2048], [65, 2048, 1536], [5528, 5], [5528, 5], [], [],`
-- `[[], [], [], [], [], []]`
+## Fresh captured kernel API shapes
 
-## Original serving capture command (provenance only)
-```bash
-sglang serve --model-path zai-org/GLM-4.7-Flash --tp 1 --attention-backend triton --reasoning-parser glm45 --tool-call-parser glm47
-```
-Do not rerun this serving command, `run_capture`, or a multi-GPU e2e A/B as part
-of the normal kernel task. Validate with the task-local standalone benchmark on
-one idle target GPU using the captured shape set.
+- Shape source: `docs/captured_kernel_api_shapes.json`
+- Standalone workloads: `bench/workloads.json`
+- Workload count: 35
+- Capture note: Captured 2026-07-07 on Verda B300 light-face-hides-fin-03-1 from a real zai-org/GLM-4.7-Flash TP=1 SGLang production-path execution in temporary container sglang-glm47-flash. Used a model-local HF cache after snapshot download, attention_backend=triton, reasoning_parser=glm45, tool_call_parser=glm47, disabled FlashInfer autotune, disabled CUDA graph prefill/decode, and marked four request windows covering long prefill, short decode, mid concurrency, and high concurrency. The attention task maps to the captured TritonAttnBackend forward APIs because this Flash path did not call the older unified_attention_with_output Python wrapper during the capture.
+
+Functions covered:
+- `sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe._fused_moe_kernel_sequence`
+- `sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe.fused_experts_impl`
+- `sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe.inplace_fused_experts`
+- `sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe_triton_kernels.invoke_fused_moe_kernel`
+
+The old profiler `input_shapes` strings were noisy and are no longer an acceptance source.
+Use the task-local workload file above for standalone single-GPU correctness and benchmark work.
+
+## Validation Policy
+
+Normal RLCR kernel work is a standalone single-GPU optimization task. Use the
+captured workload set above for correctness and benchmark acceptance on one idle
+target GPU, and do not add external runtime-readiness or fleet-level A/B gates to
+the task loop.

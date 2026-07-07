@@ -98,6 +98,10 @@ TARGETS: dict[str, tuple[str, ...]] = {
         "TRTLLMHAAttnBackend.forward_decode",
         "TRTLLMHAAttnBackend.forward_extend",
     ),
+    "sglang.srt.layers.attention.triton_backend": (
+        "TritonAttnBackend.forward_decode",
+        "TritonAttnBackend.forward_extend",
+    ),
     "sglang.srt.layers.attention.flashattention_backend": (
         "FlashAttentionBackend.forward_decode",
         "FlashAttentionBackend.forward_extend",
@@ -187,6 +191,13 @@ TARGETS: dict[str, tuple[str, ...]] = {
         "group_gemm_nvfp4_nt_groupwise",
         "group_gemm_mxfp4_nt_groupwise",
         "grouped_gemm_nt_masked",
+    ),
+}
+
+TORCH_OP_TARGETS: dict[str, tuple[str, ...]] = {
+    "sglang": (
+        "inplace_fused_experts",
+        "unified_attention_with_output",
     ),
 }
 
@@ -396,6 +407,43 @@ def _wrap_torch_function(torch_module: Any, attr_name: str, full_name: str) -> N
 
     setattr(wrapper, "_kda_shape_capture_wrapped", True)
     setattr(torch_module, attr_name, wrapper)
+    _wrapped.add(full_name)
+
+
+def _wrap_torch_ops_once() -> bool:
+    try:
+        import torch
+    except Exception:
+        return False
+
+    all_wrapped = True
+    for namespace, names in TORCH_OP_TARGETS.items():
+        try:
+            op_namespace = getattr(torch.ops, namespace)
+        except Exception:
+            all_wrapped = False
+            continue
+        for name in names:
+            full_name = f"torch.ops.{namespace}.{name}"
+            if full_name in _wrapped:
+                continue
+            if not hasattr(op_namespace, name):
+                all_wrapped = False
+                continue
+            try:
+                _wrap_torch_function(op_namespace, name, full_name)
+            except Exception:
+                all_wrapped = False
+    return all_wrapped
+
+
+def _wrap_torch_ops_periodically() -> None:
+    poll_steps = int(os.environ.get("KDA_CAPTURE_TORCH_OP_POLL_STEPS", "2400"))
+    poll_interval = float(os.environ.get("KDA_CAPTURE_TORCH_OP_POLL_INTERVAL", "0.25"))
+    for _ in range(poll_steps):
+        if _wrap_torch_ops_once():
+            return
+        time.sleep(poll_interval)
 
 
 class _CaptureLoader(importlib.abc.Loader):
@@ -466,3 +514,6 @@ if OUT_TEMPLATE:
             _wrap_torch_function(F, "linear", "torch.nn.functional.linear")
         except Exception:
             pass
+
+    if os.environ.get("KDA_CAPTURE_TORCH_OPS") == "1":
+        threading.Thread(target=_wrap_torch_ops_periodically, daemon=True).start()
