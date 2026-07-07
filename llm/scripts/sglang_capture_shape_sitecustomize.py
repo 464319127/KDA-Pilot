@@ -49,6 +49,15 @@ TARGETS: dict[str, tuple[str, ...]] = {
         "fp8_blockwise_scaled_mm",
         "_apply_fallback_scaled_mm",
     ),
+    "sglang.jit_kernel.nvfp4": (
+        "cutlass_scaled_fp4_mm",
+        "cutlass_fp4_group_mm",
+        "scaled_fp4_quant",
+        "scaled_fp4_experts_quant",
+        "silu_and_mul_scaled_fp4_experts_quant_packed",
+        "scaled_fp4_grouped_quant",
+        "silu_and_mul_scaled_fp4_grouped_quant",
+    ),
     "sglang.srt.layers.layernorm": (
         "rmsnorm",
         "gemma_rmsnorm",
@@ -130,6 +139,16 @@ TARGETS: dict[str, tuple[str, ...]] = {
         "flash_mla_with_kvcache",
         "flash_mla_sparse_fwd",
     ),
+    "sgl_kernel": (
+        "bmm_fp8",
+        "fp8_scaled_mm",
+        "fp8_blockwise_scaled_mm",
+    ),
+    "sgl_kernel.gemm": (
+        "bmm_fp8",
+        "fp8_scaled_mm",
+        "fp8_blockwise_scaled_mm",
+    ),
     "sglang.srt.layers.attention.flash_mla_sm120": (
         "flash_mla_with_kvcache_sm120",
     ),
@@ -140,6 +159,34 @@ TARGETS: dict[str, tuple[str, ...]] = {
     "flashinfer.decode": (
         "trtllm_batch_decode_with_kv_cache_mla",
         "trtllm_batch_decode_with_kv_cache",
+    ),
+    "flashinfer": (
+        "bmm_bf16",
+        "bmm_fp8",
+        "bmm_mxfp8",
+        "mm_fp4",
+        "mm_fp8",
+        "mm_mxfp8",
+        "grouped_mm_fp4",
+        "grouped_mm_fp8",
+        "grouped_mm_mxfp8",
+        "group_gemm_nvfp4_nt_groupwise",
+        "group_gemm_mxfp4_nt_groupwise",
+        "trtllm_fp4_block_scale_moe",
+        "trtllm_fp4_block_scale_routed_moe",
+        "nvfp4_quantize",
+        "nvfp4_block_scale_interleave",
+    ),
+    "flashinfer.gemm": (
+        "bmm_bf16",
+        "bmm_fp8",
+        "bmm_mxfp8",
+        "mm_fp4",
+        "mm_fp8",
+        "mm_mxfp8",
+        "group_gemm_nvfp4_nt_groupwise",
+        "group_gemm_mxfp4_nt_groupwise",
+        "grouped_gemm_nt_masked",
     ),
 }
 

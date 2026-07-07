@@ -1,9 +1,11 @@
 {
   "model": "nvidia/GLM-4.7-NVFP4",
   "model_slug": "glm_47",
-  "cookbook_cmd": "python -m sglang.launch_server --model nvidia/GLM-4.7-NVFP4 --tp 8 --quantization modelopt_fp4 --reasoning-parser glm45 --trust-remote-code",
+  "cookbook_cmd": "omitted from standalone kernel task; use bench/workloads.json and docs/captured_kernel_api_shapes.json for RLCR",
   "tp": "8",
-  "python_interface": "<confirm via capture; profiler family=rmsnorm>",
+  "python_interface": [
+    "sglang.srt.layers.layernorm.rmsnorm"
+  ],
   "kernel_family": "rmsnorm",
   "profiler_op_provenance": [
     "aten::copy_",
@@ -20,10 +22,14 @@
   },
   "max_pct_of_gpu": 4.37,
   "best_scenario": "sharegpt_mid",
-  "input_shapes": [
-    "[[5672, 1536], []]",
-    "[[6586, 1536], [6586, 1536], []]",
-    "[[6656, 1536], [6656, 1, 128], [6656, 1, 128], [6656, 1536], [], [], [], [], [],"
+  "input_shapes": [],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "input_shapes_replaced_by": "docs/captured_kernel_api_shapes.json",
+  "standalone_workloads_json": "bench/workloads.json",
+  "shape_source": "fresh_sglang_kernel_api_capture",
+  "captured_kernel_api_workload_count": 9,
+  "captured_kernel_api_functions": [
+    "sglang.srt.layers.layernorm.rmsnorm"
   ],
-  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+  "shape_capture_note": "Captured 2026-07-07 on Verda B300 light-face-hides-fin-03-1 from a real nvidia/GLM-4.7-NVFP4 TP=8 SGLang production-path execution in temporary container sglang-glm47. Used a model-local HF cache in offline mode after snapshot download, trust_remote_code, quantization=modelopt_fp4, reasoning_parser=glm45, attention_backend=trtllm_mha/FlashInfer default for this NVFP4 checkpoint, moe_runner_backend=flashinfer_trtllm as selected by SGLang for ModelOpt NVFP4 MoE, disabled FlashInfer autotune, disabled CUDA graph prefill/decode, and marked four request windows covering long prefill, short decode, mid concurrency, and high concurrency. The legacy fp8_bmm task maps to the captured FlashInfer NVFP4 mm_fp4 Python API because the old profiler class name did not correspond to a bmm_fp8 Python call in this production path."
 }

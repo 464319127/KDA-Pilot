@@ -1,9 +1,14 @@
 {
   "model": "nvidia/GLM-4.7-NVFP4",
   "model_slug": "glm_47",
-  "cookbook_cmd": "python -m sglang.launch_server --model nvidia/GLM-4.7-NVFP4 --tp 8 --quantization modelopt_fp4 --reasoning-parser glm45 --trust-remote-code",
+  "cookbook_cmd": "omitted from standalone kernel task; use bench/workloads.json and docs/captured_kernel_api_shapes.json for RLCR",
   "tp": "8",
-  "python_interface": "sglang.unified_attention_with_output",
+  "python_interface": [
+    "flashinfer.decode.trtllm_batch_decode_with_kv_cache",
+    "flashinfer.prefill.trtllm_batch_context_with_kv_cache",
+    "sglang.srt.layers.attention.trtllm_mha_backend.TRTLLMHAAttnBackend.forward_decode",
+    "sglang.srt.layers.attention.trtllm_mha_backend.TRTLLMHAAttnBackend.forward_extend"
+  ],
   "kernel_family": "attention",
   "profiler_op_provenance": [
     "aten::add",
@@ -27,16 +32,17 @@
   },
   "max_pct_of_gpu": 4.87,
   "best_scenario": "sharegpt_low",
-  "input_shapes": [
-    "[[1024, 1536], [1024, 1, 128], [1024, 1, 128], [1024, 1536], [], [], [], [], [],",
-    "[[1], [1], []]",
-    "[[1], [], []]",
-    "[[1], []]",
-    "[[5299776, 1, 128], []]",
-    "[[64], [64], []]",
-    "[[704], [], [], [], []]",
-    "[[82809, 1, 64, 128], [], [], []]",
-    "[[82809, 64, 1, 128], []]"
+  "input_shapes": [],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "input_shapes_replaced_by": "docs/captured_kernel_api_shapes.json",
+  "standalone_workloads_json": "bench/workloads.json",
+  "shape_source": "fresh_sglang_kernel_api_capture",
+  "captured_kernel_api_workload_count": 18,
+  "captured_kernel_api_functions": [
+    "flashinfer.decode.trtllm_batch_decode_with_kv_cache",
+    "flashinfer.prefill.trtllm_batch_context_with_kv_cache",
+    "sglang.srt.layers.attention.trtllm_mha_backend.TRTLLMHAAttnBackend.forward_decode",
+    "sglang.srt.layers.attention.trtllm_mha_backend.TRTLLMHAAttnBackend.forward_extend"
   ],
-  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+  "shape_capture_note": "Captured 2026-07-07 on Verda B300 light-face-hides-fin-03-1 from a real nvidia/GLM-4.7-NVFP4 TP=8 SGLang production-path execution in temporary container sglang-glm47. Used a model-local HF cache in offline mode after snapshot download, trust_remote_code, quantization=modelopt_fp4, reasoning_parser=glm45, attention_backend=trtllm_mha/FlashInfer default for this NVFP4 checkpoint, moe_runner_backend=flashinfer_trtllm as selected by SGLang for ModelOpt NVFP4 MoE, disabled FlashInfer autotune, disabled CUDA graph prefill/decode, and marked four request windows covering long prefill, short decode, mid concurrency, and high concurrency. The legacy fp8_bmm task maps to the captured FlashInfer NVFP4 mm_fp4 Python API because the old profiler class name did not correspond to a bmm_fp8 Python call in this production path."
 }
