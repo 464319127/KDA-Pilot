@@ -1,0 +1,46 @@
+[task]
+slug = "b200_wan_vae_rmsnorm_silu__bitwise"
+arch = "b200"
+target_gpu = "NVIDIA B200"
+family = "wan_vae_rmsnorm_silu"
+entry_points = [
+  "sglang.multimodal_gen.runtime.models.vaes.wanvae:WanRMS_norm",
+  "sglang.multimodal_gen.runtime.models.vaes.wanvae:residual_block_forward",
+  "sglang.multimodal_gen.runtime.models.vaes.wanvae:WanEncoder3d.forward",
+  "sglang.multimodal_gen.runtime.models.vaes.wanvae:WanDecoder3d.forward",
+]
+
+[build]
+language = "cuda"
+destination_passing_style = true
+baseline_entry_points = [
+  "bench/adapter.py::call_baseline_residual_block_norm1",
+  "bench/adapter.py::call_baseline_residual_block_norm2",
+  "bench/adapter.py::call_baseline_encoder_head",
+  "bench/adapter.py::call_baseline_decoder_head",
+]
+candidate_entry_points = [
+  "solution/kernel.cu::wan_vae_rmsnorm_silu_candidate",
+]
+
+[correctness]
+bitwise_required = true
+comparison = "torch_equal"
+forbid_tolerance = true
+baseline = "sglang_wan22_vae_production"
+production_autocast = true
+vae_precision = "bfloat16"
+memory_format = "channels_last_3d"
+full_video_consistency_required = true
+require_no_exception_fallback = true
+
+[benchmark]
+warmup_runs = 10
+iterations = 200
+num_trials = 7
+inner_iterations_min = 1
+inner_iterations_max = 2048
+target_sample_us = 1000
+timeout_seconds = 900
+use_isolated_runner = true
+required_matched_ratio = 1.0
