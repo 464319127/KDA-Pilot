@@ -1,7 +1,7 @@
 # Profile evidence - glm_46__void_moe_sum_reduce_warp_per_tok
 
 **Standalone kernel target: 3.4% of total serving GPU time** (max across scenarios) on
-`zai-org/GLM-4.6-FP8`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Kernel API shapes below were recaptured from a real `zai-org/GLM-4.6-FP8` server run and replace the old noisy profiler shape strings.
+`zai-org/GLM-4.6-FP8`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Kernel API shapes below are frozen from a one-time real `zai-org/GLM-4.6-FP8` production-path capture and replace the old noisy profiler shape strings.
 
 - Model: `zai-org/GLM-4.6-FP8` (slug `glm_46`, tp=8)
 - Python interface(s): `sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe.moe_sum_reduce`, `sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe.moe_sum_reduce_torch_compile`
@@ -33,12 +33,9 @@ Functions covered:
 The old profiler `input_shapes` strings were noisy and are no longer an acceptance source.
 Use the task-local workload file above for standalone single-GPU correctness and benchmark work.
 
-## Original serving profile command (provenance only)
-```bash
-sglang serve --model-path zai-org/GLM-4.6-FP8 --tp 8 --reasoning-parser glm45 --tool-call-parser glm45 --attention-backend fa4
-```
-This command is retained only to explain target selection. Normal RLCR kernel
-work must not depend on a live SGLang server, `run_capture`, 8-GPU availability,
-or a multi-GPU e2e gate. Validate with the task-local standalone benchmark on
-one idle target GPU using the captured shape set. Re-run serving capture only
-when intentionally refreshing these evidence files.
+## Validation Policy
+
+Normal RLCR kernel work is a standalone single-GPU optimization task. Use the
+captured workload set above for correctness and benchmark acceptance on one idle
+target GPU, and do not add external runtime-readiness or fleet-level A/B gates to
+the task loop.

@@ -1,7 +1,7 @@
 # Profile evidence - kimi_k2__fp8_bmm
 
 **Standalone kernel target: 38.5% of total serving GPU time** (max across scenarios) on
-`moonshotai/Kimi-K2-Instruct`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Kernel API shapes below were recaptured from a real `moonshotai/Kimi-K2-Instruct` server run and replace the old noisy profiler shape strings.
+`moonshotai/Kimi-K2-Instruct`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Kernel API shapes below are frozen from a one-time real `moonshotai/Kimi-K2-Instruct` production-path capture and replace the old noisy profiler shape strings.
 
 - Model: `moonshotai/Kimi-K2-Instruct` (slug `kimi_k2`, tp=8)
 - Python interface(s): `torch.bmm`
@@ -34,12 +34,9 @@ Functions covered:
 The old profiler `input_shapes` strings were noisy and are no longer an acceptance source.
 Use the task-local workload file above for standalone single-GPU correctness and benchmark work.
 
-## Original serving profile command (provenance only)
-```bash
-sglang serve --model-path moonshotai/Kimi-K2-Instruct --tp 8 --tool-call-parser kimi_k2
-```
-This command is retained only to explain target selection. Normal RLCR kernel
-work must not depend on a live SGLang server, `run_capture`, 8-GPU availability,
-or a multi-GPU e2e gate. Validate with the task-local standalone benchmark on
-one idle target GPU using the captured shape set. Re-run serving capture only
-when intentionally refreshing these evidence files.
+## Validation Policy
+
+Normal RLCR kernel work is a standalone single-GPU optimization task. Use the
+captured workload set above for correctness and benchmark acceptance on one idle
+target GPU, and do not add external runtime-readiness or fleet-level A/B gates to
+the task loop.

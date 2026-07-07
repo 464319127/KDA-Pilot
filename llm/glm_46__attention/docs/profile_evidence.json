@@ -1,7 +1,7 @@
 {
   "model": "zai-org/GLM-4.6-FP8",
   "model_slug": "glm_46",
-  "cookbook_cmd": "sglang serve --model-path zai-org/GLM-4.6-FP8 --tp 8 --reasoning-parser glm45 --tool-call-parser glm45 --attention-backend fa4",
+  "cookbook_cmd": "omitted from standalone kernel task; use bench/workloads.json and docs/captured_kernel_api_shapes.json for RLCR",
   "tp": "8",
   "python_interface": [
     "sglang.srt.layers.attention.flashattention_backend.FlashAttentionBackend.forward_decode",
