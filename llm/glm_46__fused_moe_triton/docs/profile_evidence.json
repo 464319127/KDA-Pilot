@@ -3,7 +3,13 @@
   "model_slug": "glm_46",
   "cookbook_cmd": "sglang serve --model-path zai-org/GLM-4.6-FP8 --tp 8 --reasoning-parser glm45 --tool-call-parser glm45 --attention-backend fa4",
   "tp": "8",
-  "python_interface": "<confirm via capture; profiler family=fused_moe_triton>",
+  "python_interface": [
+    "sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe._fused_moe_kernel_sequence",
+    "sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe.fused_experts",
+    "sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe.fused_experts_impl",
+    "sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe.inplace_fused_experts",
+    "sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe_triton_kernels.invoke_fused_moe_kernel"
+  ],
   "kernel_family": "fused_moe_triton",
   "profiler_op_provenance": [
     "FlashAttnVarlenFunc",
@@ -27,19 +33,19 @@
   },
   "max_pct_of_gpu": 34.8,
   "best_scenario": "random_high",
-  "input_shapes": [
-    "[[112, 1536], [112, 1, 128], [112, 1, 128], [112, 1536], [], [], [], [], [], [],",
-    "[[112, 1536], [], [], []]",
-    "[[1536, 1, 128], [], [], []]",
-    "[[1], []]",
-    "[[2193, 12, 128]]",
-    "[[2816, 1, 128], [], [], []]",
-    "[[325], [], [], []]",
-    "[[32], [32], []]",
-    "[[80, 12, 128], [19176, 128, 1, 128], [19176, 128, 1, 128], [], [2], [], [], [1]",
-    "[[80, 1536], [80, 1536], []]",
-    "[[8125, 12, 128], [19176, 128, 1, 128], [19176, 128, 1, 128], [], [27], [], [], "
-  ],
+  "input_shapes": [],
   "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
-  "note": "Triton MoE expert-GEMM (sglang's own fused_experts/fused_moe kernel) \u2014 single-GPU optimizable; NOT the comm-fused trtllm MoE path (excluded)."
+  "note": "Triton MoE expert-GEMM (sglang's own fused_experts/fused_moe kernel) \u2014 single-GPU optimizable; NOT the comm-fused trtllm MoE path (excluded).",
+  "input_shapes_replaced_by": "docs/captured_kernel_api_shapes.json",
+  "standalone_workloads_json": "bench/workloads.json",
+  "shape_source": "fresh_sglang_kernel_api_capture",
+  "captured_kernel_api_workload_count": 42,
+  "captured_kernel_api_functions": [
+    "sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe._fused_moe_kernel_sequence",
+    "sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe.fused_experts",
+    "sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe.fused_experts_impl",
+    "sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe.inplace_fused_experts",
+    "sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe_triton_kernels.invoke_fused_moe_kernel"
+  ],
+  "shape_capture_note": "Captured 2026-07-07 on Verda B300 light-face-hides-fin-03-1 from a real zai-org/GLM-4.6-FP8 SGLang TP=8 server in temporary container sglang-glm46. Used a model-local HF cache in offline mode after snapshot download, trust_remote_code, reasoning_parser=glm45, tool_call_parser=glm45 (server_args normalized it to glm; chat template auto-detected glm45), attention_backend=fa4, moe_runner_backend=triton for the Triton MoE tasks, CUDA graph prefill/decode disabled, and marked four request windows covering long prefill, short decode, mid concurrency, and high concurrency."
 }
