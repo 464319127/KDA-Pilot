@@ -26,6 +26,7 @@ TARGETS: dict[str, tuple[str, ...]] = {
     "sglang.srt.layers.quantization.fp8_kernel": (
         "deep_gemm_fp8_fp8_bf16_nt",
         "sglang_per_token_group_quant_fp8",
+        "sglang_per_token_group_quant_fp8_row_padded",
         "per_token_group_quant_fp8",
         "sglang_per_token_group_quant_8bit",
         "per_token_group_quant_8bit",

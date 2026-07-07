@@ -12,11 +12,11 @@ from pathlib import Path
 from typing import Any
 
 
-TASK_RULES = {
-    "glm_52__sglang_deep_gemm_fp8_fp8_bf16_nt": (
+TASK_SUFFIX_RULES = {
+    "__sglang_deep_gemm_fp8_fp8_bf16_nt": (
         "deep_gemm_fp8_fp8_bf16_nt",
     ),
-    "glm_52__fp8_bmm": (
+    "__fp8_bmm": (
         ".bmm_fp8",
         "._bmm_fp8_op",
         ".flashinfer_bmm_fp8",
@@ -24,7 +24,7 @@ TASK_RULES = {
         "fp8_paged_mqa_logits_torch",
         "_aiter_fp8_paged_mqa_logits",
     ),
-    "glm_52__sglang_unified_attention_with_output": (
+    "__sglang_unified_attention_with_output": (
         "unified_attention_with_output",
         "mla_bmm_then_unified_attention",
         "DeepseekV4AttnBackend.forward",
@@ -42,13 +42,16 @@ TASK_RULES = {
         "trtllm_batch_decode_with_kv_cache_mla",
         "_forward_prefill_sparse",
     ),
-    "glm_52__per_token_group_quant": (
+    "__per_token_group_quant": (
         "sglang_per_token_group_quant_fp8",
+        "sglang_per_token_group_quant_fp8_row_padded",
         "per_token_group_quant_fp8",
         "sglang_per_token_group_quant_8bit",
         "per_token_group_quant_8bit",
     ),
 }
+
+DEFAULT_TASK_PREFIX = "glm_52"
 
 DROP_TENSOR_KEYS = {"device", "device_index", "device_type", "requires_grad", "numel"}
 
@@ -106,6 +109,9 @@ def tensor_paths(value: Any, prefix: str = "") -> list[tuple[str, dict[str, Any]
     elif isinstance(value, dict) and value.get("kind") == "dict":
         for key, item in value.get("items", {}).items():
             out.extend(tensor_paths(item, f"{prefix}.{key}" if prefix else key))
+    elif isinstance(value, dict):
+        for key, item in value.items():
+            out.extend(tensor_paths(item, f"{prefix}.{key}" if prefix else key))
     elif isinstance(value, list):
         for idx, item in enumerate(value):
             out.extend(tensor_paths(item, f"{prefix}.{idx}" if prefix else str(idx)))
@@ -141,8 +147,20 @@ def record_signature(row: dict[str, Any]) -> str:
     return json.dumps(material, sort_keys=True, separators=(",", ":"))
 
 
-def task_for_function(function: str) -> str | None:
-    for task, needles in TASK_RULES.items():
+def build_task_rules(task_prefix: str, repo_root: Path) -> dict[str, tuple[str, ...]]:
+    rules = {
+        f"{task_prefix}{suffix}": needles
+        for suffix, needles in TASK_SUFFIX_RULES.items()
+    }
+    return {
+        task: needles
+        for task, needles in rules.items()
+        if (repo_root / "llm" / task).exists()
+    }
+
+
+def task_for_function(function: str, task_rules: dict[str, tuple[str, ...]]) -> str | None:
+    for task, needles in task_rules.items():
         if any(needle in function for needle in needles):
             return task
     return None
@@ -180,13 +198,17 @@ def main() -> None:
     parser.add_argument("--markers", type=Path)
     parser.add_argument("--repo-root", type=Path, required=True)
     parser.add_argument("--model", default="zai-org/GLM-5.2-FP8")
+    parser.add_argument("--task-prefix", default=DEFAULT_TASK_PREFIX)
     parser.add_argument("--capture-note", default="")
     args = parser.parse_args()
 
     rows = load_jsonl(args.records)
     markers = load_markers(args.markers)
+    task_rules = build_task_rules(args.task_prefix, args.repo_root)
+    if not task_rules:
+        raise SystemExit(f"no task dirs found for task prefix: {args.task_prefix}")
     by_task: dict[str, OrderedDict[str, dict[str, Any]]] = {
-        task: OrderedDict() for task in TASK_RULES
+        task: OrderedDict() for task in task_rules
     }
     unmatched = 0
 
@@ -195,7 +217,7 @@ def main() -> None:
         if not function:
             unmatched += 1
             continue
-        task = task_for_function(function)
+        task = task_for_function(function, task_rules)
         if task is None:
             unmatched += 1
             continue

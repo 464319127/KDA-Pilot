@@ -3,7 +3,9 @@
   "model_slug": "kimi_k2",
   "cookbook_cmd": "sglang serve --model-path moonshotai/Kimi-K2-Instruct --tp 8 --tool-call-parser kimi_k2",
   "tp": "8",
-  "python_interface": "sglang.deep_gemm_fp8_fp8_bf16_nt",
+  "python_interface": [
+    "sglang.srt.layers.quantization.fp8_kernel.deep_gemm_fp8_fp8_bf16_nt"
+  ],
   "kernel_family": "linear_gemm",
   "profiler_op_provenance": [
     "aten::_local_scalar_dense",
@@ -27,19 +29,14 @@
   },
   "max_pct_of_gpu": 23.12,
   "best_scenario": "sharegpt_low",
-  "input_shapes": [
-    "[[1], [1], []]",
-    "[[1], [], [], []]",
-    "[[1]]",
-    "[[256], [], [], [], []]",
-    "[[263], [], [], []]",
-    "[[280], [], [], [], []]",
-    "[[32, 163840], [], []]",
-    "[[48, 8, 512], [48, 1, 512], [48, 1, 512], [48, 4096], [], [], [48, 8, 64], [48,",
-    "[[48], [], [], [], []]",
-    "[[6], [], [], []]",
-    "[[8084, 2304], [8084, 5], [7168, 2304], [7168, 5], [8084, 7168]]",
-    "[[8084, 7168], [8084, 14], [4608, 7168], [4608, 14], [8084, 4608]]"
+  "input_shapes": [],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "input_shapes_replaced_by": "docs/captured_kernel_api_shapes.json",
+  "standalone_workloads_json": "bench/workloads.json",
+  "shape_source": "fresh_sglang_kernel_api_capture",
+  "captured_kernel_api_workload_count": 7,
+  "captured_kernel_api_functions": [
+    "sglang.srt.layers.quantization.fp8_kernel.deep_gemm_fp8_fp8_bf16_nt"
   ],
-  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+  "shape_capture_note": "Captured on 2026-07-07 from a real moonshotai/Kimi-K2-Instruct SGLang TP=8 server on Verda B300 node light-face-hides-fin-03-1, container sglang-kimi-k2-local, local NVMe Hugging Face cache, HF offline mode, trust_remote_code, tool_call_parser=kimi_k2, cuda graph prefill/decode disabled for Python API capture. Runtime selected attention_backend=trtllm_mla and moe_runner_backend=flashinfer_trtllm(auto). Records include server startup/JIT/autotune API calls plus marked request windows for sharegpt_low_long_prompt, random_low_short_prompt, sharegpt_mid_concurrency_long_prompt, and random_high_concurrency_short_prompt."
 }
