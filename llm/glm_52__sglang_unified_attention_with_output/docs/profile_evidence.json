@@ -3,7 +3,14 @@
   "model_slug": "glm_52",
   "cookbook_cmd": "python -m sglang.launch_server --model-path zai-org/GLM-5.2-FP8 --tp 8 --trust-remote-code --mem-fraction-static 0.8",
   "tp": "8",
-  "python_interface": "sglang.unified_attention_with_output",
+  "python_interface": [
+    "flashinfer.decode.trtllm_batch_decode_with_kv_cache_mla",
+    "flashinfer.prefill.trtllm_ragged_attention_deepseek",
+    "sglang.srt.layers.attention.dsa_backend.DeepseekSparseAttnBackend._forward_standard_mha",
+    "sglang.srt.layers.attention.dsa_backend.DeepseekSparseAttnBackend._forward_trtllm",
+    "sglang.srt.layers.attention.dsa_backend.DeepseekSparseAttnBackend.forward_decode",
+    "sglang.srt.layers.attention.dsa_backend.DeepseekSparseAttnBackend.forward_extend"
+  ],
   "kernel_family": "attention",
   "profiler_op_provenance": [
     "aten::_local_scalar_dense",
@@ -27,14 +34,19 @@
   },
   "max_pct_of_gpu": 14.21,
   "best_scenario": "sharegpt_mid",
-  "input_shapes": [
-    "[[1536, 8, 512], [1536, 1, 512], [1536, 1, 512], [1536, 4096], [], [], [1536, 8,",
-    "[[1], [1], []]",
-    "[[1], [], [], [], []]",
-    "[[1], []]",
-    "[[2048, 8, 512], [2048, 1, 512], [2048, 1, 512], [2048, 4096], [], [], [2048, 8,",
-    "[[9137, 1, 8, 576], []]",
-    "[[]]"
+  "input_shapes": [],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "input_shapes_replaced_by": "docs/captured_kernel_api_shapes.json",
+  "standalone_workloads_json": "bench/workloads.json",
+  "shape_source": "fresh_sglang_kernel_api_capture",
+  "captured_kernel_api_workload_count": 46,
+  "captured_kernel_api_functions": [
+    "flashinfer.decode.trtllm_batch_decode_with_kv_cache_mla",
+    "flashinfer.prefill.trtllm_ragged_attention_deepseek",
+    "sglang.srt.layers.attention.dsa_backend.DeepseekSparseAttnBackend._forward_standard_mha",
+    "sglang.srt.layers.attention.dsa_backend.DeepseekSparseAttnBackend._forward_trtllm",
+    "sglang.srt.layers.attention.dsa_backend.DeepseekSparseAttnBackend.forward_decode",
+    "sglang.srt.layers.attention.dsa_backend.DeepseekSparseAttnBackend.forward_extend"
   ],
-  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+  "shape_capture_note": "Captured on verda-b300-fin-03-1/light-face-hides-fin-03-1, sglang-glm52 container, zai-org/GLM-5.2-FP8 tp=8, CUDA graphs disabled for Python API capture, 2026-07-07. Final records include DSA/TRTLLM attention, torch.bmm, DeepGEMM, and per-token quant call contracts from real server requests."
 }

@@ -1,8 +1,13 @@
 # KDA Prompt: glm_52__sglang_unified_attention_with_output
 
-Target GPU: NVIDIA B200. Optimize the SGLang kernel behind:
+Target GPU: NVIDIA B200. Optimize the SGLang kernel path behind:
 
-- `sglang.unified_attention_with_output`
+- `flashinfer.decode.trtllm_batch_decode_with_kv_cache_mla`
+- `flashinfer.prefill.trtllm_ragged_attention_deepseek`
+- `sglang.srt.layers.attention.dsa_backend.DeepseekSparseAttnBackend._forward_standard_mha`
+- `sglang.srt.layers.attention.dsa_backend.DeepseekSparseAttnBackend._forward_trtllm`
+- `sglang.srt.layers.attention.dsa_backend.DeepseekSparseAttnBackend.forward_decode`
+- `sglang.srt.layers.attention.dsa_backend.DeepseekSparseAttnBackend.forward_extend`
 
 ## Environment And Runner
 
@@ -20,8 +25,8 @@ cards or directly on the `ion-b200` host.
 `sharegpt_mid`) — a serving-profile headroom signal used to select this standalone kernel task. Family
 `attention`, category `attention`.
 
-See `docs/profile_evidence.md` for the per-scenario %-of-GPU, GPU kernels, shapes,
-and original serving capture provenance. Do not start/re-run SGLang serve,
-`run_capture`, or a multi-GPU e2e A/B for the normal RLCR loop; optimize and
-validate via the task-local standalone benchmark on one idle target GPU. Follow
+Use `bench/workloads.json` as the task-local standalone shape source. It was generated from
+`docs/captured_kernel_api_shapes.json`, a fresh real GLM-5.2-FP8 TP=8 SGLang capture. Do not
+start/re-run SGLang serve, `run_capture`, or a multi-GPU e2e A/B for the normal RLCR loop;
+optimize and validate via the task-local standalone benchmark on one idle target GPU. Follow
 `llm/docs/llm_kernel_optimization_rules.md` (CUDA, no DSL) + `llm/docs/llm_correctness_contract.md`.

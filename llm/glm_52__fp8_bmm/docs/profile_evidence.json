@@ -3,7 +3,7 @@
   "model_slug": "glm_52",
   "cookbook_cmd": "python -m sglang.launch_server --model-path zai-org/GLM-5.2-FP8 --tp 8 --trust-remote-code --mem-fraction-static 0.8",
   "tp": "8",
-  "python_interface": "<confirm via capture; profiler family=fp8_bmm>",
+  "python_interface": "torch.bmm",
   "kernel_family": "fp8_bmm",
   "profiler_op_provenance": [
     "aten::_index_put_impl_",
@@ -35,19 +35,14 @@
   },
   "max_pct_of_gpu": 25.02,
   "best_scenario": "sharegpt_mid",
-  "input_shapes": [
-    "[[1, 2], [1, 2], []]",
-    "[[100], []]",
-    "[[104, 16], [104, 16], []]",
-    "[[134, 1, 8, 512], [134, 1, 8, 512], []]",
-    "[[134, 2048], []]",
-    "[[1450, 1, 8, 512], [1450, 1, 8, 512], []]",
-    "[[1536, 4096], [], [], [], []]",
-    "[[1536, 8, 512], [1536, 1, 512], [1536, 1, 512], [1536, 4096], [], [], [1536, 8,",
-    "[[16, 8, 512], [16, 1, 512], [16, 1, 512], [16, 4096], [], [], [16, 8, 64], [16,",
-    "[[181], [], []]",
-    "[[1], [1], []]",
-    "[[1], [], []]"
+  "input_shapes": [],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "input_shapes_replaced_by": "docs/captured_kernel_api_shapes.json",
+  "standalone_workloads_json": "bench/workloads.json",
+  "shape_source": "fresh_sglang_kernel_api_capture",
+  "captured_kernel_api_workload_count": 10,
+  "captured_kernel_api_functions": [
+    "torch.bmm"
   ],
-  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+  "shape_capture_note": "Captured on verda-b300-fin-03-1/light-face-hides-fin-03-1, sglang-glm52 container, zai-org/GLM-5.2-FP8 tp=8, CUDA graphs disabled for Python API capture, 2026-07-07. Final records include DSA/TRTLLM attention, torch.bmm, DeepGEMM, and per-token quant call contracts from real server requests."
 }

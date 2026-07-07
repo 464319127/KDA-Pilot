@@ -3,7 +3,7 @@
   "model_slug": "glm_52",
   "cookbook_cmd": "python -m sglang.launch_server --model-path zai-org/GLM-5.2-FP8 --tp 8 --trust-remote-code --mem-fraction-static 0.8",
   "tp": "8",
-  "python_interface": "sglang.deep_gemm_fp8_fp8_bf16_nt",
+  "python_interface": "sglang.srt.layers.quantization.fp8_kernel.deep_gemm_fp8_fp8_bf16_nt",
   "kernel_family": "linear_gemm",
   "profiler_op_provenance": [
     "aten::arange",
@@ -29,19 +29,14 @@
   },
   "max_pct_of_gpu": 28.56,
   "best_scenario": "sharegpt_low",
-  "input_shapes": [
-    "[[16, 1, 8, 512], [16, 1, 8, 512], []]",
-    "[[16, 8, 512], [16, 1, 512], [16, 1, 512], [16, 4096], [], [], [16, 8, 64], [16,",
-    "[[1], [1], []]",
-    "[[1], []]",
-    "[[2049, 1048580], [], []]",
-    "[[32, 56], [32, 56], []]",
-    "[[32], [32], []]",
-    "[[48, 128], [], [], []]",
-    "[[48, 4096], [], [], [], []]",
-    "[[48, 8, 512], [48, 1, 512], [48, 1, 512], [48, 4096], [], [], [48, 8, 64], [48,",
-    "[[704], [704], []]",
-    "[[720], [], [], []]"
+  "input_shapes": [],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "input_shapes_replaced_by": "docs/captured_kernel_api_shapes.json",
+  "standalone_workloads_json": "bench/workloads.json",
+  "shape_source": "fresh_sglang_kernel_api_capture",
+  "captured_kernel_api_workload_count": 24,
+  "captured_kernel_api_functions": [
+    "sglang.srt.layers.quantization.fp8_kernel.deep_gemm_fp8_fp8_bf16_nt"
   ],
-  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+  "shape_capture_note": "Captured on verda-b300-fin-03-1/light-face-hides-fin-03-1, sglang-glm52 container, zai-org/GLM-5.2-FP8 tp=8, CUDA graphs disabled for Python API capture, 2026-07-07. Final records include DSA/TRTLLM attention, torch.bmm, DeepGEMM, and per-token quant call contracts from real server requests."
 }

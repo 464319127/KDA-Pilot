@@ -1,8 +1,8 @@
 # KDA Prompt: glm_52__sglang_deep_gemm_fp8_fp8_bf16_nt
 
-Target GPU: NVIDIA B200. Optimize the SGLang kernel behind:
+Target GPU: NVIDIA B200. Optimize the SGLang kernel path behind:
 
-- `sglang.deep_gemm_fp8_fp8_bf16_nt`
+- `sglang.srt.layers.quantization.fp8_kernel.deep_gemm_fp8_fp8_bf16_nt`
 
 ## Environment And Runner
 
@@ -20,8 +20,8 @@ cards or directly on the `ion-b200` host.
 `sharegpt_low`) — a serving-profile headroom signal used to select this standalone kernel task. Family
 `linear_gemm`, category `quant_gemm`.
 
-See `docs/profile_evidence.md` for the per-scenario %-of-GPU, GPU kernels, shapes,
-and original serving capture provenance. Do not start/re-run SGLang serve,
-`run_capture`, or a multi-GPU e2e A/B for the normal RLCR loop; optimize and
-validate via the task-local standalone benchmark on one idle target GPU. Follow
+Use `bench/workloads.json` as the task-local standalone shape source. It was generated from
+`docs/captured_kernel_api_shapes.json`, a fresh real GLM-5.2-FP8 TP=8 SGLang capture. Do not
+start/re-run SGLang serve, `run_capture`, or a multi-GPU e2e A/B for the normal RLCR loop;
+optimize and validate via the task-local standalone benchmark on one idle target GPU. Follow
 `llm/docs/llm_kernel_optimization_rules.md` (CUDA, no DSL) + `llm/docs/llm_correctness_contract.md`.

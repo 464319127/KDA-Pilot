@@ -126,7 +126,7 @@ def main():
         cat=max(e["cats"],key=lambda x:e["cats"][x])
         per={l:round(e["labels"][l],2) for l in LABELS if e["labels"].get(l,0)>0}
         best=max(e["labels"],key=lambda l:e["labels"][l]); dset,conc=best.rsplit("_",1)
-        entry=name if clean else f"<confirm via capture; profiler family={fam}>"
+        entry=name if clean else f"fresh_capture_required::{fam}"
         note=""
         if fam=="fused_moe_triton": note="Triton MoE expert-GEMM (sglang's own fused_experts/fused_moe kernel) — single-GPU optimizable; NOT the comm-fused trtllm MoE path (excluded)."
         if fam=="activation": note="Activation (SiLU/GELU+mul). Prior guidance: limited headroom — deprioritize."
@@ -142,6 +142,8 @@ entry_points = [
   "{entry}",
 ]
 evidence_json = "docs/profile_evidence.json"
+shape_source_json = "docs/captured_kernel_api_shapes.json"
+workloads_json = "bench/workloads.json"
 
 [selection]
 method = "serving-profile GPU-time headroom (extract_kernel_shapes >2%, family-grouped; provenance only)"
@@ -165,7 +167,9 @@ required_matched_ratio = 1.0
         ev={"model":a.model,"model_slug":a.model_slug,"cookbook_cmd":a.cookbook_cmd,"tp":a.tp,
             "python_interface":entry,"kernel_family":fam,"profiler_op_provenance":sorted(e["prov"])[:6],
             "category":cat,"gpu_kernels":sorted(e["kernels"]),"pct_of_gpu_by_scenario":per,
-            "max_pct_of_gpu":round(maxpct,2),"best_scenario":best,"input_shapes":sorted(e["shapes"])[:12],
+            "max_pct_of_gpu":round(maxpct,2),"best_scenario":best,"input_shapes":[],
+            "input_shapes_replaced_by":"docs/captured_kernel_api_shapes.json",
+            "standalone_workloads_json":"bench/workloads.json",
             "scenarios":"random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"}
         if note: ev["note"]=note
         json.dump(ev,open(os.path.join(d,"docs","profile_evidence.json"),"w"),indent=2)
@@ -175,7 +179,7 @@ required_matched_ratio = 1.0
 
 **Standalone kernel target: {maxpct:.1f}% of total serving GPU time** (max across scenarios) on
 `{a.model}`, from the exact cookbook-aligned profile. This is target-selection
-provenance and headroom context, not the validation path. {'Clean Python interface (profiler provenance).' if clean else 'Profiler kernel-family; confirm exact Python interface via SGLANG_KERNEL_API_LOGLEVEL capture.'}
+provenance and headroom context, not the validation path. {'Clean Python interface (profiler provenance).' if clean else 'Profiler kernel-family; fresh kernel API workload capture required before RLCR.'}
 {(chr(10)+'> '+note+chr(10)) if note else ''}
 - Model: `{a.model}` (slug `{a.model_slug}`, tp={a.tp})
 - Python interface: `{entry}`
@@ -190,8 +194,13 @@ provenance and headroom context, not the validation path. {'Clean Python interfa
 
 **Peak: {maxpct:.1f}% in `{best}` ({dset}, concurrency {CONC.get(conc,conc)}).**
 
-## Input shapes (profiler)
-{chr(10).join('- `'+s+'`' for s in sorted(e['shapes'])[:12]) or '- (see trace)'}
+## Fresh captured kernel API shapes
+
+- Shape source: `docs/captured_kernel_api_shapes.json`
+- Standalone workloads: `bench/workloads.json`
+
+Populate these files from a real model run before starting RLCR. Do not use
+profiler shape strings as benchmark inputs.
 
 ## Original serving capture command (provenance only)
 ```bash
@@ -211,8 +220,9 @@ Target GPU: NVIDIA B200. Optimize the SGLang kernel behind:
 profile, peak `{best}`) — a serving-profile headroom signal used to select this
 standalone kernel task. Family `{fam}`, category `{cat}`.{(' '+note) if note else ''}
 
-See `docs/profile_evidence.md` for the per-scenario %-of-GPU, GPU kernels, shapes,
-and original serving capture provenance. Do not start/re-run SGLang serve,
+See `docs/profile_evidence.md` for the per-scenario %-of-GPU and GPU kernel
+selection provenance, then use `bench/workloads.json` as the standalone shape
+source. Do not start/re-run SGLang serve,
 `run_capture`, or a multi-GPU e2e A/B for the normal RLCR loop; optimize and
 validate via the task-local standalone benchmark on one idle target GPU. Follow
 `llm/docs/llm_kernel_optimization_rules.md` (CUDA, no DSL) + `llm/docs/llm_correctness_contract.md`.
