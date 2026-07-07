@@ -58,6 +58,23 @@ TARGETS: dict[str, tuple[str, ...]] = {
         "scaled_fp4_grouped_quant",
         "silu_and_mul_scaled_fp4_grouped_quant",
     ),
+    "sglang.jit_kernel.hadamard": (
+        "hadamard_transform",
+        "hadamard_transform_12n",
+        "hadamard_transform_20n",
+        "hadamard_transform_28n",
+        "hadamard_transform_40n",
+    ),
+    "sglang.jit_kernel.dsv4.elementwise": (
+        "fused_q_indexer_rope_hadamard_fp4_quant",
+        "fused_q_indexer_rope_hadamard_quant",
+    ),
+    "sgl_kernel.elementwise": (
+        "dsv4_fused_q_indexer_rope_hadamard_quant",
+    ),
+    "sglang.srt.layers.quantization.fp4_utils": (
+        "fp4_quantize",
+    ),
     "sglang.srt.layers.layernorm": (
         "rmsnorm",
         "gemma_rmsnorm",
@@ -196,6 +213,8 @@ TARGETS: dict[str, tuple[str, ...]] = {
 
 TORCH_OP_TARGETS: dict[str, tuple[str, ...]] = {
     "sglang": (
+        "flashinfer_fp4_quantize",
+        "hadamard_transform",
         "inplace_fused_experts",
         "unified_attention_with_output",
     ),
