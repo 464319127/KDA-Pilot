@@ -3,7 +3,12 @@
   "model_slug": "ernie45",
   "cookbook_cmd": "sglang serve --model-path baidu/ERNIE-4.5-21B-A3B-PT --tp 1",
   "tp": "1",
-  "python_interface": "sglang.unified_attention_with_output",
+  "python_interface": [
+    "flashinfer.decode.trtllm_batch_decode_with_kv_cache",
+    "flashinfer.prefill.trtllm_batch_context_with_kv_cache",
+    "sglang.srt.layers.attention.trtllm_mha_backend.TRTLLMHAAttnBackend.forward_decode",
+    "sglang.srt.layers.attention.trtllm_mha_backend.TRTLLMHAAttnBackend.forward_extend"
+  ],
   "kernel_family": "attention",
   "profiler_op_provenance": [
     "aten::argmax",
@@ -29,17 +34,17 @@
   },
   "max_pct_of_gpu": 8.02,
   "best_scenario": "random_high",
-  "input_shapes": [
-    "[[0], [], [], []]",
-    "[[100]]",
-    "[[104, 17], [104, 17], []]",
-    "[[11264, 2560], [11264, 4, 128], [11264, 4, 128], [11264, 2560], [], [], [], [],",
-    "[[1], [1], []]",
-    "[[1]]",
-    "[[256], [256], []]",
-    "[[2816, 2560], [2816, 4, 128], [2816, 4, 128], [2816, 2560], [], [], [], [], [],",
-    "[[5120, 2560], [5120, 4, 128], [5120, 4, 128], [5120, 2560], [], [], [], [], [],",
-    "[[55], [], [], []]"
+  "input_shapes": [],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "input_shapes_replaced_by": "docs/captured_kernel_api_shapes.json",
+  "standalone_workloads_json": "bench/workloads.json",
+  "shape_source": "fresh_sglang_kernel_api_capture",
+  "captured_kernel_api_workload_count": 18,
+  "captured_kernel_api_functions": [
+    "flashinfer.decode.trtllm_batch_decode_with_kv_cache",
+    "flashinfer.prefill.trtllm_batch_context_with_kv_cache",
+    "sglang.srt.layers.attention.trtllm_mha_backend.TRTLLMHAAttnBackend.forward_decode",
+    "sglang.srt.layers.attention.trtllm_mha_backend.TRTLLMHAAttnBackend.forward_extend"
   ],
-  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+  "shape_capture_note": "Captured 2026-07-07 on Verda B300 light-face-hides-fin-03-1 from a real baidu/ERNIE-4.5-21B-A3B-PT SGLang TP=1 server in container sglang-ernie45. Used local NVMe HF cache in offline mode, trust_remote_code, attention_backend=trtllm_mha, moe_runner_backend=triton for the Triton MoE task, CUDA graph prefill/decode disabled, and marked four request windows covering long prefill, short decode, mid concurrency, and high concurrency."
 }

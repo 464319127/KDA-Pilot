@@ -3,7 +3,9 @@
   "model_slug": "ernie45",
   "cookbook_cmd": "sglang serve --model-path baidu/ERNIE-4.5-21B-A3B-PT --tp 1",
   "tp": "1",
-  "python_interface": "<confirm via capture; profiler family=fused_add_rmsnorm>",
+  "python_interface": [
+    "sglang.srt.layers.layernorm.fused_add_rmsnorm"
+  ],
   "kernel_family": "fused_add_rmsnorm",
   "profiler_op_provenance": [
     "aten::as_strided",
@@ -21,11 +23,14 @@
   },
   "max_pct_of_gpu": 4.46,
   "best_scenario": "sharegpt_low",
-  "input_shapes": [
-    "[[1, 103424], [], [], []]",
-    "[[1, 1], [1, 1], []]",
-    "[[1], [], [], [], []]",
-    "[[1]]"
+  "input_shapes": [],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "input_shapes_replaced_by": "docs/captured_kernel_api_shapes.json",
+  "standalone_workloads_json": "bench/workloads.json",
+  "shape_source": "fresh_sglang_kernel_api_capture",
+  "captured_kernel_api_workload_count": 9,
+  "captured_kernel_api_functions": [
+    "sglang.srt.layers.layernorm.fused_add_rmsnorm"
   ],
-  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+  "shape_capture_note": "Captured 2026-07-07 on Verda B300 light-face-hides-fin-03-1 from a real baidu/ERNIE-4.5-21B-A3B-PT SGLang TP=1 server in container sglang-ernie45. Used local NVMe HF cache in offline mode, trust_remote_code, attention_backend=trtllm_mha, moe_runner_backend=triton for the Triton MoE task, CUDA graph prefill/decode disabled, and marked four request windows covering long prefill, short decode, mid concurrency, and high concurrency."
 }

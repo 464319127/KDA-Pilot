@@ -25,11 +25,44 @@ MAX_CALLS_PER_FUNC = int(os.environ.get("KDA_CAPTURE_MAX_CALLS_PER_FUNC", "256")
 TARGETS: dict[str, tuple[str, ...]] = {
     "sglang.srt.layers.quantization.fp8_kernel": (
         "deep_gemm_fp8_fp8_bf16_nt",
+        "triton_scaled_mm",
         "sglang_per_token_group_quant_fp8",
         "sglang_per_token_group_quant_fp8_row_padded",
         "per_token_group_quant_fp8",
         "sglang_per_token_group_quant_8bit",
         "per_token_group_quant_8bit",
+    ),
+    "sglang.srt.layers.quantization.fp8_utils": (
+        "flashinfer_bmm_fp8",
+        "apply_fp8_linear",
+        "apply_fp8_linear_bmm_flashinfer",
+        "flashinfer_gemm_w8a8_block_fp8_linear_with_fallback",
+        "cutlass_w8a8_block_fp8_linear_with_fallback",
+        "deepgemm_w8a8_block_fp8_linear_with_fallback",
+        "triton_w8a8_block_fp8_linear",
+        "triton_scaled_mm",
+        "fp8_scaled_mm",
+        "fp8_blockwise_scaled_mm",
+        "_apply_fallback_scaled_mm",
+    ),
+    "sglang.srt.layers.layernorm": (
+        "fused_add_rmsnorm",
+        "gemma_fused_add_rmsnorm",
+        "_jit_fused_add_rmsnorm",
+    ),
+    "sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe": (
+        "fused_experts",
+        "inplace_fused_experts",
+        "outplace_fused_experts",
+        "fused_experts_impl",
+        "_fused_moe_kernel_sequence",
+    ),
+    "sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe_triton_kernels": (
+        "invoke_fused_moe_kernel",
+    ),
+    "sglang.srt.layers.attention.trtllm_mha_backend": (
+        "TRTLLMHAAttnBackend.forward_decode",
+        "TRTLLMHAAttnBackend.forward_extend",
     ),
     "sglang.srt.layers.radix_attention": (
         "unified_attention_with_output",
@@ -40,9 +73,6 @@ TARGETS: dict[str, tuple[str, ...]] = {
         "_bmm_fp8_op",
         "mla_bmm_then_unified_attention",
         "bcg_mla_bmm_then_unified_attention",
-    ),
-    "sglang.srt.layers.quantization.fp8_utils": (
-        "flashinfer_bmm_fp8",
     ),
     "sglang.srt.layers.attention.deepseek_v4_backend": (
         "DeepseekV4AttnBackend.forward",
@@ -74,9 +104,11 @@ TARGETS: dict[str, tuple[str, ...]] = {
     ),
     "flashinfer.prefill": (
         "trtllm_ragged_attention_deepseek",
+        "trtllm_batch_context_with_kv_cache",
     ),
     "flashinfer.decode": (
         "trtllm_batch_decode_with_kv_cache_mla",
+        "trtllm_batch_decode_with_kv_cache",
     ),
 }
 
@@ -245,6 +277,49 @@ def _wrap_module(module: Any, module_name: str) -> None:
         _wrap_function(module, module_name, attr_name)
 
 
+def _wrap_torch_function(torch_module: Any, attr_name: str, full_name: str) -> None:
+    if not hasattr(torch_module, attr_name):
+        return
+    func = getattr(torch_module, attr_name)
+    if not callable(func) or getattr(func, "_kda_shape_capture_wrapped", False):
+        return
+
+    @functools.wraps(func)
+    def wrapper(*args: Any, **kwargs: Any) -> Any:
+        if _is_torch_compiling():
+            return func(*args, **kwargs)
+        count = _counts.get(full_name, 0)
+        should_record = count < MAX_CALLS_PER_FUNC
+        if should_record:
+            _counts[full_name] = count + 1
+            record: dict[str, Any] = {
+                "event": "call",
+                "time": time.time(),
+                "pid": os.getpid(),
+                "call_index": count + 1,
+                "function": full_name,
+                "rank_env": _rank_env(),
+                "args": [_summarize(arg) for arg in args],
+                "kwargs": {key: _summarize(val) for key, val in kwargs.items()},
+            }
+            try:
+                result = func(*args, **kwargs)
+            except Exception as exc:
+                record["exception"] = {
+                    "type": type(exc).__name__,
+                    "message": str(exc),
+                }
+                _append_record(record)
+                raise
+            record["result"] = _summarize(result)
+            _append_record(record)
+            return result
+        return func(*args, **kwargs)
+
+    setattr(wrapper, "_kda_shape_capture_wrapped", True)
+    setattr(torch_module, attr_name, wrapper)
+
+
 class _CaptureLoader(importlib.abc.Loader):
     def __init__(self, wrapped: importlib.abc.Loader, module_name: str):
         self._wrapped = wrapped
@@ -294,45 +369,22 @@ if OUT_TEMPLATE:
         try:
             import torch
 
-            if not getattr(torch.bmm, "_kda_shape_capture_wrapped", False):
-                _torch_bmm = torch.bmm
+            _wrap_torch_function(torch, "bmm", "torch.bmm")
+        except Exception:
+            pass
 
-                @functools.wraps(_torch_bmm)
-                def _bmm_wrapper(*args: Any, **kwargs: Any) -> Any:
-                    if _is_torch_compiling():
-                        return _torch_bmm(*args, **kwargs)
-                    full_name = "torch.bmm"
-                    count = _counts.get(full_name, 0)
-                    should_record = count < MAX_CALLS_PER_FUNC
-                    if should_record:
-                        _counts[full_name] = count + 1
-                        record: dict[str, Any] = {
-                            "event": "call",
-                            "time": time.time(),
-                            "pid": os.getpid(),
-                            "call_index": count + 1,
-                            "function": full_name,
-                            "rank_env": _rank_env(),
-                            "args": [_summarize(arg) for arg in args],
-                            "kwargs": {
-                                key: _summarize(val) for key, val in kwargs.items()
-                            },
-                        }
-                        try:
-                            result = _torch_bmm(*args, **kwargs)
-                        except Exception as exc:
-                            record["exception"] = {
-                                "type": type(exc).__name__,
-                                "message": str(exc),
-                            }
-                            _append_record(record)
-                            raise
-                        record["result"] = _summarize(result)
-                        _append_record(record)
-                        return result
-                    return _torch_bmm(*args, **kwargs)
+    if os.environ.get("KDA_CAPTURE_TORCH_SCALED_MM") == "1":
+        try:
+            import torch
 
-                setattr(_bmm_wrapper, "_kda_shape_capture_wrapped", True)
-                torch.bmm = _bmm_wrapper
+            _wrap_torch_function(torch, "_scaled_mm", "torch._scaled_mm")
+        except Exception:
+            pass
+
+    if os.environ.get("KDA_CAPTURE_TORCH_LINEAR") == "1":
+        try:
+            import torch.nn.functional as F
+
+            _wrap_torch_function(F, "linear", "torch.nn.functional.linear")
         except Exception:
             pass
