@@ -1,8 +1,9 @@
-# llama4_scout — e2e kernel task selection
+# llama4_scout — standalone kernel task selection
 
 - Model: `meta-llama/Llama-4-Scout-17B-16E-Instruct` (tp=8)
-- Cookbook cmd: `python -m sglang.launch_server --model-path meta-llama/Llama-4-Scout-17B-16E-Instruct --tp 8 --trust-remote-code --mem-fraction-static 0.8 --context-length 65536`
-- Kept: max GPU-time share `>= 3.0%`, non-comm, non-trtllm-MoE
+- Serving capture cmd (provenance only): `python -m sglang.launch_server --model-path meta-llama/Llama-4-Scout-17B-16E-Instruct --tp 8 --trust-remote-code --mem-fraction-static 0.8 --context-length 65536`
+- Task mode: standalone single-GPU kernel optimization; no live serve, run_capture, or multi-GPU e2e gate during RLCR.
+- Kept: max serving-profile GPU-time share `>= 3.0%`, non-comm, non-trtllm-MoE
 
 | task | category | family | max % GPU | peak scenario | clean op |
 |---|---|---|---:|---|---|

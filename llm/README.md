@@ -1,7 +1,7 @@
 # KDA-Pilot LLM Kernel Interface Tasks
 
-This subtree records SGLang LLM kernel optimization tasks from live B200 serving
-runs.
+This subtree records SGLang LLM kernel optimization tasks discovered from live
+B200 serving runs, then optimized as standalone single-GPU kernel tasks.
 
 The current LLM task source is runtime SGLang kernel API logging:
 
@@ -40,5 +40,7 @@ and symbols converted to underscores, for example
 
 The important rule is symmetry: copy the relevant upstream SGLang implementation
 into `baseline/`, expose baseline and candidate through matching local
-interfaces, and benchmark only task-local code. The live SGLang server is used
-for shape discovery, not as the correctness or benchmark baseline.
+interfaces, and benchmark only task-local code on one idle target GPU. The live
+SGLang server is used for shape discovery and target selection, not as the
+correctness or benchmark baseline. Do not require `sglang serve`, `run_capture`,
+TP/EP, or an all-GPU idle serving slot during the kernel optimization loop.

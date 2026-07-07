@@ -1,8 +1,7 @@
 # Profile evidence — nemotron3_nano__sglang_flashinfer_bmm_fp8
 
-**Why this kernel is an e2e-optimization target:** it is **20.7% of total GPU
-time** (max across scenarios) on `nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-FP8`, measured by profiling the exact
-cookbook deployment. Clean Python interface from profiler provenance.
+**Why this is a standalone kernel target:** it is **20.7% of total serving GPU time** (max across scenarios) on `nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-FP8`, measured by profiling the exact
+cookbook deployment. This is target-selection provenance and headroom context, not the validation path. Clean Python interface from profiler provenance.
 
 - Model: `nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-FP8` (slug `nemotron3_nano`, tp=1)
 - Python interface: `sglang.flashinfer_bmm_fp8`
@@ -29,10 +28,11 @@ cookbook deployment. Clean Python interface from profiler provenance.
 - `[[], []]`
 - `[[]]`
 
-## Reproduce the deployment (cookbook-aligned)
+## Original serving capture command (provenance only)
 ```bash
 python3 -m sglang.launch_server --model-path nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-FP8 --trust-remote-code --max-running-requests 1024
 ```
 
-After optimizing, re-run the **random_mid** scenario to validate the e2e effect:
-`bench_serving --dataset-name random ... --max-concurrency 32`.
+Do not rerun this serving command, `run_capture`, or a multi-GPU e2e A/B as part
+of the normal kernel task. Validate with the task-local standalone benchmark on
+one idle target GPU using the captured shape set.

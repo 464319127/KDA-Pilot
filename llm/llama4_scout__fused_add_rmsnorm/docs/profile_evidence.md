@@ -1,7 +1,7 @@
 # Profile evidence — llama4_scout__fused_add_rmsnorm
 
-**e2e-optimization target: 34.8% of total GPU time** (max across scenarios) on
-`meta-llama/Llama-4-Scout-17B-16E-Instruct`, from the exact cookbook-aligned profile. Profiler kernel-family; confirm exact Python interface via SGLANG_KERNEL_API_LOGLEVEL capture.
+**Standalone kernel target: 34.8% of total serving GPU time** (max across scenarios) on
+`meta-llama/Llama-4-Scout-17B-16E-Instruct`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Profiler kernel-family; confirm exact Python interface via SGLANG_KERNEL_API_LOGLEVEL capture.
 
 - Model: `meta-llama/Llama-4-Scout-17B-16E-Instruct` (slug `llama4_scout`, tp=8)
 - Python interface: `<confirm via capture; profiler family=fused_add_rmsnorm>`
@@ -35,8 +35,10 @@
 - `[[5120, 640], [], []]`
 - `[[5689792, 1, 128], []]`
 
-## Reproduce (cookbook-aligned)
+## Original serving capture command (provenance only)
 ```bash
 python -m sglang.launch_server --model-path meta-llama/Llama-4-Scout-17B-16E-Instruct --tp 8 --trust-remote-code --mem-fraction-static 0.8 --context-length 65536
 ```
-After optimizing, re-run **random_low** to validate the e2e effect.
+Do not rerun this serving command, `run_capture`, or a multi-GPU e2e A/B as part
+of the normal kernel task. Validate with the task-local standalone benchmark on
+one idle target GPU using the captured shape set.

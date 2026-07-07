@@ -1,7 +1,7 @@
 # Profile evidence — qwen36__sglang_deep_gemm_fp8_fp8_bf16_nt
 
-**e2e-optimization target: 26.3% of total GPU time** (max across scenarios) on
-`Qwen/Qwen3.6-35B-A3B-FP8`, from the exact cookbook-aligned profile. Clean Python interface (profiler provenance).
+**Standalone kernel target: 26.3% of total serving GPU time** (max across scenarios) on
+`Qwen/Qwen3.6-35B-A3B-FP8`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Clean Python interface (profiler provenance).
 
 - Model: `Qwen/Qwen3.6-35B-A3B-FP8` (slug `qwen36`, tp=1)
 - Python interface: `sglang.deep_gemm_fp8_fp8_bf16_nt`
@@ -35,8 +35,10 @@
 - `[[49, 2], []]`
 - `[[49], [49], []]`
 
-## Reproduce (cookbook-aligned)
+## Original serving capture command (provenance only)
 ```bash
 sglang serve --model-path Qwen/Qwen3.6-35B-A3B-FP8 --reasoning-parser qwen3 --tool-call-parser qwen3_coder --speculative-algorithm EAGLE --speculative-num-steps 3 --speculative-eagle-topk 1
 ```
-After optimizing, re-run **sharegpt_low** to validate the e2e effect.
+Do not rerun this serving command, `run_capture`, or a multi-GPU e2e A/B as part
+of the normal kernel task. Validate with the task-local standalone benchmark on
+one idle target GPU using the captured shape set.

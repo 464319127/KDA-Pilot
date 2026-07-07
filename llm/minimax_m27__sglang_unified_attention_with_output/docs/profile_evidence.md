@@ -1,7 +1,7 @@
 # Profile evidence — minimax_m27__sglang_unified_attention_with_output
 
-**e2e-optimization target: 5.4% of total GPU time** (max across scenarios) on
-`MiniMaxAI/MiniMax-M2.7`, from the exact cookbook-aligned profile. Clean Python interface (profiler provenance).
+**Standalone kernel target: 5.4% of total serving GPU time** (max across scenarios) on
+`MiniMaxAI/MiniMax-M2.7`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Clean Python interface (profiler provenance).
 
 - Model: `MiniMaxAI/MiniMax-M2.7` (slug `minimax_m27`, tp=8)
 - Python interface: `sglang.unified_attention_with_output`
@@ -34,8 +34,10 @@
 - `[[[64], [576]], []]`
 - `[[], [], [], [], [], []]`
 
-## Reproduce (cookbook-aligned)
+## Original serving capture command (provenance only)
 ```bash
 sglang serve --model-path MiniMaxAI/MiniMax-M2.7 --tp 8 --ep 8 --tool-call-parser minimax-m2 --reasoning-parser minimax-append-think
 ```
-After optimizing, re-run **sharegpt_high** to validate the e2e effect.
+Do not rerun this serving command, `run_capture`, or a multi-GPU e2e A/B as part
+of the normal kernel task. Validate with the task-local standalone benchmark on
+one idle target GPU using the captured shape set.

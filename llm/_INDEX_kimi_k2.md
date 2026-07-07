@@ -1,8 +1,9 @@
-# kimi_k2 — e2e kernel task selection
+# kimi_k2 — standalone kernel task selection
 
 - Model: `moonshotai/Kimi-K2-Instruct` (tp=8)
-- Cookbook cmd: `sglang serve --model-path moonshotai/Kimi-K2-Instruct --tp 8 --tool-call-parser kimi_k2`
-- Kept: max GPU-time share `>= 3.0%`, non-comm, non-trtllm-MoE
+- Serving capture cmd (provenance only): `sglang serve --model-path moonshotai/Kimi-K2-Instruct --tp 8 --tool-call-parser kimi_k2`
+- Task mode: standalone single-GPU kernel optimization; no live serve, run_capture, or multi-GPU e2e gate during RLCR.
+- Kept: max serving-profile GPU-time share `>= 3.0%`, non-comm, non-trtllm-MoE
 
 | task | category | family | max % GPU | peak scenario | clean op |
 |---|---|---|---:|---|---|

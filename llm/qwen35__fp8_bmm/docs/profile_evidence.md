@@ -1,7 +1,7 @@
 # Profile evidence — qwen35__fp8_bmm
 
-**e2e-optimization target: 16.0% of total GPU time** (max across scenarios) on
-`nvidia/Qwen3.5-397B-A17B-NVFP4`, from the exact cookbook-aligned profile. Profiler kernel-family; confirm exact Python interface via SGLANG_KERNEL_API_LOGLEVEL capture.
+**Standalone kernel target: 16.0% of total serving GPU time** (max across scenarios) on
+`nvidia/Qwen3.5-397B-A17B-NVFP4`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Profiler kernel-family; confirm exact Python interface via SGLANG_KERNEL_API_LOGLEVEL capture.
 
 - Model: `nvidia/Qwen3.5-397B-A17B-NVFP4` (slug `qwen35`, tp=4)
 - Python interface: `<confirm via capture; profiler family=fp8_bmm>`
@@ -33,8 +33,10 @@
 - `[[30758, 4096], []]`
 - `[[31, 62080]]`
 
-## Reproduce (cookbook-aligned)
+## Original serving capture command (provenance only)
 ```bash
 sglang serve --model-path nvidia/Qwen3.5-397B-A17B-NVFP4 --tp 4 --reasoning-parser qwen3 --tool-call-parser qwen3_coder
 ```
-After optimizing, re-run **random_mid** to validate the e2e effect.
+Do not rerun this serving command, `run_capture`, or a multi-GPU e2e A/B as part
+of the normal kernel task. Validate with the task-local standalone benchmark on
+one idle target GPU using the captured shape set.

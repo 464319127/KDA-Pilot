@@ -1,7 +1,7 @@
 # Profile evidence — kimi_k2__sglang_unified_attention_with_output
 
-**e2e-optimization target: 9.5% of total GPU time** (max across scenarios) on
-`moonshotai/Kimi-K2-Instruct`, from the exact cookbook-aligned profile. Clean Python interface (profiler provenance).
+**Standalone kernel target: 9.5% of total serving GPU time** (max across scenarios) on
+`moonshotai/Kimi-K2-Instruct`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Clean Python interface (profiler provenance).
 
 - Model: `moonshotai/Kimi-K2-Instruct` (slug `kimi_k2`, tp=8)
 - Python interface: `sglang.unified_attention_with_output`
@@ -34,8 +34,10 @@
 - `[[[1]], [], [], [], [], []]`
 - `[[[320], [38]], []]`
 
-## Reproduce (cookbook-aligned)
+## Original serving capture command (provenance only)
 ```bash
 sglang serve --model-path moonshotai/Kimi-K2-Instruct --tp 8 --tool-call-parser kimi_k2
 ```
-After optimizing, re-run **sharegpt_high** to validate the e2e effect.
+Do not rerun this serving command, `run_capture`, or a multi-GPU e2e A/B as part
+of the normal kernel task. Validate with the task-local standalone benchmark on
+one idle target GPU using the captured shape set.

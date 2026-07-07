@@ -1,8 +1,9 @@
-# lfm25 — e2e kernel task selection
+# lfm25 — standalone kernel task selection
 
 - Model: `LiquidAI/LFM2.5-8B-A1B` (tp=1)
-- Cookbook cmd: `sglang serve --model-path LiquidAI/LFM2.5-8B-A1B --tp 1 --attention-backend flashinfer --reasoning-parser qwen3 --tool-call-parser lfm2`
-- Threshold: kept kernels with max GPU-time share `>= 3.0%` (non-comm, non-fused-MoE)
+- Serving capture cmd (provenance only): `sglang serve --model-path LiquidAI/LFM2.5-8B-A1B --tp 1 --attention-backend flashinfer --reasoning-parser qwen3 --tool-call-parser lfm2`
+- Task mode: standalone single-GPU kernel optimization; no live serve, run_capture, or multi-GPU e2e gate during RLCR.
+- Threshold: kept kernels with max serving-profile GPU-time share `>= 3.0%` (non-comm, non-fused-MoE)
 
 ## Kept tasks (e2e-impactful)
 

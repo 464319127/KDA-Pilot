@@ -1,8 +1,9 @@
-# deepseek_v3 — e2e kernel task selection
+# deepseek_v3 — standalone kernel task selection
 
 - Model: `deepseek-ai/DeepSeek-V3` (tp=8)
-- Cookbook cmd: `sglang serve --model-path deepseek-ai/DeepSeek-V3 --tp 8 --speculative-algorithm EAGLE`
-- Kept: max GPU-time share `>= 3.0%`, non-comm, non-trtllm-MoE
+- Serving capture cmd (provenance only): `sglang serve --model-path deepseek-ai/DeepSeek-V3 --tp 8 --speculative-algorithm EAGLE`
+- Task mode: standalone single-GPU kernel optimization; no live serve, run_capture, or multi-GPU e2e gate during RLCR.
+- Kept: max serving-profile GPU-time share `>= 3.0%`, non-comm, non-trtllm-MoE
 
 | task | category | family | max % GPU | peak scenario | clean op |
 |---|---|---|---:|---|---|

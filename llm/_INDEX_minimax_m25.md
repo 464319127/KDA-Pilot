@@ -1,8 +1,9 @@
-# minimax_m25 — e2e kernel task selection
+# minimax_m25 — standalone kernel task selection
 
 - Model: `MiniMaxAI/MiniMax-M2.5` (tp=8)
-- Cookbook cmd: `sglang serve --model-path MiniMaxAI/MiniMax-M2.5 --tp 8 --ep 8 --reasoning-parser minimax-append-think`
-- Kept: max GPU-time share `>= 3.0%`, non-comm, non-trtllm-MoE
+- Serving capture cmd (provenance only): `sglang serve --model-path MiniMaxAI/MiniMax-M2.5 --tp 8 --ep 8 --reasoning-parser minimax-append-think`
+- Task mode: standalone single-GPU kernel optimization; no live serve, run_capture, or multi-GPU e2e gate during RLCR.
+- Kept: max serving-profile GPU-time share `>= 3.0%`, non-comm, non-trtllm-MoE
 
 | task | category | family | max % GPU | peak scenario | clean op |
 |---|---|---|---:|---|---|

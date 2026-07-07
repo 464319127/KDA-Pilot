@@ -1,7 +1,7 @@
 # Profile evidence — laguna_m1__fused_add_rmsnorm
 
-**e2e-optimization target: 5.5% of total GPU time** (max across scenarios) on
-`poolside/Laguna-M.1-NVFP4`, from the exact cookbook-aligned profile. Profiler kernel-family; confirm exact Python interface via SGLANG_KERNEL_API_LOGLEVEL capture.
+**Standalone kernel target: 5.5% of total serving GPU time** (max across scenarios) on
+`poolside/Laguna-M.1-NVFP4`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Profiler kernel-family; confirm exact Python interface via SGLANG_KERNEL_API_LOGLEVEL capture.
 
 - Model: `poolside/Laguna-M.1-NVFP4` (slug `laguna_m1`, tp=8)
 - Python interface: `<confirm via capture; profiler family=fused_add_rmsnorm>`
@@ -31,8 +31,10 @@
 - `[[[512], [55]], []]`
 - `[[]]`
 
-## Reproduce (cookbook-aligned)
+## Original serving capture command (provenance only)
 ```bash
 sglang serve --model-path poolside/Laguna-M.1-NVFP4 --tp 8 --trust-remote-code --reasoning-parser poolside_v1 --tool-call-parser poolside_v1
 ```
-After optimizing, re-run **sharegpt_low** to validate the e2e effect.
+Do not rerun this serving command, `run_capture`, or a multi-GPU e2e A/B as part
+of the normal kernel task. Validate with the task-local standalone benchmark on
+one idle target GPU using the captured shape set.

@@ -1,8 +1,7 @@
 # Profile evidence — lfm25__linear_gemm
 
-**Why this kernel is an e2e-optimization target:** it is **19.0% of total GPU
-time** (max across scenarios) on `LiquidAI/LFM2.5-8B-A1B`, measured by profiling the exact
-cookbook deployment. Profiler role name; confirm exact Python interface via SGLANG_KERNEL_API_LOGLEVEL capture.
+**Why this is a standalone kernel target:** it is **19.0% of total serving GPU time** (max across scenarios) on `LiquidAI/LFM2.5-8B-A1B`, measured by profiling the exact
+cookbook deployment. This is target-selection provenance and headroom context, not the validation path. Profiler role name; confirm exact Python interface via SGLANG_KERNEL_API_LOGLEVEL capture.
 
 - Model: `LiquidAI/LFM2.5-8B-A1B` (slug `lfm25`, tp=1)
 - Python interface: `<confirm via capture; profiler role=linear_gemm>`
@@ -37,10 +36,11 @@ cookbook deployment. Profiler role name; confirm exact Python interface via SGLA
 - `[[1], []]`
 - `[[1]]`
 
-## Reproduce the deployment (cookbook-aligned)
+## Original serving capture command (provenance only)
 ```bash
 sglang serve --model-path LiquidAI/LFM2.5-8B-A1B --tp 1 --attention-backend flashinfer --reasoning-parser qwen3 --tool-call-parser lfm2
 ```
 
-After optimizing, re-run the **random_low** scenario to validate the e2e effect:
-`bench_serving --dataset-name random ... --max-concurrency 1`.
+Do not rerun this serving command, `run_capture`, or a multi-GPU e2e A/B as part
+of the normal kernel task. Validate with the task-local standalone benchmark on
+one idle target GPU using the captured shape set.

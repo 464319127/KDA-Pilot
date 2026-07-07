@@ -1,7 +1,7 @@
 # Profile evidence — mistral_small4__sgl_kernel_fp8_scaled_mm
 
-**e2e-optimization target: 28.4% of total GPU time** (max across scenarios) on
-`mistralai/Mistral-Small-4-119B-2603`, from the exact cookbook-aligned profile. Clean Python interface (profiler provenance).
+**Standalone kernel target: 28.4% of total serving GPU time** (max across scenarios) on
+`mistralai/Mistral-Small-4-119B-2603`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Clean Python interface (profiler provenance).
 
 - Model: `mistralai/Mistral-Small-4-119B-2603` (slug `mistral_small4`, tp=1)
 - Python interface: `sgl_kernel.fp8_scaled_mm`
@@ -35,8 +35,10 @@
 - `[[1], [], []]`
 - `[[1]]`
 
-## Reproduce (cookbook-aligned)
+## Original serving capture command (provenance only)
 ```bash
 sglang serve --model-path mistralai/Mistral-Small-4-119B-2603 --tp 1 --reasoning-parser mistral --tool-call-parser mistral
 ```
-After optimizing, re-run **sharegpt_low** to validate the e2e effect.
+Do not rerun this serving command, `run_capture`, or a multi-GPU e2e A/B as part
+of the normal kernel task. Validate with the task-local standalone benchmark on
+one idle target GPU using the captured shape set.

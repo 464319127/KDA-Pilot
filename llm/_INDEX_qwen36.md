@@ -1,8 +1,9 @@
-# qwen36 — e2e kernel task selection
+# qwen36 — standalone kernel task selection
 
 - Model: `Qwen/Qwen3.6-35B-A3B-FP8` (tp=1)
-- Cookbook cmd: `sglang serve --model-path Qwen/Qwen3.6-35B-A3B-FP8 --reasoning-parser qwen3 --tool-call-parser qwen3_coder --speculative-algorithm EAGLE --speculative-num-steps 3 --speculative-eagle-topk 1`
-- Kept: max GPU-time share `>= 3.0%`, non-comm, non-trtllm-MoE
+- Serving capture cmd (provenance only): `sglang serve --model-path Qwen/Qwen3.6-35B-A3B-FP8 --reasoning-parser qwen3 --tool-call-parser qwen3_coder --speculative-algorithm EAGLE --speculative-num-steps 3 --speculative-eagle-topk 1`
+- Task mode: standalone single-GPU kernel optimization; no live serve, run_capture, or multi-GPU e2e gate during RLCR.
+- Kept: max serving-profile GPU-time share `>= 3.0%`, non-comm, non-trtllm-MoE
 
 | task | category | family | max % GPU | peak scenario | clean op |
 |---|---|---|---:|---|---|

@@ -1,8 +1,9 @@
-# ling_26 — e2e kernel task selection
+# ling_26 — standalone kernel task selection
 
 - Model: `inclusionAI/Ling-2.6-flash` (tp=4)
-- Cookbook cmd: `sglang serve --model-path inclusionAI/Ling-2.6-flash --tp 4 --trust-remote-code`
-- Kept: max GPU-time share `>= 3.0%`, non-comm, non-trtllm-MoE
+- Serving capture cmd (provenance only): `sglang serve --model-path inclusionAI/Ling-2.6-flash --tp 4 --trust-remote-code`
+- Task mode: standalone single-GPU kernel optimization; no live serve, run_capture, or multi-GPU e2e gate during RLCR.
+- Kept: max serving-profile GPU-time share `>= 3.0%`, non-comm, non-trtllm-MoE
 
 | task | category | family | max % GPU | peak scenario | clean op |
 |---|---|---|---:|---|---|

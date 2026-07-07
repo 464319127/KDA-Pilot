@@ -1,7 +1,7 @@
 # Profile evidence — deepseek_r1_fp4__sglang_flashinfer_dsv3_router_gemm
 
-**e2e-optimization target: 19.1% of total GPU time** (max across scenarios) on
-`nvidia/DeepSeek-R1-0528-FP4-v2`, from the exact cookbook-aligned profile. Clean Python interface (profiler provenance).
+**Standalone kernel target: 19.1% of total serving GPU time** (max across scenarios) on
+`nvidia/DeepSeek-R1-0528-FP4-v2`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Clean Python interface (profiler provenance).
 
 - Model: `nvidia/DeepSeek-R1-0528-FP4-v2` (slug `deepseek_r1_fp4`, tp=8)
 - Python interface: `sglang.flashinfer_dsv3_router_gemm`
@@ -25,8 +25,10 @@
 - `[[[1, 1], [1, 3]], []]`
 - `[[], [], []]`
 
-## Reproduce (cookbook-aligned)
+## Original serving capture command (provenance only)
 ```bash
 sglang serve --model-path nvidia/DeepSeek-R1-0528-FP4-v2 --tp 8 --trust-remote-code
 ```
-After optimizing, re-run **sharegpt_low** to validate the e2e effect.
+Do not rerun this serving command, `run_capture`, or a multi-GPU e2e A/B as part
+of the normal kernel task. Validate with the task-local standalone benchmark on
+one idle target GPU using the captured shape set.

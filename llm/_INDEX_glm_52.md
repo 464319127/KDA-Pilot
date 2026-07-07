@@ -1,12 +1,13 @@
-# glm_52 — e2e kernel task selection
+# glm_52 — standalone kernel task selection
 
 - Model: `zai-org/GLM-5.2-FP8` (tp=8)
-- Cookbook cmd: `python -m sglang.launch_server --model-path zai-org/GLM-5.2-FP8 --tp 8 --trust-remote-code --mem-fraction-static 0.8`
+- Serving capture cmd (provenance only): `python -m sglang.launch_server --model-path zai-org/GLM-5.2-FP8 --tp 8 --trust-remote-code --mem-fraction-static 0.8`
+- Task mode: standalone single-GPU kernel optimization; no live serve, run_capture, or multi-GPU e2e gate during RLCR.
 - Runner: `ion-b200` / `sglang_bbuf`; select a verified-idle B200 GPU before
   any CUDA, Python, build, test, benchmark, or profiling command.
 - Agent model: Opus (`CLAUDE_MODEL=opus` in each task launcher; override by
   exporting a different valid `CLAUDE_MODEL` before launch).
-- Kept: max GPU-time share `>= 3.0%`, non-comm, non-trtllm-MoE
+- Kept: max serving-profile GPU-time share `>= 3.0%`, non-comm, non-trtllm-MoE
 
 | task | category | family | max % GPU | peak scenario | clean op |
 |---|---|---|---:|---|---|

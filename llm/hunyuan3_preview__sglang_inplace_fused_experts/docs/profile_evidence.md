@@ -1,7 +1,7 @@
 # Profile evidence — hunyuan3_preview__sglang_inplace_fused_experts
 
-**e2e-optimization target: 34.7% of total GPU time** (max across scenarios) on
-`tencent/Hy3-preview`, from the exact cookbook-aligned profile. Clean Python interface (profiler provenance).
+**Standalone kernel target: 34.7% of total serving GPU time** (max across scenarios) on
+`tencent/Hy3-preview`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Clean Python interface (profiler provenance).
 
 > Triton MoE expert-GEMM (sglang's own fused_experts/fused_moe kernel) — single-GPU optimizable; NOT the comm-fused trtllm MoE path (excluded).
 
@@ -33,8 +33,10 @@
 - `[[5067, 4096], [192, 384, 4096], [192, 4096, 192], [5067, 8], [5067, 8], [], [],`
 - `[[5067, 4096], [384, 4096], []]`
 
-## Reproduce (cookbook-aligned)
+## Original serving capture command (provenance only)
 ```bash
 sglang serve --model-path tencent/Hy3-preview --tp 8 --speculative-algorithm EAGLE --speculative-num-steps 3 --speculative-eagle-topk 1
 ```
-After optimizing, re-run **random_mid** to validate the e2e effect.
+Do not rerun this serving command, `run_capture`, or a multi-GPU e2e A/B as part
+of the normal kernel task. Validate with the task-local standalone benchmark on
+one idle target GPU using the captured shape set.

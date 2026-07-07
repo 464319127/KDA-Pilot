@@ -7,7 +7,9 @@ attention kernel's CPU-op provenance). A clean sglang/sgl_kernel/jit_kernel op
 is used only to NAME a family when their keywords agree. Excludes communication
 and the vendor TRTLLM fused-MoE path (moe::dev / *_trtllm_*_moe_wrapper); keeps
 the optimizable Triton fused_experts. Records per task the
-model/scenario/dataset/concurrency/%-of-GPU + shapes as the e2e-headroom proof.
+model/scenario/dataset/concurrency/%-of-GPU + shapes as serving-profile
+headroom proof. Generated tasks are standalone single-GPU kernel tasks; the
+serving command is provenance, not the validation path.
 """
 import argparse, json, os, re
 from collections import defaultdict
@@ -142,7 +144,7 @@ entry_points = [
 evidence_json = "docs/profile_evidence.json"
 
 [selection]
-method = "cookbook-aligned torch-profiler e2e GPU-time share (extract_kernel_shapes >2%, family-grouped)"
+method = "serving-profile GPU-time headroom (extract_kernel_shapes >2%, family-grouped; provenance only)"
 max_pct_of_gpu = {round(maxpct,2)}
 best_scenario = "{best}"
 dataset = "{dset}"
@@ -171,8 +173,9 @@ required_matched_ratio = 1.0
                          for l in LABELS if e["labels"].get(l,0)>0)
         open(os.path.join(d,"docs","profile_evidence.md"),"w").write(f"""# Profile evidence — {task}
 
-**e2e-optimization target: {maxpct:.1f}% of total GPU time** (max across scenarios) on
-`{a.model}`, from the exact cookbook-aligned profile. {'Clean Python interface (profiler provenance).' if clean else 'Profiler kernel-family; confirm exact Python interface via SGLANG_KERNEL_API_LOGLEVEL capture.'}
+**Standalone kernel target: {maxpct:.1f}% of total serving GPU time** (max across scenarios) on
+`{a.model}`, from the exact cookbook-aligned profile. This is target-selection
+provenance and headroom context, not the validation path. {'Clean Python interface (profiler provenance).' if clean else 'Profiler kernel-family; confirm exact Python interface via SGLANG_KERNEL_API_LOGLEVEL capture.'}
 {(chr(10)+'> '+note+chr(10)) if note else ''}
 - Model: `{a.model}` (slug `{a.model_slug}`, tp={a.tp})
 - Python interface: `{entry}`
@@ -190,11 +193,13 @@ required_matched_ratio = 1.0
 ## Input shapes (profiler)
 {chr(10).join('- `'+s+'`' for s in sorted(e['shapes'])[:12]) or '- (see trace)'}
 
-## Reproduce (cookbook-aligned)
+## Original serving capture command (provenance only)
 ```bash
 {a.cookbook_cmd}
 ```
-After optimizing, re-run **{best}** to validate the e2e effect.
+Do not rerun this serving command, `run_capture`, or a multi-GPU e2e A/B as part
+of the normal kernel task. Validate with the task-local standalone benchmark on
+one idle target GPU using the captured shape set.
 """)
         open(os.path.join(d,"prompt.md"),"w").write(f"""# KDA Prompt: {task}
 
@@ -202,19 +207,23 @@ Target GPU: NVIDIA B200. Optimize the SGLang kernel behind:
 
 - `{entry}`
 
-**{maxpct:.1f}% of total GPU time** on `{a.model}` (cookbook-aligned profile, peak
-`{best}`) — a genuine end-to-end target selected by profiler e2e share. Family
-`{fam}`, category `{cat}`.{(' '+note) if note else ''}
+**{maxpct:.1f}% of total serving GPU time** on `{a.model}` (cookbook-aligned
+profile, peak `{best}`) — a serving-profile headroom signal used to select this
+standalone kernel task. Family `{fam}`, category `{cat}`.{(' '+note) if note else ''}
 
 See `docs/profile_evidence.md` for the per-scenario %-of-GPU, GPU kernels, shapes,
-the cookbook deployment, and the scenario to re-run for the e2e A/B. Follow
+and original serving capture provenance. Do not start/re-run SGLang serve,
+`run_capture`, or a multi-GPU e2e A/B for the normal RLCR loop; optimize and
+validate via the task-local standalone benchmark on one idle target GPU. Follow
 `llm/docs/llm_kernel_optimization_rules.md` (CUDA, no DSL) + `llm/docs/llm_correctness_contract.md`.
 """)
         summary.append((task,cat,fam,maxpct,best,clean))
 
     with open(os.path.join(a.out_dir,f"_INDEX_{a.model_slug}.md"),"w") as f:
-        f.write(f"# {a.model_slug} — e2e kernel task selection\n\n- Model: `{a.model}` (tp={a.tp})\n")
-        f.write(f"- Cookbook cmd: `{a.cookbook_cmd}`\n- Kept: max GPU-time share `>= {a.threshold}%`, non-comm, non-trtllm-MoE\n\n")
+        f.write(f"# {a.model_slug} — standalone kernel task selection\n\n- Model: `{a.model}` (tp={a.tp})\n")
+        f.write(f"- Serving capture cmd (provenance only): `{a.cookbook_cmd}`\n")
+        f.write("- Task mode: standalone single-GPU kernel optimization; no live serve, run_capture, or multi-GPU e2e gate during RLCR.\n")
+        f.write(f"- Kept: max serving-profile GPU-time share `>= {a.threshold}%`, non-comm, non-trtllm-MoE\n\n")
         f.write("| task | category | family | max % GPU | peak scenario | clean op |\n|---|---|---|---:|---|---|\n")
         for t,cat,fam,mp,bl,cl in sorted(summary,key=lambda x:-x[3]):
             f.write(f"| `{t}` | {cat} | {fam} | {mp:.1f}% | {bl} | {'yes' if cl else 'role'} |\n")

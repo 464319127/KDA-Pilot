@@ -1,7 +1,7 @@
 # Profile evidence — ring_25_1t__sgl_kernel_fp8_scaled_mm
 
-**e2e-optimization target: 17.7% of total GPU time** (max across scenarios) on
-`inclusionAI/Ring-2.5-1T`, from the exact cookbook-aligned profile. Clean Python interface (profiler provenance).
+**Standalone kernel target: 17.7% of total serving GPU time** (max across scenarios) on
+`inclusionAI/Ring-2.5-1T`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Clean Python interface (profiler provenance).
 
 - Model: `inclusionAI/Ring-2.5-1T` (slug `ring_25_1t`, tp=8)
 - Python interface: `sgl_kernel.fp8_scaled_mm`
@@ -35,8 +35,10 @@
 - `[[3330, 8192], [8192, 256]]`
 - `[[3330, 8192], [8192, 4608], [3330, 1], [4608, 1], [], []]`
 
-## Reproduce (cookbook-aligned)
+## Original serving capture command (provenance only)
 ```bash
 sglang serve --model-path inclusionAI/Ring-2.5-1T --tp 8 --trust-remote-code
 ```
-After optimizing, re-run **random_high** to validate the e2e effect.
+Do not rerun this serving command, `run_capture`, or a multi-GPU e2e A/B as part
+of the normal kernel task. Validate with the task-local standalone benchmark on
+one idle target GPU using the captured shape set.

@@ -16,10 +16,12 @@ compute processes and no meaningful memory occupancy. Export that id as
 profiler, and NCU commands in the current run. Do not run measurements on busy
 cards or directly on the `ion-b200` host.
 
-**10.9% of total GPU time** on `zai-org/GLM-5.2-FP8` (cookbook-aligned profile, peak
-`random_low`) — a genuine end-to-end target selected by profiler e2e share. Family
+**10.9% of total serving GPU time** on `zai-org/GLM-5.2-FP8` (cookbook-aligned profile, peak
+`random_low`) — a serving-profile headroom signal used to select this standalone kernel task. Family
 `per_token_group_quant`, category `quant_gemm`.
 
 See `docs/profile_evidence.md` for the per-scenario %-of-GPU, GPU kernels, shapes,
-the cookbook deployment, and the scenario to re-run for the e2e A/B. Follow
+and original serving capture provenance. Do not start/re-run SGLang serve,
+`run_capture`, or a multi-GPU e2e A/B for the normal RLCR loop; optimize and
+validate via the task-local standalone benchmark on one idle target GPU. Follow
 `llm/docs/llm_kernel_optimization_rules.md` (CUDA, no DSL) + `llm/docs/llm_correctness_contract.md`.

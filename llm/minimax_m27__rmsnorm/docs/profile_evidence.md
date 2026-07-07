@@ -1,7 +1,7 @@
 # Profile evidence — minimax_m27__rmsnorm
 
-**e2e-optimization target: 3.9% of total GPU time** (max across scenarios) on
-`MiniMaxAI/MiniMax-M2.7`, from the exact cookbook-aligned profile. Profiler kernel-family; confirm exact Python interface via SGLANG_KERNEL_API_LOGLEVEL capture.
+**Standalone kernel target: 3.9% of total serving GPU time** (max across scenarios) on
+`MiniMaxAI/MiniMax-M2.7`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Profiler kernel-family; confirm exact Python interface via SGLANG_KERNEL_API_LOGLEVEL capture.
 
 - Model: `MiniMaxAI/MiniMax-M2.7` (slug `minimax_m27`, tp=8)
 - Python interface: `<confirm via capture; profiler family=rmsnorm>`
@@ -27,8 +27,10 @@
 - `[[59, 1, 128], []]`
 - `[[64, 1, 128], [], [], [], []]`
 
-## Reproduce (cookbook-aligned)
+## Original serving capture command (provenance only)
 ```bash
 sglang serve --model-path MiniMaxAI/MiniMax-M2.7 --tp 8 --ep 8 --tool-call-parser minimax-m2 --reasoning-parser minimax-append-think
 ```
-After optimizing, re-run **random_low** to validate the e2e effect.
+Do not rerun this serving command, `run_capture`, or a multi-GPU e2e A/B as part
+of the normal kernel task. Validate with the task-local standalone benchmark on
+one idle target GPU using the captured shape set.

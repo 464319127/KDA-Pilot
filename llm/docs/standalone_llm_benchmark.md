@@ -1,8 +1,8 @@
 # Standalone LLM Kernel Benchmark Contract
 
-This repo optimizes SGLang **LLM serving kernels** (per model+arch, e.g.
-`llm/glm_52/b200`) without interacting with a live SGLang server or checkout at
-benchmark runtime. SGLang is only a source-code provider for the local baseline.
+This repo optimizes SGLang **LLM serving kernels** as standalone kernel tasks,
+without interacting with a live SGLang server or checkout at benchmark runtime.
+SGLang is only a source-code provider for the local baseline.
 
 Each kernel task's `prompt.md` carries the captured Python-interface, call count,
 and per-variant shapes (`docs/evidence.json` has the full records). This contract
@@ -12,6 +12,13 @@ defines how to turn those into a fair, reproducible baseline-vs-candidate result
 
 - Do not patch, import, monkey-patch, or install into SGLang during correctness
   or benchmark runs. All benchmark code calls only files in the task directory.
+- Do not start `sglang serve`, run `python -m sglang.launch_server`, run
+  `run_capture`, or require a TP/EP/multi-GPU deployment for task validation.
+  The live serving profile is target-selection provenance only; the task's
+  acceptance path is local baseline vs local candidate on captured shapes.
+- Use exactly one idle GPU of the task's target architecture for correctness,
+  benchmark, profiler, and NCU commands. Do not wait for all GPUs in the machine
+  to become idle; one clean target GPU is enough.
 - Copy the relevant upstream SGLang kernel source into `baseline/` before
   implementing the candidate. Resolve the latest upstream SGLang `main` commit at
   baseline-recovery time, copy the kernel code from that exact commit, and record
@@ -54,7 +61,7 @@ docs/
   benchmark_method.md  compile flags, build paths, timing settings
   results.md          per-shape baseline-vs-candidate table + headline + conclusion
   dispatch.md         only when shape-specialized (bucket -> kernel + per-bucket speedup)
-  run_log.md          host/GPU id/model + before/after idle state
+  run_log.md          host/GPU id/model + before/after idle state for one GPU
 config.toml
 ```
 
@@ -126,7 +133,7 @@ use_isolated_runner = true
 ## Provenance
 
 Every benchmark result must record: task slug + target GPU; upstream baseline
-commit + copied files; candidate source hash; exact command; CUDA, PyTorch,
-compiler, and TVM-FFI versions; GPU model/id and idle state before/after;
-workload count and trial/iteration/inner-loop settings; correctness summary. Do
-not keep benchmark numbers without this provenance.
+commit + copied files; candidate source hash; exact standalone command; CUDA,
+PyTorch, compiler, and TVM-FFI versions; one GPU model/id and idle state
+before/after; workload count and trial/iteration/inner-loop settings;
+correctness summary. Do not keep benchmark numbers without this provenance.

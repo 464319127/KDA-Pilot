@@ -1,7 +1,7 @@
 # Profile evidence — deepseek_v31__fp8_bmm
 
-**e2e-optimization target: 12.1% of total GPU time** (max across scenarios) on
-`deepseek-ai/DeepSeek-V3.1`, from the exact cookbook-aligned profile. Profiler kernel-family; confirm exact Python interface via SGLANG_KERNEL_API_LOGLEVEL capture.
+**Standalone kernel target: 12.1% of total serving GPU time** (max across scenarios) on
+`deepseek-ai/DeepSeek-V3.1`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Profiler kernel-family; confirm exact Python interface via SGLANG_KERNEL_API_LOGLEVEL capture.
 
 - Model: `deepseek-ai/DeepSeek-V3.1` (slug `deepseek_v31`, tp=8)
 - Python interface: `<confirm via capture; profiler family=fp8_bmm>`
@@ -32,8 +32,10 @@
 - `[[[1]], [], [], [], [], []]`
 - `[[[37], [6]], []]`
 
-## Reproduce (cookbook-aligned)
+## Original serving capture command (provenance only)
 ```bash
 sglang serve --model-path deepseek-ai/DeepSeek-V3.1 --tp 8 --speculative-algorithm EAGLE --trust-remote-code
 ```
-After optimizing, re-run **sharegpt_mid** to validate the e2e effect.
+Do not rerun this serving command, `run_capture`, or a multi-GPU e2e A/B as part
+of the normal kernel task. Validate with the task-local standalone benchmark on
+one idle target GPU using the captured shape set.

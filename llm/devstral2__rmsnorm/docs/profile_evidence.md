@@ -1,7 +1,7 @@
 # Profile evidence — devstral2__rmsnorm
 
-**e2e-optimization target: 8.5% of total GPU time** (max across scenarios) on
-`mistralai/Devstral-2-123B-Instruct-2512`, from the exact cookbook-aligned profile. Profiler kernel-family; confirm exact Python interface via SGLANG_KERNEL_API_LOGLEVEL capture.
+**Standalone kernel target: 8.5% of total serving GPU time** (max across scenarios) on
+`mistralai/Devstral-2-123B-Instruct-2512`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Profiler kernel-family; confirm exact Python interface via SGLANG_KERNEL_API_LOGLEVEL capture.
 
 - Model: `mistralai/Devstral-2-123B-Instruct-2512` (slug `devstral2`, tp=8)
 - Python interface: `<confirm via capture; profiler family=rmsnorm>`
@@ -31,8 +31,10 @@
 - `[[8704, 1536], [], [], [], []]`
 - `[[[1], [39375]], []]`
 
-## Reproduce (cookbook-aligned)
+## Original serving capture command (provenance only)
 ```bash
 sglang serve --model-path mistralai/Devstral-2-123B-Instruct-2512 --tp 8 --reasoning-parser mistral --tool-call-parser mistral
 ```
-After optimizing, re-run **sharegpt_mid** to validate the e2e effect.
+Do not rerun this serving command, `run_capture`, or a multi-GPU e2e A/B as part
+of the normal kernel task. Validate with the task-local standalone benchmark on
+one idle target GPU using the captured shape set.

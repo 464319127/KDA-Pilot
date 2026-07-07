@@ -1,7 +1,7 @@
 # Profile evidence — glm_5__sglang_flashinfer_fp4_quantize
 
-**e2e-optimization target: 13.1% of total GPU time** (max across scenarios) on
-`nvidia/GLM-5-NVFP4`, from the exact cookbook-aligned profile. Clean Python interface (profiler provenance).
+**Standalone kernel target: 13.1% of total serving GPU time** (max across scenarios) on
+`nvidia/GLM-5-NVFP4`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Clean Python interface (profiler provenance).
 
 - Model: `nvidia/GLM-5-NVFP4` (slug `glm_5`, tp=4)
 - Python interface: `sglang.flashinfer_fp4_quantize`
@@ -35,8 +35,10 @@
 - `[[30796, 3072], [3072, 6144], [30848, 384], [384, 6144], [], [], []]`
 - `[[], [], [], [], [], []]`
 
-## Reproduce (cookbook-aligned)
+## Original serving capture command (provenance only)
 ```bash
 sglang serve --model-path nvidia/GLM-5-NVFP4 --tp 4 --quantization modelopt_fp4 --kv-cache-dtype fp8_e4m3
 ```
-After optimizing, re-run **sharegpt_high** to validate the e2e effect.
+Do not rerun this serving command, `run_capture`, or a multi-GPU e2e A/B as part
+of the normal kernel task. Validate with the task-local standalone benchmark on
+one idle target GPU using the captured shape set.

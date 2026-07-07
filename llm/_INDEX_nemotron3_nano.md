@@ -1,8 +1,9 @@
-# nemotron3_nano — e2e kernel task selection
+# nemotron3_nano — standalone kernel task selection
 
 - Model: `nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-FP8` (tp=1)
-- Cookbook cmd: `python3 -m sglang.launch_server --model-path nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-FP8 --trust-remote-code --max-running-requests 1024`
-- Threshold: kept kernels with max GPU-time share `>= 3.0%` (non-comm, non-fused-MoE)
+- Serving capture cmd (provenance only): `python3 -m sglang.launch_server --model-path nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-FP8 --trust-remote-code --max-running-requests 1024`
+- Task mode: standalone single-GPU kernel optimization; no live serve, run_capture, or multi-GPU e2e gate during RLCR.
+- Threshold: kept kernels with max serving-profile GPU-time share `>= 3.0%` (non-comm, non-fused-MoE)
 
 ## Kept tasks (e2e-impactful)
 

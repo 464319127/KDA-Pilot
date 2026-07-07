@@ -1,7 +1,7 @@
 # Profile evidence — llama33_70b__sglang_unified_attention_with_output
 
-**e2e-optimization target: 3.6% of total GPU time** (max across scenarios) on
-`meta-llama/Llama-3.3-70B-Instruct`, from the exact cookbook-aligned profile. Clean Python interface (profiler provenance).
+**Standalone kernel target: 3.6% of total serving GPU time** (max across scenarios) on
+`meta-llama/Llama-3.3-70B-Instruct`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Clean Python interface (profiler provenance).
 
 - Model: `meta-llama/Llama-3.3-70B-Instruct` (slug `llama33_70b`, tp=1)
 - Python interface: `sglang.unified_attention_with_output`
@@ -30,8 +30,10 @@
 - `[[9728, 8192], [9728, 8, 128], [9728, 8, 128], [9728, 8192], [], [], [], [], [],`
 - `[[], [], [], [], [], []]`
 
-## Reproduce (cookbook-aligned)
+## Original serving capture command (provenance only)
 ```bash
 sglang serve --model-path meta-llama/Llama-3.3-70B-Instruct --tp 1 --tool-call-parser llama3
 ```
-After optimizing, re-run **sharegpt_mid** to validate the e2e effect.
+Do not rerun this serving command, `run_capture`, or a multi-GPU e2e A/B as part
+of the normal kernel task. Validate with the task-local standalone benchmark on
+one idle target GPU using the captured shape set.

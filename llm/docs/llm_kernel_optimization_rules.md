@@ -48,17 +48,21 @@ math-mode flags to only one side. Avoid comparing different builder paths (e.g.
 Record all flags in `docs/benchmark_method.md`. PDL may be tested only if the
 upstream kernel has a comparable path and it wins on the task's real workloads.
 
-## Remote GPU Rule
+## Single-GPU Standalone Rule
 
-Validate and benchmark on the task's target arch (B200 tasks on B200). Before GPU
-work, inspect `nvidia-smi`, pick a GPU with no active compute and no meaningful
-memory occupancy, export it as `REMOTE_GPU_ID`, and use it consistently for
+Validate and benchmark on one idle GPU of the task's target arch (B200 tasks on
+one B200). Before GPU work, inspect `nvidia-smi`, pick a GPU with no active
+compute and no meaningful memory occupancy, export it as `REMOTE_GPU_ID`, and
+optionally set `CUDA_VISIBLE_DEVICES` to that id. Use the same single GPU for
 baseline, candidate, correctness, benchmark, profiling, and NCU in that run.
 Record host, GPU id, GPU model, and before/after state in `docs/run_log.md`. Use
-a task-owned remote workspace; never write into another task's workspace.
+a task-owned workspace; never write into another task's workspace.
 
-(Launchers pin a round-robin `REMOTE_GPU_ID` per kernel; honor it unless it is
-busy, then wait/retry or ask.)
+Do not wait for every GPU on the machine to become idle. Do not start
+`sglang serve`, run `python -m sglang.launch_server`, run `run_capture`, or
+require TP/EP/multi-GPU e2e validation for this standalone kernel task. The
+serving profile explains why the kernel was selected; task validation comes from
+the captured-shape standalone benchmark.
 
 ## Correctness Before Performance
 
@@ -80,12 +84,13 @@ warp-specialized candidates) before the next edit/run/no-go.
 
 A final performance claim reports: median/mean/std/min/p10/p90 latency per
 workload; equal-weight geometric-mean speedup over production workloads; exact
-commands; baseline commit + candidate hash; GPU host/id/model + idle evidence. A
-final win or no-go includes a roofline-style explanation: estimated bytes moved,
-useful ops, achieved bandwidth and/or FLOP/s when relevant, and the active bound
-or blocker. Do not finalize a no-go just because the first candidate loses — a
-no-go needs baseline numbers, ≥1 reasoned candidate attempt, correctness status,
-benchmark/NCU evidence, and a named active bound.
+standalone commands; baseline commit + candidate hash; single GPU host/id/model
++ idle evidence. A final win or no-go includes a roofline-style explanation:
+estimated bytes moved, useful ops, achieved bandwidth and/or FLOP/s when
+relevant, and the active bound or blocker. Do not finalize a no-go just because
+the first candidate loses — a no-go needs baseline numbers, ≥1 reasoned
+candidate attempt, correctness status, benchmark/NCU evidence, and a named
+active bound.
 
 ## Shape Specialization
 

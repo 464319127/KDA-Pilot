@@ -1,7 +1,7 @@
 # Profile evidence — glm_51__sglang_deep_gemm_fp8_fp8_bf16_nt
 
-**e2e-optimization target: 20.6% of total GPU time** (max across scenarios) on
-`zai-org/GLM-5.1-FP8`, from the exact cookbook-aligned profile. Clean Python interface (profiler provenance).
+**Standalone kernel target: 20.6% of total serving GPU time** (max across scenarios) on
+`zai-org/GLM-5.1-FP8`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Clean Python interface (profiler provenance).
 
 - Model: `zai-org/GLM-5.1-FP8` (slug `glm_51`, tp=8)
 - Python interface: `sglang.deep_gemm_fp8_fp8_bf16_nt`
@@ -32,8 +32,10 @@
 - `[[[0], [38]], []]`
 - `[[]]`
 
-## Reproduce (cookbook-aligned)
+## Original serving capture command (provenance only)
 ```bash
 sglang serve --model-path zai-org/GLM-5.1-FP8 --tp 8 --tool-call-parser glm47 --reasoning-parser glm45
 ```
-After optimizing, re-run **random_low** to validate the e2e effect.
+Do not rerun this serving command, `run_capture`, or a multi-GPU e2e A/B as part
+of the normal kernel task. Validate with the task-local standalone benchmark on
+one idle target GPU using the captured shape set.

@@ -1,7 +1,7 @@
 # Profile evidence — deepseek_v32__sglang_fp4_gemm
 
-**e2e-optimization target: 32.5% of total GPU time** (max across scenarios) on
-`nvidia/DeepSeek-V3.2-NVFP4`, from the exact cookbook-aligned profile. Clean Python interface (profiler provenance).
+**Standalone kernel target: 32.5% of total serving GPU time** (max across scenarios) on
+`nvidia/DeepSeek-V3.2-NVFP4`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Clean Python interface (profiler provenance).
 
 - Model: `nvidia/DeepSeek-V3.2-NVFP4` (slug `deepseek_v32`, tp=4)
 - Python interface: `sglang.fp4_gemm`
@@ -35,8 +35,10 @@
 - `[[13285, 7168], [7168, 2112]]`
 - `[[13285, 7168], [7168, 256]]`
 
-## Reproduce (cookbook-aligned)
+## Original serving capture command (provenance only)
 ```bash
 python -m sglang.launch_server --model nvidia/DeepSeek-V3.2-NVFP4 --tp 4 --quantization modelopt_fp4 --moe-runner-backend flashinfer_trtllm --tool-call-parser deepseekv32 --reasoning-parser deepseek-v3
 ```
-After optimizing, re-run **sharegpt_low** to validate the e2e effect.
+Do not rerun this serving command, `run_capture`, or a multi-GPU e2e A/B as part
+of the normal kernel task. Validate with the task-local standalone benchmark on
+one idle target GPU using the captured shape set.

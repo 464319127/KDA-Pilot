@@ -1,7 +1,7 @@
 # Profile evidence — qwen3_coder__per_token_group_quant
 
-**e2e-optimization target: 17.2% of total GPU time** (max across scenarios) on
-`Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8`, from the exact cookbook-aligned profile. Profiler kernel-family; confirm exact Python interface via SGLANG_KERNEL_API_LOGLEVEL capture.
+**Standalone kernel target: 17.2% of total serving GPU time** (max across scenarios) on
+`Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Profiler kernel-family; confirm exact Python interface via SGLANG_KERNEL_API_LOGLEVEL capture.
 
 - Model: `Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8` (slug `qwen3_coder`, tp=8)
 - Python interface: `<confirm via capture; profiler family=per_token_group_quant>`
@@ -27,8 +27,10 @@
 - `[[6, 1536], [6, 1536], []]`
 - `[[8, 1536], [8, 1, 128], [8, 1, 128], [8, 1536], [], [], [], [], [], [], [], [],`
 
-## Reproduce (cookbook-aligned)
+## Original serving capture command (provenance only)
 ```bash
 sglang serve --model-path Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8 --tp 8 --ep 8 --tool-call-parser qwen3_coder
 ```
-After optimizing, re-run **random_low** to validate the e2e effect.
+Do not rerun this serving command, `run_capture`, or a multi-GPU e2e A/B as part
+of the normal kernel task. Validate with the task-local standalone benchmark on
+one idle target GPU using the captured shape set.

@@ -1,7 +1,7 @@
 # Profile evidence — gemma4__sglang_inplace_fused_experts
 
-**e2e-optimization target: 50.8% of total GPU time** (max across scenarios) on
-`google/gemma-4-26B-A4B-it`, from the exact cookbook-aligned profile. Clean Python interface (profiler provenance).
+**Standalone kernel target: 50.8% of total serving GPU time** (max across scenarios) on
+`google/gemma-4-26B-A4B-it`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Clean Python interface (profiler provenance).
 
 > Triton MoE expert-GEMM (sglang's own fused_experts/fused_moe kernel) — single-GPU optimizable; NOT the comm-fused trtllm MoE path (excluded).
 
@@ -31,8 +31,10 @@
 - `[[38, 2816], [128, 1408, 2816], [128, 2816, 704], [38, 8], [38, 8], [], [], [], `
 - `[[7081, 2816], [128, 1408, 2816], [128, 2816, 704], [7081, 8], [7081, 8], [], []`
 
-## Reproduce (cookbook-aligned)
+## Original serving capture command (provenance only)
 ```bash
 sglang serve --model-path google/gemma-4-26B-A4B-it --reasoning-parser gemma4 --tool-call-parser gemma4
 ```
-After optimizing, re-run **random_high** to validate the e2e effect.
+Do not rerun this serving command, `run_capture`, or a multi-GPU e2e A/B as part
+of the normal kernel task. Validate with the task-local standalone benchmark on
+one idle target GPU using the captured shape set.

@@ -1,7 +1,7 @@
 # Profile evidence — deepseek_math_v2__sglang_deep_gemm_fp8_fp8_bf16_nt
 
-**e2e-optimization target: 26.1% of total GPU time** (max across scenarios) on
-`deepseek-ai/DeepSeek-Math-V2`, from the exact cookbook-aligned profile. Clean Python interface (profiler provenance).
+**Standalone kernel target: 26.1% of total serving GPU time** (max across scenarios) on
+`deepseek-ai/DeepSeek-Math-V2`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Clean Python interface (profiler provenance).
 
 - Model: `deepseek-ai/DeepSeek-Math-V2` (slug `deepseek_math_v2`, tp=8)
 - Python interface: `sglang.deep_gemm_fp8_fp8_bf16_nt`
@@ -31,8 +31,10 @@
 - `[[4097, 45], []]`
 - `[[8661, 7168], [8661, 14], [4608, 7168], [4608, 14], [8661, 4608]]`
 
-## Reproduce (cookbook-aligned)
+## Original serving capture command (provenance only)
 ```bash
 sglang serve --model-path deepseek-ai/DeepSeek-Math-V2 --tp 8 --ep 8 --trust-remote-code
 ```
-After optimizing, re-run **random_low** to validate the e2e effect.
+Do not rerun this serving command, `run_capture`, or a multi-GPU e2e A/B as part
+of the normal kernel task. Validate with the task-local standalone benchmark on
+one idle target GPU using the captured shape set.

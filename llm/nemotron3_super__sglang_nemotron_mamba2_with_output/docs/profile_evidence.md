@@ -1,7 +1,7 @@
 # Profile evidence — nemotron3_super__sglang_nemotron_mamba2_with_output
 
-**e2e-optimization target: 27.3% of total GPU time** (max across scenarios) on
-`nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-BF16`, from the exact cookbook-aligned profile. Clean Python interface (profiler provenance).
+**Standalone kernel target: 27.3% of total serving GPU time** (max across scenarios) on
+`nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-BF16`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Clean Python interface (profiler provenance).
 
 - Model: `nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-BF16` (slug `nemotron3_super`, tp=4)
 - Python interface: `sglang.nemotron_mamba2_with_output`
@@ -25,8 +25,10 @@
 - `[[16384, 4096], [4096, 4640]]`
 - `[[31, 1, 1], []]`
 
-## Reproduce (cookbook-aligned)
+## Original serving capture command (provenance only)
 ```bash
 sglang serve --model-path nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-BF16 --tp 4 --trust-remote-code
 ```
-After optimizing, re-run **random_high** to validate the e2e effect.
+Do not rerun this serving command, `run_capture`, or a multi-GPU e2e A/B as part
+of the normal kernel task. Validate with the task-local standalone benchmark on
+one idle target GPU using the captured shape set.

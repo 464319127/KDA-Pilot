@@ -1,7 +1,7 @@
 # Profile evidence — glm_47_flash__sglang_unified_attention_with_output
 
-**e2e-optimization target: 75.3% of total GPU time** (max across scenarios) on
-`zai-org/GLM-4.7-Flash`, from the exact cookbook-aligned profile. Clean Python interface (profiler provenance).
+**Standalone kernel target: 75.3% of total serving GPU time** (max across scenarios) on
+`zai-org/GLM-4.7-Flash`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Clean Python interface (profiler provenance).
 
 - Model: `zai-org/GLM-4.7-Flash` (slug `glm_47_flash`, tp=1)
 - Python interface: `sglang.unified_attention_with_output`
@@ -29,8 +29,10 @@
 - `[[5102], [], [5102, 5], [5102, 64], [5102, 1], [1], [5102, 5], [5102, 5], [], []`
 - `[[80, 20, 576], [80, 1, 576], [80, 1, 512], [80, 10240], [], [], [], [], [], [],`
 
-## Reproduce (cookbook-aligned)
+## Original serving capture command (provenance only)
 ```bash
 sglang serve --model-path zai-org/GLM-4.7-Flash --tp 1 --attention-backend triton --reasoning-parser glm45 --tool-call-parser glm47
 ```
-After optimizing, re-run **sharegpt_mid** to validate the e2e effect.
+Do not rerun this serving command, `run_capture`, or a multi-GPU e2e A/B as part
+of the normal kernel task. Validate with the task-local standalone benchmark on
+one idle target GPU using the captured shape set.

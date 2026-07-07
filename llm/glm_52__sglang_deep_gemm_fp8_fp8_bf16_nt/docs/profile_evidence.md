@@ -1,7 +1,7 @@
 # Profile evidence — glm_52__sglang_deep_gemm_fp8_fp8_bf16_nt
 
-**e2e-optimization target: 28.6% of total GPU time** (max across scenarios) on
-`zai-org/GLM-5.2-FP8`, from the exact cookbook-aligned profile. Clean Python interface (profiler provenance).
+**Standalone kernel target: 28.6% of total serving GPU time** (max across scenarios) on
+`zai-org/GLM-5.2-FP8`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Clean Python interface (profiler provenance).
 
 - Model: `zai-org/GLM-5.2-FP8` (slug `glm_52`, tp=8)
 - Python interface: `sglang.deep_gemm_fp8_fp8_bf16_nt`
@@ -35,8 +35,10 @@
 - `[[704], [704], []]`
 - `[[720], [], [], []]`
 
-## Reproduce (cookbook-aligned)
+## Original serving capture command (provenance only)
 ```bash
 python -m sglang.launch_server --model-path zai-org/GLM-5.2-FP8 --tp 8 --trust-remote-code --mem-fraction-static 0.8
 ```
-After optimizing, re-run **sharegpt_low** to validate the e2e effect.
+Do not rerun this serving command, `run_capture`, or a multi-GPU e2e A/B as part
+of the normal kernel task. Validate with the task-local standalone benchmark on
+one idle target GPU using the captured shape set.

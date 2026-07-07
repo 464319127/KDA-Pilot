@@ -1,7 +1,7 @@
 # Profile evidence — kimi_k25__fp8_bmm
 
-**e2e-optimization target: 22.7% of total GPU time** (max across scenarios) on
-`moonshotai/Kimi-K2.5`, from the exact cookbook-aligned profile. Profiler kernel-family; confirm exact Python interface via SGLANG_KERNEL_API_LOGLEVEL capture.
+**Standalone kernel target: 22.7% of total serving GPU time** (max across scenarios) on
+`moonshotai/Kimi-K2.5`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Profiler kernel-family; confirm exact Python interface via SGLANG_KERNEL_API_LOGLEVEL capture.
 
 - Model: `moonshotai/Kimi-K2.5` (slug `kimi_k25`, tp=8)
 - Python interface: `<confirm via capture; profiler family=fp8_bmm>`
@@ -34,8 +34,10 @@
 - `[[[11218, 7168]], [], [], [], [], []]`
 - `[[[256]], []]`
 
-## Reproduce (cookbook-aligned)
+## Original serving capture command (provenance only)
 ```bash
 sglang serve --model-path moonshotai/Kimi-K2.5 --tp 8 --reasoning-parser kimi_k2 --tool-call-parser kimi_k2
 ```
-After optimizing, re-run **random_high** to validate the e2e effect.
+Do not rerun this serving command, `run_capture`, or a multi-GPU e2e A/B as part
+of the normal kernel task. Validate with the task-local standalone benchmark on
+one idle target GPU using the captured shape set.

@@ -1,7 +1,7 @@
 # Profile evidence — llama4_scout__sglang_inplace_fused_experts
 
-**e2e-optimization target: 16.7% of total GPU time** (max across scenarios) on
-`meta-llama/Llama-4-Scout-17B-16E-Instruct`, from the exact cookbook-aligned profile. Clean Python interface (profiler provenance).
+**Standalone kernel target: 16.7% of total serving GPU time** (max across scenarios) on
+`meta-llama/Llama-4-Scout-17B-16E-Instruct`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Clean Python interface (profiler provenance).
 
 > Triton MoE expert-GEMM (sglang's own fused_experts/fused_moe kernel) — single-GPU optimizable; NOT the comm-fused trtllm MoE path (excluded).
 
@@ -35,8 +35,10 @@
 - `[[9795, 5120], [16, 2048, 5120], [16, 5120, 1024], [9795, 1], [9795, 1], [], [],`
 - `[[], [], [], [], [], []]`
 
-## Reproduce (cookbook-aligned)
+## Original serving capture command (provenance only)
 ```bash
 python -m sglang.launch_server --model-path meta-llama/Llama-4-Scout-17B-16E-Instruct --tp 8 --trust-remote-code --mem-fraction-static 0.8 --context-length 65536
 ```
-After optimizing, re-run **random_mid** to validate the e2e effect.
+Do not rerun this serving command, `run_capture`, or a multi-GPU e2e A/B as part
+of the normal kernel task. Validate with the task-local standalone benchmark on
+one idle target GPU using the captured shape set.

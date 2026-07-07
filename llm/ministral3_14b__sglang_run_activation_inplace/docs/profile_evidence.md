@@ -1,7 +1,7 @@
 # Profile evidence — ministral3_14b__sglang_run_activation_inplace
 
-**e2e-optimization target: 5.3% of total GPU time** (max across scenarios) on
-`mistralai/Ministral-3-14B-Instruct-2512`, from the exact cookbook-aligned profile. Clean Python interface (profiler provenance).
+**Standalone kernel target: 5.3% of total serving GPU time** (max across scenarios) on
+`mistralai/Ministral-3-14B-Instruct-2512`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Clean Python interface (profiler provenance).
 
 > Activation (SiLU/GELU+mul). Prior guidance: limited headroom — deprioritize.
 
@@ -31,8 +31,10 @@
 - `[[], [8384, 32768], [8384, 16384]]`
 - `[[], [], [], [], [], []]`
 
-## Reproduce (cookbook-aligned)
+## Original serving capture command (provenance only)
 ```bash
 sglang serve --model-path mistralai/Ministral-3-14B-Instruct-2512 --tp 1 --trust-remote-code
 ```
-After optimizing, re-run **random_mid** to validate the e2e effect.
+Do not rerun this serving command, `run_capture`, or a multi-GPU e2e A/B as part
+of the normal kernel task. Validate with the task-local standalone benchmark on
+one idle target GPU using the captured shape set.

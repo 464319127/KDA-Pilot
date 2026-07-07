@@ -1,7 +1,7 @@
 # Profile evidence — qwen3_coder__sglang_unified_attention_with_output
 
-**e2e-optimization target: 6.8% of total GPU time** (max across scenarios) on
-`Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8`, from the exact cookbook-aligned profile. Clean Python interface (profiler provenance).
+**Standalone kernel target: 6.8% of total serving GPU time** (max across scenarios) on
+`Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Clean Python interface (profiler provenance).
 
 - Model: `Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8` (slug `qwen3_coder`, tp=8)
 - Python interface: `sglang.unified_attention_with_output`
@@ -32,8 +32,10 @@
 - `[[[1]], [], [], [], [], []]`
 - `[[]]`
 
-## Reproduce (cookbook-aligned)
+## Original serving capture command (provenance only)
 ```bash
 sglang serve --model-path Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8 --tp 8 --ep 8 --tool-call-parser qwen3_coder
 ```
-After optimizing, re-run **sharegpt_high** to validate the e2e effect.
+Do not rerun this serving command, `run_capture`, or a multi-GPU e2e A/B as part
+of the normal kernel task. Validate with the task-local standalone benchmark on
+one idle target GPU using the captured shape set.
