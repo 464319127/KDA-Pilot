@@ -3,7 +3,10 @@
   "model_slug": "glm_45",
   "cookbook_cmd": "sglang serve --model-path zai-org/GLM-4.5-FP8 --tp 8 --reasoning-parser glm45 --tool-call-parser glm45 --attention-backend fa4",
   "tp": "8",
-  "python_interface": "<confirm via capture; profiler family=void_moe_sum_reduce_warp_per_tok>",
+  "python_interface": [
+    "sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe.moe_sum_reduce",
+    "sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe.moe_sum_reduce_torch_compile"
+  ],
   "kernel_family": "void_moe_sum_reduce_warp_per_tok",
   "profiler_op_provenance": [
     "aten::as_strided",
@@ -24,11 +27,15 @@
   },
   "max_pct_of_gpu": 3.26,
   "best_scenario": "random_mid",
-  "input_shapes": [
-    "[[1], []]",
-    "[[2560, 1536], [2560, 1, 128], [2560, 1, 128], [2560, 1536], [], [], [], [], [],",
-    "[[26], [], [], [], [], [], [], []]",
-    "[[7639, 1536], []]"
+  "input_shapes": [],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "input_shapes_replaced_by": "docs/captured_kernel_api_shapes.json",
+  "standalone_workloads_json": "bench/workloads.json",
+  "shape_source": "fresh_sglang_kernel_api_capture",
+  "captured_kernel_api_workload_count": 9,
+  "captured_kernel_api_functions": [
+    "sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe.moe_sum_reduce",
+    "sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe.moe_sum_reduce_torch_compile"
   ],
-  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+  "shape_capture_note": "Captured 2026-07-07 on Verda B300 light-face-hides-fin-03-1 from a real zai-org/GLM-4.5-FP8 SGLang TP=8 server in temporary container sglang-glm45. Used local NVMe HF cache in offline mode, trust_remote_code, reasoning_parser=glm45, tool_call_parser=glm45 (runtime normalized to glm), attention_backend=fa4, moe_runner_backend=triton for the Triton MoE tasks, CUDA graph prefill/decode disabled, and marked four request windows covering long prefill, short decode, mid concurrency, and high concurrency."
 }

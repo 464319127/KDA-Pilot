@@ -46,6 +46,17 @@ TASK_SUFFIX_RULES = {
         "trtllm_batch_decode_with_kv_cache_mla",
         "_forward_prefill_sparse",
     ),
+    "__attention": (
+        "unified_attention_with_output",
+        "FlashAttentionBackend.forward_decode",
+        "FlashAttentionBackend.forward_extend",
+        "flash_attn_varlen_func",
+        "flash_attn_with_kvcache",
+        "TRTLLMHAAttnBackend.forward_decode",
+        "TRTLLMHAAttnBackend.forward_extend",
+        "trtllm_batch_context_with_kv_cache",
+        "trtllm_batch_decode_with_kv_cache",
+    ),
     "__per_token_group_quant": (
         "sglang_per_token_group_quant_fp8",
         "sglang_per_token_group_quant_fp8_row_padded",
@@ -57,6 +68,11 @@ TASK_SUFFIX_RULES = {
         ".fused_add_rmsnorm",
         ".gemma_fused_add_rmsnorm",
         "._jit_fused_add_rmsnorm",
+    ),
+    "__rmsnorm": (
+        ".rmsnorm",
+        ".gemma_rmsnorm",
+        "._jit_rmsnorm_hf",
     ),
     "__fused_moe_triton": (
         "triton_utils.fused_moe.fused_experts",
@@ -79,6 +95,30 @@ TASK_SUFFIX_RULES = {
         "._apply_fallback_scaled_mm",
         "torch._scaled_mm",
         "torch.nn.functional.linear",
+    ),
+    "__quant_fp8": (
+        "scaled_fp8_quant",
+        "static_quant_fp8",
+        "sglang_per_token_quant_fp8",
+        "sgl_per_token_quant_fp8",
+        "per_token_group_quant_fp8",
+    ),
+    "__moe_align_block_size": (
+        "moe_align_block_size",
+    ),
+    "__void_at_native_sbtopk_gather_top": (
+        ".select_experts",
+        ".fused_topk",
+        ".fused_topk_torch_native",
+        ".fused_topk_softmax_torch_raw_logits",
+        ".grouped_topk",
+        ".biased_grouped_topk",
+    ),
+    "__void_moe_sum_reduce_warp_per_tok": (
+        "moe_sum_reduce",
+    ),
+    "__void_moe_sum_reduce_kernel_warp": (
+        "moe_sum_reduce",
     ),
 }
 
@@ -163,7 +203,7 @@ def scalarize(value: Any) -> Any:
             return {key: scalarize(item) for key, item in value.get("items", {}).items()}
         if "repr" in value:
             return {"kind": value.get("kind")}
-        return value
+        return {key: scalarize(item) for key, item in value.items()}
     if isinstance(value, list):
         return [scalarize(item) for item in value]
     return value

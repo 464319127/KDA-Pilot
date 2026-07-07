@@ -3,7 +3,11 @@
   "model_slug": "glm_45",
   "cookbook_cmd": "sglang serve --model-path zai-org/GLM-4.5-FP8 --tp 8 --reasoning-parser glm45 --tool-call-parser glm45 --attention-backend fa4",
   "tp": "8",
-  "python_interface": "<confirm via capture; profiler family=attention>",
+  "python_interface": [
+    "sglang.srt.layers.attention.flashattention_backend.FlashAttentionBackend.forward_decode",
+    "sglang.srt.layers.attention.flashattention_backend.FlashAttentionBackend.forward_extend",
+    "sglang.srt.layers.attention.flashattention_backend.flash_attn_with_kvcache"
+  ],
   "kernel_family": "attention",
   "profiler_op_provenance": [
     "FlashAttnVarlenFunc",
@@ -27,19 +31,16 @@
   },
   "max_pct_of_gpu": 9.12,
   "best_scenario": "sharegpt_low",
-  "input_shapes": [
-    "[[103, 12, 128], [19181, 128, 1, 128], [19181, 128, 1, 128], [], [2], [], [], [1",
-    "[[1969, 12, 128], [19181, 128, 1, 128], [19181, 128, 1, 128], [], [39], [], [], ",
-    "[[1], [], [], [], [], [], []]",
-    "[[1], []]",
-    "[[1]]",
-    "[[2276, 12, 128], [19181, 128, 1, 128], [19181, 128, 1, 128], [], [48], [], [], ",
-    "[[2444, 12, 128], [19181, 128, 1, 128], [19181, 128, 1, 128], [], [43], [], [], ",
-    "[[2455168, 1, 128], []]",
-    "[[7680, 1, 128], [], [], []]",
-    "[[80, 12, 128], [19181, 128, 1, 128], [19181, 128, 1, 128], [], [2], [], [], [1]",
-    "[[8125, 12, 128], [19181, 128, 1, 128], [19181, 128, 1, 128], [], [27], [], [], ",
-    "[[8125, 1536], [], [], [], [], []]"
+  "input_shapes": [],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "input_shapes_replaced_by": "docs/captured_kernel_api_shapes.json",
+  "standalone_workloads_json": "bench/workloads.json",
+  "shape_source": "fresh_sglang_kernel_api_capture",
+  "captured_kernel_api_workload_count": 21,
+  "captured_kernel_api_functions": [
+    "sglang.srt.layers.attention.flashattention_backend.FlashAttentionBackend.forward_decode",
+    "sglang.srt.layers.attention.flashattention_backend.FlashAttentionBackend.forward_extend",
+    "sglang.srt.layers.attention.flashattention_backend.flash_attn_with_kvcache"
   ],
-  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+  "shape_capture_note": "Captured 2026-07-07 on Verda B300 light-face-hides-fin-03-1 from a real zai-org/GLM-4.5-FP8 SGLang TP=8 server in temporary container sglang-glm45. Used local NVMe HF cache in offline mode, trust_remote_code, reasoning_parser=glm45, tool_call_parser=glm45 (runtime normalized to glm), attention_backend=fa4, moe_runner_backend=triton for the Triton MoE tasks, CUDA graph prefill/decode disabled, and marked four request windows covering long prefill, short decode, mid concurrency, and high concurrency."
 }

@@ -26,6 +26,10 @@ TARGETS: dict[str, tuple[str, ...]] = {
     "sglang.srt.layers.quantization.fp8_kernel": (
         "deep_gemm_fp8_fp8_bf16_nt",
         "triton_scaled_mm",
+        "scaled_fp8_quant",
+        "static_quant_fp8",
+        "sglang_per_token_quant_fp8",
+        "sgl_per_token_quant_fp8",
         "sglang_per_token_group_quant_fp8",
         "sglang_per_token_group_quant_fp8_row_padded",
         "per_token_group_quant_fp8",
@@ -46,6 +50,9 @@ TARGETS: dict[str, tuple[str, ...]] = {
         "_apply_fallback_scaled_mm",
     ),
     "sglang.srt.layers.layernorm": (
+        "rmsnorm",
+        "gemma_rmsnorm",
+        "_jit_rmsnorm_hf",
         "fused_add_rmsnorm",
         "gemma_fused_add_rmsnorm",
         "_jit_fused_add_rmsnorm",
@@ -56,13 +63,37 @@ TARGETS: dict[str, tuple[str, ...]] = {
         "outplace_fused_experts",
         "fused_experts_impl",
         "_fused_moe_kernel_sequence",
+        "moe_sum_reduce",
+        "moe_sum_reduce_torch_compile",
+        "moe_sum_reduce_triton",
+    ),
+    "sglang.srt.layers.moe.moe_runner.triton_utils.moe_align_block_size": (
+        "moe_align_block_size",
     ),
     "sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe_triton_kernels": (
         "invoke_fused_moe_kernel",
+        "moe_sum_reduce_triton",
+    ),
+    "sglang.srt.layers.moe.topk": (
+        "select_experts",
+        "fused_topk",
+        "fused_topk_torch_native",
+        "fused_topk_softmax_torch_raw_logits",
+        "grouped_topk_gpu",
+        "grouped_topk_cpu",
+        "biased_grouped_topk_impl",
+        "biased_grouped_topk_gpu",
+        "biased_grouped_topk_cpu",
     ),
     "sglang.srt.layers.attention.trtllm_mha_backend": (
         "TRTLLMHAAttnBackend.forward_decode",
         "TRTLLMHAAttnBackend.forward_extend",
+    ),
+    "sglang.srt.layers.attention.flashattention_backend": (
+        "FlashAttentionBackend.forward_decode",
+        "FlashAttentionBackend.forward_extend",
+        "flash_attn_varlen_func",
+        "flash_attn_with_kvcache",
     ),
     "sglang.srt.layers.radix_attention": (
         "unified_attention_with_output",
