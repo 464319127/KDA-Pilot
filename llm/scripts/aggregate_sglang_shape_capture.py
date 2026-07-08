@@ -211,6 +211,16 @@ TASK_EXACT_RULES = {
         "TritonAttnBackend.forward_decode",
         "TritonAttnBackend.forward_extend",
     ),
+    "qwen3__fp8_bmm": (
+        "flashinfer.decode.trtllm_batch_decode_with_kv_cache",
+        "flashinfer.prefill.trtllm_batch_context_with_kv_cache",
+    ),
+}
+
+TASK_DUPLICATE_RULES = {
+    "qwen3__void_cublas_lt_split_kreduce_ker": (
+        "torch.nn.functional.linear",
+    ),
 }
 
 DEFAULT_TASK_PREFIX = "glm_52"
@@ -328,11 +338,31 @@ def build_task_rules(task_prefix: str, repo_root: Path) -> dict[str, tuple[str, 
     }
 
 
+def build_duplicate_task_rules(
+    task_prefix: str, repo_root: Path
+) -> dict[str, tuple[str, ...]]:
+    return {
+        task: needles
+        for task, needles in TASK_DUPLICATE_RULES.items()
+        if task.startswith(f"{task_prefix}__") and (repo_root / "llm" / task).exists()
+    }
+
+
 def task_for_function(function: str, task_rules: dict[str, tuple[str, ...]]) -> str | None:
     for task, needles in task_rules.items():
         if any(needle in function for needle in needles):
             return task
     return None
+
+
+def duplicate_tasks_for_function(
+    function: str, task_rules: dict[str, tuple[str, ...]]
+) -> list[str]:
+    return [
+        task
+        for task, needles in task_rules.items()
+        if any(needle in function for needle in needles)
+    ]
 
 
 def compact_workload(row: dict[str, Any], scenario: str | None, ordinal: int) -> dict[str, Any]:
@@ -374,10 +404,13 @@ def main() -> None:
     rows = load_jsonl(args.records)
     markers = load_markers(args.markers)
     task_rules = build_task_rules(args.task_prefix, args.repo_root)
-    if not task_rules:
+    duplicate_task_rules = build_duplicate_task_rules(args.task_prefix, args.repo_root)
+    if not task_rules and not duplicate_task_rules:
         raise SystemExit(f"no task dirs found for task prefix: {args.task_prefix}")
+    task_names = list(task_rules)
+    task_names.extend(task for task in duplicate_task_rules if task not in task_rules)
     by_task: dict[str, OrderedDict[str, dict[str, Any]]] = {
-        task: OrderedDict() for task in task_rules
+        task: OrderedDict() for task in task_names
     }
     unmatched = 0
 
@@ -387,13 +420,22 @@ def main() -> None:
             unmatched += 1
             continue
         task = task_for_function(function, task_rules)
-        if task is None:
+        tasks = []
+        if task is not None:
+            tasks.append(task)
+        for duplicate_task in duplicate_tasks_for_function(function, duplicate_task_rules):
+            if duplicate_task not in tasks:
+                tasks.append(duplicate_task)
+        if not tasks:
             unmatched += 1
             continue
         scenario = scenario_for_time(markers, row.get("time"))
         signature = record_signature(row)
-        if signature not in by_task[task]:
-            by_task[task][signature] = compact_workload(row, scenario, len(by_task[task]) + 1)
+        for target_task in tasks:
+            if signature not in by_task[target_task]:
+                by_task[target_task][signature] = compact_workload(
+                    row, scenario, len(by_task[target_task]) + 1
+                )
 
     summary: dict[str, Any] = {
         "model": args.model,
