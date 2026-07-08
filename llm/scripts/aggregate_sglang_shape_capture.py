@@ -250,6 +250,11 @@ TASK_EXACT_RULES = {
         "TritonAttnBackend.forward_decode",
         "TritonAttnBackend.forward_extend",
     ),
+    "mimo_v25__fp8_bmm": (
+        "FlashAttentionBackend.forward_decode",
+        "FlashAttentionBackend.forward_extend",
+        "flash_attn_with_kvcache",
+    ),
 }
 
 TASK_DUPLICATE_RULES = {
