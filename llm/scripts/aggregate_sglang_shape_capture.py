@@ -207,6 +207,10 @@ TASK_EXACT_RULES = {
         "TritonAttnBackend.forward_decode",
         "TritonAttnBackend.forward_extend",
     ),
+    "qwen35__fp8_bmm": (
+        "TritonAttnBackend.forward_decode",
+        "TritonAttnBackend.forward_extend",
+    ),
 }
 
 DEFAULT_TASK_PREFIX = "glm_52"
