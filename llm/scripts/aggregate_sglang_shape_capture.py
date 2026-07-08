@@ -215,6 +215,10 @@ TASK_EXACT_RULES = {
         "flashinfer.decode.trtllm_batch_decode_with_kv_cache",
         "flashinfer.prefill.trtllm_batch_context_with_kv_cache",
     ),
+    "gpt_oss_120b__fp8_bmm": (
+        "flashinfer.decode.trtllm_batch_decode_with_kv_cache",
+        "flashinfer.prefill.trtllm_batch_context_with_kv_cache",
+    ),
 }
 
 TASK_DUPLICATE_RULES = {
