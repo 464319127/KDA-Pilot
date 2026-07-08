@@ -199,6 +199,10 @@ TASK_EXACT_RULES = {
         "TritonAttnBackend.forward_decode",
         "TritonAttnBackend.forward_extend",
     ),
+    "qwen3_coder__fp8_bmm": (
+        "flashinfer.decode.trtllm_batch_decode_with_kv_cache",
+        "flashinfer.prefill.trtllm_batch_context_with_kv_cache",
+    ),
 }
 
 DEFAULT_TASK_PREFIX = "glm_52"

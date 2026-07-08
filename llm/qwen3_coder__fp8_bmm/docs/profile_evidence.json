@@ -1,9 +1,12 @@
 {
   "model": "Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8",
   "model_slug": "qwen3_coder",
-  "cookbook_cmd": "sglang serve --model-path Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8 --tp 8 --ep 8 --tool-call-parser qwen3_coder",
+  "cookbook_cmd": "omitted from standalone kernel task; use bench/workloads.json and docs/captured_kernel_api_shapes.json for RLCR",
   "tp": "8",
-  "python_interface": "<confirm via capture; profiler family=fp8_bmm>",
+  "python_interface": [
+    "flashinfer.decode.trtllm_batch_decode_with_kv_cache",
+    "flashinfer.prefill.trtllm_batch_context_with_kv_cache"
+  ],
   "kernel_family": "fp8_bmm",
   "profiler_op_provenance": [
     "aten::_local_scalar_dense",
@@ -36,19 +39,15 @@
   },
   "max_pct_of_gpu": 34.04,
   "best_scenario": "random_high",
-  "input_shapes": [
-    "[[0], [0], []]",
-    "[[1, 2], [1, 2], []]",
-    "[[100], [], []]",
-    "[[100]]",
-    "[[104, 91], [104, 91], []]",
-    "[[1950], [], [], [], [], [], [], []]",
-    "[[1], [1], []]",
-    "[[1], [], [], [], [], [], []]",
-    "[[1], [], [], []]",
-    "[[1], [], []]",
-    "[[1]]",
-    "[[2048, 1536], [2048, 1, 128], [2048, 1, 128], [2048, 1536], [], [], [], [], [],"
+  "input_shapes": [],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "input_shapes_replaced_by": "docs/captured_kernel_api_shapes.json",
+  "standalone_workloads_json": "bench/workloads.json",
+  "shape_source": "fresh_sglang_kernel_api_capture",
+  "captured_kernel_api_workload_count": 9,
+  "captured_kernel_api_functions": [
+    "flashinfer.decode.trtllm_batch_decode_with_kv_cache",
+    "flashinfer.prefill.trtllm_batch_context_with_kv_cache"
   ],
-  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+  "shape_capture_note": "Captured 2026-07-08 on Verda B300 light-face-hides-fin-03-1 from a real Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8 TP=8 EP=8 SGLang production-path execution in temporary container sglang-qwen3-coder on eight B300 GPUs. Used a model-local HF cache after snapshot download, tool_call_parser=qwen3_coder, disabled FlashInfer autotune, disabled CUDA graph prefill/decode, cleared startup health records before capture, and marked four request windows covering long prefill, short decode, mid concurrency, and high concurrency. The legacy qwen3_coder__fp8_bmm task is routed to the real low-level FlashInfer TRTLLM batch context/decode APIs observed in the production path, while the attention task uses the higher-level TRTLLM backend forward APIs."
 }
