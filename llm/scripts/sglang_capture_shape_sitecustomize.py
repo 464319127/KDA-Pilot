@@ -15,6 +15,7 @@ import os
 import sys
 import threading
 import time
+import dataclasses
 from pathlib import Path
 from typing import Any
 
@@ -319,7 +320,7 @@ def _summarize(value: Any, depth: int = 0) -> Any:
     if value is None or isinstance(value, (bool, int, float, str)):
         return value
     if depth >= 3:
-        return {"kind": type(value).__name__, "repr": repr(value)[:160]}
+        return _object_meta(value)
     if isinstance(value, (tuple, list)):
         return {
             "kind": type(value).__name__,
@@ -333,7 +334,33 @@ def _summarize(value: Any, depth: int = 0) -> Any:
                 for key, item in list(value.items())[:64]
             },
         }
-    return {"kind": type(value).__name__, "repr": repr(value)[:160]}
+    if dataclasses.is_dataclass(value) and not isinstance(value, type):
+        items: dict[str, Any] = {}
+        for field in dataclasses.fields(value)[:64]:
+            try:
+                items[field.name] = _summarize(getattr(value, field.name), depth + 1)
+            except Exception as exc:
+                items[field.name] = {
+                    "kind": "unavailable",
+                    "error": type(exc).__name__,
+                }
+        meta = _object_meta(value)
+        meta["fields"] = items
+        return meta
+    if isinstance(value, tuple) and hasattr(value, "_fields"):
+        items = {
+            str(name): _summarize(getattr(value, name), depth + 1)
+            for name in list(value._fields)[:64]
+        }
+        meta = _object_meta(value)
+        meta["fields"] = items
+        return meta
+    return _object_meta(value)
+
+
+def _object_meta(value: Any) -> dict[str, str]:
+    cls = type(value)
+    return {"kind": cls.__name__, "module": getattr(cls, "__module__", "")}
 
 
 def _append_record(record: dict[str, Any]) -> None:
