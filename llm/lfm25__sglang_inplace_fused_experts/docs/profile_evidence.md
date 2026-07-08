@@ -1,39 +1,45 @@
-# Profile evidence — lfm25__sglang_inplace_fused_experts
+# Profile evidence - lfm25__sglang_inplace_fused_experts
 
-**Why this is a standalone kernel target:** it is **50.5% of total serving GPU time** (max across scenarios) on `LiquidAI/LFM2.5-8B-A1B`, measured by profiling the exact
-cookbook deployment. This is target-selection provenance and headroom context, not the validation path. Clean Python interface from profiler provenance.
+**Standalone kernel target: 50.5% of total serving GPU time** (max across scenarios) on
+`LiquidAI/LFM2.5-8B-A1B`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Kernel API shapes below are frozen from a one-time real `LiquidAI/LFM2.5-8B-A1B` production-path capture and replace the old noisy profiler shape strings.
 
 - Model: `LiquidAI/LFM2.5-8B-A1B` (slug `lfm25`, tp=1)
-- Python interface: `sglang.inplace_fused_experts`
-- Category: `moe`
+- Python interface(s): `sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe._fused_moe_kernel_sequence`, `sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe.fused_experts_impl`, `sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe.inplace_fused_experts`, `sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe_triton_kernels.invoke_fused_moe_kernel`
+- Kernel family: `None`  .  Category: `moe`
 - GPU kernel(s): `fused_moe_kernel`
-- Profiler op provenance: `sglang::inplace_fused_experts`
 
 ## % of GPU time by scenario
 
-| dataset | scenario (concurrency) | % of GPU time |
+| dataset | concurrency | % of GPU time |
 |---|---|---|
-| random_low | random (conc 1) | 32.96% |
-| random_mid | random (conc 32) | 50.52% |
-| random_high | random (conc 100) | 45.03% |
-| sharegpt_low | sharegpt (conc 1) | 34.12% |
-| sharegpt_mid | sharegpt (conc 32) | 47.66% |
-| sharegpt_high | sharegpt (conc 100) | 42.22% |
+| random | conc 1 | 32.96% |
+| random | conc 32 | 50.52% |
+| random | conc 100 | 45.03% |
+| sharegpt | conc 1 | 34.12% |
+| sharegpt | conc 32 | 47.66% |
+| sharegpt | conc 100 | 42.22% |
 
-**Peak: 50.5% in `random_mid` (random, concurrency 32).**
+**Peak: 50.5% in `random_mid`.**
 
-## Input shapes (profiler)
-- `[[103, 2048], [32, 3584, 2048], [32, 2048, 1792], [103, 4], [103, 4], [], [], []`
-- `[[16384, 2048], [32, 3584, 2048], [32, 2048, 1792], [16384, 4], [16384, 4], [], `
-- `[[624, 2048], [32, 3584, 2048], [32, 2048, 1792], [624, 4], [624, 4], [], [], []`
-- `[[7193, 2048], [32, 3584, 2048], [32, 2048, 1792], [7193, 4], [7193, 4], [], [],`
-- `[[7505, 2048], [32, 3584, 2048], [32, 2048, 1792], [7505, 4], [7505, 4], [], [],`
+## Fresh captured kernel API shapes
 
-## Original serving capture command (provenance only)
-```bash
-sglang serve --model-path LiquidAI/LFM2.5-8B-A1B --tp 1 --attention-backend flashinfer --reasoning-parser qwen3 --tool-call-parser lfm2
-```
+- Shape source: `docs/captured_kernel_api_shapes.json`
+- Standalone workloads: `bench/workloads.json`
+- Workload count: 50
+- Capture note: Captured 2026-07-08 on Verda B300 light-face-hides-fin-03-1 from a real LiquidAI/LFM2.5-8B-A1B TP=1 SGLang production-path execution in temporary container sglang-lfm25 on a single B300 GPU. Used a model-local HF cache after snapshot download, attention_backend=flashinfer, reasoning_parser=qwen3, tool_call_parser=lfm2, disabled FlashInfer autotune, disabled CUDA graph prefill/decode, cleared startup health records before capture, and marked four request windows covering long prefill, short decode, mid concurrency, and high concurrency.
 
-Do not rerun this serving command, `run_capture`, or a multi-GPU e2e A/B as part
-of the normal kernel task. Validate with the task-local standalone benchmark on
-one idle target GPU using the captured shape set.
+Functions covered:
+- `sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe._fused_moe_kernel_sequence`
+- `sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe.fused_experts_impl`
+- `sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe.inplace_fused_experts`
+- `sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe_triton_kernels.invoke_fused_moe_kernel`
+
+The old profiler `input_shapes` strings were noisy and are no longer an acceptance source.
+Use the task-local workload file above for standalone single-GPU correctness and benchmark work.
+
+## Validation Policy
+
+Normal RLCR kernel work is a standalone single-GPU optimization task. Use the
+captured workload set above for correctness and benchmark acceptance on one idle
+target GPU, and do not add external runtime-readiness or fleet-level A/B gates to
+the task loop.

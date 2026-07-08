@@ -69,6 +69,17 @@ TARGETS: dict[str, tuple[str, ...]] = {
         "fused_q_indexer_rope_hadamard_fp4_quant",
         "fused_q_indexer_rope_hadamard_quant",
     ),
+    "sglang.jit_kernel.activation": (
+        "_run_activation_inplace",
+        "_run_activation_filtered_inplace",
+        "run_activation",
+        "silu_and_mul",
+        "gelu_and_mul",
+        "gelu_tanh_and_mul",
+    ),
+    "sglang.jit_kernel.moe_align": (
+        "moe_align_block_size",
+    ),
     "sgl_kernel.elementwise": (
         "dsv4_fused_q_indexer_rope_hadamard_quant",
     ),
@@ -164,6 +175,7 @@ TARGETS: dict[str, tuple[str, ...]] = {
         "bmm_fp8",
         "fp8_scaled_mm",
         "fp8_blockwise_scaled_mm",
+        "moe_align_block_size",
     ),
     "sgl_kernel.gemm": (
         "bmm_fp8",

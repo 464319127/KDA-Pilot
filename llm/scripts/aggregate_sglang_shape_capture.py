@@ -103,6 +103,14 @@ TASK_SUFFIX_RULES = {
         "triton_utils.fused_moe_triton_kernels.invoke_fused_moe_kernel",
         "torch.ops.sglang.inplace_fused_experts",
     ),
+    "__sglang_run_activation_inplace": (
+        "jit_kernel.activation._run_activation_inplace",
+        "jit_kernel.activation._run_activation_filtered_inplace",
+        "jit_kernel.activation.run_activation",
+        "jit_kernel.activation.silu_and_mul",
+        "jit_kernel.activation.gelu_and_mul",
+        "jit_kernel.activation.gelu_tanh_and_mul",
+    ),
     "__sglang_flashinfer_fp4_quantize": (
         "quantization.fp4_utils.fp4_quantize",
         "torch.ops.sglang.flashinfer_fp4_quantize",
@@ -158,6 +166,11 @@ TASK_SUFFIX_RULES = {
     ),
     "__moe_align_block_size": (
         "moe_align_block_size",
+    ),
+    "__sgl_kernel_moe_align_block_size": (
+        "sgl_kernel.moe_align_block_size",
+        "jit_kernel.moe_align.moe_align_block_size",
+        "triton_utils.moe_align_block_size.moe_align_block_size",
     ),
     "__void_at_native_sbtopk_gather_top": (
         ".select_experts",
