@@ -255,6 +255,17 @@ TASK_EXACT_RULES = {
         "FlashAttentionBackend.forward_extend",
         "flash_attn_with_kvcache",
     ),
+    "step35_flash__sgl_kernel_gemma_rmsnorm": (
+        "gemma_rmsnorm",
+    ),
+    "step35_flash__void_moe_top_k_256_float_const_b": (
+        ".select_experts",
+        ".fused_topk",
+        ".fused_topk_torch_native",
+        ".fused_topk_softmax_torch_raw_logits",
+        ".grouped_topk",
+        ".biased_grouped_topk",
+    ),
 }
 
 TASK_DUPLICATE_RULES = {
