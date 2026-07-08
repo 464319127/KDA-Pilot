@@ -219,6 +219,10 @@ TASK_EXACT_RULES = {
         "flashinfer.decode.trtllm_batch_decode_with_kv_cache",
         "flashinfer.prefill.trtllm_batch_context_with_kv_cache",
     ),
+    "intern_s2_preview__fp8_bmm": (
+        "TritonAttnBackend.forward_decode",
+        "TritonAttnBackend.forward_extend",
+    ),
 }
 
 TASK_DUPLICATE_RULES = {
