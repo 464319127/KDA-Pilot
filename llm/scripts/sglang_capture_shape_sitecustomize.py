@@ -16,6 +16,7 @@ import sys
 import threading
 import time
 import dataclasses
+from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
 
@@ -179,6 +180,34 @@ TARGETS: dict[str, tuple[str, ...]] = {
         "DeepseekSparseAttnBackend._forward_standard_mha",
         "DeepseekSparseAttnBackend._forward_trtllm",
     ),
+    "sglang.srt.models.nemotron_h": (
+        "NemotronHAttention.forward",
+        "NemotronHMambaDecoderLayer._forward_mamba",
+        "nemotron_mamba2_with_output",
+        "breakable_nemotron_mamba2_with_output",
+    ),
+    "sglang.srt.layers.attention.mamba.causal_conv1d": (
+        "causal_conv1d_fn",
+        "causal_conv1d_update",
+    ),
+    "sglang.srt.layers.attention.mamba.causal_conv1d_triton": (
+        "causal_conv1d_fn",
+        "causal_conv1d_update",
+    ),
+    "sglang.srt.layers.attention.mamba.ops.ssd_combined": (
+        "mamba_chunk_scan_combined",
+        "_mamba_chunk_scan_combined_fwd",
+    ),
+    "sglang.srt.layers.attention.mamba.ops.ssd_chunk_scan": (
+        "_chunk_scan_fwd",
+    ),
+    "sglang.srt.layers.attention.mamba.ops.ssd_chunk_state": (
+        "_chunk_state_fwd",
+        "chunk_state_varlen",
+    ),
+    "sglang.srt.layers.attention.mamba.ops.ssd_state_passing": (
+        "_state_passing_fwd",
+    ),
     "sgl_kernel.flash_mla": (
         "flash_mla_with_kvcache",
         "flash_mla_sparse_fwd",
@@ -270,6 +299,53 @@ TORCH_OP_OVERLOAD_TARGETS: dict[str, tuple[str, ...]] = {
 _lock = threading.Lock()
 _counts: dict[str, int] = {}
 _wrapped: set[str] = set()
+
+
+def _disable_transformers_torchao_probe() -> None:
+    """Avoid optional torchao imports in capture-only environments."""
+    try:
+        import transformers.utils as transformers_utils
+        import transformers.utils.import_utils as import_utils
+
+        def is_torchao_available(*args: Any, **kwargs: Any) -> bool:
+            return False
+
+        import_utils.is_torchao_available = is_torchao_available
+        transformers_utils.is_torchao_available = is_torchao_available
+    except Exception:
+        pass
+
+
+def _patch_torch_core_decompositions() -> None:
+    """Normalize PyTorch nightly CustomDecompTable for older inductor callers."""
+    try:
+        import torch._decomp as torch_decomp
+
+        original = torch_decomp.core_aten_decompositions
+        if getattr(original, "_kda_capture_wrapped", False):
+            return
+
+        @functools.wraps(original)
+        def core_aten_decompositions(*args: Any, **kwargs: Any) -> Mapping[Any, Any]:
+            table = original(*args, **kwargs)
+            if type(table) is dict:
+                return table
+            try:
+                return dict(table.items())
+            except Exception:
+                return dict(table)
+
+        setattr(core_aten_decompositions, "_kda_capture_wrapped", True)
+        try:
+            import torch.export.decomp_utils as decomp_utils
+
+            if hasattr(decomp_utils, "core_aten_decompositions"):
+                decomp_utils.core_aten_decompositions = core_aten_decompositions
+        except Exception:
+            pass
+        torch_decomp.core_aten_decompositions = core_aten_decompositions
+    except Exception:
+        pass
 
 
 def _out_path() -> Path | None:
@@ -651,6 +727,11 @@ class _CaptureFinder(importlib.abc.MetaPathFinder):
 
 
 if OUT_TEMPLATE:
+    if os.environ.get("KDA_CAPTURE_DISABLE_TORCHAO") == "1":
+        _disable_transformers_torchao_probe()
+    if os.environ.get("KDA_CAPTURE_PATCH_TORCH_DECOMPOSITIONS") == "1":
+        _patch_torch_core_decompositions()
+
     sys.meta_path.insert(0, _CaptureFinder())
     for _module_name, _module in list(sys.modules.items()):
         if _module_name in TARGETS:

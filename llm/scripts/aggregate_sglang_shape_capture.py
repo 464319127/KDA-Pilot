@@ -255,6 +255,30 @@ TASK_EXACT_RULES = {
         "FlashAttentionBackend.forward_extend",
         "flash_attn_with_kvcache",
     ),
+    "nemotron3_nano__sglang_flashinfer_bmm_fp8": (
+        "flashinfer_bmm_fp8",
+        "flashinfer.gemm.bmm_fp8",
+    ),
+    "nemotron3_nano__sglang_nemotron_mamba2_with_output": (
+        "NemotronHMambaDecoderLayer._forward_mamba",
+        "nemotron_mamba2_with_output",
+        "breakable_nemotron_mamba2_with_output",
+        "mamba_chunk_scan_combined",
+        "_mamba_chunk_scan_combined_fwd",
+        "_chunk_scan_fwd",
+        "_chunk_state_fwd",
+        "chunk_state_varlen",
+        "_state_passing_fwd",
+        "causal_conv1d_fn",
+        "causal_conv1d_update",
+    ),
+    "nemotron3_nano__sglang_unified_attention_with_output": (
+        "NemotronHAttention.forward",
+        "unified_attention_with_output",
+    ),
+    "nemotron3_nano__static_quant_fp8": (
+        "static_quant_fp8",
+    ),
     "step35_flash__sgl_kernel_gemma_rmsnorm": (
         "gemma_rmsnorm",
     ),
