@@ -25,6 +25,8 @@ MAX_CALLS_PER_FUNC = int(os.environ.get("KDA_CAPTURE_MAX_CALLS_PER_FUNC", "256")
 TARGETS: dict[str, tuple[str, ...]] = {
     "sglang.srt.layers.quantization.fp8_kernel": (
         "deep_gemm_fp8_fp8_bf16_nt",
+        "w8a8_block_fp8_matmul_deepgemm",
+        "w8a8_block_fp8_matmul_triton",
         "triton_scaled_mm",
         "scaled_fp8_quant",
         "static_quant_fp8",
@@ -41,6 +43,7 @@ TARGETS: dict[str, tuple[str, ...]] = {
         "apply_fp8_linear",
         "apply_fp8_linear_bmm_flashinfer",
         "flashinfer_gemm_w8a8_block_fp8_linear_with_fallback",
+        "flashinfer_deepgemm_w8a8_block_fp8_linear_with_fallback",
         "cutlass_w8a8_block_fp8_linear_with_fallback",
         "deepgemm_w8a8_block_fp8_linear_with_fallback",
         "triton_w8a8_block_fp8_linear",
@@ -85,6 +88,14 @@ TARGETS: dict[str, tuple[str, ...]] = {
     ),
     "sglang.srt.layers.quantization.fp4_utils": (
         "fp4_quantize",
+    ),
+    "sglang.srt.layers.quantization.fp8": (
+        "Fp8LinearMethod.apply",
+    ),
+    "sglang.multimodal_gen.runtime.layers.quantization.weight_only_fp8": (
+        "_apply_srt_w8a8_fp8_linear",
+        "_apply_weight_only_fp8_linear",
+        "dequantize_rowwise_fp8_weight",
     ),
     "sglang.srt.layers.layernorm": (
         "rmsnorm",
@@ -176,11 +187,21 @@ TARGETS: dict[str, tuple[str, ...]] = {
         "fp8_scaled_mm",
         "fp8_blockwise_scaled_mm",
         "moe_align_block_size",
+        "sgl_per_token_quant_fp8",
+        "sglang_per_token_quant_fp8",
+        "sgl_per_token_group_quant_fp8",
+        "sglang_per_token_group_quant_fp8",
+        "sglang_per_token_group_quant_fp8_row_padded",
     ),
     "sgl_kernel.gemm": (
         "bmm_fp8",
         "fp8_scaled_mm",
         "fp8_blockwise_scaled_mm",
+        "sgl_per_token_quant_fp8",
+        "sglang_per_token_quant_fp8",
+        "sgl_per_token_group_quant_fp8",
+        "sglang_per_token_group_quant_fp8",
+        "sglang_per_token_group_quant_fp8_row_padded",
     ),
     "sglang.srt.layers.attention.flash_mla_sm120": (
         "flash_mla_with_kvcache_sm120",
@@ -229,6 +250,19 @@ TORCH_OP_TARGETS: dict[str, tuple[str, ...]] = {
         "hadamard_transform",
         "inplace_fused_experts",
         "unified_attention_with_output",
+    ),
+}
+
+TORCH_OP_OVERLOAD_TARGETS: dict[str, tuple[str, ...]] = {
+    "sgl_kernel": (
+        "bmm_fp8",
+        "fp8_scaled_mm",
+        "fp8_blockwise_scaled_mm",
+        "sgl_per_token_quant_fp8",
+        "sglang_per_token_quant_fp8",
+        "sgl_per_token_group_quant_fp8",
+        "sglang_per_token_group_quant_fp8",
+        "sglang_per_token_group_quant_fp8_row_padded",
     ),
 }
 
@@ -441,6 +475,56 @@ def _wrap_torch_function(torch_module: Any, attr_name: str, full_name: str) -> N
     _wrapped.add(full_name)
 
 
+def _wrap_torch_op_overload(
+    op_packet: Any,
+    overload_name: str,
+    full_name: str,
+) -> None:
+    if full_name in _wrapped:
+        return
+    if not hasattr(op_packet, overload_name):
+        return
+    func = getattr(op_packet, overload_name)
+    if not callable(func) or getattr(func, "_kda_shape_capture_wrapped", False):
+        return
+
+    @functools.wraps(func)
+    def wrapper(*args: Any, **kwargs: Any) -> Any:
+        if _is_torch_compiling():
+            return func(*args, **kwargs)
+        count = _counts.get(full_name, 0)
+        should_record = count < MAX_CALLS_PER_FUNC
+        if should_record:
+            _counts[full_name] = count + 1
+            record: dict[str, Any] = {
+                "event": "call",
+                "time": time.time(),
+                "pid": os.getpid(),
+                "call_index": count + 1,
+                "function": full_name,
+                "rank_env": _rank_env(),
+                "args": [_summarize(arg) for arg in args],
+                "kwargs": {key: _summarize(val) for key, val in kwargs.items()},
+            }
+            try:
+                result = func(*args, **kwargs)
+            except Exception as exc:
+                record["exception"] = {
+                    "type": type(exc).__name__,
+                    "message": str(exc),
+                }
+                _append_record(record)
+                raise
+            record["result"] = _summarize(result)
+            _append_record(record)
+            return result
+        return func(*args, **kwargs)
+
+    setattr(wrapper, "_kda_shape_capture_wrapped", True)
+    setattr(op_packet, overload_name, wrapper)
+    _wrapped.add(full_name)
+
+
 def _wrap_torch_ops_once() -> bool:
     try:
         import torch
@@ -465,12 +549,35 @@ def _wrap_torch_ops_once() -> bool:
                 _wrap_torch_function(op_namespace, name, full_name)
             except Exception:
                 all_wrapped = False
+    for namespace, names in TORCH_OP_OVERLOAD_TARGETS.items():
+        try:
+            op_namespace = getattr(torch.ops, namespace)
+        except Exception:
+            all_wrapped = False
+            continue
+        for name in names:
+            packet_name = f"torch.ops.{namespace}.{name}"
+            full_name = f"{packet_name}.default"
+            if full_name in _wrapped:
+                continue
+            if not hasattr(op_namespace, name):
+                all_wrapped = False
+                continue
+            try:
+                _wrap_torch_op_overload(
+                    getattr(op_namespace, name), "default", full_name
+                )
+            except Exception:
+                all_wrapped = False
     return all_wrapped
 
 
 def _wrap_torch_ops_periodically() -> None:
     poll_steps = int(os.environ.get("KDA_CAPTURE_TORCH_OP_POLL_STEPS", "2400"))
     poll_interval = float(os.environ.get("KDA_CAPTURE_TORCH_OP_POLL_INTERVAL", "0.25"))
+    initial_delay = float(os.environ.get("KDA_CAPTURE_TORCH_OP_INITIAL_DELAY", "0"))
+    if initial_delay > 0:
+        time.sleep(initial_delay)
     for _ in range(poll_steps):
         if _wrap_torch_ops_once():
             return
