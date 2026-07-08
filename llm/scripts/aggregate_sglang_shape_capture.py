@@ -188,6 +188,15 @@ TASK_SUFFIX_RULES = {
     ),
 }
 
+TASK_EXACT_RULES = {
+    "qwen36__fp8_bmm": (
+        "TRTLLMHAAttnBackend.forward_decode",
+        "TRTLLMHAAttnBackend.forward_extend",
+        "trtllm_batch_context_with_kv_cache",
+        "trtllm_batch_decode_with_kv_cache",
+    ),
+}
+
 DEFAULT_TASK_PREFIX = "glm_52"
 
 DROP_TENSOR_KEYS = {"device", "device_index", "device_type", "requires_grad", "numel"}
@@ -289,6 +298,13 @@ def build_task_rules(task_prefix: str, repo_root: Path) -> dict[str, tuple[str, 
         f"{task_prefix}{suffix}": needles
         for suffix, needles in TASK_SUFFIX_RULES.items()
     }
+    rules.update(
+        {
+            task: needles
+            for task, needles in TASK_EXACT_RULES.items()
+            if task.startswith(f"{task_prefix}__")
+        }
+    )
     return {
         task: needles
         for task, needles in rules.items()
