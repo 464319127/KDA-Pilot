@@ -1,4 +1,4 @@
-# meta_kernel — GLM-5.2 bs=1 low-latency kernel campaign (8×B300 / sm_103)
+# mega_kernel — GLM-5.2 bs=1 low-latency kernel campaign (8×B300 / sm_103)
 
 Isolated kernel-optimization tasks for the GLM-5.2 FP8 bs=1 MTP(5-1-6) decode
 path. Frozen production shapes come from the live serving profile on
@@ -29,8 +29,8 @@ hooks (see `integration/`).
 
 | Task | Target | Baseline | Budget → floor | Expected e2e |
 |---|---|---|---|---|
-| 01_dense_fp8_gemm_bs1 | M∈{1,6} w8a8 block-FP8 dense GEMM | DeepGEMM fp8+quant AND cuBLAS bf16 (both) | 2.8 → ~1.3 ms | −1.4 ms/iter |
-| 03_ar_norm_fused_bs1 | 8-rank oneshot AR(+add+rmsnorm), 73 KB | flashinfer mnnvl `oneshotAllreduceFusionKernel` 8.7 µs | 1.4 → ~0.5 ms | −0.8 ms/iter |
+| tasks/01 (dense_fp8_gemm_bs1) | M∈{1,6} w8a8 block-FP8 dense GEMM | DeepGEMM fp8+quant AND cuBLAS bf16 (both) | 2.8 → ~1.3 ms | −1.4 ms/iter |
+| tasks/02 (ar_norm_fused_bs1) | 8-rank oneshot AR(+add+rmsnorm), 73 KB | flashinfer mnnvl `oneshotAllreduceFusionKernel` 8.7 µs | 1.4 → ~0.5 ms | −0.8 ms/iter |
 
 Both promoted: GPU 9.3 → ~7.1 ms → iteration ~8.9 ms ≈ **~445 tok/s** (accept 3.95).
 

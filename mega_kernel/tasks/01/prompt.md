@@ -8,12 +8,20 @@ shape 上按冷 L2 图内口径同时打赢两条基线,达到 promote 门槛后
 **NEVER STOP**:持续实现、验证、benchmark、profile、优化,不要问我。遇到问题自己定位。
 
 硬性环境约定:
+0) 机器断开/过期不是终止条件,按下面处理后继续任务:
+   a. rx 传输层掉线(websocket 1006 / Broken pipe)是常态:直接重连重试;长命令一律用
+      setsid 后台 + 轮询模式跑(rx devbox run 的连接可能被控制面滚动切断)。
+   b. devbox 已过期/被释放:重新申请同规格机器并重建环境——
+      export PATH=$HOME/.local/bin:$PATH
+      rxp devbox acquire --gpu B300 --count 8 --image lmsysorg/sglang:latest --name glm52-bs1-opt
+      rxp devbox extend glm52-bs1-opt   # 续 TTL
+      rxp devbox ssh-config glm52-bs1-opt
+      然后把 ~/.ssh/rx_config 里该 Host 的 ProxyCommand 按同文件 bbuf-gb300-8x 的样式加
+      proxychains 包装(rx 不认代理环境变量)。模型权重在 /cluster-storage/shared/hf_cache/
+      glm52-fp8(集群存储,不随机器丢);workdir 重建 = mkdir -p + 从任务目录 scp 本任务
+      的源码/harness 上去即可,一切以本任务 worktree 里的文件为准。
 1) 所有 GPU 命令在 rx devbox `glm52-bs1-opt` 上跑(本机已配 `ssh glm52-bs1-opt` 别名)。
-   若 devbox 已过期:`export PATH=$HOME/.local/bin:$PATH && rxp devbox acquire --gpu B300
-   --count 8 --image lmsysorg/sglang:latest --name glm52-bs1-opt && rxp devbox ssh-config
-   glm52-bs1-opt`,然后把 ~/.ssh/rx_config 里该 Host 的 ProxyCommand 按同文件里
-   bbuf-gb300-8x 的样式加上 proxychains 包装(rx 不认代理环境变量)。
-2) kernel 微基准固定 GPU7(`K2_DEV=7`);workdir = /scratch/kda_bs1/meta01。
+2) kernel 微基准固定 GPU7(`K2_DEV=7`);workdir = /scratch/kda_bs1/mega01。
 3) devbox pod 本身就是 sglang 0.5.14 容器,nvcc CUDA 13.0,编 sm_103a。
 4) 若节点上有 serving 进程在跑,微基准可共存(显存余量 ~47GB/卡),不要杀它。
 

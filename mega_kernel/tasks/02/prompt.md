@@ -8,10 +8,21 @@ serving 里每迭代 160 次的融合 allreduce(+residual add+rmsnorm)从 8.7µs
 **NEVER STOP**:持续实现、验证、benchmark、profile、优化,不要问我。
 
 硬性环境约定:
-1) 所有 GPU 命令在 rx devbox `glm52-bs1-opt` 上跑(`ssh glm52-bs1-opt`;devbox 过期的
-   重建方法见 ../01_dense_fp8_gemm_bs1/prompt.md 第 1 条)。
+0) 机器断开/过期不是终止条件,按下面处理后继续任务:
+   a. rx 传输层掉线(websocket 1006 / Broken pipe)是常态:直接重连重试;长命令一律用
+      setsid 后台 + 轮询模式跑(rx devbox run 的连接可能被控制面滚动切断)。
+   b. devbox 已过期/被释放:重新申请同规格机器并重建环境——
+      export PATH=$HOME/.local/bin:$PATH
+      rxp devbox acquire --gpu B300 --count 8 --image lmsysorg/sglang:latest --name glm52-bs1-opt
+      rxp devbox extend glm52-bs1-opt   # 续 TTL
+      rxp devbox ssh-config glm52-bs1-opt
+      然后把 ~/.ssh/rx_config 里该 Host 的 ProxyCommand 按同文件 bbuf-gb300-8x 的样式加
+      proxychains 包装(rx 不认代理环境变量)。模型权重在 /cluster-storage/shared/hf_cache/
+      glm52-fp8(集群存储,不随机器丢);workdir 重建 = mkdir -p + 从任务目录 scp 本任务
+      的源码/harness 上去即可,一切以本任务 worktree 里的文件为准。
+1) 所有 GPU 命令在 rx devbox `glm52-bs1-opt` 上跑(`ssh glm52-bs1-opt`)。
 2) 需要全部 8 卡(单进程多卡 + cudaDeviceEnablePeerAccess);workdir =
-   /scratch/kda_bs1/meta03;与常驻 serving 进程可共存。
+   /scratch/kda_bs1/mega02;与常驻 serving 进程可共存。
 3) 编 sm_103a,CUDA 13.0。
 
 现状(先读 RESULTS_SM103.md):
