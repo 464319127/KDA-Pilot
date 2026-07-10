@@ -53,14 +53,14 @@ Environment recovery and measurement provenance log. Every GPU measurement in th
 - Harness/method review: AGREED on A/B symmetry, workspace protocol fidelity, oracle-tolerance reasoning, timing shape, noise-floor approach, D1-D4 justification. REQUIRED_CHANGES (all implemented before any further gate evidence): (1) stability detector hardened — 3 rotating input banks + in-graph output poisoning + per-bank references (constant-input/reused-output blind spots fixed), plus plain max-overlap variant; the first-cut "25k rounds stable" claim was downgraded and the gate re-run; (2) bench mode now refuses to time unless the two impls are bit-exact right then (recorded per row); (3) provenance extended (raw samples, headline geomean, GPU names/totals, nvcc + tvm-ffi versions, source hashes of baseline header + port files, candidate build flags); (4) stale "rel<1e-3" wording purged from docstrings; (5) result artifacts synced back into the repo tree. Full review: .humanize/skill/2026-07-10_16-51-37-*/output.md.
 - Port-diff review: VERIFIED the kernel header differs from upstream ONLY in the include block and the binding only in include+comment; FFI drive parity between fi_original.py and jit_port.py confirmed; compat helpers behavior-equivalent on success paths; SGL_CUDA_ARCH define inert for this TU. DIVERGENCES: error-path message cosmetics only. REQUIRED_CHANGES: none. Notes for later shapes: twoshot/large-H paths inherited but untested here (out of task scope; serving routes only the oneshot decode regime to the port). Review: .humanize/skill output alongside.
 
-## Serving Gate (P0.c) — in progress
+## Serving Gate (P0.c) — COMPLETE (final verdict in docs/results.md serving-gate table)
 
 - Baseline sanity (resident long-warm server, pre-patch): overall mean_decode_output_tok_s = 385.93; 40 records captured (results_task01_base).
 - Patch applied to /sgl-workspace/sglang via exact-string patcher (pre-apply repo diff fingerprint aa8500cd... recorded; flashinfer_comm_fusion.py 77b14b94 -> 1ffe7044; new files: jit_kernel/mnnvl_ar_fused.py + csrc/mnnvl_ar_fused/). jit module prebuilt for sm_103a (override_jit_cuda_arch(10,3,"a")).
 - Flag-OFF phase (patched code, env unset): server restarted healthy; sanity overall = 376.53 tok/s (>= 376); text records 40/40 identical to base (tokens, chars, prefix) -> OFF-inertness confirmed. Note: fresh-restart throughput sits ~2.4% below the long-warm base server; restart variance matters when reading the 376/378 thresholds.
 - Flag-ON phase (route ON, jit module): 372.94 tok/s (< 376) and text records only 4/40 identical to base -> GATE FAILED; greedy outputs diverge under the routed path. Serving restored immediately afterward (restore phase: 376.70 tok/s, 40/40 identical to base — resident serving proven back at baseline behavior).
 
-## Flag-ON Divergence Diagnosis (2026-07-10, ongoing)
+## Flag-ON Divergence Diagnosis (2026-07-10) — RESOLVED (root cause: baseline binary fast-math flags; fix verified end-to-end)
 
 Facts established, in order:
 1. OFF and restore phases are each 40/40 text-identical to base across full server restarts -> serving is restart-deterministic on the stock path; the ON divergence is caused by the routed path, not restart noise.

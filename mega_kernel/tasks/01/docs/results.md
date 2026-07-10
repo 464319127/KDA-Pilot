@@ -118,7 +118,8 @@ completion_tokens, text_chars, text_prefix per task).
 | bisect2 | route ON, scope=attn, x2 runs | 372.07/372.43 | 4/40 vs base; 40/40 run-vs-run (deterministic) |
 | on2 | stale IEEE build (patcher bug: early return skipped file refresh) | 374.11 | 4/40 — build fingerprint gate added after this |
 | **on3** | **route ON, fast-math port (FTZ=14,334 verified)** | **376.27 (>= 376)** | **40/40 identical — GATE PASS** |
-| restore/restore2 | flag unset | 376.70 / (in flight) | 40/40 — resident serving restored |
+| restore/restore2 | flag unset | 376.70 / 376.57 | 40/40 both — resident serving restored |
+| final restore (fresh box, post-promote) | flag unset | 375.50 | 40/40 — verified against the fresh-box base record |
 
 Default-OFF inertness: proven twice (off, restore). The integration patch
 remains applied on the box with the flag unset between milestones (byte-inert
@@ -166,8 +167,10 @@ Gates (all PASS):
   (|1-pseudo| up to 1.29%); no production row < 0.97x. 25-trial
   confirmation + fresh noise floor: see below.
 
-NCU breakdown (solo pre-fed launch, T=6, `--replay-mode application`,
-reports: `profile/p1_baseline/solo_{jit,opt}_t6.ncu-rep`):
+NCU breakdown (solo pre-fed launch, T=6, `--replay-mode application`;
+durable text exports in `docs/ncu/`; fresh-box re-run reproduces: jit
+16.93us/18,466 cycles vs opt 15.36us/16,756 cycles, registers 61 -> 58,
+same latency portrait):
 
 | Metric | ported baseline (jit) | candidate (opt) |
 |---|---:|---:|
@@ -202,17 +205,23 @@ bar and all promote gates MET. Serving restored (flag unset): 375.5 tok/s,
 40/40 identical. Raw records: `bench/results.jsonl` (fresh-box re-collection)
 + serving out-dirs on box.
 
-### 25-trial confirmation & noise floor
+### 25-trial confirmation & noise floor — two campaigns, both passing
 
-| Row | jit median us | opt median us | speedup | fresh noise spread (opt vs opt, 10 trials) |
-|---|---:|---:|---:|---:|
-| T=6 | 6.831 | 6.726 | 1.0157 | 0.94% (std 0.117/0.124) |
-| T=1 | 6.576 | 6.435 | 1.0219 | 0.14% (std 0.036/0.080) |
+Two full measurement campaigns exist because the devbox was released and
+reacquired mid-task (see docs/run_log.md). The FRESH-BOX re-collection is
+the artifact-backed record (raw samples in `bench/results.jsonl`); the
+pre-release numbers are retained as the cross-box reproduction.
 
-Headline geomean **1.0188** over the production rows — beyond the measured
-noise envelope on both rows; both rows above 1.0 (row floor 0.97x holds with
-margin). AC-7.1 hard promotion bar: **MET**. Pre-timing bit-exact ties held
-on every benchmark invocation.
+| Campaign | T=6 speedup | T=1 speedup | geomean | noise spread (opt vs opt) |
+|---|---:|---:|---:|---|
+| pre-release box (25 trials) | 1.0157 (6.831 -> 6.726) | 1.0219 (6.576 -> 6.435) | 1.0188 | 0.94% / 0.14% |
+| **fresh box, jsonl-backed (25 trials)** | **1.0126 (6.858 -> 6.773)** | **1.0230 (6.556 -> 6.409)** | **1.0178** | 0.36% / 0.46% |
+
+Both campaigns: geomean beyond the same-campaign noise envelope on the
+headline; both rows above 1.0 (row floor 0.97x holds with margin); AC-7.1
+hard promotion bar: **MET** in both. Pre-timing bit-exact ties held on every
+benchmark invocation. Cross-box agreement of the medians to ~0.3% is itself
+reproduction evidence.
 
 ## Dispatch table
 

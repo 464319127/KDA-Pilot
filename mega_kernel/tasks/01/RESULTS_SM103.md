@@ -46,16 +46,23 @@ env gate is off.
 
 ### Harness A/B (8x 50-round CUDA graphs, concurrent replay, wall/round, pdl=0)
 
-| Row | ported baseline us | specialized us | speedup | noise spread |
-|---|---:|---:|---:|---:|
-| T=6 (73.7 KB) | 6.831 | 6.726 | **1.0157** | 0.94% |
-| T=1 (12.3 KB) | 6.576 | 6.435 | **1.0219** | 0.14% |
+Two campaigns (devbox released + reacquired mid-task; every gate re-verified
+on the fresh box). The fresh-box campaign is the artifact-backed record
+(raw samples in `bench/results.jsonl`):
 
-Headline geomean **1.0188** (25 trials, interleaved A/B, fresh inputs/trial,
-pre-timing bit-exact check enforced). Hard promotion bar (geomean > 1.0
-beyond noise, no production row < 0.97x): **MET**. Candidate is bf16
-bit-exact vs the flashinfer original and 50,000-round stability-clean
-(pdl=1).
+| Campaign | Row | ported baseline us | specialized us | speedup | noise spread |
+|---|---|---:|---:|---:|---:|
+| pre-release box | T=6 | 6.831 | 6.726 | 1.0157 | 0.94% |
+| pre-release box | T=1 | 6.576 | 6.435 | 1.0219 | 0.14% |
+| **fresh box (jsonl)** | T=6 | 6.858 | 6.773 | **1.0126** | 0.36% |
+| **fresh box (jsonl)** | T=1 | 6.556 | 6.409 | **1.0230** | 0.46% |
+
+Headline geomean **1.0188 / 1.0178** (pre-release / fresh-box; 25 trials,
+interleaved A/B, fresh inputs/trial, pre-timing bit-exact check enforced).
+Hard promotion bar (geomean > 1.0 beyond noise, no production row < 0.97x):
+**MET in both campaigns**. Candidate is bf16 bit-exact vs the flashinfer
+original (randn + value zoo, both boxes) and 50,000-round stability-clean
+(pdl=1, both boxes).
 
 ### NCU breakdown (solo pre-fed launch, T=6, application replay)
 
