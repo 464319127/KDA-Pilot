@@ -25,7 +25,8 @@ import functools
 
 @functools.cache
 def _module():
-    # Compiled by flashinfer's own JIT (same header, flashinfer's own flags).
+    # Resolves to the precompiled flashinfer-jit-cache AOT module on this box
+    # (fast-math build; no local JIT — see module docstring).
     from flashinfer.comm.trtllm_mnnvl_ar import get_trtllm_mnnvl_comm_module
 
     return get_trtllm_mnnvl_comm_module()

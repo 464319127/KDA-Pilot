@@ -114,3 +114,28 @@ ROOT CAUSE: build-flag asymmetry between the deployed baseline binary (fast-math
   `docs/serving_runs/baseline_official_pretask/`, dispatch/docs references
   reconciled to the adopted kernel, `port_opt_cuh` added to harness
   provenance source_hashes.
+
+## Round 2 — provenance closure (2026-07-10)
+
+- `docs/baseline_source.md` runtime-path paragraph rewritten to the
+  AOT-wheel reality (loader resolves to `flashinfer-jit-cache 0.6.12+cu130`,
+  fast-math build; header = source-lineage artifact, binary = numeric
+  reference); repo-wide stale-wording sweep clean; one leftover inline
+  comment in `baseline/fi_original.py` fixed the same way.
+- AC-7 evidence RERUN on box with the current harness (which now hashes
+  `mnnvl_ar_fused_opt.cuh` as `port_opt_cuh` in every record's provenance):
+  serialized chain `r2a_chain.sh` = 25-trial bench jit,opt + noise +
+  hardened stability (pdl=1, 1000 replays = 50,000 instrumented rounds/row)
+  + pdlprobe (10 trials). Results reproduce round 1: A/B 1.0546/1.0888
+  geomean 1.0716 (round-1: 1.0563/1.0884/1.0722, deltas <= 0.2%), stability
+  0 mismatches, pdlprobe deltas −0.18%..+0.28% inside noise, all bit-ok.
+  Chain log records pre/post `results.jsonl` line-count guard (16 -> 25)
+  and an in-chain provenance check: all 9 appended records carry
+  `port_opt_cuh` (PROVENANCE_CHECK: PASS); log archived at
+  `docs/profiler_evidence/r2a_chain_log.txt`. Records pulled box->repo
+  (pull-only per BL-20260710-sync-overwrites-onbox-records).
+- Independent verification re-review (Codex gpt-5.5 xhigh): both round-1
+  gaps confirmed closed against the actual files/records; AC-7 gates
+  re-verified on the fresh records (T=6 +5.46% vs 1.60% same-session noise,
+  T=1 +8.88% vs 0.33%, geomean +7.16%; no row < 0.97x); REQUIRED_CHANGES
+  empty.

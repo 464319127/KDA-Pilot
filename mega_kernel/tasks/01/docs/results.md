@@ -243,6 +243,17 @@ verified 378.14 tok/s 40/40. Raw artifacts:
 The <=7.0us target remains missed (7.6 us) — gap halved; named bound
 unchanged.
 
+Provenance-complete rerun (round 2): the round-1 jsonl records above were
+collected before `port_opt_cuh` (the optimized-header hash) was added to
+harness provenance, so the full evidence set was RERUN with the current
+harness — 25-trial A/B T=6 **1.0546** (jit 6.866 -> opt 6.510) / T=1
+**1.0888** (6.621 -> 6.081), geomean **1.0716**; same-session noise |1-x|
+1.60%/0.33%; hardened stability 50,000 instrumented rounds per row + 1000
+plain replays: 0 mismatches; pdlprobe deltas −0.18%..+0.28% (inside noise,
+bit-ok, conclusion unchanged). All conclusions reproduce the round-1
+numbers (deltas <= 0.2% on the speedups); every appended record carries
+`provenance.source_hashes.port_opt_cuh` (bench/results.jsonl lines 17-25).
+
 ## P1 route evaluation closure (round 1)
 
 Every route from the source prompt's idea pool, with recorded evidence
@@ -253,7 +264,7 @@ Every route from the source prompt's idea pool, with recorded evidence
 | Constant-fold T/H/world/eps | ADOPTED (P1 candidate) | A/B + NCU tables above |
 | Weight/gamma + residual prefetch across the spin | ADOPTED (same candidate) | same |
 | Grid/block re-config for small payloads | RULED OUT under byte-identity | the norm's cross-warp fp32 reduction tree is geometry-dependent; changing block/cluster shape changes fullSum bits -> greedy text drift (analysis; the promote gate demands byte-identical output) |
-| PDL entry (`cudaGridDependencySynchronize` overlap) | EVALUATED — no measurable benefit; dispatch unchanged | predecessor-aware probe (`--mode pdlprobe`: per-round [copy-predecessor -> AR] graphs, 10 trials; jsonl-backed rerun after the first run's records were lost to a sync overwrite): pdl1-vs-pdl0 pair-median deltas jit +0.12%/+0.03%, opt +0.15%/+0.21% (T=6/T=1), all inside noise (0.36-0.46%), bit-ok everywhere; the lost first run agreed (−0.36%..+0.12%). Serving keeps stock `launch_with_pdl=True`; the kernel's PDL hooks are preserved verbatim. Records: `bench/results.jsonl` mode=pdlprobe |
+| PDL entry (`cudaGridDependencySynchronize` overlap) | EVALUATED — no measurable benefit; dispatch unchanged | predecessor-aware probe (`--mode pdlprobe`: per-round [copy-predecessor -> AR] graphs, 10 trials), run three times (first run's records lost to a sync overwrite; round-1 rerun; round-2 provenance-complete rerun — both reruns jsonl-backed): pdl1-vs-pdl0 pair-median deltas span −0.36%..+0.28% across all runs, always inside noise, bit-ok everywhere. Latest records (with `port_opt_cuh` provenance): jit −0.18%/+0.28%, opt +0.06%/−0.04% (T=6/T=1). Serving keeps stock `launch_with_pdl=True`; the kernel's PDL hooks are preserved verbatim. Records: `bench/results.jsonl` mode=pdlprobe |
 | Fence/flag granularity (single flag round for 6 tokens) | byte-preserving transform FOUND, measured, ADOPTED | the per-call flag protocol is already one arrival round + one rotation; the removable cost is ctaArrive's cluster.sync. Block-granular arrival (`oneshotArFusedNormConstKernelBA`): bit-exact vs flashinfer (randn + value zoo; archived zoo run of the adopted dispatch entry: `docs/profiler_evidence/zoo_fi_vs_opt_adopted.txt`, 0 mismatched elements), stability-clean, +6.9% at T=1 (single-cluster geometry pays a whole-grid sync) and +0.8% at T=6 vs the cluster-arrival candidate; requires exact-fit geometry (asserted; frozen shapes qualify). Adopted into the specialized entry behind the full ladder incl. a fresh promote pass |
 | Epilogue fold (quant / next op) | NO-GO for this serving config | trace adjacency (archived: `docs/profiler_evidence/trace_adjacency_task01_ba.txt`; 13,600 AR calls, task01_ba profile): the kernels FOLLOWING the fused AR are cuBLAS `nvjet_sm103_*` GEMMs (13,260) and `router_gemm_kernel` (340); the task01_opt profile showed the same pattern (13,440 calls: 12,852 nvjet / 336 router) — under `SGLANG_BS1_BF16_DENSE=1` there is NO quant kernel after the AR (norm_out feeds bf16 GEMMs directly), and folding into closed-source cubin kernels is outside the campaign's port-what-has-source rule. Folding the 2.5%-share router GEMM is not worth an ABI change. A fold would also change the op's public outputs and require replicating the consumer's exact arithmetic for byte-identity. Conditional follow-up only if the serving config moves to an fp8-quant-after-AR path |
 

@@ -12,9 +12,9 @@ call inside `oneshotArFusedConstDispatch`
 
 | Regime | Kernel | Per-regime result (jsonl-backed, 25 trials, same-session pairing) |
 |---|---|---|
-| T=6, H=6144, world=8, bf16, oneshot, rmsnorm, exact-fit geometry | `oneshotArFusedNormConstKernelBA<8,bf16,6,6144>` (block-arrival, ADOPTED round 1) | **1.0563** vs ported baseline (noise 0.36%) |
-| T=1, H=6144, world=8, bf16, oneshot, rmsnorm, exact-fit geometry | `oneshotArFusedNormConstKernelBA<8,bf16,1,6144>` | **1.0884** vs ported baseline (noise 0.46%) |
-| frozen shapes but non-exact-fit geometry (defensive; cannot occur for H=6144 on this arch) | `oneshotArFusedNormConstKernel` (cluster-arrival) | 1.0126 / 1.0230 vs ported baseline |
+| T=6, H=6144, world=8, bf16, oneshot, rmsnorm, exact-fit geometry | `oneshotArFusedNormConstKernelBA<8,bf16,6,6144>` (block-arrival, ADOPTED round 1) | **1.0563** vs ported baseline (noise 0.36%); provenance-complete rerun **1.0546** (noise 1.60%) |
+| T=1, H=6144, world=8, bf16, oneshot, rmsnorm, exact-fit geometry | `oneshotArFusedNormConstKernelBA<8,bf16,1,6144>` | **1.0884** vs ported baseline (noise 0.46%); provenance-complete rerun **1.0888** (noise 0.33%) |
+| frozen shapes but non-exact-fit geometry (defensive; cannot occur for H=6144 on this arch) | `oneshotArFusedNormConstKernel` (cluster-arrival) | 1.0126 / 1.0230 vs ported baseline (round-1 records; superseded candidate kept only as the guarded fallback) |
 | any other (shape, dtype, world, pattern) | generic verbatim `oneshotAllreduceFusionKernel` dispatch | parity within +-3% of the flashinfer original (P0 gate) |
 
 Launch geometry for the specialized rows comes from the SAME

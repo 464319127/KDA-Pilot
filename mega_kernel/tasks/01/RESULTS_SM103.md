@@ -100,6 +100,7 @@ pass, superseding the cluster-arrival candidate as the shipped kernel:
 | bit-exact vs flashinfer original (randn + value zoo, pdl 0/1) | PASS (both rows, all ranks, both outputs) |
 | hardened stability, pdl=1, 1000 replays | PASS (50,000 rounds/row, zero mismatches) |
 | harness A/B vs ported baseline (25 trials, same-session pairing) | T=6 **1.0563** (6.902 -> 6.534us), T=1 **1.0884** (6.535 -> 6.004us), geomean **1.0722** — far beyond the 0.36-0.46% noise floor |
+| round-2 provenance-complete rerun (records carry `port_opt_cuh` source hash; incl. fresh stability + pdlprobe) | T=6 **1.0546** (6.866 -> 6.510us), T=1 **1.0888** (6.621 -> 6.081us), geomean **1.0716** vs same-session noise 1.60%/0.33%; stability 0 mismatches; reproduces round-1 within 0.2% |
 | serving warm sanity / sanity-2 | **381.54 / 380.52 tok/s** (>= 378), 40/40 identical |
 | OFFICIAL 3x40 | **381.42 tok/s** (baseline official 376.06 -> **+1.4%**), all runs 40/40 byte-identical |
 | in-serving per-call | **7.6 us** (13,600 calls) vs 8.3-8.5 baseline capture (-8..-11%) |
@@ -144,9 +145,10 @@ and `docs/dispatch.md` for the resulting dispatch. Summary:
 
 - Constant-fold + spin-hidden prefetch: ADOPTED (the P1 candidate).
 - PDL entry: EVALUATED with a predecessor-aware probe (`--mode pdlprobe`,
-  jsonl-backed records in `bench/results.jsonl`) — pdl1-vs-pdl0 deltas
-  +0.03%..+0.21%, inside noise, bit-ok; no dispatch change; kernel PDL hooks
-  preserved verbatim.
+  jsonl-backed records in `bench/results.jsonl`, probe run repeatedly incl.
+  the round-2 provenance-complete rerun) — pdl1-vs-pdl0 deltas span
+  −0.36%..+0.28% across runs, always inside noise, bit-ok; no dispatch
+  change; kernel PDL hooks preserved verbatim.
 - Fence/flag granularity: byte-preserving BLOCK-ARRIVAL transform found
   (drops ctaArrive's cluster.sync; rotation counts blocks), bit-exact incl.
   value zoo, stability-clean, +6.9% @ T=1 / +0.8% @ T=6 over the
