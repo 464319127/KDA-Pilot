@@ -25,7 +25,12 @@ def _jit_module():
     # suffix on B300).
     with override_jit_cuda_arch(10, 3, "a"):
         return load_jit(
-            "mnnvl_ar_fused",
+            # "_fm" pins the fast-math build flavor in the cache key:
+            # load_jit keys on module name + source hash, NOT compiler
+            # flags, so without the token a stale IEEE .so built from the
+            # same sources would be silently reused (mirrors the harness
+            # runner's mnnvl_ar_fused_port_fm convention).
+            "mnnvl_ar_fused_fm",
             cuda_files=["mnnvl_ar_fused/mnnvl_ar_fused.cu"],
             extra_dependencies=["flashinfer"],
             # Matches the deployed flashinfer-jit-cache binary's float codegen

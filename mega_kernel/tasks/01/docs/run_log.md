@@ -213,3 +213,26 @@ ROOT CAUSE: build-flag asymmetry between the deployed baseline binary (fast-math
   idempotent re-apply reports "already applied at v3-trigger-guard", all
   three guard lines grep-verified in the checkout; resident serving
   untouched and /health-verified.
+
+## Round 6 (review phase) — serving jit cache busted by flag-encoded name (2026-07-10)
+
+- Code review P2: the serving module called `load_jit("mnnvl_ar_fused",
+  ..., extra_cuda_cflags=["--use_fast_math"])`, but load_jit keys its
+  tvm-ffi cache on module name + source hash, NOT flags — a host with a
+  previous IEEE build of the same sources would silently reuse the stale
+  IEEE .so (the round-0 divergence class; this staleness bit the on2
+  serving run once). Fix per BL-20260710-aot-wheel-flag-asymmetry's
+  constraints clause: module renamed `mnnvl_ar_fused_fm` (mirrors the
+  harness runner's `mnnvl_ar_fused_port_fm` convention) with a why-comment;
+  a flag change now can never collide with a stale cache entry.
+- Box verification: module file synced + `apply` refreshed the checkout
+  (helper unchanged at v3); `prebuild()` on the box built FRESH under
+  `~/.cache/tvm-ffi/sgl_kernel_jit_mnnvl_ar_fused_fm_6463ccb8...__arch_10.3a`;
+  SASS fingerprint of the new .so: 16,208 `.FTZ` modifiers + 294 MUFU.RCP
+  (fast-math; IEEE fingerprint ~558); symbols
+  `trtllm_mnnvl_allreduce_fusion` / `mnnvl_ar_fused_opt` /
+  `mnnvl_ar_fused_opt_ba` all exported (FM_CACHE_VERIFY: PASS). Resident
+  serving untouched, /health OK. No evidence re-gate: same sources + same
+  flags -> the promoted runs already executed this fast-math flavor; only
+  the cache key changed. jit_serving_build.py's diagnostic glob
+  (`sgl_kernel_jit_mnnvl_ar_fused_*`) still matches the new dir.
