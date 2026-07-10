@@ -110,42 +110,6 @@ def fp32_oracle(
     return OracleRefs(residual_out=res_ref, out=out_ref)
 
 
-@dataclass
-class RankResult:
-    rank: int
-    bit_out: Tuple[bool, int, Optional[int]]
-    bit_resout: Tuple[bool, int, Optional[int]]
-    rel_out: float
-    rel_resout: float
-    structural: List[str]
-
-
-def check_rank(
-    rank: int,
-    got_out: torch.Tensor,
-    got_resout: torch.Tensor,
-    ref_out: torch.Tensor,
-    ref_resout: torch.Tensor,
-    oracle: OracleRefs,
-) -> RankResult:
-    structural = []
-    for name, got, ref in (
-        ("out", got_out, ref_out),
-        ("residual_out", got_resout, ref_resout),
-    ):
-        msg = structural_check(f"rank{rank}/{name}", got, ref)
-        if msg:
-            structural.append(msg)
-    return RankResult(
-        rank=rank,
-        bit_out=bitwise_equal(got_out, ref_out),
-        bit_resout=bitwise_equal(got_resout, ref_resout),
-        rel_out=rel_err(got_out, oracle.out.to(got_out.device)),
-        rel_resout=rel_err(got_resout, oracle.residual_out.to(got_resout.device)),
-        structural=structural,
-    )
-
-
 # ----------------------------------------------------------------------
 # Comparator self-tests (negative tests): each must FAIL on purpose.
 # ----------------------------------------------------------------------

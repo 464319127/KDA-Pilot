@@ -327,7 +327,6 @@ def mode_correctness(args, ws) -> bool:
                 ok_o, ex_o = cc.contract_allclose(outs[i], oracle.out.to(outs[i].device))
                 ok_r, ex_r = cc.contract_allclose(
                     resouts[i], oracle.residual_out.to(resouts[i].device))
-                rel_o = cc.rel_err(outs[i], oracle.out.to(outs[i].device))
                 if msg or not ok_o or not ok_r:
                     all_ok = False
                     print(f"[correctness] T={T} {name} rank{i} FAIL "
