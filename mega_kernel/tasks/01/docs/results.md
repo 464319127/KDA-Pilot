@@ -223,12 +223,49 @@ hard promotion bar: **MET** in both. Pre-timing bit-exact ties held on every
 benchmark invocation. Cross-box agreement of the medians to ~0.3% is itself
 reproduction evidence.
 
+## Adopted kernel promote (round 1) — block-arrival specialization
+
+The fence/flag route's byte-preserving transform passed the full ladder and
+a FRESH promote pass, superseding the cluster-arrival candidate as the
+shipped kernel: bit-exact (randn + zoo) ✓; 1000-replay stability ✓; 25-trial
+same-session A/B vs the ported baseline T=6 **1.0563** / T=1 **1.0884**,
+geomean **1.0722** (noise 0.36-0.46%); serving warm sanity 381.54 and
+sanity-2 380.52 tok/s (>= 378), **OFFICIAL 3x40 = 381.42 tok/s** (+1.4% vs
+baseline official 376.06), every run 40/40 byte-identical; in-serving
+per-call **7.6 us** (13,600 calls; baseline capture 8.3-8.5); restore
+verified 378.14 tok/s 40/40. Raw artifacts:
+`docs/serving_runs/results_task01_ba_*`,
+`docs/serving_runs/percall_profile_task01_ba_tp0.txt`,
+`bench/results.jsonl`; baseline-official (376.06) provenance:
+`docs/serving_runs/baseline_official_pretask/glm52_bs1_summary.json`
+(copied from the pre-task campaign record
+`/personal/glm52_backup_20260710/results_20260710T032813Z_main_full_official/`).
+The <=7.0us target remains missed (7.6 us) — gap halved; named bound
+unchanged.
+
+## P1 route evaluation closure (round 1)
+
+Every route from the source prompt's idea pool, with recorded evidence
+(review-required closure; raw records in `bench/results.jsonl`):
+
+| Route | Verdict | Evidence |
+|---|---|---|
+| Constant-fold T/H/world/eps | ADOPTED (P1 candidate) | A/B + NCU tables above |
+| Weight/gamma + residual prefetch across the spin | ADOPTED (same candidate) | same |
+| Grid/block re-config for small payloads | RULED OUT under byte-identity | the norm's cross-warp fp32 reduction tree is geometry-dependent; changing block/cluster shape changes fullSum bits -> greedy text drift (analysis; the promote gate demands byte-identical output) |
+| PDL entry (`cudaGridDependencySynchronize` overlap) | EVALUATED — no measurable benefit; dispatch unchanged | predecessor-aware probe (`--mode pdlprobe`: per-round [copy-predecessor -> AR] graphs, 10 trials; jsonl-backed rerun after the first run's records were lost to a sync overwrite): pdl1-vs-pdl0 pair-median deltas jit +0.12%/+0.03%, opt +0.15%/+0.21% (T=6/T=1), all inside noise (0.36-0.46%), bit-ok everywhere; the lost first run agreed (−0.36%..+0.12%). Serving keeps stock `launch_with_pdl=True`; the kernel's PDL hooks are preserved verbatim. Records: `bench/results.jsonl` mode=pdlprobe |
+| Fence/flag granularity (single flag round for 6 tokens) | byte-preserving transform FOUND, measured, ADOPTED | the per-call flag protocol is already one arrival round + one rotation; the removable cost is ctaArrive's cluster.sync. Block-granular arrival (`oneshotArFusedNormConstKernelBA`): bit-exact vs flashinfer (randn + value zoo; archived zoo run of the adopted dispatch entry: `docs/profiler_evidence/zoo_fi_vs_opt_adopted.txt`, 0 mismatched elements), stability-clean, +6.9% at T=1 (single-cluster geometry pays a whole-grid sync) and +0.8% at T=6 vs the cluster-arrival candidate; requires exact-fit geometry (asserted; frozen shapes qualify). Adopted into the specialized entry behind the full ladder incl. a fresh promote pass |
+| Epilogue fold (quant / next op) | NO-GO for this serving config | trace adjacency (archived: `docs/profiler_evidence/trace_adjacency_task01_ba.txt`; 13,600 AR calls, task01_ba profile): the kernels FOLLOWING the fused AR are cuBLAS `nvjet_sm103_*` GEMMs (13,260) and `router_gemm_kernel` (340); the task01_opt profile showed the same pattern (13,440 calls: 12,852 nvjet / 336 router) — under `SGLANG_BS1_BF16_DENSE=1` there is NO quant kernel after the AR (norm_out feeds bf16 GEMMs directly), and folding into closed-source cubin kernels is outside the campaign's port-what-has-source rule. Folding the 2.5%-share router GEMM is not worth an ABI change. A fold would also change the op's public outputs and require replicating the consumer's exact arithmetic for byte-identity. Conditional follow-up only if the serving config moves to an fp8-quant-after-AR path |
+
 ## Dispatch table
+
+Authoritative artifact: `docs/dispatch.md` (folder contract). Summary:
 
 | Regime | Kernel | Selected by |
 |---|---|---|
-| T=6, H=6144, world=8, bf16, oneshot, rmsnorm | `oneshotArFusedNormConstKernel<8,bf16,6,6144>` | host scalar compare in `oneshotArFusedConstDispatch` |
-| T=1, H=6144, world=8, bf16, oneshot, rmsnorm | `oneshotArFusedNormConstKernel<8,bf16,1,6144>` | same |
+| T=6, H=6144, world=8, bf16, oneshot, rmsnorm, exact-fit geometry | `oneshotArFusedNormConstKernelBA<8,bf16,6,6144>` (block-arrival, ADOPTED round 1) | host scalar compares + exact-fit check in `oneshotArFusedConstDispatch` |
+| T=1, same conditions | `oneshotArFusedNormConstKernelBA<8,bf16,1,6144>` | same |
+| frozen shapes, non-exact-fit geometry (defensive guard; cannot occur for H=6144 on sm_103) | `oneshotArFusedNormConstKernel` (cluster-arrival) | exact-fit check fails -> guarded fallback |
 | any other shape/dtype/world/pattern | generic verbatim `oneshotAllreduceFusionKernel` dispatch | fallback inside the same entry |
 | serving, payload > oneshot threshold (e.g. prefill) | stock flashinfer route (twoshot) | callsite route rejects, stock path runs |
 | serving, `SGLANG_JIT_MNNVL_AR` unset/0 | stock flashinfer route | env gate default OFF |

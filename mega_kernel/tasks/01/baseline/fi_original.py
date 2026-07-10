@@ -1,10 +1,14 @@
 """Baseline runner: drives the flashinfer ORIGINAL MNNVL fused allreduce kernel.
 
-The kernel executed here is JIT-compiled by the installed flashinfer package
-(0.6.12) from the exact header copied verbatim at
-`baseline/trtllm_mnnvl_allreduce.cuh` (sha256 ab6560f2..97aa, verified equal).
-This module never imports the live serving checkout and never imports the
-reference copies under `baseline/upstream_ref/`.
+The kernel executed here is the binary the production serving stack actually
+loads: flashinfer's loader prefers the PRE-COMPILED AOT module from the
+`flashinfer-jit-cache 0.6.12+cu130` wheel (a fast-math build — see
+docs/results.md "verbatim source is not enough"); it does NOT JIT-compile
+locally on this box. The wheel was built from the same source revision as
+the header copied verbatim at `baseline/trtllm_mnnvl_allreduce.cuh` (sha256
+ab6560f2..97aa; kernel symbol signatures verified identical). This module
+never imports the live serving checkout and never imports the reference
+copies under `baseline/upstream_ref/`.
 
 Entry ABI (shared with the candidate, see bench/adapter.py):
     launch(input, output, residual_in, residual_out, gamma, ws_rank, epsilon,

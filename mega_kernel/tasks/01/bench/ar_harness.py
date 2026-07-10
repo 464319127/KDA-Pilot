@@ -69,7 +69,11 @@ def load_impl(name: str):
         from solution import jit_port_opt
 
         return jit_port_opt
-    raise ValueError(f"unknown impl {name!r} (expected fi|jit|jits|opt)")
+    if name == "optba":  # experimental block-arrival variant (route eval only)
+        from solution import jit_port_opt_ba
+
+        return jit_port_opt_ba
+    raise ValueError(f"unknown impl {name!r} (expected fi|jit|jits|opt|optba)")
 
 
 # ----------------------------------------------------------------------
@@ -257,6 +261,7 @@ def provenance(args) -> Dict:
             "port_cuh": _sha16(os.path.join(csrc, "mnnvl_ar_fused.cuh")),
             "port_binding_cu": _sha16(os.path.join(csrc, "mnnvl_ar_fused.cu")),
             "port_compat": _sha16(os.path.join(csrc, "mnnvl_ar_fused_compat.cuh")),
+            "port_opt_cuh": _sha16(os.path.join(csrc, "mnnvl_ar_fused_opt.cuh")),
         },
         "candidate_build": build_info,
         "settings": {
@@ -614,6 +619,78 @@ def _feed_solo_slots(ws, rank: int, io: RowIO, T: int) -> None:
     torch.cuda.synchronize(rank)
 
 
+def mode_pdlprobe(args, ws) -> bool:
+    """PDL-with-predecessor evaluation (P1 idea-pool route closure).
+
+    Isolated back-to-back AR rounds cannot show PDL benefit (nothing to
+    overlap with). This mode captures per-device graphs where every round is
+    [predecessor kernel -> AR launch]: the predecessor copies the input from
+    a source buffer (standing in for the producer GEMM writing x), so with
+    launch_with_pdl=1 the AR kernel's launch/entry can overlap the
+    predecessor's tail exactly as in the serving graph. Compares pdl=0 vs
+    pdl=1 per implementation per row (pair wall/round includes the
+    predecessor both ways; the delta isolates PDL), with a post-replay
+    bitwise correctness check against an eager reference.
+    """
+    impl_names = args.impls.split(",")
+    prov = provenance(args)
+    for row in load_rows(args):
+        T = row["scalars"]["num_tokens"]
+        streams = [torch.cuda.Stream(device=i) for i in range(WORLD)]
+        io = RowIO(T, args.seed)
+        x_srcs = [io.xs[i].clone() for i in range(WORLD)]
+        rec = {"mode": "pdlprobe", "row": row["id"], "T": T,
+               "provenance": prov, "results": {}}
+        for name in impl_names:
+            impl = load_impl(name)
+            # eager reference (predecessor applied once)
+            ws.reset()
+            outs, resouts = io.make_outputs()
+            for i in range(WORLD):
+                io.xs[i].copy_(x_srcs[i])
+            eager_round(impl, io, ws, outs, resouts, False)
+            refs = [(outs[i].view(torch.int16).clone(),
+                     resouts[i].view(torch.int16).clone()) for i in range(WORLD)]
+            for pdl in (0, 1):
+                samples = []
+                for trial in range(args.trials):
+                    ws.reset()
+                    for i in range(WORLD):
+                        cc.poison_(outs[i]); cc.poison_(resouts[i])
+                    graphs = []
+                    for i in range(WORLD):
+                        torch.cuda.set_device(i)
+                        g = torch.cuda.CUDAGraph()
+                        with torch.cuda.graph(g, stream=streams[i]):
+                            for _ in range(args.rounds):
+                                io.xs[i].copy_(x_srcs[i])  # predecessor kernel
+                                impl.launch(io.xs[i], outs[i], io.residuals[i],
+                                            resouts[i], io.gammas[i], ws.ranks[i],
+                                            EPS, bool(pdl))
+                        graphs.append(g)
+                    for _ in range(args.warmup_replays):
+                        replay_all(graphs)
+                        sync_all()
+                    samples.append(timed_replays(graphs, args.reps, args.rounds))
+                    del graphs
+                st = stats(samples)
+                ok_bits = all(
+                    torch.equal(outs[i].view(torch.int16), refs[i][0])
+                    and torch.equal(resouts[i].view(torch.int16), refs[i][1])
+                    for i in range(WORLD)
+                )
+                rec["results"][f"{name}_pdl{pdl}"] = {**st, "bit_ok": ok_bits}
+                print(f"[pdlprobe] T={T} {name} pdl={pdl}: pair-median="
+                      f"{st['median']:.3f}us p10={st['p10']:.3f} p90={st['p90']:.3f} "
+                      f"(n={args.trials}; incl. predecessor) bit-ok={ok_bits}")
+            a = rec["results"][f"{name}_pdl0"]["median"]
+            b = rec["results"][f"{name}_pdl1"]["median"]
+            print(f"[pdlprobe] T={T} {name}: pdl1/pdl0 pair-median delta = "
+                  f"{(a - b):+.3f}us ({(a - b) / a * 100:+.2f}%)")
+        emit(rec, args.out)
+    return True
+
+
 def mode_ncusolo(args, ws) -> bool:
     """Single-rank pre-fed launch: NCU-safe profiling + compute-floor timing."""
     name = args.impls.split(",")[0]
@@ -660,7 +737,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--mode", required=True,
                     choices=["correctness", "bench", "noise", "stability", "selftest",
-                             "ncusolo"])
+                             "ncusolo", "pdlprobe"])
     ap.add_argument("--ncu-rank", type=int, default=0)
     ap.add_argument("--solo-iters", type=int, default=30)
     ap.add_argument("--impls", default="fi", help="comma list: fi,jit (first = baseline)")
@@ -684,7 +761,7 @@ def main():
     try:
         ok = {"correctness": mode_correctness, "bench": mode_bench,
               "noise": mode_noise, "stability": mode_stability,
-              "ncusolo": mode_ncusolo}[args.mode](args, ws)
+              "ncusolo": mode_ncusolo, "pdlprobe": mode_pdlprobe}[args.mode](args, ws)
     finally:
         ws.destroy()
     print(f"[harness] mode={args.mode} -> {'PASS' if ok else 'FAIL'}")

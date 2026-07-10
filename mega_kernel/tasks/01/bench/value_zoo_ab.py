@@ -36,6 +36,10 @@ def _load_impl(name: str):
         from solution import jit_port_opt
 
         return jit_port_opt
+    if name == "optba":
+        from solution import jit_port_opt_ba
+
+        return jit_port_opt_ba
     raise ValueError(name)
 
 ZOO_U16 = [

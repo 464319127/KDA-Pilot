@@ -3,7 +3,9 @@
 Host: rx devbox `glm52-bs1-opt` (verda worker `light-face-hides-fin-03-1`),
 8x NVIDIA B300 SXM6 AC, sm_103a, CUDA 13.0.88, NV18 full mesh, NVLS
 multimem; GLM-5.2-FP8 bs=1 MTP (EAGLE 5-1-6) serving baseline 376.06 tok/s
-official. Kernel: `oneshotAllreduceFusionKernel` (flashinfer 0.6.12),
+official (campaign record: `config.toml` `serving_context` /
+`mega_kernel/README.md`; pre-task official artifact copied to
+`docs/serving_runs/baseline_official_pretask/`). Kernel: `oneshotAllreduceFusionKernel` (flashinfer 0.6.12),
 157.3 calls/iter x 8.3-8.5 us = ~1.31 ms/iter (SHAPES.md re-verified on box
 2026-07-10). Full method + deviations: `docs/benchmark_method.md`; complete
 measurement narrative: `docs/run_log.md`; per-run records:
@@ -86,7 +88,29 @@ the production-relevant readout is the in-serving per-call profile below.
 Named bound on further value-preserving gains: peer-arrival latency
 dominates and is protocol-level, not compute-level.
 
-### <=7.0us target status & e2e promote — PROMOTED (2026-07-10)
+### FINAL promoted kernel (round 1 adoption): block-arrival specialization
+
+After the round-0 promote, the fence/flag-granularity route evaluation
+produced a byte-preserving improvement (block-granular arrival, see the
+route-closure section) which passed the FULL ladder and a FRESH promote
+pass, superseding the cluster-arrival candidate as the shipped kernel:
+
+| Gate (adopted `oneshotArFusedNormConstKernelBA`) | Result |
+|---|---|
+| bit-exact vs flashinfer original (randn + value zoo, pdl 0/1) | PASS (both rows, all ranks, both outputs) |
+| hardened stability, pdl=1, 1000 replays | PASS (50,000 rounds/row, zero mismatches) |
+| harness A/B vs ported baseline (25 trials, same-session pairing) | T=6 **1.0563** (6.902 -> 6.534us), T=1 **1.0884** (6.535 -> 6.004us), geomean **1.0722** — far beyond the 0.36-0.46% noise floor |
+| serving warm sanity / sanity-2 | **381.54 / 380.52 tok/s** (>= 378), 40/40 identical |
+| OFFICIAL 3x40 | **381.42 tok/s** (baseline official 376.06 -> **+1.4%**), all runs 40/40 byte-identical |
+| in-serving per-call | **7.6 us** (13,600 calls) vs 8.3-8.5 baseline capture (-8..-11%) |
+| serving restored (flag unset) | 378.14 tok/s, 40/40 identical |
+
+<=7.0us target status: **still MISSED at 7.6 us**, but the gap to the
+serving-convention target shrank from ~1.3-1.5 us to ~0.6 us. Named bound
+unchanged: NVLS peer-arrival latency; the remaining byte-identity-safe
+levers are exhausted (see route closure).
+
+### Round-0 promote record (cluster-arrival candidate, superseded)
 
 Executed on the reacquired box (same worker, rebuilt env; all P0/P1 gates
 re-verified there first — cross-box reproduction: 25-trial geomean 1.0178 vs
@@ -113,6 +137,27 @@ per the standing promotion policy the numeric target is direction, and the
 hard bar (geomean > 1.0 beyond noise, no row < 0.97x, sanity >= 378 +
 byte-identical + official 3x40) is fully met.
 
+## P1 route evaluation closure (full idea-pool disposition)
+
+See `docs/results.md` "P1 route evaluation closure" for the evidence table
+and `docs/dispatch.md` for the resulting dispatch. Summary:
+
+- Constant-fold + spin-hidden prefetch: ADOPTED (the P1 candidate).
+- PDL entry: EVALUATED with a predecessor-aware probe (`--mode pdlprobe`,
+  jsonl-backed records in `bench/results.jsonl`) — pdl1-vs-pdl0 deltas
+  +0.03%..+0.21%, inside noise, bit-ok; no dispatch change; kernel PDL hooks
+  preserved verbatim.
+- Fence/flag granularity: byte-preserving BLOCK-ARRIVAL transform found
+  (drops ctaArrive's cluster.sync; rotation counts blocks), bit-exact incl.
+  value zoo, stability-clean, +6.9% @ T=1 / +0.8% @ T=6 over the
+  cluster-arrival candidate — ADOPTED into the specialized entry behind the
+  full ladder + a fresh promote pass (numbers below).
+- Epilogue fold: NO-GO for this config — trace adjacency
+  (`docs/profiler_evidence/trace_adjacency_task01_ba.txt`) shows the AR
+  feeds closed-source cuBLAS `nvjet` GEMMs directly (bf16-dense path has no
+  quant kernel after the AR); folding into cubins is outside the campaign
+  rule; conditional follow-up only for an fp8-quant-after-AR config.
+
 ## Failed / ruled-out routes
 
 - Unicast-push transport rebuild: pre-judged dead by prior art (36.6 us,
@@ -128,6 +173,10 @@ byte-identical + official 3x40) is fully met.
 - NCU application-replay on the CONCURRENT 8-rank harness: hangs by design
   (per-launch serialization starves the collective's peers) — replaced by
   the pre-fed solo-rank mode (`bench/ar_harness.py --mode ncusolo`).
+- PDL in back-to-back and predecessor-adjacent settings: no measurable win
+  at these payloads (probe data above) — not a dispatch lever here.
+- Epilogue folding into the bf16-dense consumer chain: no-go (closed-source
+  consumers; no post-AR quant kernel in this config).
 
 ## Warp-specialization profiling applicability
 

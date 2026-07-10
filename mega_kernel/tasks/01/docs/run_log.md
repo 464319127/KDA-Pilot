@@ -83,3 +83,34 @@ ROOT CAUSE: build-flag asymmetry between the deployed baseline binary (fast-math
 - Data continuity: all task code/docs and the documented gate numbers live in the repo worktree (synced back throughout). Lost with the pod and RE-COLLECTED on the rebuilt box (single serialized chain this time): raw P1 jsonl records (25-trial A/B, noise, stability, ncusolo), NCU .ncu-rep files, and the promote-pass serving runs. The pre-release promote evidence retained as provisional: the in-serving per-call profile showing `oneshotArFusedNormConstKernel` live at 8.0 us/call (800 calls; generic fallback 272 calls @ 8.0 us) — measured against the correctly-built ON+OPT server; the interleaved-chain official (293 tok/s) was contention-contaminated and is DISCARDED.
 - Rebuild recipe executed: weights `/cluster-storage/shared/hf_cache/glm52-fp8` -> `/scratch/models/glm52-fp8`; `/sgl-workspace/sglang` checkout `87992eeec` + `main_port_full.diff` + `pip install -e python/ --no-deps` + `sgl-deep-gemm==0.1.4`; blog_bench restored from `/personal/glm52_backup_20260710/glm52_blog_bench`. New-box baseline text record re-captured before any gated comparison (cross-box text identity is not assumed).
 - Process-hygiene lessons folded into the chain design: ONE serialized detached script (no interleaving chains), build-fingerprint gates before serving runs, quoting-proof staged scripts.
+
+## Round 1 — route closure + block-arrival adoption (2026-07-10)
+
+- PDL-with-predecessor probe (`bench/ar_harness.py --mode pdlprobe`): per-round
+  [copy-predecessor -> AR] captured graphs, pdl=0 vs pdl=1 pairs, 10 trials,
+  jit + opt, T=6/T=1. First run's jsonl records were LOST to a repo->box tar
+  sync that overwrote box `bench/results.jsonl` (caught by the independent
+  re-review); probe RERUN in a serialized chain — fresh records live in
+  `bench/results.jsonl` (deltas +0.03%..+0.21%, inside noise, bit-ok).
+  Standing rule: syncs exclude `results.jsonl`.
+- Fence/flag granularity: block-arrival transform (`...NormConstKernelBA`,
+  `__syncthreads()` + per-block red.async arrival; rotation counts blocks;
+  exact-fit geometry asserted) taken through the FULL ladder from scratch:
+  randn + value-zoo bit-exactness, hardened stability, 25-trial same-session
+  A/B (1.0563/1.0884, geomean 1.0722), then a fresh serialized promote chain:
+  warm 381.54 -> sanity-2 380.52 -> OFFICIAL 3x40 = 381.42 tok/s, every run
+  40/40 byte-identical; restore verified 378.14 (40/40). ADOPTED into
+  `oneshotArFusedConstDispatch` (cluster-arrival kernel kept as the guarded
+  non-exact-fit fallback). In-serving per-call 7.6 us over 13,600 calls
+  (`docs/serving_runs/percall_profile_task01_ba_tp0.txt`).
+- Epilogue-fold feasibility: bounded profile of the adopted server; kernel
+  adjacency extracted (`docs/profiler_evidence/trace_adjacency_task01_ba.txt`,
+  method script alongside): AR followers are closed-source nvjet cuBLAS GEMMs
+  (13,260/13,600) + router_gemm (340) — no post-AR quant kernel under
+  bf16-dense. NO-GO recorded with conditional revisit trigger.
+- Evidence plumbing from the combined re-review: adopted-entry value-zoo run
+  archived (`docs/profiler_evidence/zoo_fi_vs_opt_adopted.txt`, 0 mismatched
+  elements), baseline-official 376.06 summary copied to
+  `docs/serving_runs/baseline_official_pretask/`, dispatch/docs references
+  reconciled to the adopted kernel, `port_opt_cuh` added to harness
+  provenance source_hashes.
