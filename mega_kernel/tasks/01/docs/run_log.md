@@ -189,3 +189,27 @@ ROOT CAUSE: build-flag asymmetry between the deployed baseline binary (fast-math
   canonical `bench/results.jsonl` md5-identical before/after (scratch
   --out per the sync lesson); fixed harness synced to the box task tree
   (single-file scp).
+
+## Round 5 (review phase) — trigger_completion_at_end route guard (2026-07-10)
+
+- Code review P2: the env-gated route ignored the sglang custom op's
+  `trigger_completion_at_end` parameter. The stock path forwards it to
+  flashinfer (when the installed version supports it); the jit wrapper has
+  no end-of-kernel-completion parameter and the kernel triggers PDL
+  completion before the norm/output writes — so a flag-ON caller passing
+  True could have PDL-dependent work start before the outputs are ready.
+  The round-0 serving callsite audit already established the production
+  callsite never passes this flag (defaults False), so the promoted bf16
+  evidence is unaffected; this closes the API-surface hole.
+- Fix: helper v3-trigger-guard — `_jit_mnnvl_ar_route(...,
+  trigger_completion_at_end=False)` returns False when the flag is truthy
+  (stock path honors it); ROUTED passes the in-scope variable and its
+  fallback-list comment names it; HELPER_VERSION bumped so apply()'s
+  version guard forces the safe upgrade path. Local behavior test with
+  real tensors: trigger=True -> stock, trigger=False/default bf16 decode
+  -> routed; dtype/fp32_acc/flag-off regressions all hold.
+- Box redeploy: revert with the v2 patcher (7548de9a23492de8 ->
+  77b14b94adbbdca6), synced the v3 patcher, apply (-> 54e6dc1369d29372),
+  idempotent re-apply reports "already applied at v3-trigger-guard", all
+  three guard lines grep-verified in the checkout; resident serving
+  untouched and /health-verified.

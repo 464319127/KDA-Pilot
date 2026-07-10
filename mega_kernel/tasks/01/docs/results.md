@@ -280,6 +280,7 @@ Authoritative artifact: `docs/dispatch.md` (folder contract). Summary:
 | any other shape/dtype/world/pattern | generic verbatim `oneshotAllreduceFusionKernel` dispatch | fallback inside the same entry |
 | serving, payload > oneshot threshold (e.g. prefill) | stock flashinfer route (twoshot) | callsite route rejects, stock path runs |
 | serving, non-bf16 activations | stock flashinfer route | callsite dtype guard (jit module is bf16-only) |
+| serving, `trigger_completion_at_end=True` | stock flashinfer route | callsite guard (jit wrapper cannot honor end-of-kernel completion; stock forwards the flag) |
 | serving, `SGLANG_JIT_MNNVL_AR` unset/0 | stock flashinfer route | env gate default OFF |
 
 Correctness is never lost: every uncovered combination reaches the verbatim

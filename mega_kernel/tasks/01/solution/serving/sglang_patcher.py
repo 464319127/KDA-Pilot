@@ -44,11 +44,11 @@ ROUTED = """    residual_out = torch.empty_like(residual)
     # Task-local env-gated route (SGLANG_JIT_MNNVL_AR=1, default OFF): dispatch
     # the oneshot mnnvl decode regime to the jit_kernel port of the same
     # flashinfer kernel; every other case (twoshot/prefill sizes, fp32_acc,
-    # non-bf16 dtype, non-mnnvl backend, missing workspace attrs) stays on the
-    # stock path so correctness is never lost.
+    # non-bf16 dtype, trigger_completion_at_end, non-mnnvl backend, missing
+    # workspace attrs) stays on the stock path so correctness is never lost.
     if _jit_mnnvl_ar_route(
         workspace_manager.workspace, input_tensor, use_oneshot, fp32_acc,
-        use_attn_tp_group,
+        use_attn_tp_group, trigger_completion_at_end,
     ):
         from sglang.jit_kernel.mnnvl_ar_fused import allreduce_add_rmsnorm
 
@@ -70,10 +70,11 @@ ROUTED = """    residual_out = torch.empty_like(residual)
 HELPER_ANCHOR = """def fake_flashinfer_allreduce_residual_rmsnorm(
 """
 
-HELPER_VERSION = "v2-dtype-guard"
+HELPER_VERSION = "v3-trigger-guard"
 
-HELPER = """def _jit_mnnvl_ar_route(ws, input_tensor, use_oneshot, fp32_acc, is_attn) -> bool:
-    \"\"\"True only for the env-gated oneshot mnnvl decode regime (task 01; v2-dtype-guard).\"\"\"
+HELPER = """def _jit_mnnvl_ar_route(ws, input_tensor, use_oneshot, fp32_acc, is_attn,
+                        trigger_completion_at_end=False) -> bool:
+    \"\"\"True only for the env-gated oneshot mnnvl decode regime (task 01; v3-trigger-guard).\"\"\"
     import os
 
     import torch
@@ -89,6 +90,11 @@ HELPER = """def _jit_mnnvl_ar_route(ws, input_tensor, use_oneshot, fp32_acc, is_
         if ws is None or getattr(ws, "backend", None) != "mnnvl":
             return False
         if fp32_acc or use_oneshot is False:
+            return False
+        # The jit wrapper has no end-of-kernel completion parameter (the
+        # kernel triggers PDL completion before the norm/output writes);
+        # the stock path forwards this flag, so honor it there.
+        if trigger_completion_at_end:
             return False
         # The jit module is bf16-only (it asserts); the stock flashinfer path
         # handles fp16/fp32, so any other dtype must stay on the stock route.
