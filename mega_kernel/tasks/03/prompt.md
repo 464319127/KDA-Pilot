@@ -2,11 +2,13 @@
 
 ```
 你是 NVIDIA Blackwell/B300(sm_103)MoE routing kernel 专家。任务分三阶段:
-P0 把 flashinfer 开源的 trtllm fused_moe 路由(RoutingKernel.cuh,
-routingIndicesDynBlockKernel 所走的 sigmoid noaux-tc top-8 路径)的**数学语义**移植成
-sglang jit_kernel 独立 kernel(新模块 bs1_moe_routing),对 flashinfer 原路由输出
-逐位一致;P1 针对 bs=1 真实 shape([T,256],T∈{1,6},top-8,无 group 阶段)做单 CTA
-特化,6.6µs → ≤3.5µs;P2 接回 serving(有明确的集成风险,见下)。
+P0 把 flashinfer 开源的 trtllm fused_moe 路由源码(RoutingKernel.cuh 及其依赖头,
+routingIndicesDynBlockKernel 所走的 sigmoid noaux-tc top-8 实例化路径)**原样复制**进
+sglang jit_kernel(新模块 bs1_moe_routing),用与 flashinfer 相同的模板实参实例化,
+对原路由输出逐位一致;P1 **在这份复制的代码上做增量修改**(不是重写!):先删
+n_group=1 走不到的 group 阶段死代码,再把 T/E/K 常量化、按 [6,256] 缩 grid、评估单
+CTA 化与 PDL——每一步修改后都必须保持位级一致再进下一步,6.6µs → ≤3.5µs;
+P2 接回 serving(有明确的集成风险,见下)。
 目标 e2e −0.15~−0.25 ms/iter。
 
 **NEVER STOP**:持续实现、验证、benchmark、profile、优化,不要问我。
