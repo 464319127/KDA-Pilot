@@ -139,3 +139,32 @@ ROOT CAUSE: build-flag asymmetry between the deployed baseline binary (fast-math
   re-verified on the fresh records (T=6 +5.46% vs 1.60% same-session noise,
   T=1 +8.88% vs 0.33%, geomean +7.16%; no row < 0.97x); REQUIRED_CHANGES
   empty.
+
+## Round 3 (review phase) — serving-route dtype guard (2026-07-10)
+
+- Code review P2: `_jit_mnnvl_ar_route` had no dtype guard, so a flag-ON
+  non-bf16 (fp16/fp32) MNNVL oneshot call would route into the bf16-only
+  jit wrapper and die on its assert instead of falling back to the stock
+  flashinfer path (which supports those dtypes). Cannot trigger in the
+  promoted GLM-5.2 config (bf16 activations) and cannot trigger at all
+  with the flag unset (default), but it broke the route's
+  never-crash-always-fallback promise.
+- Fix: bf16 dtype check in the HELPER (non-bf16 -> stock), fallback list
+  in the ROUTED comment updated. Helper verified locally with real torch
+  tensors: fp16 -> False, fp32 -> False, bf16 decode regime -> True,
+  flag-off -> False.
+- Deployment correctness fix that the change itself exposed: apply()'s
+  is_applied check is name-based, so a helper-TEXT change would leave an
+  already-patched checkout silently running the OLD helper (and revert's
+  exact-string match would error). Added HELPER_VERSION ("v2-dtype-guard",
+  embedded in the helper docstring) and an apply() version-mismatch guard
+  that refuses with an explicit revert-first instruction.
+- Box redeploy: revert with the OLD patcher (c7c2fabade6d14e4 ->
+  77b14b94adbbdca6, module files removed), synced the new patcher, apply
+  (-> 7548de9a23492de8, files restored), status applied=True, guard text
+  verified in the checkout (helper docstring v2-dtype-guard, dtype check
+  at the routed callsite), idempotent re-apply reports "already applied at
+  v2-dtype-guard". Resident serving untouched and re-verified healthy
+  (/health OK; flag default OFF so the running process never evaluates the
+  helper; next gated restart picks up the guard, which is behavior-inert
+  for bf16).

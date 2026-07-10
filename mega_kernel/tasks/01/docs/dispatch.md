@@ -31,6 +31,7 @@ Route lives in `flashinfer_comm_fusion.py` (applied by
 |---|---|
 | `SGLANG_JIT_MNNVL_AR` unset/0 (DEFAULT) | stock flashinfer route — byte-inert, measured twice (40/40 records identical) |
 | flag on, backend != mnnvl, or fp32_acc, or `use_oneshot is False` | stock flashinfer route |
+| flag on, `input_tensor.dtype != bf16` (jit module is bf16-only; stock handles fp16/fp32) | stock flashinfer route (guard added post-review, patch v2-dtype-guard) |
 | flag on, payload > oneshot threshold (1 MiB; e.g. prefill) | stock flashinfer route (twoshot) |
 | flag on, workspace missing any required attribute | stock flashinfer route (defensive) |
 | flag on, oneshot decode regime | jit module, generic port symbol |

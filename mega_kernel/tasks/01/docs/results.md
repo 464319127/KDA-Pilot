@@ -279,6 +279,7 @@ Authoritative artifact: `docs/dispatch.md` (folder contract). Summary:
 | frozen shapes, non-exact-fit geometry (defensive guard; cannot occur for H=6144 on sm_103) | `oneshotArFusedNormConstKernel` (cluster-arrival) | exact-fit check fails -> guarded fallback |
 | any other shape/dtype/world/pattern | generic verbatim `oneshotAllreduceFusionKernel` dispatch | fallback inside the same entry |
 | serving, payload > oneshot threshold (e.g. prefill) | stock flashinfer route (twoshot) | callsite route rejects, stock path runs |
+| serving, non-bf16 activations | stock flashinfer route | callsite dtype guard (jit module is bf16-only) |
 | serving, `SGLANG_JIT_MNNVL_AR` unset/0 | stock flashinfer route | env gate default OFF |
 
 Correctness is never lost: every uncovered combination reaches the verbatim

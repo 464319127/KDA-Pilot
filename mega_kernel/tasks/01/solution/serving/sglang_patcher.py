@@ -44,8 +44,8 @@ ROUTED = """    residual_out = torch.empty_like(residual)
     # Task-local env-gated route (SGLANG_JIT_MNNVL_AR=1, default OFF): dispatch
     # the oneshot mnnvl decode regime to the jit_kernel port of the same
     # flashinfer kernel; every other case (twoshot/prefill sizes, fp32_acc,
-    # non-mnnvl backend, missing workspace attrs) stays on the stock path so
-    # correctness is never lost.
+    # non-bf16 dtype, non-mnnvl backend, missing workspace attrs) stays on the
+    # stock path so correctness is never lost.
     if _jit_mnnvl_ar_route(
         workspace_manager.workspace, input_tensor, use_oneshot, fp32_acc,
         use_attn_tp_group,
@@ -70,9 +70,13 @@ ROUTED = """    residual_out = torch.empty_like(residual)
 HELPER_ANCHOR = """def fake_flashinfer_allreduce_residual_rmsnorm(
 """
 
+HELPER_VERSION = "v2-dtype-guard"
+
 HELPER = """def _jit_mnnvl_ar_route(ws, input_tensor, use_oneshot, fp32_acc, is_attn) -> bool:
-    \"\"\"True only for the env-gated oneshot mnnvl decode regime (task 01).\"\"\"
+    \"\"\"True only for the env-gated oneshot mnnvl decode regime (task 01; v2-dtype-guard).\"\"\"
     import os
+
+    import torch
 
     if os.environ.get("SGLANG_JIT_MNNVL_AR", "0") != "1":
         return False
@@ -85,6 +89,10 @@ HELPER = """def _jit_mnnvl_ar_route(ws, input_tensor, use_oneshot, fp32_acc, is_
         if ws is None or getattr(ws, "backend", None) != "mnnvl":
             return False
         if fp32_acc or use_oneshot is False:
+            return False
+        # The jit module is bf16-only (it asserts); the stock flashinfer path
+        # handles fp16/fp32, so any other dtype must stay on the stock route.
+        if input_tensor.dtype != torch.bfloat16:
             return False
         num_tokens, hidden = input_tensor.shape
         payload = num_tokens * hidden * ws.tp_size * input_tensor.element_size()
@@ -141,11 +149,20 @@ def apply(repo: pathlib.Path) -> int:
     t = target(repo)
     text = t.read_text()
     if is_applied(text):
-        # comm_fusion already routed — still refresh the module files so flag
-        # or source updates always land (an early return here once shipped a
-        # stale build into a full serving gate run).
+        if HELPER not in text:
+            # The route exists but its text differs from this patcher's HELPER
+            # (an older helper version is deployed). Refusing beats silently
+            # keeping stale route logic in the checkout.
+            print(f"ERROR: _jit_mnnvl_ar_route is applied with a DIFFERENT helper "
+                  f"version than this patcher ({HELPER_VERSION}). Revert with the "
+                  f"patcher version that applied it, then re-run apply.")
+            return 1
+        # comm_fusion already routed at the current version — still refresh the
+        # module files so flag or source updates always land (an early return
+        # here once shipped a stale build into a full serving gate run).
         _copy_module_files(repo)
-        print(f"already applied ({TARGET_REL} sha={sha(t)}); module files refreshed")
+        print(f"already applied at {HELPER_VERSION} ({TARGET_REL} sha={sha(t)}); "
+              f"module files refreshed")
         return 0
     if text.count(ANCHOR) != 1 or text.count(HELPER_ANCHOR) != 1:
         print("ERROR: anchors not found exactly once — serving file drifted; aborting")
