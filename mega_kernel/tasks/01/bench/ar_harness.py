@@ -634,6 +634,7 @@ def mode_pdlprobe(args, ws) -> bool:
     """
     impl_names = args.impls.split(",")
     prov = provenance(args)
+    all_ok = True
     for row in load_rows(args):
         T = row["scalars"]["num_tokens"]
         streams = [torch.cuda.Stream(device=i) for i in range(WORLD)]
@@ -679,6 +680,7 @@ def mode_pdlprobe(args, ws) -> bool:
                     and torch.equal(resouts[i].view(torch.int16), refs[i][1])
                     for i in range(WORLD)
                 )
+                all_ok &= ok_bits
                 rec["results"][f"{name}_pdl{pdl}"] = {**st, "bit_ok": ok_bits}
                 print(f"[pdlprobe] T={T} {name} pdl={pdl}: pair-median="
                       f"{st['median']:.3f}us p10={st['p10']:.3f} p90={st['p90']:.3f} "
@@ -688,7 +690,7 @@ def mode_pdlprobe(args, ws) -> bool:
             print(f"[pdlprobe] T={T} {name}: pdl1/pdl0 pair-median delta = "
                   f"{(a - b):+.3f}us ({(a - b) / a * 100:+.2f}%)")
         emit(rec, args.out)
-    return True
+    return all_ok
 
 
 def mode_ncusolo(args, ws) -> bool:

@@ -168,3 +168,24 @@ ROOT CAUSE: build-flag asymmetry between the deployed baseline binary (fast-math
   (/health OK; flag default OFF so the running process never evaluates the
   helper; next gated restart picks up the guard, which is behavior-inert
   for bf16).
+
+## Round 4 (review phase) — pdlprobe fail-closed exit (2026-07-10)
+
+- Code review P2: `mode_pdlprobe` computed and recorded per-setting
+  `bit_ok` but returned True unconditionally — a PDL-induced bitwise
+  mismatch would print/record the failure yet still exit PASS/0. Fixed:
+  ok_bits aggregated across rows/impls/pdl settings, mode returns the
+  conjunction (main() already maps False -> FAIL / exit 1). Class audit:
+  correctness/bench/stability already fail closed; noise/ncusolo have no
+  correctness signal by design — pdlprobe was the only instance.
+- No evidence invalidated: the recorded bit_ok values were computed
+  correctly all along and are True on every line of the canonical records
+  and archived chain logs (r1c/r2a), so no PASS verdict in the record set
+  came from the masked-failure path. No records regenerated; no doc
+  numbers changed.
+- Verification: AST check (single return of aggregated all_ok) + on-box
+  end-to-end run of the fixed mode (`--impls opt --tokens 1 --trials 3`,
+  `--out /tmp/r4_pdlprobe_check.jsonl`): bit-ok=True, PASS, exit 0;
+  canonical `bench/results.jsonl` md5-identical before/after (scratch
+  --out per the sync lesson); fixed harness synced to the box task tree
+  (single-file scp).
