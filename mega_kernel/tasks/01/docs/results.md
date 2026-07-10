@@ -168,7 +168,7 @@ Gates (all PASS):
   confirmation + fresh noise floor: see below.
 
 NCU breakdown (solo pre-fed launch, T=6, `--replay-mode application`;
-durable text exports in `docs/ncu/`; fresh-box re-run reproduces: jit
+durable text exports in `docs/profiler_evidence/`; fresh-box re-run reproduces: jit
 16.93us/18,466 cycles vs opt 15.36us/16,756 cycles, registers 61 -> 58,
 same latency portrait):
 

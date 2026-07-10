@@ -66,13 +66,17 @@ original (randn + value zoo, both boxes) and 50,000-round stability-clean
 
 ### NCU breakdown (solo pre-fed launch, T=6, application replay)
 
+Durable text exports: `docs/profiler_evidence/ncu_{jit,opt}_t6_details.txt`
+(fresh-box re-run; raw `.ncu-rep` stays on-box per artifact hygiene — the
+repo gitignores `**/*.ncu-rep`). Both campaigns agree:
+
 | Metric | ported baseline | specialized |
 |---|---:|---:|
-| Duration under NCU | 16.29 us | 15.36 us (-5.7%) |
-| Elapsed cycles | 17,777 | 16,746 |
-| SM / DRAM throughput | 0.91% / 0.62% | 0.95% / 0.66% |
+| Duration under NCU (pre-release / fresh box) | 16.29 / 16.93 us | 15.36 / 15.36 us |
+| Elapsed cycles (pre-release / fresh box) | 17,777 / 18,466 | 16,746 / 16,756 |
+| SM / DRAM throughput (fresh box) | 0.90% / 0.60% | 0.94% / 0.66% |
 | Registers per thread | 61 | 58 |
-| Achieved occupancy / no-eligible | 9.49% / 91.28% | 9.44% / 91.13% |
+| Achieved occupancy / no-eligible (fresh box) | 9.33% / 91.66% | 9.21% / 91.00% |
 | Geometry | grid 24 x block 192 (6 tokens x 4-block clusters) | identical (pinned for byte-identity) |
 
 Reading: the kernel is pure latency — warps park on the NVLS fan-out +
