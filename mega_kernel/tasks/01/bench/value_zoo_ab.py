@@ -19,10 +19,24 @@ sys.path.insert(0, TASK_ROOT)
 
 from bench.correctness import bitwise_equal, poison_  # noqa: E402
 from bench.sp_nvls_workspace import SpNvlsWorkspace  # noqa: E402
-from baseline import fi_original  # noqa: E402
-from solution import jit_port  # noqa: E402
 
 WORLD, H, EPS = 8, 6144, 1e-5
+
+
+def _load_impl(name: str):
+    if name == "fi":
+        from baseline import fi_original
+
+        return fi_original
+    if name == "jit":
+        from solution import jit_port
+
+        return jit_port
+    if name == "opt":
+        from solution import jit_port_opt
+
+        return jit_port_opt
+    raise ValueError(name)
 
 ZOO_U16 = [
     0x8000,  # -0.0
@@ -53,7 +67,7 @@ def lace(t: torch.Tensor, seed: int) -> None:
         flat[idx.to(flat.device)] = sv.to(flat.device)
 
 
-def run_case(ws, T: int, seed: int, pdl: bool) -> int:
+def run_case(ws, impls, T: int, seed: int, pdl: bool) -> int:
     torch.manual_seed(seed)
     gamma_cpu = torch.randn(H, dtype=torch.bfloat16)
     lace(gamma_cpu, seed + 99)
@@ -68,7 +82,7 @@ def run_case(ws, T: int, seed: int, pdl: bool) -> int:
         res.append(residual_cpu.to(f"cuda:{i}"))
         gam.append(gamma_cpu.to(f"cuda:{i}"))
     outs = {}
-    for name, impl in (("fi", fi_original), ("jit", jit_port)):
+    for name, impl in impls:
         ws.reset()
         o = [poison_(torch.empty(T, H, dtype=torch.bfloat16, device=f"cuda:{i}"))
              for i in range(WORLD)]
@@ -80,10 +94,11 @@ def run_case(ws, T: int, seed: int, pdl: bool) -> int:
         for i in range(WORLD):
             torch.cuda.synchronize(i)
         outs[name] = (o, r)
+    a, b = impls[0][0], impls[1][0]
     bad = 0
     for i in range(WORLD):
-        for kind, ta, tb in (("out", outs["fi"][0][i], outs["jit"][0][i]),
-                             ("res", outs["fi"][1][i], outs["jit"][1][i])):
+        for kind, ta, tb in (("out", outs[a][0][i], outs[b][0][i]),
+                             ("res", outs[a][1][i], outs[b][1][i])):
             eq, count, first = bitwise_equal(ta, tb)
             if not eq:
                 bad += count
@@ -96,19 +111,29 @@ def run_case(ws, T: int, seed: int, pdl: bool) -> int:
 
 
 def main():
+    import argparse
+
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--impls", default="fi,jit", help="comma pair, e.g. fi,opt")
+    args = ap.parse_args()
+    names = args.impls.split(",")
+    assert len(names) == 2
+    impls = [(n, _load_impl(n)) for n in names]
+
     ws = SpNvlsWorkspace(world_size=WORLD)
     total = 0
     try:
         for T in (6, 1):
             for pdl in (False, True):
                 for seed in (11, 22, 33):
-                    bad = run_case(ws, T, seed, pdl)
+                    bad = run_case(ws, impls, T, seed, pdl)
                     tag = "MATCH" if bad == 0 else f"DIVERGE({bad})"
-                    print(f"[zoo] T={T} pdl={int(pdl)} seed={seed}: {tag}")
+                    print(f"[zoo] {names[0]} vs {names[1]} T={T} pdl={int(pdl)} "
+                          f"seed={seed}: {tag}")
                     total += bad
     finally:
         ws.destroy()
-    print(f"[zoo] TOTAL mismatched elements: {total} -> "
+    print(f"[zoo] {names[0]} vs {names[1]} TOTAL mismatched elements: {total} -> "
           f"{'BIT-EXACT on value zoo' if total == 0 else 'VALUE-CLASS DIVERGENCE CONFIRMED'}")
     sys.exit(0 if total == 0 else 1)
 

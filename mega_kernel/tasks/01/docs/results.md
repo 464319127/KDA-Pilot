@@ -182,9 +182,25 @@ reports: `profile/p1_baseline/solo_{jit,opt}_t6.ncu-rep`):
 
 Named bound (why the remaining headroom is small under this contract): the
 kernel is end-to-end latency-bound on the NVLS fan-out + Lamport arrival
-wait (91% no-eligible at 0.9% SM utilization); value-preserving compute
-optimizations only trim the post-arrival tail. The <=7.0us serving-convention
-target status is measured in the promote pass (in-serving per-call profile).
+wait (91% no-eligible at 0.9% SM utilization). The solo pre-fed NCU delta is
+CONSISTENT WITH local tail trimming (fewer instructions, hidden operand
+loads), but solo conditions remove live peer arrival/fabric contention, so
+the production attribution rests on the in-serving per-call profile measured
+in the promote pass, not on the solo numbers alone (independent-review
+wording).
+
+### E2E promote — PASS (2026-07-10, reacquired box)
+
+Box release mid-pass handled per runbook (reacquire + rebuild + full gate
+re-verification on the fresh env; new base text record captured first).
+Warm sanity 376.94 -> warmed sanity **378.86 tok/s (>= 378)**, both 40/40
+byte-identical; **OFFICIAL 3x40: 379.2 tok/s, all runs 40/40 identical**
+(baseline official 376.06). In-serving per-call: specialized kernel live at
+**8.2 us** (13,440 calls; 8.0 us on the pre-release box) vs 8.3-8.5 us
+baseline capture. <=7.0us target MISSED — named bound above; hard promotion
+bar and all promote gates MET. Serving restored (flag unset): 375.5 tok/s,
+40/40 identical. Raw records: `bench/results.jsonl` (fresh-box re-collection)
++ serving out-dirs on box.
 
 ### 25-trial confirmation & noise floor
 

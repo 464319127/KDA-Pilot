@@ -571,7 +571,8 @@ def mode_stability(args, ws) -> bool:
             replay_all(plain)
             sync_all()
             for i in range(WORLD):
-                if not torch.equal(outs[i].view(torch.int16), refs[0][i][0]):
+                if not torch.equal(outs[i].view(torch.int16), refs[0][i][0]) or \
+                        not torch.equal(resouts[i].view(torch.int16), refs[0][i][1]):
                     plain_bad += 1
         del plain
 

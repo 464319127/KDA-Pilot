@@ -122,12 +122,19 @@ def sha(p: pathlib.Path) -> str:
 
 
 def _copy_module_files(repo: pathlib.Path) -> None:
-    """Always refresh the jit_kernel module files (idempotent)."""
+    """Always refresh the jit_kernel module files (idempotent).
+
+    csrc comes DIRECTLY from solution/mnnvl_ar_fused/csrc — the single source
+    of truth — never from a staged copy (a stale staged copy once shipped a
+    module without the specialized symbol into a serving run).
+    """
     shutil.copy2(HERE / "files" / "mnnvl_ar_fused.py", repo / JK_PY_REL)
+    csrc_src = HERE.parent / "mnnvl_ar_fused" / "csrc"
     csrc_dst = repo / JK_CSRC_REL
     csrc_dst.mkdir(parents=True, exist_ok=True)
-    for f in (HERE / "files" / "csrc").iterdir():
-        shutil.copy2(f, csrc_dst / f.name)
+    for f in csrc_src.iterdir():
+        if f.suffix in (".cu", ".cuh"):
+            shutil.copy2(f, csrc_dst / f.name)
 
 
 def apply(repo: pathlib.Path) -> int:
