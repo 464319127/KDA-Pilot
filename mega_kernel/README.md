@@ -1,63 +1,49 @@
-# mega_kernel — GLM-5.2 bs=1 low-latency kernel campaign (8×B300 / sm_103)
+# mega_kernel — GLM-5.2-FP8 bs=1 解码 kernel 战役(第二轮:flashinfer 开源 kernel → sglang jit_kernel)
 
-Isolated kernel-optimization tasks for the GLM-5.2 FP8 bs=1 MTP(5-1-6) decode
-path. Frozen production shapes come from the live serving profile on
-`light-face-hides-fin-03-1` (rx devbox `glm52-bs1-opt`); each task follows the
-KDA-Pilot rules: copied upstream baseline, symmetric benchmark, correctness
-gate, NCU evidence, promotion only on `geomean > 1.0` with no production row
-`< 0.97`. Promoted kernels flow back into serving through env-gated dispatch
-hooks (see `integration/`).
+目标:8×B300(sm_103)上 GLM-5.2-FP8 bs=1 MTP(EAGLE 5-1-6)解码吞吐
+**376.06 → ≥400 tok/s**(官方 3×40 口径),需再省 ~0.62 ms/迭代。
 
-## Serving context the tasks must respect
+策略:serving 热路径里凡是**有源码**的 kernel(flashinfer JIT 源 + sglang 自家),
+移植进 sglang `python/sglang/jit_kernel/` 后针对 bs=1 真实 shape 特化。cubin 部分
+(cuBLAS nvjet、trtllm-gen GEMM/FMHA)不碰。**先移植后优化:移植版必须逐位一致、
+性能持平、e2e 吞吐不变(env 门控默认关),然后才允许改。**
 
-- One MTP iteration (accept ≈ 3.95) = draft graph (4×M=1 fwd) + target-verify
-  graph (M=6 through 78 layers) + draft-extend graph (M=6, 1 layer).
-- Current official e2e: **354.1 tok/s** (11.15 ms/iter = GPU ~9.3 ms + ~1.8 ms
-  CPU exposure). Baseline chain: 307.17 → 316.05 (phase-1 sync fixes) → 354.10
-  (bf16-dense + FP8 deferred finalize).
-- Everything on the hot path replays inside CUDA graphs → **benchmark in-graph
-  and with cold L2** (rotate ≥48 weight copies; replay-same-weight measures L2,
-  not DRAM — this trap is documented in `glm52_blog_bench/REPORT_OPT.md`).
-- GPU budget per iteration (kernel-duration deflated): MoE GEMMs 3.2 ms
-  (~82% of weight-BW bound), dense GEMMs 2.8 ms (bf16 cuBLAS today), fused AR
-  1.4 ms (mnnvl oneshot 8.7 µs × 160, payload 73 KB), attention 1.1 ms
-  (fmhaSm100f 9.1 µs × 83), MoE aux 0.65 ms, norms/misc ~1.1 ms.
-  In-graph inter-kernel gaps (<10 µs class) total only ~0.4-0.5 ms/iter — PDL
-  is a garnish, not the main course (task 05 quantifies per-pair anyway).
+## 任务索引(替换第一轮的 01/02;第一轮结论见 LEARNINGS.md,必读)
 
-## Task index (value-ordered)
+| 任务 | 对象(全部 flashinfer JIT 源码) | 池子 ms/iter | 目标 | 一键启动 |
+|---|---|---:|---|---|
+| [01](tasks/01/) | mnnvl 融合 AR+add+rmsnorm(`trtllm_mnnvl_allreduce.cuh`,8.3µs×157) | 1.31 | ≤7µs(冲 5µs),e2e −0.15~0.35ms | `scripts/launch_kernels/k01_b300_mnnvl_ar_jit_bs1.sh` |
+| [02](tasks/02/) | RMSNorm(`norm.cu`)+ RopeQuantize(`rope.cu`)横/纵向融合包 | 0.60 | 融合 ≥1.4×,e2e −0.2~0.3ms | `scripts/launch_kernels/k02_b300_norm_rope_pack_jit_bs1.sh` |
+| [03](tasks/03/) | MoE sigmoid top-8/256 routing(`RoutingKernel.cuh`)+ topk_small_batch | 0.64 | routing ≤3.5µs,e2e −0.15~0.25ms | `scripts/launch_kernels/k03_b300_moe_routing_topk_jit_bs1.sh` |
 
-| Task | Target | Baseline | Budget → floor | Expected e2e |
-|---|---|---|---|---|
-| tasks/01 (dense_fp8_gemm_bs1) | M∈{1,6} w8a8 block-FP8 dense GEMM | DeepGEMM fp8+quant AND cuBLAS bf16 (both) | 2.8 → ~1.3 ms | −1.4 ms/iter |
-| tasks/02 (ar_norm_fused_bs1) | 8-rank oneshot AR(+add+rmsnorm), 73 KB | flashinfer mnnvl `oneshotAllreduceFusionKernel` 8.7 µs | 1.4 → ~0.5 ms | −0.8 ms/iter |
+合计预期 −0.5~−0.9 ms/iter → **400-410 tok/s**。
 
-Both promoted: GPU 9.3 → ~7.1 ms → iteration ~8.9 ms ≈ **~445 tok/s** (accept 3.95).
+## 铁律
 
-Future (deliberately out of scope for now): MoE aux fusion (−0.5), DSA sparse
-decode q≤6 port (−0.35), PDL audit (−0.2-0.4).
+1. **shape 全部来自 bs=1 真实 serving**(T∈{1,6},配置冻结的 EAGLE 5-1-6),每个任务
+   开工先在箱上实测复核 SHAPES.md,不许用臆造 shape 调优。
+2. **P0 移植阶段位级一致 + e2e 不倒退是硬门槛**,不过 P0 不许进优化。
+3. serving 接入一律 env 门控、默认关;基线(376.06)随时可复现。
+4. promote = 隔离达标 + sanity ≥378 且 greedy 输出逐字一致 + 官方 3×40 记录。
+5. 机器断开/过期不是终止(重连/重申请流程写在各 prompt 第 0 条)。
 
-## Ground rules
+## 环境
 
-1. **Shapes are frozen** (see each task's `SHAPES.md`); per-TP-rank, TP=8.
-2. **Two benchmark modes, both mandatory**: (a) cold-L2 in-graph replay
-   (production-faithful), (b) eager per-call (debug only, never the headline).
-3. **Correctness**: fp32 oracle, rel err < 2e-2 for GEMM-class, bitwise for
-   memory-movement class; adversarial cases (ragged tails, scale ramps,
-   negative dispatch) required before promotion.
-4. **NCU evidence** for every claimed win (`ncu-report-skill` conventions).
-5. **Integration is env-gated**: each task lists its serving hook; e2e
-   validation = 40-task × 1-run sanity on the devbox (greedy determinism +
-   accept-len watch) before any 3-run official number.
+- 机器:rx devbox `glm52-bs1-opt`(verda-b300-fin-03-1,8×B300 SXM6,x86)。
+- serving 基线:sglang main `87992eeec` + `/personal/glm52_backup_20260710/patches_main/
+  main_port_full.diff`(GLM 装载修复 + bf16-dense + fp8-defer),权重 NVMe
+  `/scratch/models/glm52-fp8`,重启 ~13 分钟。
+- 评测:`/scratch/glm52_blog_bench/benchmark_glm52_bs1.py`(sanity `--runs 1`,官方
+  `--runs 3`);profile 用 /start_profile num_steps≤100(严禁不限步,曾把服务器
+  OOM 打挂)。
+- 公共资产:`common/harness/`(8 卡 AR harness)、`common/prior_art/`(第一轮完整
+  RESULTS)、`LEARNINGS.md`(判死方向与协议)。
 
-## Prior art to reuse (from `对比.md` / earlier KDA-Pilot campaigns, B200)
+## 启动方式
 
-- `deep_gemm_fp8_fp8_bf16_nt` M=1 decode GEMV: kernel-honest **1.356×**
-  (peak 1.93×) vs DeepGEMM — port to sm_103 for the draft path (task 01).
-- M>1 CUDA-core attempts are a confirmed dead end (two independent runs:
-  0.011-0.44×); M=6 requires CUTLASS SM100 blockwise tensor-core work.
-- Unified attention native split-KV flash-decode, B=1: **1.87×** geomean vs
-  fmhaSm100f — port + extend q 1→6 (task 04).
-- `per_token_group_quant` promoted 1.115× — low relevance now (bf16-dense
-  removed most quant calls; only MoE input quant remains, 80/iter).
-- fp8_bmm eager wins were host-dispatch-bound — NOT applicable in-graph.
+```bash
+# 例:启动任务 01(自动建 git worktree + Claude Code + Humanize RLCR 循环)
+mega_kernel/scripts/launch_kernels/k01_b300_mnnvl_ar_jit_bs1.sh
+```
+三个任务相互独立可并行,但共享 devbox——kernel 开发各用 1 卡即可(任务 01 需 8 卡
+时段性占用),e2e 验证需独占重启 serving,错峰进行。

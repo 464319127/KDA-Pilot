@@ -1,47 +1,32 @@
-# 01_dense_fp8_gemm_bs1 — frozen shapes (per TP-rank, GLM-5.2 FP8 TP=8)
+# 真实 shape(bs=1 serving,冻结口径)
 
-out[M,N] bf16 = A[M,K] bf16 @ dequant(W[N,K] fp8e4m3, S[⌈N/128⌉,⌈K/128⌉] f32)^T
+来源:GLM-5.2-FP8 8×B300 TP8,EAGLE 5-1-6,bs=1,376.06 tok/s 官方配置的 torch profiler
+(`/scratch/glm52_blog_bench/profiles/full376/`,60 迭代)。**所有 shape 必须是 batch_size=1
+serving 的真实值;开工第一步在箱上实测复核本表,任何出入以实测为准并更新本表。**
 
-M ∈ {1 (draft steps), 6 (verify / draft-extend)}. Weighted by per-iteration
-call count (verify 78 layers dominates):
+## 调用统计(每 MTP 迭代)
 
-| shape (N×K) | role | calls/iter (M=6) | calls/iter (M=1) |
-|---|---|---:|---:|
-| 2624×6144 | fused q_a+kv_a | 79 | 4 |
-| 2048×2048 | q_b | 79 | 4 |
-| 6144×2048 | o_proj | 79 | 4 |
-| 512×6144  | shared-expert gate_up | 76 | 4 |
-| 6144×256  | shared-expert down | 76 | 4 |
-| 3072×6144 | dense-MLP gate_up (layers 0-2) | 3 | 0 |
-| 6144×1536 | dense-MLP down | 3 | 0 |
-| 3584×512 / 4096×2048 / 128×6144 | indexer/misc (低频) | ~20 | ~2 |
+| kernel | 次数/iter | 单次耗时 | 合计 |
+|---|---:|---:|---:|
+| `oneshotAllreduceFusionKernel` | 157.3 | 8.3µs | **1.309 ms** |
 
-## Baselines (BOTH must be beaten on the weighted mix)
-1. DeepGEMM fp8 path incl. its per-call activation quant
-   (`sglang_per_token_group_quant_fp8` + `deep_gemm.fp8_gemm_nt`): in-graph
-   ≈ 8.7 + 2.3 µs per call at M=6.
-2. cuBLAS bf16 (current production, `SGLANG_BS1_BF16_DENSE=1`): cold-L2
-   measured M=6: 2624×6144 8.83 µs, 6144×2048 6.09, 512×6144 5.96,
-   2048×2048 5.93, 6144×256 2.35, 3072×6144 9.45, 6144×1536 4.91.
+157 ≈ 78 层 × 2(attn-out AR、mlp-out AR,verify 图)+ draft/extend 图内少量。
 
-## Targets / direction
-- M=1: port the existing B200 winner (KDA-Pilot `deep_gemm_fp8_fp8_bf16_nt`
-  M=1 GEMV, kernel 1.356×; B-scale register shuffle preload + split-K×2 for
-  N≤3072) to sm_103a. Expected ≤3 µs/call.
-- M=6: CUTLASS SM100 blockwise tensor-core (two prior CUDA-core attempts and
-  one hand mma.m16n8k16 attempt are documented dead ends — see
-  `glm52_blog_bench/k2/`). Floor: DRAM read at ≥5 TB/s + ~1.5 µs fixed
-  → qkv_a ~4 µs, o_proj ~3.5 µs, weighted mean ~3.8 µs incl. no act-quant.
-- Deterministic split-K only (bitwise-stable across replays).
+## 张量形状(bf16,hidden = 6144,world = 8)
 
-## Serving hook (already in place)
-`fp8_utils.deepgemm_w8a8_block_fp8_linear_with_fallback` dispatch at M≤8
-(env `SGLANG_BS1_TRITON_FP8_GEMV` slot — rename on promote) with plain-float
-scale stash attached at load (`requant_weight_ue8m0` hook). Promoting this
-task removes the need for `SGLANG_BS1_BF16_DENSE` → runtime returns to 100%
-FP8 weights.
+| 场景 | tokens T | payload | 备注 |
+|---|---:|---|---|
+| verify 图(占主) | 6 | [6, 6144] bf16 = 73.7 KB | num_draft_tokens=6 |
+| draft 图(5 步 M=1) | 1 | [1, 6144] bf16 = 12.3 KB | 1 层 MTP 头 |
+| draft-extend 图 | 6 | [6, 6144] | 同 verify |
 
-## Bench protocol
-Cold-L2: 48 weight copies, all calls captured in one CUDA graph, report
-us/call from graph replay (see `glm52_blog_bench/k2/k2_mma_test.py` harness).
-Correctness: fp32 oracle rel < 2e-2; scale-ramp + ragged-N adversarial rows.
+融合语义(与 flashinfer oneshot fused 一致,不许减功能):
+`out = rmsnorm(allreduce(x) + residual, weight, eps=1e-5)`,同时输出 `residual_out = allreduce(x) + residual`。
+weight [6144] bf16;eps=1e-5(config rms_norm_eps)。
+
+## 复核方法
+
+1. 在 376 服务器上抓 60 步 profile(命令见 prompt),统计该 kernel 的 n/iter 与均值。
+2. 在 sglang 调用点(`flashinfer_comm_fusion.py` / mnnvl comm 路径)临时打印一次
+   shape/dtype/eps/flags 后立刻移除。
+3. 冻结进本表后,harness 与 promote 门槛只认本表 shape。

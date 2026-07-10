@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# KDA launcher for this meta_kernel bs=1 task. Creates a task-owned git
+# KDA launcher for this mega_kernel bs=1 task. Creates a task-owned git
 # worktree and starts Claude Code inside this task folder. See
 # ../../scripts/launch_kda_kernel_task.sh -h for environment overrides.
 set -euo pipefail
