@@ -62,10 +62,10 @@ P2 集成(风险明确,按序尝试):
     只在 bypassed 格式生效(moe_runner/flashinfer_trtllm.py 里我们自己的 defer 分支
     要求 format_is_bypassed)。集成本 kernel 必须同时把 defer 分支扩展到 routed 格式
     (flashinfer routed 入口同样支持 do_finalize=False,核对后照 bypassed 分支样式加)。
-  - env 门控 SGLANG_JIT_MOE_ROUTING=1 默认关;打开后 sanity 1×40 ≥376 且 greedy 输出
+  - env 门控 SGLANG_JIT_MOE_ROUTING=1 默认关;打开后 sanity 1×40 ≥381 且 greedy 输出
     与基线逐字一致(routing 是选择性操作,任何 tie-break 差异都会改输出——位级对齐
     是硬要求);达不到就把集成 park 住,交付独立 kernel + 障碍记录。
-  - e2e promote:sanity ≥378 且输出一致 → 官方 3×40 记录。
+  - e2e promote:sanity ≥383 且输出一致 → 官方 3×40 记录。
   serving 重启/评测命令同任务 01 prompt(env 换成本任务的)。
 
 交付物:jit_kernel 模块、(若 P2 成)serving 集成 patch 含 defer 扩展、

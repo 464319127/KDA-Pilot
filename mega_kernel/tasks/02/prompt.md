@@ -50,7 +50,7 @@ P0 移植(必须先过):
   a. 两个 kernel 的 jit_kernel 版与 flashinfer 原版**逐位一致**(确定性 elementwise,
      必须位级,无容差借口),覆盖 T=1 与 T=6 两组 shape。
   b. 隔离性能 ±3%(单卡 200-round CUDA graph replay 口径)。
-  c. env 开关接入 serving(SGLANG_JIT_NORM_ROPE=1,默认关):打开后 sanity 1×40 ≥376,
+  c. env 开关接入 serving(SGLANG_JIT_NORM_ROPE=1,默认关):打开后 sanity 1×40 ≥381,
      greedy 输出与基线逐字一致。
      serving 重启/评测命令同任务 01 prompt(env 换成本任务的)。
 P1 融合特化(P0 全绿后):
@@ -60,7 +60,7 @@ P1 融合特化(P0 全绿后):
     不换归约序;做不到位级的改动直接放弃该融合)。
   - 门槛:冻结 shape 上融合包 ≥1.4×(对比原版分立总和);1000-replay 稳定;CUDA graph
     可捕获(serving 全在图内,任何 host 逻辑都不许进热路径)。
-  - e2e promote:sanity ≥378 且输出一致 → 官方 3×40 记录。
+  - e2e promote:sanity ≥383 且输出一致 → 官方 3×40 记录。
 
 交付物:jit_kernel 模块、serving 接入 patch(env 门控默认关)、RESULTS_SM103.md
 (P0/P1 证据 + 每融合步的前后对比表)、失败路线记录。
