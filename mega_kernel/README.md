@@ -15,6 +15,7 @@
 | [01](tasks/01/) ✅晋升 | mnnvl 融合 AR+add+rmsnorm(`trtllm_mnnvl_allreduce.cuh`) | 1.31 | **已交付:8.3→7.6µs,官方 381.42(+1.4%)**;7µs 判定为 NVLS 延迟下界(位级约束内) | 完成,RESULTS 见 tasks/01/ |
 | [02](tasks/02/) | RMSNorm(`norm.cu`)+ RopeQuantize(`rope.cu`)横/纵向融合包 | 0.60 | 融合 ≥1.4×,e2e −0.2~0.3ms | `scripts/launch_kernels/k02_b300_norm_rope_pack_jit_bs1.sh` |
 | [03](tasks/03/) | MoE sigmoid top-8/256 routing(`RoutingKernel.cuh`)+ topk_small_batch | 0.64 | routing ≤3.5µs,e2e −0.15~0.25ms | `scripts/launch_kernels/k03_b300_moe_routing_topk_jit_bs1.sh` |
+| [04](tasks/04/) | **DSA sparse decode 原生化(cubin 替换)**:B200 已晋升 1.874×/3.29× kernel 移植 sm103 + 扩 T=6 verify regime | 0.99(关键路径) | T=1 ≥1.5× / T=6 ≥1.3×,e2e −0.25~0.45ms(**到 400 的主力**;非位级,质量门代替) | `scripts/launch_kernels/k04_b300_dsa_decode_native_bs1.sh` |
 
 合计预期 −0.5~−0.9 ms/iter → **400-410 tok/s**。
 
