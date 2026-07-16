@@ -1,53 +1,62 @@
-# mega_kernel — GLM-5.2-FP8 bs=1 解码 kernel 战役(第二轮:flashinfer 开源 kernel → sglang jit_kernel)
+# mega_kernel — GLM-5.2-FP8 bs=1 解码 kernel 优化战役(8×B300 / sm_103)
 
-目标:8×B300(sm_103)上 GLM-5.2-FP8 bs=1 MTP(EAGLE 5-1-6)解码吞吐
-**≥400 tok/s**(官方 3×40 口径)。任务 01 已晋升:376.06 → **381.42**(mnnvl AR jit 特化,+1.4%),当前还差 ~0.47 ms/迭代。
+目标:GLM-5.2-FP8 在 8×B300(TP8)上 bs=1 MTP(EAGLE 5-1-6)解码吞吐从基线
+307.17 持续推进到 **≥400 tok/s**(官方口径 = 3 轮 × 40 任务共 120 请求,报
+mean decode tok/s)。当前已达 **381.42**(serving 侧 patch + 任务 01),上游 PR:
+[#30957](https://github.com/sgl-project/sglang/pull/30957)(bf16-dense)
+[#30958](https://github.com/sgl-project/sglang/pull/30958)(FP8 defer-finalize)
+[#30959](https://github.com/sgl-project/sglang/pull/30959)(mnnvl AR jit 特化)。
 
-策略:serving 热路径里凡是**有源码**的 kernel(flashinfer JIT 源 + sglang 自家),
-移植进 sglang `python/sglang/jit_kernel/` 后针对 bs=1 真实 shape 特化。cubin 部分
-(cuBLAS nvjet、trtllm-gen GEMM/FMHA)不碰。**先移植后优化:移植版必须逐位一致、
-性能持平、e2e 吞吐不变(env 门控默认关),然后才允许改。**
+## 一次 MTP 迭代的 kernel 占比(torch profiler,60 迭代,381.42 配置实测)
 
-## 任务索引(替换第一轮的 01/02;第一轮结论见 LEARNINGS.md,必读)
+一次迭代 ≈ 10.1ms = draft 图(5×M=1)+ verify 图(M=6 过 78 层)+ draft-extend 图
+(M=6 过 1 层)。双流乒乓执行,union busy 9.67ms,暴露气泡仅 ~0.4ms。
+kernel 时长总和口径(两大流合计,含重叠,sum=12.7ms):
 
-| 任务 | 对象(全部 flashinfer JIT 源码) | 池子 ms/iter | 目标 | 一键启动 |
-|---|---|---:|---|---|
-| [01](tasks/01/) ✅晋升 | mnnvl 融合 AR+add+rmsnorm(`trtllm_mnnvl_allreduce.cuh`) | 1.31 | **已交付:8.3→7.6µs,官方 381.42(+1.4%)**;7µs 判定为 NVLS 延迟下界(位级约束内) | 完成,RESULTS 见 tasks/01/ |
-| [02](tasks/02/) | RMSNorm(`norm.cu`)+ RopeQuantize(`rope.cu`)横/纵向融合包 | 0.60 | 融合 ≥1.4×,e2e −0.2~0.3ms | `scripts/launch_kernels/k02_b300_norm_rope_pack_jit_bs1.sh` |
-| [03](tasks/03/) | MoE sigmoid top-8/256 routing(`RoutingKernel.cuh`)+ topk_small_batch | 0.64 | routing ≤3.5µs,e2e −0.15~0.25ms | `scripts/launch_kernels/k03_b300_moe_routing_topk_jit_bs1.sh` |
-| [04](tasks/04/) | **DSA sparse decode 原生化(cubin 替换)**:B200 已晋升 1.874×/3.29× kernel 移植 sm103 + 扩 T=6 verify regime | 0.99(关键路径) | T=1 ≥1.5× / T=6 ≥1.3×,e2e −0.25~0.45ms(**到 400 的主力**;非位级,质量门代替) | `scripts/launch_kernels/k04_b300_dsa_decode_native_bs1.sh` |
+| 类别 | ms/iter | 占比 | 来源 | 可改? |
+|---|---:|---:|---|---|
+| dense GEMM bf16(nvjet+splitK reduce) | 4.70 | 37% | cuBLAS 闭源 | 换源码实现才可改 |
+| MoE GEMM(gemm1+gemm2) | 2.87 | 23% | trtllm-gen **cubin** | 换源码实现才可改 |
+| MoE 辅助(routing/finalize/act/topk) | 1.75 | 14% | flashinfer JIT 源 + sglang 自家 | ✓ |
+| 融合 AR(+add+rmsnorm)×157 | 1.22 | 10% | flashinfer JIT 源 | ✓(任务 01 已做) |
+| attention(DSA sparse,topk-2048) | 0.99 | 8% | trtllm-gen cubin(核心)+ 源码前处理 | 部分 ✓ |
+| norm/rope/quant/elementwise | 1.20 | 9% | flashinfer JIT 源 + aten | ✓ |
 
-合计预期 −0.5~−0.9 ms/iter → **400-410 tok/s**。
+**关键教训(选题前必读)**:双流重叠区里的 kernel 砍了不缩关键路径(隔离 1.1× ≠
+e2e 收益);**全 rank 同步点(AR)和串行链上的大块(GEMM/attention)才 1:1 转化**。
+立项先用 `LEARNINGS.md` 里的双流 union 归因法确认目标在关键路径上。
+
+## 任务板
+
+| 任务 | 对象 | 池子 ms/iter | 状态 |
+|---|---|---:|---|
+| [01](tasks/01/) | mnnvl 融合 AR+add+rmsnorm jit 移植 + bs=1 特化 | 1.31 | ✅ **完成并采纳**:单次 8.3→7.6µs,e2e 376.06→**381.42** 官方(+1.4%),位级一致;上游 PR #30959 |
+| [02](tasks/02/) | RMSNorm + RopeQuantize 移植与融合包 | 0.60 | 开放 |
+| [03](tasks/03/) | MoE sigmoid top-8/256 routing + small-batch topk | 0.64 | 开放 |
+| [04](tasks/04/) | DSA sparse decode 原生化(cubin 替换,B200 有 1.874×/3.29× 参照内核) | 0.99 | 开放 |
+| [09](tasks/09/) | **bs=1 MoE 巨核**:routing→gemm1→SiLU→gemm2→finalize(+shared)单 persistent kernel,替换 trtllm-gen cubin 链 | 4.6(GEMM 2.87+aux 1.75) | 开放,难度最高/收益最大 |
+| [10](tasks/10/) | **MLA a-path 竖向融合链**:fused_qkv_a GEMM 尾接 双RMSNorm→RoPE→fp8-quant→KV写 单 kernel | ~0.9(关键路径) | 开放 |
+| [11](tasks/11/) | **draft-step 巨核**(TileRT 风格):MTP 1 层 M=1 前向整层单 kernel,5 步驻留 | ~1.2(draft 图) | 开放 |
+
+(编号 05-08 属于并行的 K3/GB300 子战役——`tasks/05-08`,Kimi-K3 bs=1,另见其各自 config;本表为 GLM-5.2/B300 主线。)
+
+一键启动:`scripts/launch_kernels/k0X_*.sh`(自动建 worktree + Claude Code + RLCR 循环)。
 
 ## 铁律
 
-0. **只做增量修改,禁止从零重写**:P1 的每个优化都从 P0 移植的 flashinfer 源码出发
-   (删死代码/常量化/调 launch 形态/融合相邻 kernel),每步保持位级一致再进下一步。
-   第一轮教训:从零手写(mma GEMM、unicast AR)分别比现有实现慢 3×/4×。
-1. **shape 全部来自 bs=1 真实 serving**(T∈{1,6},配置冻结的 EAGLE 5-1-6),每个任务
-   开工先在箱上实测复核 SHAPES.md,不许用臆造 shape 调优。
-2. **P0 移植阶段位级一致 + e2e 不倒退是硬门槛**,不过 P0 不许进优化。
-3. serving 接入一律 env 门控、默认关;当前基线 **381.42** = 376.06 配置 + SGLANG_JIT_MNNVL_AR=1 SGLANG_JIT_MNNVL_AR_OPT=1。
-4. promote = 隔离达标 + sanity ≥383 且 greedy 输出逐字一致 + 官方 3×40 记录(基线 381.42)。
-5. 机器断开/过期不是终止(重连/重申请流程写在各 prompt 第 0 条)。
+0. **能增量就不重写**:有源码参照的(flashinfer JIT / B200 已晋升内核)从移植开始,
+   每步位级一致;巨核类任务(05/06/07)属于结构性重写,正确性口径改为 fp32 oracle
+   rel ≤2e-2 + e2e 质量门(sanity 不倒退 + accept ≥3.80 + 官方 3×40)。
+1. **shape 全部来自 bs=1 真实 serving**(T∈{1,6},EAGLE 5-1-6 配置冻结),开工先在箱
+   上实测复核 SHAPES.md。
+2. serving 接入一律 env 门控、默认关;基线 **381.42** 随时可复现(重建流程见各 prompt
+   第 0 条,~1 小时)。
+3. promote = 隔离达标 + 关键路径归因证明可转化 + e2e sanity ≥383 + 官方 3×40 记录。
+4. 机器断开/过期不是终止(rx devbox 重申请流程写在各 prompt 第 0 条)。
 
-## 环境
+## 环境与资产
 
-- 机器:rx devbox `glm52-bs1-opt`(verda-b300-fin-03-1,8×B300 SXM6,x86)。
-- serving 基线:sglang main `87992eeec` + `/personal/glm52_backup_20260710/patches_main/
-  main_port_full.diff`(GLM 装载修复 + bf16-dense + fp8-defer),权重 NVMe
-  `/scratch/models/glm52-fp8`,重启 ~13 分钟。
-- 评测:`/scratch/glm52_blog_bench/benchmark_glm52_bs1.py`(sanity `--runs 1`,官方
-  `--runs 3`);profile 用 /start_profile num_steps≤100(严禁不限步,曾把服务器
-  OOM 打挂)。
-- 公共资产:`common/harness/`(8 卡 AR harness)、`common/prior_art/`(第一轮完整
-  RESULTS)、`LEARNINGS.md`(判死方向与协议)。
-
-## 启动方式
-
-```bash
-# 例:启动任务 01(自动建 git worktree + Claude Code + Humanize RLCR 循环)
-mega_kernel/scripts/launch_kernels/k01_b300_mnnvl_ar_jit_bs1.sh
-```
-三个任务相互独立可并行,但共享 devbox——kernel 开发各用 1 卡即可(任务 01 需 8 卡
-时段性占用),e2e 验证需独占重启 serving,错峰进行。
+- 机器:rx devbox 池 8×B300(`rxp devbox acquire --gpu B300 --count 8 --image lmsysorg/sglang:latest`)。
+- serving 基线:sglang main `87992eeec` + `/personal/glm52_backup_20260710/patches_main/main_port_full.diff` + 任务01接入器;权重 NVMe 拷贝后重启 ~13 分钟。
+- 评测:`benchmark_glm52_bs1.py`(sanity `--runs 1` / 官方 `--runs 3`);profile 用 /start_profile `num_steps≤100`。
+- `LEARNINGS.md`:判死方向(fp8 小 M dense、自研 unicast AR、重叠区小卡)与基准协议(cold-L2 48 份、application-replay NCU、1000-replay 位级稳定)。

@@ -1,0 +1,47 @@
+[task]
+slug = "b200_ernie_adaln_residual_gate__bitwise"
+arch = "b200"
+target_gpu = "NVIDIA B200"
+family = "ernie_adaln_residual_gate"
+entry_points = [
+  "sglang.multimodal_gen.runtime.models.dits.ernie_image:ErnieImageSharedAdaLNBlock.forward",
+  "sglang.multimodal_gen.runtime.models.dits.ernie_image:_ernie_norm_scale_shift",
+  "sglang.multimodal_gen.runtime.models.dits.ernie_image:_ernie_scale_residual_norm_scale_shift",
+  "sglang.multimodal_gen.runtime.models.dits.ernie_image:_ernie_residual_gate_add",
+]
+
+[build]
+language = "cuda"
+destination_passing_style = true
+baseline_entry_points = [
+  "bench/adapter.py::call_baseline_sa_adaln",
+  "bench/adapter.py::call_baseline_attn_residual_adaln",
+  "bench/adapter.py::call_baseline_mlp_residual_gate",
+]
+candidate_entry_points = [
+  "solution/kernel.cu::ernie_sa_adaln_candidate",
+  "solution/kernel.cu::ernie_attn_residual_adaln_candidate",
+  "solution/kernel.cu::ernie_mlp_residual_gate_candidate",
+]
+
+[correctness]
+bitwise_required = true
+comparison = "torch_equal"
+forbid_tolerance = true
+baseline = "sglang_ernie_image_turbo_production"
+production_autocast = false
+dit_precision = "bfloat16"
+torch_compile_required = true
+full_image_consistency_required = true
+require_no_exception_fallback = true
+
+[benchmark]
+warmup_runs = 10
+iterations = 200
+num_trials = 7
+inner_iterations_min = 1
+inner_iterations_max = 2048
+target_sample_us = 1000
+timeout_seconds = 900
+use_isolated_runner = true
+required_matched_ratio = 1.0

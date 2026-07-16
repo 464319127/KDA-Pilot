@@ -41,6 +41,7 @@ kernels/
   b200_ltx2_rms_adaln__bitwise/
   b200_ltx2_qknorm_split_rope__bitwise/
   b200_wan_vae_rmsnorm_silu__bitwise/
+  b200_ernie_adaln_residual_gate__bitwise/
 scripts/
   launch_kda_kernel_task.sh
   launch_kernels/
@@ -105,6 +106,7 @@ diffusion/scripts/launch_kernels/k20_b200_ltx2_dual_modulate__bitwise.sh
 diffusion/scripts/launch_kernels/k21_b200_ltx2_rms_adaln__bitwise.sh
 diffusion/scripts/launch_kernels/k22_b200_ltx2_qknorm_split_rope__bitwise.sh
 diffusion/scripts/launch_kernels/k23_b200_wan_vae_rmsnorm_silu__bitwise.sh
+diffusion/scripts/launch_kernels/k23_b200_ernie_adaln_residual_gate__bitwise.sh
 ```
 
 Set `KDA_NO_CLAUDE=1` to prepare the worktree without launching Claude.
