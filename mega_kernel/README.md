@@ -37,6 +37,7 @@ e2e 收益);**全 rank 同步点(AR)和串行链上的大块(GEMM/attention)才 
 | [09](tasks/09/) | **bs=1 MoE 巨核**:routing→gemm1→SiLU→gemm2→finalize(+shared)单 persistent kernel,替换 trtllm-gen cubin 链 | 4.6(GEMM 2.87+aux 1.75) | 开放,难度最高/收益最大 |
 | [10](tasks/10/) | **MLA a-path 竖向融合链**:fused_qkv_a GEMM 尾接 双RMSNorm→RoPE→fp8-quant→KV写 单 kernel | ~0.9(关键路径) | 开放 |
 | [11](tasks/11/) | **draft-step 巨核**(TileRT 风格):MTP 1 层 M=1 前向整层单 kernel,5 步驻留 | ~1.2(draft 图) | 开放 |
+| [12](tasks/12/) | **GEMM+AR 融合**:RowParallel GEMM epilogue 直接 multimem 发出,消费端 ld_reduce+add+norm,消灭独立通信 kernel(任务 01 的下一级) | 1.19(AR)+ 边界开销 | 开放 |
 
 (编号 05-08 属于并行的 K3/GB300 子战役——`tasks/05-08`,Kimi-K3 bs=1,另见其各自 config;本表为 GLM-5.2/B300 主线。)
 
