@@ -1,9 +1,14 @@
 {
   "model": "zai-org/GLM-4.7-Flash",
   "model_slug": "glm_47_flash",
-  "cookbook_cmd": "sglang serve --model-path zai-org/GLM-4.7-Flash --tp 1 --attention-backend triton --reasoning-parser glm45 --tool-call-parser glm47",
+  "cookbook_cmd": "omitted from standalone kernel task; use bench/workloads.json and docs/captured_kernel_api_shapes.json for RLCR",
   "tp": "1",
-  "python_interface": "sglang.inplace_fused_experts",
+  "python_interface": [
+    "sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe._fused_moe_kernel_sequence",
+    "sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe.fused_experts_impl",
+    "sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe.inplace_fused_experts",
+    "sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe_triton_kernels.invoke_fused_moe_kernel"
+  ],
   "kernel_family": "fused_moe_triton",
   "profiler_op_provenance": [
     "Torch-Compiled Region: 5/0",
@@ -27,13 +32,18 @@
   },
   "max_pct_of_gpu": 30.39,
   "best_scenario": "random_mid",
-  "input_shapes": [
-    "[[1163106], [], [], [], []]",
-    "[[1], []]",
-    "[[5102, 2048], [65, 3072, 2048], [65, 2048, 1536], [5102, 5], [5102, 5], [], [],",
-    "[[5528, 2048], [65, 3072, 2048], [65, 2048, 1536], [5528, 5], [5528, 5], [], [],",
-    "[[], [], [], [], [], []]"
-  ],
+  "input_shapes": [],
   "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
-  "note": "Triton MoE expert-GEMM (sglang's own fused_experts/fused_moe kernel) \u2014 single-GPU optimizable; NOT the comm-fused trtllm MoE path (excluded)."
+  "note": "Triton MoE expert-GEMM (sglang's own fused_experts/fused_moe kernel) \u2014 single-GPU optimizable; NOT the comm-fused trtllm MoE path (excluded).",
+  "input_shapes_replaced_by": "docs/captured_kernel_api_shapes.json",
+  "standalone_workloads_json": "bench/workloads.json",
+  "shape_source": "fresh_sglang_kernel_api_capture",
+  "captured_kernel_api_workload_count": 35,
+  "captured_kernel_api_functions": [
+    "sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe._fused_moe_kernel_sequence",
+    "sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe.fused_experts_impl",
+    "sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe.inplace_fused_experts",
+    "sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe_triton_kernels.invoke_fused_moe_kernel"
+  ],
+  "shape_capture_note": "Captured 2026-07-07 on Verda B300 light-face-hides-fin-03-1 from a real zai-org/GLM-4.7-Flash TP=1 SGLang production-path execution in temporary container sglang-glm47-flash. Used a model-local HF cache after snapshot download, attention_backend=triton, reasoning_parser=glm45, tool_call_parser=glm47, disabled FlashInfer autotune, disabled CUDA graph prefill/decode, and marked four request windows covering long prefill, short decode, mid concurrency, and high concurrency. The attention task maps to the captured TritonAttnBackend forward APIs because this Flash path did not call the older unified_attention_with_output Python wrapper during the capture."
 }

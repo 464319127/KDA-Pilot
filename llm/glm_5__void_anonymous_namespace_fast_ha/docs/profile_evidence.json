@@ -1,9 +1,14 @@
 {
   "model": "nvidia/GLM-5-NVFP4",
   "model_slug": "glm_5",
-  "cookbook_cmd": "sglang serve --model-path nvidia/GLM-5-NVFP4 --tp 4 --quantization modelopt_fp4 --kv-cache-dtype fp8_e4m3",
+  "cookbook_cmd": "omitted from standalone kernel task; use bench/workloads.json and docs/captured_kernel_api_shapes.json for RLCR",
   "tp": "4",
-  "python_interface": "<confirm via capture; profiler family=void_anonymous_namespace_fast_ha>",
+  "python_interface": [
+    "sglang.srt.layers.attention.dsa_backend.DeepseekSparseAttnBackend._forward_standard_mha",
+    "sglang.srt.layers.attention.dsa_backend.DeepseekSparseAttnBackend._forward_trtllm",
+    "sglang.srt.layers.attention.dsa_backend.DeepseekSparseAttnBackend.forward_decode",
+    "sglang.srt.layers.attention.dsa_backend.DeepseekSparseAttnBackend.forward_extend"
+  ],
   "kernel_family": "void_anonymous_namespace_fast_ha",
   "profiler_op_provenance": [
     "aten::as_strided",
@@ -20,9 +25,17 @@
   },
   "max_pct_of_gpu": 3.73,
   "best_scenario": "sharegpt_high",
-  "input_shapes": [
-    "[[20784, 32, 128], []]",
-    "[[9962, 32, 128], []]"
+  "input_shapes": [],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "input_shapes_replaced_by": "docs/captured_kernel_api_shapes.json",
+  "standalone_workloads_json": "bench/workloads.json",
+  "shape_source": "fresh_sglang_kernel_api_capture",
+  "captured_kernel_api_workload_count": 22,
+  "captured_kernel_api_functions": [
+    "sglang.srt.layers.attention.dsa_backend.DeepseekSparseAttnBackend._forward_standard_mha",
+    "sglang.srt.layers.attention.dsa_backend.DeepseekSparseAttnBackend._forward_trtllm",
+    "sglang.srt.layers.attention.dsa_backend.DeepseekSparseAttnBackend.forward_decode",
+    "sglang.srt.layers.attention.dsa_backend.DeepseekSparseAttnBackend.forward_extend"
   ],
-  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+  "shape_capture_note": "Captured 2026-07-07 on Verda B300 light-face-hides-fin-03-1 from a real nvidia/GLM-5-NVFP4 TP=4 SGLang production-path execution in temporary container sglang-glm5. Used a model-local HF cache after snapshot download, quantization=modelopt_fp4, kv_cache_dtype=fp8_e4m3, attention_backend=dsa with TRTLLM DSA prefill/decode as selected by SGLang, moe_runner_backend=flashinfer_trtllm, disabled FlashInfer autotune, disabled CUDA graph prefill/decode, and marked five request windows covering long prefill, short decode, mid concurrency, high concurrency, and an extra-long DSA/indexer prompt. The legacy fast_hadamard task maps to the captured DSA backend forward APIs because the current cookbook path did not emit a standalone hadamard_transform Python API; the old fast_hadamard GPU work is fused inside the DSA path."
 }

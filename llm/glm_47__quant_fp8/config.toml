@@ -7,9 +7,11 @@ kernel_family = "quant_fp8"
 model = "nvidia/GLM-4.7-NVFP4"
 model_slug = "glm_47"
 entry_points = [
-  "<confirm via capture; profiler family=quant_fp8>",
+  "flashinfer.nvfp4_block_scale_interleave",
 ]
 evidence_json = "docs/profile_evidence.json"
+shape_source_json = "docs/captured_kernel_api_shapes.json"
+workloads_json = "bench/workloads.json"
 
 [selection]
 method = "serving-profile GPU-time headroom (extract_kernel_shapes >2%, family-grouped; provenance only)"

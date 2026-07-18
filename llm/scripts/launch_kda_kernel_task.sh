@@ -236,11 +236,11 @@ cd "$WORKTREE_ROOT/$TASK_DIR"
 if [[ -n "${KDA_GPU_ID:-}" ]]; then
   GPU_SELECTION_POLICY="- This task is explicitly pinned to one ${TARGET_GPU_LABEL} GPU: id ${KDA_GPU_ID}. Export REMOTE_GPU_ID=${KDA_GPU_ID}, optionally set CUDA_VISIBLE_DEVICES=${KDA_GPU_ID}, and use exactly that one GPU for local baseline, candidate, correctness, benchmark, profiler, and NCU commands in this run.
 - Before measuring, verify GPU ${KDA_GPU_ID} is completely idle: no active compute processes, utilization around 0-1%, and memory at the driver baseline / near empty. If it is busy, keep polling that exact GPU until it becomes completely idle. Do not ask the user, do not measure on another GPU, and do not run on a busy card unless the user explicitly changes KDA_GPU_ID.
-- Never wait for all GPUs on the machine to become idle. This task needs one idle target GPU, not an 8-GPU serving slot."
+- Select only that pinned target GPU for the task-local loop; full-machine availability is outside the acceptance path."
 else
   GPU_SELECTION_POLICY="- Before any GPU work, autonomously inspect the matching target host and select one completely idle ${TARGET_GPU_LABEL} GPU: no active compute processes, utilization around 0-1%, and memory at the driver baseline / near empty. Export that id as REMOTE_GPU_ID, optionally set CUDA_VISIBLE_DEVICES to that id, and use it consistently for local baseline, candidate, correctness, benchmark, profiler, and NCU commands in the current run.
 - If no completely idle ${TARGET_GPU_LABEL} GPU is available, keep polling with short reconnecting nvidia-smi checks until one appears. Do not ask the user, do not switch hosts, and do not run measurements on a busy GPU.
-- Never wait for all GPUs on the machine to become idle. This task needs one idle target GPU, not an 8-GPU serving slot.
+- Select one idle target GPU for the task-local loop; full-machine availability is outside the acceptance path.
 - Re-check the selected GPU immediately before and after every correctness, benchmark, profiler, or NCU run. Discard performance data from any run whose before/after checks are not completely idle except for the current task process itself."
 fi
 
@@ -276,14 +276,11 @@ EOF
   any vendored or repository-local Humanize implementation from KDA-Pilot.
 - Read the local \`prompt.md\` and \`config.toml\` for the exact kernel
   interface, captured shapes, build/benchmark policy, and correctness contract.
-- STANDALONE LLM KERNEL BOUNDARY: this is a task-local kernel optimization, not
-  a live SGLang serving replay. The serving/cookbook command, dataset label,
-  concurrency, and %-of-GPU numbers in \`prompt.md\` or
-  \`docs/profile_evidence.*\` are target-selection provenance and headroom
-  context only. Do not start \`sglang serve\`, \`python -m
-  sglang.launch_server\`, run \`run_capture\`, launch a multi-GPU TP/EP
-  deployment, or require an end-to-end A/B as part of RLCR unless the user
-  explicitly asks for a separate serving validation pass.
+- STANDALONE LLM KERNEL BOUNDARY: this is a task-local kernel optimization.
+  The model, dataset label, concurrency, and %-of-GPU numbers in \`prompt.md\`
+  or \`docs/profile_evidence.*\` are target-selection provenance and headroom
+  context only. Keep RLCR acceptance inside the local captured-workload
+  harness unless the user explicitly asks for a separate fleet validation pass.
 - Optimize and validate from the captured kernel interface and shape set:
   copied local baseline vs task-local candidate, one selected idle target GPU,
   standard correctness, and the standalone benchmark harness. The final speedup
@@ -383,8 +380,8 @@ EOF
   and copy the relevant kernel source for this exact Python interface from that
   exact commit. Record the SGLang repository URL, branch, resolved commit SHA,
   resolution time, and copied files in \`docs/baseline_source.md\`.
-- Do not import, patch, monkey-patch, or install into a live SGLang server or
-  checkout during correctness or benchmark runtime. Copy the SGLang
+- Do not import, patch, monkey-patch, or install into shared framework runtime
+  state during correctness or benchmark execution. Copy the SGLang
   implementation into \`baseline/\` and expose it through the same low-overhead
   local entry ABI used by the candidate.
 - Always ask before destructive operations, global machine/container changes,
@@ -401,8 +398,7 @@ into the plan unless the source prompt explicitly says otherwise:
   one idle target GPU autonomously.
 - Use the matching target host (${REMOTE_HOST_HINT}) unless the source prompt
   provides a stricter host choice, but use it only as a single-GPU standalone
-  runner. Do not start a live SGLang server or require TP/EP/multi-GPU setup for
-  this task.
+  runner. Keep distributed runtime setup outside this task's acceptance path.
 ${GPU_SELECTION_POLICY}
 - Treat minimal, reversible, task-owned setup work as approved: creating remote
   workspaces, checking out commits, building inside the task workspace,
@@ -442,10 +438,10 @@ ${GPU_SELECTION_POLICY}
 - Include a single-GPU measurement phase that records selected host/GPU
   id/model, before/after GPU idleness, exact commands, benchmark artifacts,
   optional NCU artifacts, and any warp-specialization timelines.
-- Do not plan or require a live \`sglang serve\`, cookbook command replay,
-  \`run_capture\`, or multi-GPU e2e validation. If the source prompt mentions an
-  e2e scenario, treat it as provenance explaining why the kernel was selected;
-  validation for this RLCR task is the task-local standalone benchmark.
+- Keep runtime-readiness, command replay, and fleet-level e2e validation outside
+  the normal RLCR plan. If the source prompt mentions an e2e scenario, treat it
+  as provenance explaining why the kernel was selected; validation for this RLCR
+  task is the task-local standalone benchmark.
 - Use NCU/profile and warp-specialization-timeline evidence for non-obvious
   bottlenecks.
 - Update \`docs/results.md\` (including the per-shape dispatch table and
