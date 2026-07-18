@@ -1,9 +1,11 @@
 {
   "model": "Qwen/Qwen3.6-35B-A3B-FP8",
   "model_slug": "qwen36",
-  "cookbook_cmd": "sglang serve --model-path Qwen/Qwen3.6-35B-A3B-FP8 --reasoning-parser qwen3 --tool-call-parser qwen3_coder --speculative-algorithm EAGLE --speculative-num-steps 3 --speculative-eagle-topk 1",
+  "cookbook_cmd": "omitted from standalone kernel task; use bench/workloads.json and docs/captured_kernel_api_shapes.json for RLCR",
   "tp": "1",
-  "python_interface": "sglang.deep_gemm_fp8_fp8_bf16_nt",
+  "python_interface": [
+    "sglang.srt.layers.quantization.fp8_kernel.deep_gemm_fp8_fp8_bf16_nt"
+  ],
   "kernel_family": "linear_gemm",
   "profiler_op_provenance": [
     "aten::_local_scalar_dense",
@@ -29,19 +31,14 @@
   },
   "max_pct_of_gpu": 26.34,
   "best_scenario": "sharegpt_low",
-  "input_shapes": [
-    "[[1, 1], [1, 1], []]",
-    "[[1, 1], [], [], [], [], []]",
-    "[[1, 4], []]",
-    "[[11886, 2048], [11886, 4], [12288, 2048], [12288, 4], [11886, 12288]]",
-    "[[15434, 2048], [15434, 4], [12288, 2048], [12288, 4], [15434, 12288]]",
-    "[[17, 2048], [17, 4], [9216, 2048], [9216, 4], [17, 9216]]",
-    "[[192], [], [], []]",
-    "[[32, 16], [32, 16], []]",
-    "[[384], [384], []]",
-    "[[44, 248320], [], []]",
-    "[[49, 2], []]",
-    "[[49], [49], []]"
+  "input_shapes": [],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "input_shapes_replaced_by": "docs/captured_kernel_api_shapes.json",
+  "standalone_workloads_json": "bench/workloads.json",
+  "shape_source": "fresh_sglang_kernel_api_capture",
+  "captured_kernel_api_workload_count": 67,
+  "captured_kernel_api_functions": [
+    "sglang.srt.layers.quantization.fp8_kernel.deep_gemm_fp8_fp8_bf16_nt"
   ],
-  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+  "shape_capture_note": "Captured 2026-07-08 on Verda B300 light-face-hides-fin-03-1 from a real Qwen/Qwen3.6-35B-A3B-FP8 TP=1 SGLang production-path execution in temporary container sglang-qwen36 on a single B300 GPU. Used a model-local HF cache after snapshot download, speculative_algorithm=EAGLE with 3 steps/topk 1 per the cookbook command, quantization=fp8 as detected by SGLang, attention_backend=trtllm_mha, moe_runner_backend=flashinfer_trtllm, disabled FlashInfer autotune, disabled CUDA graph prefill/decode, cleared startup health records before capture, and marked four request windows covering long prefill, short decode, mid concurrency, and high concurrency. The legacy fp8_bmm task maps to captured TRTLLM MHA attention APIs because this Qwen3.6 route did not emit a standalone bmm Python API; the old bmm GPU work is fused inside the attention backend."
 }
