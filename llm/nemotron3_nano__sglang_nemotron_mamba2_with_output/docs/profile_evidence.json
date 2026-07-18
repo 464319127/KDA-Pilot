@@ -1,9 +1,19 @@
 {
   "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-FP8",
   "model_slug": "nemotron3_nano",
-  "cookbook_cmd": "python3 -m sglang.launch_server --model-path nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-FP8 --trust-remote-code --max-running-requests 1024",
+  "cookbook_cmd": "omitted from standalone kernel task; use bench/workloads.json and docs/captured_kernel_api_shapes.json for RLCR",
   "tp": "1",
-  "python_interface": "sglang.nemotron_mamba2_with_output",
+  "python_interface": [
+    "sglang.srt.layers.attention.mamba.causal_conv1d_triton.causal_conv1d_fn",
+    "sglang.srt.layers.attention.mamba.causal_conv1d_triton.causal_conv1d_update",
+    "sglang.srt.layers.attention.mamba.ops.ssd_chunk_scan._chunk_scan_fwd",
+    "sglang.srt.layers.attention.mamba.ops.ssd_chunk_state._chunk_state_fwd",
+    "sglang.srt.layers.attention.mamba.ops.ssd_chunk_state.chunk_state_varlen",
+    "sglang.srt.layers.attention.mamba.ops.ssd_combined._mamba_chunk_scan_combined_fwd",
+    "sglang.srt.layers.attention.mamba.ops.ssd_combined.mamba_chunk_scan_combined",
+    "sglang.srt.layers.attention.mamba.ops.ssd_state_passing._state_passing_fwd",
+    "sglang.srt.models.nemotron_h.NemotronHMambaDecoderLayer._forward_mamba"
+  ],
   "profiler_op_provenance": [
     "aten::_local_scalar_dense",
     "aten::any",
@@ -36,19 +46,22 @@
   },
   "max_pct_of_gpu": 55.76,
   "best_scenario": "sharegpt_mid",
-  "input_shapes": [
-    "[[1024, 2688], [1024, 2688], []]",
-    "[[103, 2688], [2688, 10304]]",
-    "[[10304, 2688]]",
-    "[[112, 2688], [112, 2688], []]",
-    "[[13312, 2688], [13312, 2688], []]",
-    "[[1553, 2688], [2688, 10304]]",
-    "[[1553, 2688], [], [], [], [], []]",
-    "[[1792, 2688], [1792, 2688], []]",
-    "[[1], [1], []]",
-    "[[1]]",
-    "[[23, 1246, 6144, 3], [], []]",
-    "[[23, 1246, 64, 64, 128], [], [], []]"
+  "input_shapes": [],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "input_shapes_replaced_by": "docs/captured_kernel_api_shapes.json",
+  "standalone_workloads_json": "bench/workloads.json",
+  "shape_source": "fresh_sglang_kernel_api_capture",
+  "captured_kernel_api_workload_count": 341,
+  "captured_kernel_api_functions": [
+    "sglang.srt.layers.attention.mamba.causal_conv1d_triton.causal_conv1d_fn",
+    "sglang.srt.layers.attention.mamba.causal_conv1d_triton.causal_conv1d_update",
+    "sglang.srt.layers.attention.mamba.ops.ssd_chunk_scan._chunk_scan_fwd",
+    "sglang.srt.layers.attention.mamba.ops.ssd_chunk_state._chunk_state_fwd",
+    "sglang.srt.layers.attention.mamba.ops.ssd_chunk_state.chunk_state_varlen",
+    "sglang.srt.layers.attention.mamba.ops.ssd_combined._mamba_chunk_scan_combined_fwd",
+    "sglang.srt.layers.attention.mamba.ops.ssd_combined.mamba_chunk_scan_combined",
+    "sglang.srt.layers.attention.mamba.ops.ssd_state_passing._state_passing_fwd",
+    "sglang.srt.models.nemotron_h.NemotronHMambaDecoderLayer._forward_mamba"
   ],
-  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+  "shape_capture_note": "Captured 2026-07-08 on Verda B300 light-face-hides-fin-03-1 from a real nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-FP8 TP=1 SGLang production-path execution in the prepared sglang_bbuf_b300 container; CUDA graph disabled only to keep the temporary shape-capture hook out of graph capture; capture used temporary import/decomposition compatibility shims for the local Torch/Transformers environment, with request windows covering long/short prompt and mid/high concurrency serving paths."
 }
