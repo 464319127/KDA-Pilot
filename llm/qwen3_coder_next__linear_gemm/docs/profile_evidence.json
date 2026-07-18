@@ -1,9 +1,11 @@
 {
   "model": "Qwen/Qwen3-Coder-Next",
   "model_slug": "qwen3_coder_next",
-  "cookbook_cmd": "sglang serve --model-path Qwen/Qwen3-Coder-Next --tp 2 --tool-call-parser qwen3_coder",
+  "cookbook_cmd": "omitted from standalone kernel task; use bench/workloads.json and docs/captured_kernel_api_shapes.json for RLCR",
   "tp": "2",
-  "python_interface": "<confirm via capture; profiler family=linear_gemm>",
+  "python_interface": [
+    "torch.nn.functional.linear"
+  ],
   "kernel_family": "linear_gemm",
   "profiler_op_provenance": [
     "aten::_index_put_impl_",
@@ -37,19 +39,14 @@
   },
   "max_pct_of_gpu": 40.52,
   "best_scenario": "random_low",
-  "input_shapes": [
-    "[[1, 118, 16, 128], []]",
-    "[[1, 151936], [], [], []]",
-    "[[1, 151936], [], []]",
-    "[[118, 2048], [2048, 512]]",
-    "[[118, 2048], [], [], [], [], []]",
-    "[[16384, 2048], [2048, 6144]]",
-    "[[16384, 4096], [], [], []]",
-    "[[17, 2048], [], [], [], [], []]",
-    "[[17, 2048], []]",
-    "[[17184, 128], []]",
-    "[[1], [1], []]",
-    "[[1], []]"
+  "input_shapes": [],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "input_shapes_replaced_by": "docs/captured_kernel_api_shapes.json",
+  "standalone_workloads_json": "bench/workloads.json",
+  "shape_source": "fresh_sglang_kernel_api_capture",
+  "captured_kernel_api_workload_count": 18,
+  "captured_kernel_api_functions": [
+    "torch.nn.functional.linear"
   ],
-  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+  "shape_capture_note": "Captured 2026-07-08 on Verda B300 light-face-hides-fin-03-1 from a real Qwen/Qwen3-Coder-Next TP=2 SGLang production-path execution in temporary container sglang-qwen3-coder-next on two B300 GPUs. Used a model-local HF cache after snapshot download, tool_call_parser=qwen3_coder, disabled FlashInfer autotune, disabled CUDA graph prefill/decode, cleared startup health records before capture, and marked four request windows covering long prefill, short decode, mid concurrency, and high concurrency. The legacy qwen3_coder_next__fp8_bmm task has no standalone torch.bmm/FP8 BMM Python API in this capture; it is routed to the real Triton attention backend APIs emitted by the production path rather than synthetic BMM shapes."
 }

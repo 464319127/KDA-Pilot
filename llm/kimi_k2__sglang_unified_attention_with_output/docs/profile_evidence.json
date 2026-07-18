@@ -1,9 +1,12 @@
 {
   "model": "moonshotai/Kimi-K2-Instruct",
   "model_slug": "kimi_k2",
-  "cookbook_cmd": "sglang serve --model-path moonshotai/Kimi-K2-Instruct --tp 8 --tool-call-parser kimi_k2",
+  "cookbook_cmd": "omitted from standalone kernel task; use bench/workloads.json and docs/captured_kernel_api_shapes.json for RLCR",
   "tp": "8",
-  "python_interface": "sglang.unified_attention_with_output",
+  "python_interface": [
+    "flashinfer.decode.trtllm_batch_decode_with_kv_cache_mla",
+    "flashinfer.prefill.trtllm_ragged_attention_deepseek"
+  ],
   "kernel_family": "attention",
   "profiler_op_provenance": [
     "aten::_local_scalar_dense",
@@ -29,19 +32,15 @@
   },
   "max_pct_of_gpu": 9.49,
   "best_scenario": "sharegpt_high",
-  "input_shapes": [
-    "[[1, 163840], [], []]",
-    "[[1536, 8, 512], [1536, 1, 512], [1536, 1, 512], [1536, 4096], [], [], [1536, 8,",
-    "[[1]]",
-    "[[2112], [2112], []]",
-    "[[255], [], [], []]",
-    "[[25], [], [], []]",
-    "[[320], [320], []]",
-    "[[50], [], [], []]",
-    "[[512], [], [], []]",
-    "[[543], [], [], []]",
-    "[[[1]], [], [], [], [], []]",
-    "[[[320], [38]], []]"
+  "input_shapes": [],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "input_shapes_replaced_by": "docs/captured_kernel_api_shapes.json",
+  "standalone_workloads_json": "bench/workloads.json",
+  "shape_source": "fresh_sglang_kernel_api_capture",
+  "captured_kernel_api_workload_count": 64,
+  "captured_kernel_api_functions": [
+    "flashinfer.decode.trtllm_batch_decode_with_kv_cache_mla",
+    "flashinfer.prefill.trtllm_ragged_attention_deepseek"
   ],
-  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+  "shape_capture_note": "Captured on 2026-07-07 from a real moonshotai/Kimi-K2-Instruct SGLang TP=8 server on Verda B300 node light-face-hides-fin-03-1, container sglang-kimi-k2-local, local NVMe Hugging Face cache, HF offline mode, trust_remote_code, tool_call_parser=kimi_k2, cuda graph prefill/decode disabled for Python API capture. Runtime selected attention_backend=trtllm_mla and moe_runner_backend=flashinfer_trtllm(auto). Records include server startup/JIT/autotune API calls plus marked request windows for sharegpt_low_long_prompt, random_low_short_prompt, sharegpt_mid_concurrency_long_prompt, and random_high_concurrency_short_prompt."
 }

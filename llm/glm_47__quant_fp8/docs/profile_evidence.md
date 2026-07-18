@@ -1,11 +1,11 @@
-# Profile evidence — glm_47__quant_fp8
+# Profile evidence - glm_47__quant_fp8
 
 **Standalone kernel target: 14.2% of total serving GPU time** (max across scenarios) on
-`nvidia/GLM-4.7-NVFP4`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Profiler kernel-family; confirm exact Python interface via SGLANG_KERNEL_API_LOGLEVEL capture.
+`nvidia/GLM-4.7-NVFP4`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Kernel API shapes below are frozen from a one-time real `nvidia/GLM-4.7-NVFP4` production-path capture and replace the old noisy profiler shape strings.
 
 - Model: `nvidia/GLM-4.7-NVFP4` (slug `glm_47`, tp=8)
-- Python interface: `<confirm via capture; profiler family=quant_fp8>`
-- Kernel family: `quant_fp8`  ·  Category: `quant_gemm`
+- Python interface(s): `flashinfer.nvfp4_block_scale_interleave`
+- Kernel family: `quant_fp8`  .  Category: `quant_gemm`
 - GPU kernel(s): `kernel_cutlass_kernel_flashinferquantizationkernelsnvfp4_quantizeNVFP4QuantizeSwizzledKern`
 
 ## % of GPU time by scenario
@@ -19,21 +19,24 @@
 | sharegpt | conc 32 | 5.54% |
 | sharegpt | conc 100 | 8.08% |
 
-**Peak: 14.2% in `random_low` (random, concurrency 1).**
+**Peak: 14.2% in `random_low`.**
 
-## Input shapes (profiler)
-- `[[16, 1536], [16, 1, 128], [16, 1, 128], [16, 1536], [], [], [], [], [], [], [],`
-- `[[16, 1536], [16, 1536], []]`
-- `[[16, 1536], [], [], []]`
-- `[[39, 1536], [39, 1536], []]`
-- `[[48, 1536], [48, 1, 128], [48, 1, 128], [48, 1536], [], [], [], [], [], [], [],`
-- `[[5299776, 1, 128], []]`
-- `[[82809, 1, 64, 128], [], [], []]`
+## Fresh captured kernel API shapes
 
-## Original serving capture command (provenance only)
-```bash
-python -m sglang.launch_server --model nvidia/GLM-4.7-NVFP4 --tp 8 --quantization modelopt_fp4 --reasoning-parser glm45 --trust-remote-code
-```
-Do not rerun this serving command, `run_capture`, or a multi-GPU e2e A/B as part
-of the normal kernel task. Validate with the task-local standalone benchmark on
-one idle target GPU using the captured shape set.
+- Shape source: `docs/captured_kernel_api_shapes.json`
+- Standalone workloads: `bench/workloads.json`
+- Workload count: 2
+- Capture note: Captured 2026-07-07 on Verda B300 light-face-hides-fin-03-1 from a real nvidia/GLM-4.7-NVFP4 TP=8 SGLang production-path execution in temporary container sglang-glm47. Used a model-local HF cache in offline mode after snapshot download, trust_remote_code, quantization=modelopt_fp4, reasoning_parser=glm45, attention_backend=trtllm_mha/FlashInfer default for this NVFP4 checkpoint, moe_runner_backend=flashinfer_trtllm as selected by SGLang for ModelOpt NVFP4 MoE, disabled FlashInfer autotune, disabled CUDA graph prefill/decode, and marked four request windows covering long prefill, short decode, mid concurrency, and high concurrency. The legacy fp8_bmm task maps to the captured FlashInfer NVFP4 mm_fp4 Python API because the old profiler class name did not correspond to a bmm_fp8 Python call in this production path.
+
+Functions covered:
+- `flashinfer.nvfp4_block_scale_interleave`
+
+The old profiler `input_shapes` strings were noisy and are no longer an acceptance source.
+Use the task-local workload file above for standalone single-GPU correctness and benchmark work.
+
+## Validation Policy
+
+Normal RLCR kernel work is a standalone single-GPU optimization task. Use the
+captured workload set above for correctness and benchmark acceptance on one idle
+target GPU, and do not add external runtime-readiness or fleet-level A/B gates to
+the task loop.

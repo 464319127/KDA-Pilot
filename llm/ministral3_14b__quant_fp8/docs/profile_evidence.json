@@ -1,9 +1,11 @@
 {
   "model": "mistralai/Ministral-3-14B-Instruct-2512",
   "model_slug": "ministral3_14b",
-  "cookbook_cmd": "sglang serve --model-path mistralai/Ministral-3-14B-Instruct-2512 --tp 1 --trust-remote-code",
+  "cookbook_cmd": "omitted from standalone kernel task; use bench/workloads.json and docs/captured_kernel_api_shapes.json for RLCR",
   "tp": "1",
-  "python_interface": "<confirm via capture; profiler family=quant_fp8>",
+  "python_interface": [
+    "sglang.srt.layers.quantization.fp8_kernel.static_quant_fp8"
+  ],
   "kernel_family": "quant_fp8",
   "profiler_op_provenance": [
     "aten::_local_scalar_dense",
@@ -27,15 +29,14 @@
   },
   "max_pct_of_gpu": 6.68,
   "best_scenario": "random_low",
-  "input_shapes": [
-    "[[1228, 5120], []]",
-    "[[1], [1], []]",
-    "[[1], [], []]",
-    "[[1], []]",
-    "[[32], [32], []]",
-    "[[42], [], []]",
-    "[[], [], [], [], [], []]",
-    "[[]]"
+  "input_shapes": [],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "input_shapes_replaced_by": "docs/captured_kernel_api_shapes.json",
+  "standalone_workloads_json": "bench/workloads.json",
+  "shape_source": "fresh_sglang_kernel_api_capture",
+  "captured_kernel_api_workload_count": 6,
+  "captured_kernel_api_functions": [
+    "sglang.srt.layers.quantization.fp8_kernel.static_quant_fp8"
   ],
-  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+  "shape_capture_note": "Captured 2026-07-08 on Verda B300 light-face-hides-fin-03-1 from a real mistralai/Ministral-3-14B-Instruct-2512 TP=1 SGLang production-path execution in temporary container sglang-ministral3-14b on one B300 GPU. Used a model-local HF cache after snapshot download, cookbook-aligned --trust-remote-code, disabled CUDA graph prefill/decode, enabled SGLANG_DIFFUSION_ENABLE_W8A8_FP8_GEMM=1 to expose the FP8 W8A8 GEMM path selected by the original evidence, delayed torch-op wrapping until after imports, preserved server startup/warmup records for static_quant_fp8 and sgl_kernel fp8_scaled_mm shapes, and marked four request windows covering long prefill, short decode, mid concurrency, and high concurrency."
 }
