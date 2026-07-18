@@ -6,9 +6,12 @@ family = "gemm"
 model = "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-FP8"
 model_slug = "nemotron3_nano"
 entry_points = [
-  "sglang.flashinfer_bmm_fp8",
+  "flashinfer.gemm.bmm_fp8",
+  "sglang.srt.layers.quantization.fp8_utils.flashinfer_bmm_fp8",
 ]
 evidence_json = "docs/profile_evidence.json"
+shape_source_json = "docs/captured_kernel_api_shapes.json"
+workloads_json = "bench/workloads.json"
 
 [selection]
 method = "cookbook-aligned torch-profiler e2e share (extract_kernel_shapes >2%)"

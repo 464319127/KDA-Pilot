@@ -156,6 +156,14 @@ TASK_SUFFIX_RULES = {
         "static_quant_fp8",
         "sglang_per_token_quant_fp8",
         "sgl_per_token_quant_fp8",
+        "sglang_per_token_group_quant_fp8",
+        "sglang_per_token_group_quant_fp8_row_padded",
+        "sgl_per_token_group_quant_fp8",
+        "torch.ops.sgl_kernel.sglang_per_token_quant_fp8.default",
+        "torch.ops.sgl_kernel.sgl_per_token_quant_fp8.default",
+        "torch.ops.sgl_kernel.sglang_per_token_group_quant_fp8.default",
+        "torch.ops.sgl_kernel.sgl_per_token_group_quant_fp8.default",
+        "torch.ops.sgl_kernel.sglang_per_token_group_quant_fp8_row_padded.default",
         "per_token_group_quant_fp8",
         "scaled_fp4_quant",
         "scaled_fp4_experts_quant",
@@ -171,6 +179,25 @@ TASK_SUFFIX_RULES = {
         "sgl_kernel.moe_align_block_size",
         "jit_kernel.moe_align.moe_align_block_size",
         "triton_utils.moe_align_block_size.moe_align_block_size",
+    ),
+    "__sgl_kernel_fp8_scaled_mm": (
+        "sgl_kernel.fp8_scaled_mm",
+        "sgl_kernel.fp8_blockwise_scaled_mm",
+        "torch.ops.sgl_kernel.fp8_scaled_mm",
+        "torch.ops.sgl_kernel.fp8_scaled_mm.default",
+        "torch.ops.sgl_kernel.fp8_blockwise_scaled_mm",
+        "torch.ops.sgl_kernel.fp8_blockwise_scaled_mm.default",
+        "quantization.fp8.Fp8LinearMethod.apply",
+        "quantization.fp8_utils.apply_fp8_linear",
+        "quantization.fp8_utils.flashinfer_gemm_w8a8_block_fp8_linear_with_fallback",
+        "quantization.fp8_utils.flashinfer_deepgemm_w8a8_block_fp8_linear_with_fallback",
+        "quantization.fp8_utils.cutlass_w8a8_block_fp8_linear_with_fallback",
+        "quantization.fp8_utils.deepgemm_w8a8_block_fp8_linear_with_fallback",
+        "quantization.fp8_utils.triton_w8a8_block_fp8_linear",
+        "quantization.fp8_kernel.w8a8_block_fp8_matmul_deepgemm",
+        "quantization.fp8_kernel.w8a8_block_fp8_matmul_triton",
+        "multimodal_gen.runtime.layers.quantization.weight_only_fp8._apply_srt_w8a8_fp8_linear",
+        "multimodal_gen.runtime.layers.quantization.weight_only_fp8._apply_weight_only_fp8_linear",
     ),
     "__void_at_native_sbtopk_gather_top": (
         ".select_experts",
@@ -210,6 +237,64 @@ TASK_EXACT_RULES = {
     "qwen35__fp8_bmm": (
         "TritonAttnBackend.forward_decode",
         "TritonAttnBackend.forward_extend",
+    ),
+    "qwen3__fp8_bmm": (
+        "flashinfer.decode.trtllm_batch_decode_with_kv_cache",
+        "flashinfer.prefill.trtllm_batch_context_with_kv_cache",
+    ),
+    "gpt_oss_120b__fp8_bmm": (
+        "flashinfer.decode.trtllm_batch_decode_with_kv_cache",
+        "flashinfer.prefill.trtllm_batch_context_with_kv_cache",
+    ),
+    "intern_s2_preview__fp8_bmm": (
+        "TritonAttnBackend.forward_decode",
+        "TritonAttnBackend.forward_extend",
+    ),
+    "mimo_v25__fp8_bmm": (
+        "FlashAttentionBackend.forward_decode",
+        "FlashAttentionBackend.forward_extend",
+        "flash_attn_with_kvcache",
+    ),
+    "nemotron3_nano__sglang_flashinfer_bmm_fp8": (
+        "flashinfer_bmm_fp8",
+        "flashinfer.gemm.bmm_fp8",
+    ),
+    "nemotron3_nano__sglang_nemotron_mamba2_with_output": (
+        "NemotronHMambaDecoderLayer._forward_mamba",
+        "nemotron_mamba2_with_output",
+        "breakable_nemotron_mamba2_with_output",
+        "mamba_chunk_scan_combined",
+        "_mamba_chunk_scan_combined_fwd",
+        "_chunk_scan_fwd",
+        "_chunk_state_fwd",
+        "chunk_state_varlen",
+        "_state_passing_fwd",
+        "causal_conv1d_fn",
+        "causal_conv1d_update",
+    ),
+    "nemotron3_nano__sglang_unified_attention_with_output": (
+        "NemotronHAttention.forward",
+        "unified_attention_with_output",
+    ),
+    "nemotron3_nano__static_quant_fp8": (
+        "static_quant_fp8",
+    ),
+    "step35_flash__sgl_kernel_gemma_rmsnorm": (
+        "gemma_rmsnorm",
+    ),
+    "step35_flash__void_moe_top_k_256_float_const_b": (
+        ".select_experts",
+        ".fused_topk",
+        ".fused_topk_torch_native",
+        ".fused_topk_softmax_torch_raw_logits",
+        ".grouped_topk",
+        ".biased_grouped_topk",
+    ),
+}
+
+TASK_DUPLICATE_RULES = {
+    "qwen3__void_cublas_lt_split_kreduce_ker": (
+        "torch.nn.functional.linear",
     ),
 }
 
@@ -328,11 +413,31 @@ def build_task_rules(task_prefix: str, repo_root: Path) -> dict[str, tuple[str, 
     }
 
 
+def build_duplicate_task_rules(
+    task_prefix: str, repo_root: Path
+) -> dict[str, tuple[str, ...]]:
+    return {
+        task: needles
+        for task, needles in TASK_DUPLICATE_RULES.items()
+        if task.startswith(f"{task_prefix}__") and (repo_root / "llm" / task).exists()
+    }
+
+
 def task_for_function(function: str, task_rules: dict[str, tuple[str, ...]]) -> str | None:
     for task, needles in task_rules.items():
         if any(needle in function for needle in needles):
             return task
     return None
+
+
+def duplicate_tasks_for_function(
+    function: str, task_rules: dict[str, tuple[str, ...]]
+) -> list[str]:
+    return [
+        task
+        for task, needles in task_rules.items()
+        if any(needle in function for needle in needles)
+    ]
 
 
 def compact_workload(row: dict[str, Any], scenario: str | None, ordinal: int) -> dict[str, Any]:
@@ -374,10 +479,13 @@ def main() -> None:
     rows = load_jsonl(args.records)
     markers = load_markers(args.markers)
     task_rules = build_task_rules(args.task_prefix, args.repo_root)
-    if not task_rules:
+    duplicate_task_rules = build_duplicate_task_rules(args.task_prefix, args.repo_root)
+    if not task_rules and not duplicate_task_rules:
         raise SystemExit(f"no task dirs found for task prefix: {args.task_prefix}")
+    task_names = list(task_rules)
+    task_names.extend(task for task in duplicate_task_rules if task not in task_rules)
     by_task: dict[str, OrderedDict[str, dict[str, Any]]] = {
-        task: OrderedDict() for task in task_rules
+        task: OrderedDict() for task in task_names
     }
     unmatched = 0
 
@@ -387,13 +495,22 @@ def main() -> None:
             unmatched += 1
             continue
         task = task_for_function(function, task_rules)
-        if task is None:
+        tasks = []
+        if task is not None:
+            tasks.append(task)
+        for duplicate_task in duplicate_tasks_for_function(function, duplicate_task_rules):
+            if duplicate_task not in tasks:
+                tasks.append(duplicate_task)
+        if not tasks:
             unmatched += 1
             continue
         scenario = scenario_for_time(markers, row.get("time"))
         signature = record_signature(row)
-        if signature not in by_task[task]:
-            by_task[task][signature] = compact_workload(row, scenario, len(by_task[task]) + 1)
+        for target_task in tasks:
+            if signature not in by_task[target_task]:
+                by_task[target_task][signature] = compact_workload(
+                    row, scenario, len(by_task[target_task]) + 1
+                )
 
     summary: dict[str, Any] = {
         "model": args.model,

@@ -1,9 +1,12 @@
 {
   "model": "mistralai/Mistral-Small-4-119B-2603",
   "model_slug": "mistral_small4",
-  "cookbook_cmd": "sglang serve --model-path mistralai/Mistral-Small-4-119B-2603 --tp 1 --reasoning-parser mistral --tool-call-parser mistral",
+  "cookbook_cmd": "omitted from standalone kernel task; use bench/workloads.json and docs/captured_kernel_api_shapes.json for RLCR",
   "tp": "1",
-  "python_interface": "<confirm via capture; profiler family=attention>",
+  "python_interface": [
+    "flashinfer.decode.trtllm_batch_decode_with_kv_cache_mla",
+    "flashinfer.prefill.trtllm_ragged_attention_deepseek"
+  ],
   "kernel_family": "attention",
   "profiler_op_provenance": [
     "aten::add",
@@ -31,19 +34,15 @@
   },
   "max_pct_of_gpu": 8.32,
   "best_scenario": "sharegpt_mid",
-  "input_shapes": [
-    "[[1, 131072], [], [], []]",
-    "[[100], [100], []]",
-    "[[100]]",
-    "[[104, 131072], [], [], []]",
-    "[[1738, 32, 128], [1738, 32], [1738, 32, 128], [1738, 32], [1738, 32, 128], [173",
-    "[[1738, 4096], []]",
-    "[[1], [1], []]",
-    "[[1], [], [], []]",
-    "[[1], [], []]",
-    "[[1]]",
-    "[[32], [32], []]",
-    "[[32], [], [], []]"
+  "input_shapes": [],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "input_shapes_replaced_by": "docs/captured_kernel_api_shapes.json",
+  "standalone_workloads_json": "bench/workloads.json",
+  "shape_source": "fresh_sglang_kernel_api_capture",
+  "captured_kernel_api_workload_count": 36,
+  "captured_kernel_api_functions": [
+    "flashinfer.decode.trtllm_batch_decode_with_kv_cache_mla",
+    "flashinfer.prefill.trtllm_ragged_attention_deepseek"
   ],
-  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+  "shape_capture_note": "Captured 2026-07-08 on Verda B300 light-face-hides-fin-03-1 from a real mistralai/Mistral-Small-4-119B-2603 TP=1 SGLang production-path execution in temporary container sglang-mistral-small4 with TRTLLM/MLA attention and FP8 GEMM; CUDA graph disabled only to keep the temporary shape-capture hook out of graph capture; request windows include long/short prompt and mid/high concurrency serving paths."
 }

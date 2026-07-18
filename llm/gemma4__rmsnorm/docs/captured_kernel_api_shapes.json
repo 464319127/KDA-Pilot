@@ -1,0 +1,452 @@
+{
+  "model": "google/gemma-4-26B-A4B-it",
+  "task": "gemma4__rmsnorm",
+  "source": "fresh_sglang_kernel_api_capture",
+  "capture_note": "Captured 2026-07-08 on Verda B300 light-face-hides-fin-03-1 from a real google/gemma-4-26B-A4B-it TP=1 SGLang production-path execution in temporary container sglang-gemma4 on one B300 GPU. Used a model-local HF cache after snapshot download, cookbook-aligned reasoning_parser=gemma4 and tool_call_parser=gemma4, disabled CUDA graph prefill/decode, delayed torch-op wrapping until after imports, preserved server startup/warmup records, and marked four request windows covering long prefill, short decode, mid concurrency, and high concurrency.",
+  "markers": [
+    {
+      "end_time": 1783487462.929689,
+      "payload": {
+        "source": "server startup/warmup before request markers"
+      },
+      "scenario": "server_startup_warmup",
+      "start_time": 1783487415.4439778
+    },
+    {
+      "end_time": 1783487560.1285737,
+      "payload": {
+        "max_new_tokens": 8,
+        "text_chars": 19200
+      },
+      "scenario": "sharegpt_low_long_prompt",
+      "start_time": 1783487559.3528845
+    },
+    {
+      "end_time": 1783487561.0755365,
+      "payload": {
+        "max_new_tokens": 16,
+        "text_chars": 560
+      },
+      "scenario": "random_low_short_prompt",
+      "start_time": 1783487560.1287432
+    },
+    {
+      "end_time": 1783487563.666005,
+      "payload": {
+        "concurrency": 32,
+        "max_new_tokens": 4,
+        "text_chars": 19200
+      },
+      "scenario": "sharegpt_mid_concurrency_long_prompt",
+      "start_time": 1783487561.0759058
+    },
+    {
+      "end_time": 1783487565.4396596,
+      "payload": {
+        "concurrency": 100,
+        "max_new_tokens": 2,
+        "text_chars": 560
+      },
+      "scenario": "random_high_concurrency_short_prompt",
+      "start_time": 1783487563.6663706
+    }
+  ],
+  "workload_count": 5,
+  "workloads": [
+    {
+      "id": "rmsnorm__server_startup_warmup__0001__2520x1152_1152",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": "server_startup_warmup",
+      "function": "sglang.srt.layers.layernorm.rmsnorm",
+      "tensors": {
+        "arg.0": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            2520,
+            1152
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1152,
+            1
+          ]
+        },
+        "arg.1": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            1152
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            2520,
+            1152
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1152,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            1152
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1
+          ]
+        },
+        1e-06
+      ],
+      "kwargs": {},
+      "result": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": true,
+        "kind": "tensor",
+        "shape": [
+          2520,
+          1152
+        ],
+        "storage_offset": 0,
+        "stride": [
+          1152,
+          1
+        ]
+      }
+    },
+    {
+      "id": "rmsnorm__server_startup_warmup__0002__40320x72_72",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": "server_startup_warmup",
+      "function": "sglang.srt.layers.layernorm.rmsnorm",
+      "tensors": {
+        "arg.0": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            40320,
+            72
+          ],
+          "storage_offset": 0,
+          "stride": [
+            72,
+            1
+          ]
+        },
+        "arg.1": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            72
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            40320,
+            72
+          ],
+          "storage_offset": 0,
+          "stride": [
+            72,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            72
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1
+          ]
+        },
+        1e-06
+      ],
+      "kwargs": {},
+      "result": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": true,
+        "kind": "tensor",
+        "shape": [
+          40320,
+          72
+        ],
+        "storage_offset": 0,
+        "stride": [
+          72,
+          1
+        ]
+      }
+    },
+    {
+      "id": "rmsnorm__server_startup_warmup__0003__256x1152_1152",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": "server_startup_warmup",
+      "function": "sglang.srt.layers.layernorm.rmsnorm",
+      "tensors": {
+        "arg.0": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            256,
+            1152
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1152,
+            1
+          ]
+        },
+        "arg.1": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            1152
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            256,
+            1152
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1152,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            1152
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1
+          ]
+        },
+        1e-06
+      ],
+      "kwargs": {},
+      "result": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": true,
+        "kind": "tensor",
+        "shape": [
+          256,
+          1152
+        ],
+        "storage_offset": 0,
+        "stride": [
+          1152,
+          1
+        ]
+      }
+    },
+    {
+      "id": "rmsnorm__server_startup_warmup__0004__275x2816_2816",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": "server_startup_warmup",
+      "function": "sglang.srt.layers.layernorm.rmsnorm",
+      "tensors": {
+        "arg.0": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            275,
+            2816
+          ],
+          "storage_offset": 0,
+          "stride": [
+            2816,
+            1
+          ]
+        },
+        "arg.1": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            2816
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            275,
+            2816
+          ],
+          "storage_offset": 0,
+          "stride": [
+            2816,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            2816
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1
+          ]
+        },
+        1e-06
+      ],
+      "kwargs": {},
+      "result": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": true,
+        "kind": "tensor",
+        "shape": [
+          275,
+          2816
+        ],
+        "storage_offset": 0,
+        "stride": [
+          2816,
+          1
+        ]
+      }
+    },
+    {
+      "id": "rmsnorm__server_startup_warmup__0005__1x2816_2816",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": "server_startup_warmup",
+      "function": "sglang.srt.layers.layernorm.rmsnorm",
+      "tensors": {
+        "arg.0": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            1,
+            2816
+          ],
+          "storage_offset": 0,
+          "stride": [
+            2816,
+            1
+          ]
+        },
+        "arg.1": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            2816
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            1,
+            2816
+          ],
+          "storage_offset": 0,
+          "stride": [
+            2816,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            2816
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1
+          ]
+        },
+        1e-06
+      ],
+      "kwargs": {},
+      "result": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": true,
+        "kind": "tensor",
+        "shape": [
+          1,
+          2816
+        ],
+        "storage_offset": 0,
+        "stride": [
+          2816,
+          1
+        ]
+      }
+    }
+  ]
+}
