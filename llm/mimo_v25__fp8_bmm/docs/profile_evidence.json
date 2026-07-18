@@ -1,9 +1,13 @@
 {
   "model": "XiaomiMiMo/MiMo-V2.5",
   "model_slug": "mimo_v25",
-  "cookbook_cmd": "python -m sglang.launch_server --model-path XiaomiMiMo/MiMo-V2.5 --tp 4 --trust-remote-code --attention-backend fa4 --mm-attention-backend fa4 --moe-runner-backend flashinfer_trtllm --mem-fraction-static 0.65 --chunked-prefill-size 16384",
+  "cookbook_cmd": "omitted from standalone kernel task; use bench/workloads.json and docs/captured_kernel_api_shapes.json for RLCR",
   "tp": "4",
-  "python_interface": "<confirm via capture; profiler family=fp8_bmm>",
+  "python_interface": [
+    "sglang.srt.layers.attention.flashattention_backend.FlashAttentionBackend.forward_decode",
+    "sglang.srt.layers.attention.flashattention_backend.FlashAttentionBackend.forward_extend",
+    "sglang.srt.layers.attention.flashattention_backend.flash_attn_with_kvcache"
+  ],
   "kernel_family": "fp8_bmm",
   "profiler_op_provenance": [
     "FlashAttnVarlenFunc",
@@ -32,19 +36,16 @@
   },
   "max_pct_of_gpu": 27.88,
   "best_scenario": "sharegpt_mid",
-  "input_shapes": [
-    "[[10096, 16, 192], [5745, 128, 2, 192], [5745, 128, 2, 128], [], [32], [], [], [",
-    "[[10096, 16, 192], [7182, 128, 1, 192], [7182, 128, 1, 128], [], [32], [], [], [",
-    "[[103, 256], [256], [103, 4096], [32, 103], [256, 1024, 4096], [256, 8, 32], [25",
-    "[[10724, 256], [256], [10724, 4096], [32, 10724], [256, 1024, 4096], [256, 8, 32",
-    "[[1], [1], []]",
-    "[[1], [], []]",
-    "[[1], []]",
-    "[[1]]",
-    "[[2049, 1048580], []]",
-    "[[256, 4096]]",
-    "[[31], [], []]",
-    "[[32, 89], [], [], []]"
+  "input_shapes": [],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "input_shapes_replaced_by": "docs/captured_kernel_api_shapes.json",
+  "standalone_workloads_json": "bench/workloads.json",
+  "shape_source": "fresh_sglang_kernel_api_capture",
+  "captured_kernel_api_workload_count": 64,
+  "captured_kernel_api_functions": [
+    "sglang.srt.layers.attention.flashattention_backend.FlashAttentionBackend.forward_decode",
+    "sglang.srt.layers.attention.flashattention_backend.FlashAttentionBackend.forward_extend",
+    "sglang.srt.layers.attention.flashattention_backend.flash_attn_with_kvcache"
   ],
-  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+  "shape_capture_note": "Captured 2026-07-08 on Verda B300 light-face-hides-fin-03-1 from a real XiaomiMiMo/MiMo-V2.5 TP=4 SGLang production-path execution in temporary container sglang-mimo-v25 with FA4 attention and flashinfer_trtllm MoE; CUDA graph disabled only to keep the temporary shape-capture hook out of graph capture; request windows include long/short prompt and mid/high concurrency serving paths."
 }

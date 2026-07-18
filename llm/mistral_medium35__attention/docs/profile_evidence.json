@@ -1,9 +1,14 @@
 {
   "model": "mistralai/Mistral-Medium-3.5-128B",
   "model_slug": "mistral_medium35",
-  "cookbook_cmd": "sglang serve --model-path mistralai/Mistral-Medium-3.5-128B --tp 2 --reasoning-parser mistral --tool-call-parser mistral",
+  "cookbook_cmd": "omitted from standalone kernel task; use bench/workloads.json and docs/captured_kernel_api_shapes.json for RLCR",
   "tp": "2",
-  "python_interface": "<confirm via capture; profiler family=attention>",
+  "python_interface": [
+    "flashinfer.decode.trtllm_batch_decode_with_kv_cache",
+    "flashinfer.prefill.trtllm_batch_context_with_kv_cache",
+    "sglang.srt.layers.attention.trtllm_mha_backend.TRTLLMHAAttnBackend.forward_decode",
+    "sglang.srt.layers.attention.trtllm_mha_backend.TRTLLMHAAttnBackend.forward_extend"
+  ],
   "kernel_family": "attention",
   "profiler_op_provenance": [
     "aten::_local_scalar_dense",
@@ -29,16 +34,17 @@
   },
   "max_pct_of_gpu": 9.69,
   "best_scenario": "random_high",
-  "input_shapes": [
-    "[[1, 131072], [], [], [], []]",
-    "[[100], [100], []]",
-    "[[100]]",
-    "[[104], [104], []]",
-    "[[14269, 12288]]",
-    "[[1], [1], []]",
-    "[[1], [], []]",
-    "[[1], []]",
-    "[[], [], [], [], [], []]"
+  "input_shapes": [],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "input_shapes_replaced_by": "docs/captured_kernel_api_shapes.json",
+  "standalone_workloads_json": "bench/workloads.json",
+  "shape_source": "fresh_sglang_kernel_api_capture",
+  "captured_kernel_api_workload_count": 28,
+  "captured_kernel_api_functions": [
+    "flashinfer.decode.trtllm_batch_decode_with_kv_cache",
+    "flashinfer.prefill.trtllm_batch_context_with_kv_cache",
+    "sglang.srt.layers.attention.trtllm_mha_backend.TRTLLMHAAttnBackend.forward_decode",
+    "sglang.srt.layers.attention.trtllm_mha_backend.TRTLLMHAAttnBackend.forward_extend"
   ],
-  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+  "shape_capture_note": "Captured 2026-07-08 on Verda B300 light-face-hides-fin-03-1 from a real mistralai/Mistral-Medium-3.5-128B TP=2 SGLang production-path execution in temporary container sglang-mistral-medium35 with TRTLLM MHA attention and FP8 GEMM; CUDA graph disabled only to keep the temporary shape-capture hook out of graph capture; request windows include long/short prompt and mid/high concurrency serving paths."
 }
