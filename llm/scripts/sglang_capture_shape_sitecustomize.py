@@ -15,6 +15,8 @@ import os
 import sys
 import threading
 import time
+import dataclasses
+from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
 
@@ -25,6 +27,8 @@ MAX_CALLS_PER_FUNC = int(os.environ.get("KDA_CAPTURE_MAX_CALLS_PER_FUNC", "256")
 TARGETS: dict[str, tuple[str, ...]] = {
     "sglang.srt.layers.quantization.fp8_kernel": (
         "deep_gemm_fp8_fp8_bf16_nt",
+        "w8a8_block_fp8_matmul_deepgemm",
+        "w8a8_block_fp8_matmul_triton",
         "triton_scaled_mm",
         "scaled_fp8_quant",
         "static_quant_fp8",
@@ -41,6 +45,7 @@ TARGETS: dict[str, tuple[str, ...]] = {
         "apply_fp8_linear",
         "apply_fp8_linear_bmm_flashinfer",
         "flashinfer_gemm_w8a8_block_fp8_linear_with_fallback",
+        "flashinfer_deepgemm_w8a8_block_fp8_linear_with_fallback",
         "cutlass_w8a8_block_fp8_linear_with_fallback",
         "deepgemm_w8a8_block_fp8_linear_with_fallback",
         "triton_w8a8_block_fp8_linear",
@@ -48,6 +53,51 @@ TARGETS: dict[str, tuple[str, ...]] = {
         "fp8_scaled_mm",
         "fp8_blockwise_scaled_mm",
         "_apply_fallback_scaled_mm",
+    ),
+    "sglang.jit_kernel.nvfp4": (
+        "cutlass_scaled_fp4_mm",
+        "cutlass_fp4_group_mm",
+        "scaled_fp4_quant",
+        "scaled_fp4_experts_quant",
+        "silu_and_mul_scaled_fp4_experts_quant_packed",
+        "scaled_fp4_grouped_quant",
+        "silu_and_mul_scaled_fp4_grouped_quant",
+    ),
+    "sglang.jit_kernel.hadamard": (
+        "hadamard_transform",
+        "hadamard_transform_12n",
+        "hadamard_transform_20n",
+        "hadamard_transform_28n",
+        "hadamard_transform_40n",
+    ),
+    "sglang.jit_kernel.dsv4.elementwise": (
+        "fused_q_indexer_rope_hadamard_fp4_quant",
+        "fused_q_indexer_rope_hadamard_quant",
+    ),
+    "sglang.jit_kernel.activation": (
+        "_run_activation_inplace",
+        "_run_activation_filtered_inplace",
+        "run_activation",
+        "silu_and_mul",
+        "gelu_and_mul",
+        "gelu_tanh_and_mul",
+    ),
+    "sglang.jit_kernel.moe_align": (
+        "moe_align_block_size",
+    ),
+    "sgl_kernel.elementwise": (
+        "dsv4_fused_q_indexer_rope_hadamard_quant",
+    ),
+    "sglang.srt.layers.quantization.fp4_utils": (
+        "fp4_quantize",
+    ),
+    "sglang.srt.layers.quantization.fp8": (
+        "Fp8LinearMethod.apply",
+    ),
+    "sglang.multimodal_gen.runtime.layers.quantization.weight_only_fp8": (
+        "_apply_srt_w8a8_fp8_linear",
+        "_apply_weight_only_fp8_linear",
+        "dequantize_rowwise_fp8_weight",
     ),
     "sglang.srt.layers.layernorm": (
         "rmsnorm",
@@ -89,6 +139,10 @@ TARGETS: dict[str, tuple[str, ...]] = {
         "TRTLLMHAAttnBackend.forward_decode",
         "TRTLLMHAAttnBackend.forward_extend",
     ),
+    "sglang.srt.layers.attention.triton_backend": (
+        "TritonAttnBackend.forward_decode",
+        "TritonAttnBackend.forward_extend",
+    ),
     "sglang.srt.layers.attention.flashattention_backend": (
         "FlashAttentionBackend.forward_decode",
         "FlashAttentionBackend.forward_extend",
@@ -126,9 +180,58 @@ TARGETS: dict[str, tuple[str, ...]] = {
         "DeepseekSparseAttnBackend._forward_standard_mha",
         "DeepseekSparseAttnBackend._forward_trtllm",
     ),
+    "sglang.srt.models.nemotron_h": (
+        "NemotronHAttention.forward",
+        "NemotronHMambaDecoderLayer._forward_mamba",
+        "nemotron_mamba2_with_output",
+        "breakable_nemotron_mamba2_with_output",
+    ),
+    "sglang.srt.layers.attention.mamba.causal_conv1d": (
+        "causal_conv1d_fn",
+        "causal_conv1d_update",
+    ),
+    "sglang.srt.layers.attention.mamba.causal_conv1d_triton": (
+        "causal_conv1d_fn",
+        "causal_conv1d_update",
+    ),
+    "sglang.srt.layers.attention.mamba.ops.ssd_combined": (
+        "mamba_chunk_scan_combined",
+        "_mamba_chunk_scan_combined_fwd",
+    ),
+    "sglang.srt.layers.attention.mamba.ops.ssd_chunk_scan": (
+        "_chunk_scan_fwd",
+    ),
+    "sglang.srt.layers.attention.mamba.ops.ssd_chunk_state": (
+        "_chunk_state_fwd",
+        "chunk_state_varlen",
+    ),
+    "sglang.srt.layers.attention.mamba.ops.ssd_state_passing": (
+        "_state_passing_fwd",
+    ),
     "sgl_kernel.flash_mla": (
         "flash_mla_with_kvcache",
         "flash_mla_sparse_fwd",
+    ),
+    "sgl_kernel": (
+        "bmm_fp8",
+        "fp8_scaled_mm",
+        "fp8_blockwise_scaled_mm",
+        "moe_align_block_size",
+        "sgl_per_token_quant_fp8",
+        "sglang_per_token_quant_fp8",
+        "sgl_per_token_group_quant_fp8",
+        "sglang_per_token_group_quant_fp8",
+        "sglang_per_token_group_quant_fp8_row_padded",
+    ),
+    "sgl_kernel.gemm": (
+        "bmm_fp8",
+        "fp8_scaled_mm",
+        "fp8_blockwise_scaled_mm",
+        "sgl_per_token_quant_fp8",
+        "sglang_per_token_quant_fp8",
+        "sgl_per_token_group_quant_fp8",
+        "sglang_per_token_group_quant_fp8",
+        "sglang_per_token_group_quant_fp8_row_padded",
     ),
     "sglang.srt.layers.attention.flash_mla_sm120": (
         "flash_mla_with_kvcache_sm120",
@@ -141,11 +244,108 @@ TARGETS: dict[str, tuple[str, ...]] = {
         "trtllm_batch_decode_with_kv_cache_mla",
         "trtllm_batch_decode_with_kv_cache",
     ),
+    "flashinfer": (
+        "bmm_bf16",
+        "bmm_fp8",
+        "bmm_mxfp8",
+        "mm_fp4",
+        "mm_fp8",
+        "mm_mxfp8",
+        "grouped_mm_fp4",
+        "grouped_mm_fp8",
+        "grouped_mm_mxfp8",
+        "group_gemm_nvfp4_nt_groupwise",
+        "group_gemm_mxfp4_nt_groupwise",
+        "trtllm_fp4_block_scale_moe",
+        "trtllm_fp4_block_scale_routed_moe",
+        "nvfp4_quantize",
+        "nvfp4_block_scale_interleave",
+    ),
+    "flashinfer.gemm": (
+        "bmm_bf16",
+        "bmm_fp8",
+        "bmm_mxfp8",
+        "mm_fp4",
+        "mm_fp8",
+        "mm_mxfp8",
+        "group_gemm_nvfp4_nt_groupwise",
+        "group_gemm_mxfp4_nt_groupwise",
+        "grouped_gemm_nt_masked",
+    ),
+}
+
+TORCH_OP_TARGETS: dict[str, tuple[str, ...]] = {
+    "sglang": (
+        "flashinfer_fp4_quantize",
+        "hadamard_transform",
+        "inplace_fused_experts",
+        "unified_attention_with_output",
+    ),
+}
+
+TORCH_OP_OVERLOAD_TARGETS: dict[str, tuple[str, ...]] = {
+    "sgl_kernel": (
+        "bmm_fp8",
+        "fp8_scaled_mm",
+        "fp8_blockwise_scaled_mm",
+        "sgl_per_token_quant_fp8",
+        "sglang_per_token_quant_fp8",
+        "sgl_per_token_group_quant_fp8",
+        "sglang_per_token_group_quant_fp8",
+        "sglang_per_token_group_quant_fp8_row_padded",
+    ),
 }
 
 _lock = threading.Lock()
 _counts: dict[str, int] = {}
 _wrapped: set[str] = set()
+
+
+def _disable_transformers_torchao_probe() -> None:
+    """Avoid optional torchao imports in capture-only environments."""
+    try:
+        import transformers.utils as transformers_utils
+        import transformers.utils.import_utils as import_utils
+
+        def is_torchao_available(*args: Any, **kwargs: Any) -> bool:
+            return False
+
+        import_utils.is_torchao_available = is_torchao_available
+        transformers_utils.is_torchao_available = is_torchao_available
+    except Exception:
+        pass
+
+
+def _patch_torch_core_decompositions() -> None:
+    """Normalize PyTorch nightly CustomDecompTable for older inductor callers."""
+    try:
+        import torch._decomp as torch_decomp
+
+        original = torch_decomp.core_aten_decompositions
+        if getattr(original, "_kda_capture_wrapped", False):
+            return
+
+        @functools.wraps(original)
+        def core_aten_decompositions(*args: Any, **kwargs: Any) -> Mapping[Any, Any]:
+            table = original(*args, **kwargs)
+            if type(table) is dict:
+                return table
+            try:
+                return dict(table.items())
+            except Exception:
+                return dict(table)
+
+        setattr(core_aten_decompositions, "_kda_capture_wrapped", True)
+        try:
+            import torch.export.decomp_utils as decomp_utils
+
+            if hasattr(decomp_utils, "core_aten_decompositions"):
+                decomp_utils.core_aten_decompositions = core_aten_decompositions
+        except Exception:
+            pass
+        torch_decomp.core_aten_decompositions = core_aten_decompositions
+    except Exception:
+        pass
 
 
 def _out_path() -> Path | None:
@@ -196,7 +396,7 @@ def _summarize(value: Any, depth: int = 0) -> Any:
     if value is None or isinstance(value, (bool, int, float, str)):
         return value
     if depth >= 3:
-        return {"kind": type(value).__name__, "repr": repr(value)[:160]}
+        return _object_meta(value)
     if isinstance(value, (tuple, list)):
         return {
             "kind": type(value).__name__,
@@ -210,7 +410,33 @@ def _summarize(value: Any, depth: int = 0) -> Any:
                 for key, item in list(value.items())[:64]
             },
         }
-    return {"kind": type(value).__name__, "repr": repr(value)[:160]}
+    if dataclasses.is_dataclass(value) and not isinstance(value, type):
+        items: dict[str, Any] = {}
+        for field in dataclasses.fields(value)[:64]:
+            try:
+                items[field.name] = _summarize(getattr(value, field.name), depth + 1)
+            except Exception as exc:
+                items[field.name] = {
+                    "kind": "unavailable",
+                    "error": type(exc).__name__,
+                }
+        meta = _object_meta(value)
+        meta["fields"] = items
+        return meta
+    if isinstance(value, tuple) and hasattr(value, "_fields"):
+        items = {
+            str(name): _summarize(getattr(value, name), depth + 1)
+            for name in list(value._fields)[:64]
+        }
+        meta = _object_meta(value)
+        meta["fields"] = items
+        return meta
+    return _object_meta(value)
+
+
+def _object_meta(value: Any) -> dict[str, str]:
+    cls = type(value)
+    return {"kind": cls.__name__, "module": getattr(cls, "__module__", "")}
 
 
 def _append_record(record: dict[str, Any]) -> None:
@@ -349,6 +575,116 @@ def _wrap_torch_function(torch_module: Any, attr_name: str, full_name: str) -> N
 
     setattr(wrapper, "_kda_shape_capture_wrapped", True)
     setattr(torch_module, attr_name, wrapper)
+    _wrapped.add(full_name)
+
+
+def _wrap_torch_op_overload(
+    op_packet: Any,
+    overload_name: str,
+    full_name: str,
+) -> None:
+    if full_name in _wrapped:
+        return
+    if not hasattr(op_packet, overload_name):
+        return
+    func = getattr(op_packet, overload_name)
+    if not callable(func) or getattr(func, "_kda_shape_capture_wrapped", False):
+        return
+
+    @functools.wraps(func)
+    def wrapper(*args: Any, **kwargs: Any) -> Any:
+        if _is_torch_compiling():
+            return func(*args, **kwargs)
+        count = _counts.get(full_name, 0)
+        should_record = count < MAX_CALLS_PER_FUNC
+        if should_record:
+            _counts[full_name] = count + 1
+            record: dict[str, Any] = {
+                "event": "call",
+                "time": time.time(),
+                "pid": os.getpid(),
+                "call_index": count + 1,
+                "function": full_name,
+                "rank_env": _rank_env(),
+                "args": [_summarize(arg) for arg in args],
+                "kwargs": {key: _summarize(val) for key, val in kwargs.items()},
+            }
+            try:
+                result = func(*args, **kwargs)
+            except Exception as exc:
+                record["exception"] = {
+                    "type": type(exc).__name__,
+                    "message": str(exc),
+                }
+                _append_record(record)
+                raise
+            record["result"] = _summarize(result)
+            _append_record(record)
+            return result
+        return func(*args, **kwargs)
+
+    setattr(wrapper, "_kda_shape_capture_wrapped", True)
+    setattr(op_packet, overload_name, wrapper)
+    _wrapped.add(full_name)
+
+
+def _wrap_torch_ops_once() -> bool:
+    try:
+        import torch
+    except Exception:
+        return False
+
+    all_wrapped = True
+    for namespace, names in TORCH_OP_TARGETS.items():
+        try:
+            op_namespace = getattr(torch.ops, namespace)
+        except Exception:
+            all_wrapped = False
+            continue
+        for name in names:
+            full_name = f"torch.ops.{namespace}.{name}"
+            if full_name in _wrapped:
+                continue
+            if not hasattr(op_namespace, name):
+                all_wrapped = False
+                continue
+            try:
+                _wrap_torch_function(op_namespace, name, full_name)
+            except Exception:
+                all_wrapped = False
+    for namespace, names in TORCH_OP_OVERLOAD_TARGETS.items():
+        try:
+            op_namespace = getattr(torch.ops, namespace)
+        except Exception:
+            all_wrapped = False
+            continue
+        for name in names:
+            packet_name = f"torch.ops.{namespace}.{name}"
+            full_name = f"{packet_name}.default"
+            if full_name in _wrapped:
+                continue
+            if not hasattr(op_namespace, name):
+                all_wrapped = False
+                continue
+            try:
+                _wrap_torch_op_overload(
+                    getattr(op_namespace, name), "default", full_name
+                )
+            except Exception:
+                all_wrapped = False
+    return all_wrapped
+
+
+def _wrap_torch_ops_periodically() -> None:
+    poll_steps = int(os.environ.get("KDA_CAPTURE_TORCH_OP_POLL_STEPS", "2400"))
+    poll_interval = float(os.environ.get("KDA_CAPTURE_TORCH_OP_POLL_INTERVAL", "0.25"))
+    initial_delay = float(os.environ.get("KDA_CAPTURE_TORCH_OP_INITIAL_DELAY", "0"))
+    if initial_delay > 0:
+        time.sleep(initial_delay)
+    for _ in range(poll_steps):
+        if _wrap_torch_ops_once():
+            return
+        time.sleep(poll_interval)
 
 
 class _CaptureLoader(importlib.abc.Loader):
@@ -391,6 +727,11 @@ class _CaptureFinder(importlib.abc.MetaPathFinder):
 
 
 if OUT_TEMPLATE:
+    if os.environ.get("KDA_CAPTURE_DISABLE_TORCHAO") == "1":
+        _disable_transformers_torchao_probe()
+    if os.environ.get("KDA_CAPTURE_PATCH_TORCH_DECOMPOSITIONS") == "1":
+        _patch_torch_core_decompositions()
+
     sys.meta_path.insert(0, _CaptureFinder())
     for _module_name, _module in list(sys.modules.items()):
         if _module_name in TARGETS:
@@ -419,3 +760,6 @@ if OUT_TEMPLATE:
             _wrap_torch_function(F, "linear", "torch.nn.functional.linear")
         except Exception:
             pass
+
+    if os.environ.get("KDA_CAPTURE_TORCH_OPS") == "1":
+        threading.Thread(target=_wrap_torch_ops_periodically, daemon=True).start()

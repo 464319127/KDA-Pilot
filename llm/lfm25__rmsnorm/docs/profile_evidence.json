@@ -1,9 +1,11 @@
 {
   "model": "LiquidAI/LFM2.5-8B-A1B",
   "model_slug": "lfm25",
-  "cookbook_cmd": "sglang serve --model-path LiquidAI/LFM2.5-8B-A1B --tp 1 --attention-backend flashinfer --reasoning-parser qwen3 --tool-call-parser lfm2",
+  "cookbook_cmd": "omitted from standalone kernel task; use bench/workloads.json and docs/captured_kernel_api_shapes.json for RLCR",
   "tp": "1",
-  "python_interface": "<confirm via capture; profiler role=rmsnorm>",
+  "python_interface": [
+    "sglang.srt.layers.layernorm.rmsnorm"
+  ],
   "profiler_op_provenance": [
     "aten::_index_put_impl_",
     "aten::_unsafe_view",
@@ -24,15 +26,14 @@
   },
   "max_pct_of_gpu": 5.17,
   "best_scenario": "random_low",
-  "input_shapes": [
-    "[[18, 466682, 2048, 2], [], [18, 1, 2048, 2], [], []]",
-    "[[1], [1], []]",
-    "[[57544, 64], []]",
-    "[[7193, 6144], [], []]",
-    "[[7505, 2048], [2048, 32]]",
-    "[[7505, 8, 64], []]",
-    "[[[6222173], [101]], []]",
-    "[[], [], [], [], [], []]"
+  "input_shapes": [],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "input_shapes_replaced_by": "docs/captured_kernel_api_shapes.json",
+  "standalone_workloads_json": "bench/workloads.json",
+  "shape_source": "fresh_sglang_kernel_api_capture",
+  "captured_kernel_api_workload_count": 29,
+  "captured_kernel_api_functions": [
+    "sglang.srt.layers.layernorm.rmsnorm"
   ],
-  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+  "shape_capture_note": "Captured 2026-07-08 on Verda B300 light-face-hides-fin-03-1 from a real LiquidAI/LFM2.5-8B-A1B TP=1 SGLang production-path execution in temporary container sglang-lfm25 on a single B300 GPU. Used a model-local HF cache after snapshot download, attention_backend=flashinfer, reasoning_parser=qwen3, tool_call_parser=lfm2, disabled FlashInfer autotune, disabled CUDA graph prefill/decode, cleared startup health records before capture, and marked four request windows covering long prefill, short decode, mid concurrency, and high concurrency."
 }

@@ -1,0 +1,106 @@
+[
+  {
+    "id": "nvfp4_block_scale_interleave__unmarked__0001__512x320",
+    "production": true,
+    "source": "fresh_sglang_kernel_api_capture",
+    "scenario": null,
+    "function": "flashinfer.nvfp4_block_scale_interleave",
+    "tensors": {
+      "arg.0": {
+        "dtype": "torch.uint8",
+        "is_contiguous": true,
+        "kind": "tensor",
+        "shape": [
+          512,
+          320
+        ],
+        "storage_offset": 0,
+        "stride": [
+          320,
+          1
+        ]
+      }
+    },
+    "args": [
+      {
+        "dtype": "torch.uint8",
+        "is_contiguous": true,
+        "kind": "tensor",
+        "shape": [
+          512,
+          320
+        ],
+        "storage_offset": 0,
+        "stride": [
+          320,
+          1
+        ]
+      }
+    ],
+    "kwargs": {},
+    "result": {
+      "dtype": "torch.uint8",
+      "is_contiguous": true,
+      "kind": "tensor",
+      "shape": [
+        163840
+      ],
+      "storage_offset": 0,
+      "stride": [
+        1
+      ]
+    }
+  },
+  {
+    "id": "nvfp4_block_scale_interleave__unmarked__0002__5120x16",
+    "production": true,
+    "source": "fresh_sglang_kernel_api_capture",
+    "scenario": null,
+    "function": "flashinfer.nvfp4_block_scale_interleave",
+    "tensors": {
+      "arg.0": {
+        "dtype": "torch.uint8",
+        "is_contiguous": true,
+        "kind": "tensor",
+        "shape": [
+          5120,
+          16
+        ],
+        "storage_offset": 0,
+        "stride": [
+          16,
+          1
+        ]
+      }
+    },
+    "args": [
+      {
+        "dtype": "torch.uint8",
+        "is_contiguous": true,
+        "kind": "tensor",
+        "shape": [
+          5120,
+          16
+        ],
+        "storage_offset": 0,
+        "stride": [
+          16,
+          1
+        ]
+      }
+    ],
+    "kwargs": {},
+    "result": {
+      "dtype": "torch.uint8",
+      "is_contiguous": true,
+      "kind": "tensor",
+      "shape": [
+        81920
+      ],
+      "storage_offset": 0,
+      "stride": [
+        1
+      ]
+    }
+  }
+]

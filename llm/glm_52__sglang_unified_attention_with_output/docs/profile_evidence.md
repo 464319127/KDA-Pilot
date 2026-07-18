@@ -1,11 +1,11 @@
-# Profile evidence — glm_52__sglang_unified_attention_with_output
+# Profile evidence - glm_52__sglang_unified_attention_with_output
 
 **Standalone kernel target: 14.2% of total serving GPU time** (max across scenarios) on
-`zai-org/GLM-5.2-FP8`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Kernel API shapes below were recaptured from a real GLM-5.2-FP8 TP=8 server run and replace the old noisy profiler shape strings.
+`zai-org/GLM-5.2-FP8`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Kernel API shapes below are frozen from a one-time real `zai-org/GLM-5.2-FP8` production-path capture and replace the old noisy profiler shape strings.
 
 - Model: `zai-org/GLM-5.2-FP8` (slug `glm_52`, tp=8)
 - Python interface(s): `flashinfer.decode.trtllm_batch_decode_with_kv_cache_mla`, `flashinfer.prefill.trtllm_ragged_attention_deepseek`, `sglang.srt.layers.attention.dsa_backend.DeepseekSparseAttnBackend._forward_standard_mha`, `sglang.srt.layers.attention.dsa_backend.DeepseekSparseAttnBackend._forward_trtllm`, `sglang.srt.layers.attention.dsa_backend.DeepseekSparseAttnBackend.forward_decode`, `sglang.srt.layers.attention.dsa_backend.DeepseekSparseAttnBackend.forward_extend`
-- Kernel family: `attention`  ·  Category: `attention`
+- Kernel family: `attention`  .  Category: `attention`
 - GPU kernel(s): `fmhaSm100fKernel_QkvE4m3OBfloat16HQk576HV512HVPerCta128PagedKvDenseStaticTokenSparseP1Mult`, `fmhaSm100fKernel_QkvE4m3OBfloat16HQk576HV512PagedKvDenseStaticTokenSparseP1VarSeqQ8Kv128Pe`
 
 ## % of GPU time by scenario
@@ -38,10 +38,9 @@ Functions covered:
 The old profiler `input_shapes` strings were noisy and are no longer an acceptance source.
 Use the task-local workload file above for standalone single-GPU correctness and benchmark work.
 
-## Original serving capture command (provenance only)
-```bash
-python -m sglang.launch_server --model-path zai-org/GLM-5.2-FP8 --tp 8 --trust-remote-code --mem-fraction-static 0.8
-```
-Do not rerun this serving command, `run_capture`, or a multi-GPU e2e A/B as part
-of the normal kernel task. Validate with the task-local standalone benchmark on
-one idle target GPU using the captured shape set.
+## Validation Policy
+
+Normal RLCR kernel work is a standalone single-GPU optimization task. Use the
+captured workload set above for correctness and benchmark acceptance on one idle
+target GPU, and do not add external runtime-readiness or fleet-level A/B gates to
+the task loop.

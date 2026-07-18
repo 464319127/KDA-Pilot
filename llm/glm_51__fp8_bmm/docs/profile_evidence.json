@@ -1,9 +1,11 @@
 {
   "model": "zai-org/GLM-5.1-FP8",
   "model_slug": "glm_51",
-  "cookbook_cmd": "sglang serve --model-path zai-org/GLM-5.1-FP8 --tp 8 --tool-call-parser glm47 --reasoning-parser glm45",
+  "cookbook_cmd": "omitted from standalone kernel task; use bench/workloads.json and docs/captured_kernel_api_shapes.json for RLCR",
   "tp": "8",
-  "python_interface": "<confirm via capture; profiler family=fp8_bmm>",
+  "python_interface": [
+    "torch.bmm"
+  ],
   "kernel_family": "fp8_bmm",
   "profiler_op_provenance": [
     "aten::_to_copy",
@@ -29,13 +31,14 @@
   },
   "max_pct_of_gpu": 18.98,
   "best_scenario": "random_mid",
-  "input_shapes": [
-    "[[11247, 128], []]",
-    "[[13693], [], [], []]",
-    "[[1], [1], []]",
-    "[[31], [], [], [], [], [], []]",
-    "[[49], [49], []]",
-    "[[], [], [], [], [], []]"
+  "input_shapes": [],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "input_shapes_replaced_by": "docs/captured_kernel_api_shapes.json",
+  "standalone_workloads_json": "bench/workloads.json",
+  "shape_source": "fresh_sglang_kernel_api_capture",
+  "captured_kernel_api_workload_count": 6,
+  "captured_kernel_api_functions": [
+    "torch.bmm"
   ],
-  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+  "shape_capture_note": "Captured 2026-07-08 on Verda B300 light-face-hides-fin-03-1 from a real zai-org/GLM-5.1-FP8 TP=8 SGLang production-path execution in temporary container sglang-glm51. Used a model-local HF cache after snapshot download, quantization=fp8 as detected by SGLang, kv_cache_dtype=fp8_e4m3, attention_backend=dsa with TRTLLM DSA prefill/decode, moe_runner_backend=flashinfer_trtllm, disabled FlashInfer autotune, disabled CUDA graph prefill/decode, and marked four request windows covering long prefill, short decode, mid concurrency, and high concurrency. The generic attention task maps to the captured DSA backend forward APIs because this GLM-5.1 route uses DSA/TRTLLM MLA attention rather than a standalone generic attention Python API."
 }

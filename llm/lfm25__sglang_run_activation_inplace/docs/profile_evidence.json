@@ -1,9 +1,13 @@
 {
   "model": "LiquidAI/LFM2.5-8B-A1B",
   "model_slug": "lfm25",
-  "cookbook_cmd": "sglang serve --model-path LiquidAI/LFM2.5-8B-A1B --tp 1 --attention-backend flashinfer --reasoning-parser qwen3 --tool-call-parser lfm2",
+  "cookbook_cmd": "omitted from standalone kernel task; use bench/workloads.json and docs/captured_kernel_api_shapes.json for RLCR",
   "tp": "1",
-  "python_interface": "sglang._run_activation_inplace",
+  "python_interface": [
+    "sglang.jit_kernel.activation._run_activation_inplace",
+    "sglang.jit_kernel.activation.run_activation",
+    "sglang.jit_kernel.activation.silu_and_mul"
+  ],
   "profiler_op_provenance": [
     "aten::copy_",
     "aten::select",
@@ -23,18 +27,17 @@
   },
   "max_pct_of_gpu": 4.35,
   "best_scenario": "random_high",
-  "input_shapes": [
-    "[[1], [], []]",
-    "[[], [16384, 14336], [16384, 7168]]",
-    "[[], [2496, 3584], [2496, 1792]]",
-    "[[], [28772, 3584], [28772, 1792]]",
-    "[[], [30020, 3584], [30020, 1792]]",
-    "[[], [412, 3584], [412, 1792]]",
-    "[[], [65536, 3584], [65536, 1792]]",
-    "[[], [7193, 14336], [7193, 7168]]",
-    "[[], [7505, 14336], [7505, 7168]]",
-    "[[], [], []]"
-  ],
+  "input_shapes": [],
   "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
-  "note": "Activation (SiLU/GELU + mul). NOTE: user previously flagged activation as having limited headroom; included for completeness at 4.4% e2e \u2014 deprioritize vs the GEMM/MoE tasks."
+  "note": "Activation (SiLU/GELU + mul). NOTE: user previously flagged activation as having limited headroom; included for completeness at 4.4% e2e \u2014 deprioritize vs the GEMM/MoE tasks.",
+  "input_shapes_replaced_by": "docs/captured_kernel_api_shapes.json",
+  "standalone_workloads_json": "bench/workloads.json",
+  "shape_source": "fresh_sglang_kernel_api_capture",
+  "captured_kernel_api_workload_count": 60,
+  "captured_kernel_api_functions": [
+    "sglang.jit_kernel.activation._run_activation_inplace",
+    "sglang.jit_kernel.activation.run_activation",
+    "sglang.jit_kernel.activation.silu_and_mul"
+  ],
+  "shape_capture_note": "Captured 2026-07-08 on Verda B300 light-face-hides-fin-03-1 from a real LiquidAI/LFM2.5-8B-A1B TP=1 SGLang production-path execution in temporary container sglang-lfm25 on a single B300 GPU. Used a model-local HF cache after snapshot download, attention_backend=flashinfer, reasoning_parser=qwen3, tool_call_parser=lfm2, disabled FlashInfer autotune, disabled CUDA graph prefill/decode, cleared startup health records before capture, and marked four request windows covering long prefill, short decode, mid concurrency, and high concurrency."
 }

@@ -1,0 +1,153 @@
+{
+  "model": "nvidia/GLM-4.7-NVFP4",
+  "task": "glm_47__quant_fp8",
+  "source": "fresh_sglang_kernel_api_capture",
+  "capture_note": "Captured 2026-07-07 on Verda B300 light-face-hides-fin-03-1 from a real nvidia/GLM-4.7-NVFP4 TP=8 SGLang production-path execution in temporary container sglang-glm47. Used a model-local HF cache in offline mode after snapshot download, trust_remote_code, quantization=modelopt_fp4, reasoning_parser=glm45, attention_backend=trtllm_mha/FlashInfer default for this NVFP4 checkpoint, moe_runner_backend=flashinfer_trtllm as selected by SGLang for ModelOpt NVFP4 MoE, disabled FlashInfer autotune, disabled CUDA graph prefill/decode, and marked four request windows covering long prefill, short decode, mid concurrency, and high concurrency. The legacy fp8_bmm task maps to the captured FlashInfer NVFP4 mm_fp4 Python API because the old profiler class name did not correspond to a bmm_fp8 Python call in this production path.",
+  "markers": [
+    {
+      "end_time": 1783442771.401017,
+      "payload": {
+        "max_new_tokens": 8,
+        "text_chars": 20250
+      },
+      "scenario": "sharegpt_low_long_prompt",
+      "start_time": 1783442758.2262955
+    },
+    {
+      "end_time": 1783442776.5852447,
+      "payload": {
+        "max_new_tokens": 16,
+        "text_chars": 672
+      },
+      "scenario": "random_low_short_prompt",
+      "start_time": 1783442771.4013407
+    },
+    {
+      "end_time": 1783442786.9761398,
+      "payload": {
+        "concurrency": 16,
+        "max_new_tokens": 4,
+        "text_chars": 20250
+      },
+      "scenario": "sharegpt_mid_concurrency_long_prompt",
+      "start_time": 1783442776.5854897
+    },
+    {
+      "end_time": 1783442791.6674705,
+      "payload": {
+        "concurrency": 64,
+        "max_new_tokens": 2,
+        "text_chars": 672
+      },
+      "scenario": "random_high_concurrency_short_prompt",
+      "start_time": 1783442786.9764378
+    }
+  ],
+  "workload_count": 2,
+  "workloads": [
+    {
+      "id": "nvfp4_block_scale_interleave__unmarked__0001__512x320",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": null,
+      "function": "flashinfer.nvfp4_block_scale_interleave",
+      "tensors": {
+        "arg.0": {
+          "dtype": "torch.uint8",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            512,
+            320
+          ],
+          "storage_offset": 0,
+          "stride": [
+            320,
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "dtype": "torch.uint8",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            512,
+            320
+          ],
+          "storage_offset": 0,
+          "stride": [
+            320,
+            1
+          ]
+        }
+      ],
+      "kwargs": {},
+      "result": {
+        "dtype": "torch.uint8",
+        "is_contiguous": true,
+        "kind": "tensor",
+        "shape": [
+          163840
+        ],
+        "storage_offset": 0,
+        "stride": [
+          1
+        ]
+      }
+    },
+    {
+      "id": "nvfp4_block_scale_interleave__unmarked__0002__5120x16",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": null,
+      "function": "flashinfer.nvfp4_block_scale_interleave",
+      "tensors": {
+        "arg.0": {
+          "dtype": "torch.uint8",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            5120,
+            16
+          ],
+          "storage_offset": 0,
+          "stride": [
+            16,
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "dtype": "torch.uint8",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            5120,
+            16
+          ],
+          "storage_offset": 0,
+          "stride": [
+            16,
+            1
+          ]
+        }
+      ],
+      "kwargs": {},
+      "result": {
+        "dtype": "torch.uint8",
+        "is_contiguous": true,
+        "kind": "tensor",
+        "shape": [
+          81920
+        ],
+        "storage_offset": 0,
+        "stride": [
+          1
+        ]
+      }
+    }
+  ]
+}

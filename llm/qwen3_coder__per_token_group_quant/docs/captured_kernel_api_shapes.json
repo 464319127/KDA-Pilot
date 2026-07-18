@@ -1,0 +1,1606 @@
+{
+  "model": "Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8",
+  "task": "qwen3_coder__per_token_group_quant",
+  "source": "fresh_sglang_kernel_api_capture",
+  "capture_note": "Captured 2026-07-08 on Verda B300 light-face-hides-fin-03-1 from a real Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8 TP=8 EP=8 SGLang production-path execution in temporary container sglang-qwen3-coder on eight B300 GPUs. Used a model-local HF cache after snapshot download, tool_call_parser=qwen3_coder, disabled FlashInfer autotune, disabled CUDA graph prefill/decode, cleared startup health records before capture, and marked four request windows covering long prefill, short decode, mid concurrency, and high concurrency. The legacy qwen3_coder__fp8_bmm task is routed to the real low-level FlashInfer TRTLLM batch context/decode APIs observed in the production path, while the attention task uses the higher-level TRTLLM backend forward APIs.",
+  "markers": [
+    {
+      "end_time": 1783474117.9949803,
+      "payload": {
+        "max_new_tokens": 8,
+        "text_chars": 19950
+      },
+      "scenario": "sharegpt_low_long_prompt",
+      "start_time": 1783474115.7127461
+    },
+    {
+      "end_time": 1783474125.7683275,
+      "payload": {
+        "max_new_tokens": 16,
+        "text_chars": 640
+      },
+      "scenario": "random_low_short_prompt",
+      "start_time": 1783474117.9953506
+    },
+    {
+      "end_time": 1783474128.498453,
+      "payload": {
+        "concurrency": 16,
+        "max_new_tokens": 4,
+        "text_chars": 19950
+      },
+      "scenario": "sharegpt_mid_concurrency_long_prompt",
+      "start_time": 1783474125.7685623
+    },
+    {
+      "end_time": 1783474131.618657,
+      "payload": {
+        "concurrency": 64,
+        "max_new_tokens": 2,
+        "text_chars": 640
+      },
+      "scenario": "random_high_concurrency_short_prompt",
+      "start_time": 1783474128.4988027
+    }
+  ],
+  "workload_count": 21,
+  "workloads": [
+    {
+      "id": "sglang_per_token_group_quant_fp8__sharegpt_low_long_prompt__0001__3901x6144",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": "sharegpt_low_long_prompt",
+      "function": "sglang.srt.layers.quantization.fp8_kernel.sglang_per_token_group_quant_fp8",
+      "tensors": {
+        "arg.0": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            3901,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            3901,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        },
+        128
+      ],
+      "kwargs": {
+        "column_major_scales": true,
+        "scale_tma_aligned": true,
+        "scale_ue8m0": true
+      },
+      "result": [
+        {
+          "dtype": "torch.float8_e4m3fn",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            3901,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.int32",
+          "is_contiguous": false,
+          "kind": "tensor",
+          "shape": [
+            3901,
+            12
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1,
+            3904
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sglang_per_token_group_quant_fp8__sharegpt_low_long_prompt__0002__3901x1536",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": "sharegpt_low_long_prompt",
+      "function": "sglang.srt.layers.quantization.fp8_kernel.sglang_per_token_group_quant_fp8",
+      "tensors": {
+        "arg.0": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            3901,
+            1536
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1536,
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            3901,
+            1536
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1536,
+            1
+          ]
+        },
+        128
+      ],
+      "kwargs": {
+        "column_major_scales": true,
+        "scale_tma_aligned": true,
+        "scale_ue8m0": true
+      },
+      "result": [
+        {
+          "dtype": "torch.float8_e4m3fn",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            3901,
+            1536
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1536,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.int32",
+          "is_contiguous": false,
+          "kind": "tensor",
+          "shape": [
+            3901,
+            3
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1,
+            3904
+          ]
+        }
+      ]
+    },
+    {
+      "id": "per_token_group_quant_fp8__sharegpt_low_long_prompt__0003__3901x6144",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": "sharegpt_low_long_prompt",
+      "function": "sglang.srt.layers.quantization.fp8_kernel.per_token_group_quant_fp8",
+      "tensors": {
+        "arg.0": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            3901,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            3901,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        },
+        128
+      ],
+      "kwargs": {
+        "column_major_scales": true
+      },
+      "result": [
+        {
+          "dtype": "torch.float8_e4m3fn",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            3901,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.float32",
+          "is_contiguous": false,
+          "kind": "tensor",
+          "shape": [
+            3901,
+            48
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1,
+            3901
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sglang_per_token_group_quant_fp8__sharegpt_low_long_prompt__0004__1x6144",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": "sharegpt_low_long_prompt",
+      "function": "sglang.srt.layers.quantization.fp8_kernel.sglang_per_token_group_quant_fp8",
+      "tensors": {
+        "arg.0": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            1,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            1,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        },
+        128
+      ],
+      "kwargs": {
+        "column_major_scales": true,
+        "scale_tma_aligned": true,
+        "scale_ue8m0": true
+      },
+      "result": [
+        {
+          "dtype": "torch.float8_e4m3fn",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            1,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.int32",
+          "is_contiguous": false,
+          "kind": "tensor",
+          "shape": [
+            1,
+            12
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1,
+            4
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sglang_per_token_group_quant_fp8__sharegpt_low_long_prompt__0005__1x1536",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": "sharegpt_low_long_prompt",
+      "function": "sglang.srt.layers.quantization.fp8_kernel.sglang_per_token_group_quant_fp8",
+      "tensors": {
+        "arg.0": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            1,
+            1536
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1536,
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            1,
+            1536
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1536,
+            1
+          ]
+        },
+        128
+      ],
+      "kwargs": {
+        "column_major_scales": true,
+        "scale_tma_aligned": true,
+        "scale_ue8m0": true
+      },
+      "result": [
+        {
+          "dtype": "torch.float8_e4m3fn",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            1,
+            1536
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1536,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.int32",
+          "is_contiguous": false,
+          "kind": "tensor",
+          "shape": [
+            1,
+            3
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1,
+            4
+          ]
+        }
+      ]
+    },
+    {
+      "id": "per_token_group_quant_fp8__sharegpt_low_long_prompt__0006__1x6144",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": "sharegpt_low_long_prompt",
+      "function": "sglang.srt.layers.quantization.fp8_kernel.per_token_group_quant_fp8",
+      "tensors": {
+        "arg.0": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            1,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            1,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        },
+        128
+      ],
+      "kwargs": {
+        "column_major_scales": true
+      },
+      "result": [
+        {
+          "dtype": "torch.float8_e4m3fn",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            1,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.float32",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            1,
+            48
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sglang_per_token_group_quant_fp8__random_low_short_prompt__0007__161x6144",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": "random_low_short_prompt",
+      "function": "sglang.srt.layers.quantization.fp8_kernel.sglang_per_token_group_quant_fp8",
+      "tensors": {
+        "arg.0": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            161,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            161,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        },
+        128
+      ],
+      "kwargs": {
+        "column_major_scales": true,
+        "scale_tma_aligned": true,
+        "scale_ue8m0": true
+      },
+      "result": [
+        {
+          "dtype": "torch.float8_e4m3fn",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            161,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.int32",
+          "is_contiguous": false,
+          "kind": "tensor",
+          "shape": [
+            161,
+            12
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1,
+            164
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sglang_per_token_group_quant_fp8__random_low_short_prompt__0008__161x1536",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": "random_low_short_prompt",
+      "function": "sglang.srt.layers.quantization.fp8_kernel.sglang_per_token_group_quant_fp8",
+      "tensors": {
+        "arg.0": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            161,
+            1536
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1536,
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            161,
+            1536
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1536,
+            1
+          ]
+        },
+        128
+      ],
+      "kwargs": {
+        "column_major_scales": true,
+        "scale_tma_aligned": true,
+        "scale_ue8m0": true
+      },
+      "result": [
+        {
+          "dtype": "torch.float8_e4m3fn",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            161,
+            1536
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1536,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.int32",
+          "is_contiguous": false,
+          "kind": "tensor",
+          "shape": [
+            161,
+            3
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1,
+            164
+          ]
+        }
+      ]
+    },
+    {
+      "id": "per_token_group_quant_fp8__random_low_short_prompt__0009__161x6144",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": "random_low_short_prompt",
+      "function": "sglang.srt.layers.quantization.fp8_kernel.per_token_group_quant_fp8",
+      "tensors": {
+        "arg.0": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            161,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            161,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        },
+        128
+      ],
+      "kwargs": {
+        "column_major_scales": true
+      },
+      "result": [
+        {
+          "dtype": "torch.float8_e4m3fn",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            161,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.float32",
+          "is_contiguous": false,
+          "kind": "tensor",
+          "shape": [
+            161,
+            48
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1,
+            161
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sglang_per_token_group_quant_fp8__sharegpt_mid_concurrency_long_prompt__0010__67x6144",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": "sharegpt_mid_concurrency_long_prompt",
+      "function": "sglang.srt.layers.quantization.fp8_kernel.sglang_per_token_group_quant_fp8",
+      "tensors": {
+        "arg.0": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            67,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            67,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        },
+        128
+      ],
+      "kwargs": {
+        "column_major_scales": true,
+        "scale_tma_aligned": true,
+        "scale_ue8m0": true
+      },
+      "result": [
+        {
+          "dtype": "torch.float8_e4m3fn",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            67,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.int32",
+          "is_contiguous": false,
+          "kind": "tensor",
+          "shape": [
+            67,
+            12
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1,
+            68
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sglang_per_token_group_quant_fp8__sharegpt_mid_concurrency_long_prompt__0011__67x1536",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": "sharegpt_mid_concurrency_long_prompt",
+      "function": "sglang.srt.layers.quantization.fp8_kernel.sglang_per_token_group_quant_fp8",
+      "tensors": {
+        "arg.0": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            67,
+            1536
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1536,
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            67,
+            1536
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1536,
+            1
+          ]
+        },
+        128
+      ],
+      "kwargs": {
+        "column_major_scales": true,
+        "scale_tma_aligned": true,
+        "scale_ue8m0": true
+      },
+      "result": [
+        {
+          "dtype": "torch.float8_e4m3fn",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            67,
+            1536
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1536,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.int32",
+          "is_contiguous": false,
+          "kind": "tensor",
+          "shape": [
+            67,
+            3
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1,
+            68
+          ]
+        }
+      ]
+    },
+    {
+      "id": "per_token_group_quant_fp8__sharegpt_mid_concurrency_long_prompt__0012__67x6144",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": "sharegpt_mid_concurrency_long_prompt",
+      "function": "sglang.srt.layers.quantization.fp8_kernel.per_token_group_quant_fp8",
+      "tensors": {
+        "arg.0": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            67,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            67,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        },
+        128
+      ],
+      "kwargs": {
+        "column_major_scales": true
+      },
+      "result": [
+        {
+          "dtype": "torch.float8_e4m3fn",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            67,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.float32",
+          "is_contiguous": false,
+          "kind": "tensor",
+          "shape": [
+            67,
+            48
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1,
+            67
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sglang_per_token_group_quant_fp8__sharegpt_mid_concurrency_long_prompt__0013__1011x6144",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": "sharegpt_mid_concurrency_long_prompt",
+      "function": "sglang.srt.layers.quantization.fp8_kernel.sglang_per_token_group_quant_fp8",
+      "tensors": {
+        "arg.0": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            1011,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            1011,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        },
+        128
+      ],
+      "kwargs": {
+        "column_major_scales": true,
+        "scale_tma_aligned": true,
+        "scale_ue8m0": true
+      },
+      "result": [
+        {
+          "dtype": "torch.float8_e4m3fn",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            1011,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.int32",
+          "is_contiguous": false,
+          "kind": "tensor",
+          "shape": [
+            1011,
+            12
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1,
+            1012
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sglang_per_token_group_quant_fp8__sharegpt_mid_concurrency_long_prompt__0014__1011x1536",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": "sharegpt_mid_concurrency_long_prompt",
+      "function": "sglang.srt.layers.quantization.fp8_kernel.sglang_per_token_group_quant_fp8",
+      "tensors": {
+        "arg.0": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            1011,
+            1536
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1536,
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            1011,
+            1536
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1536,
+            1
+          ]
+        },
+        128
+      ],
+      "kwargs": {
+        "column_major_scales": true,
+        "scale_tma_aligned": true,
+        "scale_ue8m0": true
+      },
+      "result": [
+        {
+          "dtype": "torch.float8_e4m3fn",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            1011,
+            1536
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1536,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.int32",
+          "is_contiguous": false,
+          "kind": "tensor",
+          "shape": [
+            1011,
+            3
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1,
+            1012
+          ]
+        }
+      ]
+    },
+    {
+      "id": "per_token_group_quant_fp8__sharegpt_mid_concurrency_long_prompt__0015__1011x6144",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": "sharegpt_mid_concurrency_long_prompt",
+      "function": "sglang.srt.layers.quantization.fp8_kernel.per_token_group_quant_fp8",
+      "tensors": {
+        "arg.0": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            1011,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            1011,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        },
+        128
+      ],
+      "kwargs": {
+        "column_major_scales": true
+      },
+      "result": [
+        {
+          "dtype": "torch.float8_e4m3fn",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            1011,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.float32",
+          "is_contiguous": false,
+          "kind": "tensor",
+          "shape": [
+            1011,
+            48
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1,
+            1011
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sglang_per_token_group_quant_fp8__sharegpt_mid_concurrency_long_prompt__0016__16x6144",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": "sharegpt_mid_concurrency_long_prompt",
+      "function": "sglang.srt.layers.quantization.fp8_kernel.sglang_per_token_group_quant_fp8",
+      "tensors": {
+        "arg.0": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            16,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            16,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        },
+        128
+      ],
+      "kwargs": {
+        "column_major_scales": true,
+        "scale_tma_aligned": true,
+        "scale_ue8m0": true
+      },
+      "result": [
+        {
+          "dtype": "torch.float8_e4m3fn",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            16,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.int32",
+          "is_contiguous": false,
+          "kind": "tensor",
+          "shape": [
+            16,
+            12
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1,
+            16
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sglang_per_token_group_quant_fp8__sharegpt_mid_concurrency_long_prompt__0017__16x1536",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": "sharegpt_mid_concurrency_long_prompt",
+      "function": "sglang.srt.layers.quantization.fp8_kernel.sglang_per_token_group_quant_fp8",
+      "tensors": {
+        "arg.0": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            16,
+            1536
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1536,
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            16,
+            1536
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1536,
+            1
+          ]
+        },
+        128
+      ],
+      "kwargs": {
+        "column_major_scales": true,
+        "scale_tma_aligned": true,
+        "scale_ue8m0": true
+      },
+      "result": [
+        {
+          "dtype": "torch.float8_e4m3fn",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            16,
+            1536
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1536,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.int32",
+          "is_contiguous": false,
+          "kind": "tensor",
+          "shape": [
+            16,
+            3
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1,
+            16
+          ]
+        }
+      ]
+    },
+    {
+      "id": "per_token_group_quant_fp8__sharegpt_mid_concurrency_long_prompt__0018__16x6144",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": "sharegpt_mid_concurrency_long_prompt",
+      "function": "sglang.srt.layers.quantization.fp8_kernel.per_token_group_quant_fp8",
+      "tensors": {
+        "arg.0": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            16,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            16,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        },
+        128
+      ],
+      "kwargs": {
+        "column_major_scales": true
+      },
+      "result": [
+        {
+          "dtype": "torch.float8_e4m3fn",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            16,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.float32",
+          "is_contiguous": false,
+          "kind": "tensor",
+          "shape": [
+            16,
+            48
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1,
+            16
+          ]
+        }
+      ]
+    },
+    {
+      "id": "per_token_group_quant_fp8__random_high_concurrency_short_prompt__0019__39x6144",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": "random_high_concurrency_short_prompt",
+      "function": "sglang.srt.layers.quantization.fp8_kernel.per_token_group_quant_fp8",
+      "tensors": {
+        "arg.0": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            39,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            39,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        },
+        128
+      ],
+      "kwargs": {
+        "column_major_scales": true
+      },
+      "result": [
+        {
+          "dtype": "torch.float8_e4m3fn",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            39,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.float32",
+          "is_contiguous": false,
+          "kind": "tensor",
+          "shape": [
+            39,
+            48
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1,
+            39
+          ]
+        }
+      ]
+    },
+    {
+      "id": "per_token_group_quant_fp8__random_high_concurrency_short_prompt__0020__2511x6144",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": "random_high_concurrency_short_prompt",
+      "function": "sglang.srt.layers.quantization.fp8_kernel.per_token_group_quant_fp8",
+      "tensors": {
+        "arg.0": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            2511,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            2511,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        },
+        128
+      ],
+      "kwargs": {
+        "column_major_scales": true
+      },
+      "result": [
+        {
+          "dtype": "torch.float8_e4m3fn",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            2511,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.float32",
+          "is_contiguous": false,
+          "kind": "tensor",
+          "shape": [
+            2511,
+            48
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1,
+            2511
+          ]
+        }
+      ]
+    },
+    {
+      "id": "per_token_group_quant_fp8__random_high_concurrency_short_prompt__0021__64x6144",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": "random_high_concurrency_short_prompt",
+      "function": "sglang.srt.layers.quantization.fp8_kernel.per_token_group_quant_fp8",
+      "tensors": {
+        "arg.0": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            64,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            64,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        },
+        128
+      ],
+      "kwargs": {
+        "column_major_scales": true
+      },
+      "result": [
+        {
+          "dtype": "torch.float8_e4m3fn",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            64,
+            6144
+          ],
+          "storage_offset": 0,
+          "stride": [
+            6144,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.float32",
+          "is_contiguous": false,
+          "kind": "tensor",
+          "shape": [
+            64,
+            48
+          ],
+          "storage_offset": 0,
+          "stride": [
+            1,
+            64
+          ]
+        }
+      ]
+    }
+  ]
+}
