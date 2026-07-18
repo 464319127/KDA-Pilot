@@ -6,9 +6,19 @@ family = "other"
 model = "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-FP8"
 model_slug = "nemotron3_nano"
 entry_points = [
-  "sglang.nemotron_mamba2_with_output",
+  "sglang.srt.layers.attention.mamba.causal_conv1d_triton.causal_conv1d_fn",
+  "sglang.srt.layers.attention.mamba.causal_conv1d_triton.causal_conv1d_update",
+  "sglang.srt.layers.attention.mamba.ops.ssd_chunk_scan._chunk_scan_fwd",
+  "sglang.srt.layers.attention.mamba.ops.ssd_chunk_state._chunk_state_fwd",
+  "sglang.srt.layers.attention.mamba.ops.ssd_chunk_state.chunk_state_varlen",
+  "sglang.srt.layers.attention.mamba.ops.ssd_combined._mamba_chunk_scan_combined_fwd",
+  "sglang.srt.layers.attention.mamba.ops.ssd_combined.mamba_chunk_scan_combined",
+  "sglang.srt.layers.attention.mamba.ops.ssd_state_passing._state_passing_fwd",
+  "sglang.srt.models.nemotron_h.NemotronHMambaDecoderLayer._forward_mamba",
 ]
 evidence_json = "docs/profile_evidence.json"
+shape_source_json = "docs/captured_kernel_api_shapes.json"
+workloads_json = "bench/workloads.json"
 
 [selection]
 method = "cookbook-aligned torch-profiler e2e share (extract_kernel_shapes >2%)"
