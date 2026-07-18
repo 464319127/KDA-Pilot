@@ -1,9 +1,11 @@
 {
   "model": "XiaomiMiMo/MiMo-V2.5",
   "model_slug": "mimo_v25",
-  "cookbook_cmd": "python -m sglang.launch_server --model-path XiaomiMiMo/MiMo-V2.5 --tp 4 --trust-remote-code --attention-backend fa4 --mm-attention-backend fa4 --moe-runner-backend flashinfer_trtllm --mem-fraction-static 0.65 --chunked-prefill-size 16384",
+  "cookbook_cmd": "omitted from standalone kernel task; use bench/workloads.json and docs/captured_kernel_api_shapes.json for RLCR",
   "tp": "4",
-  "python_interface": "<confirm via capture; profiler family=fused_add_rmsnorm>",
+  "python_interface": [
+    "sglang.srt.layers.layernorm.fused_add_rmsnorm"
+  ],
   "kernel_family": "fused_add_rmsnorm",
   "profiler_op_provenance": [
     "aten::as_strided",
@@ -27,19 +29,14 @@
   },
   "max_pct_of_gpu": 34.62,
   "best_scenario": "sharegpt_low",
-  "input_shapes": [
-    "[[103, 3712], []]",
-    "[[103, 4096], [103, 4096], [103, 8], [], [], [], [], [], [], []]",
-    "[[103, 4096], [], []]",
-    "[[196, 3072], []]",
-    "[[196, 4096], [], []]",
-    "[[86, 256], [256], [86, 4096], [32, 86], [256, 1024, 4096], [256, 8, 32], [256, ",
-    "[[89, 256], [256], [89, 4096], [32, 89], [256, 1024, 4096], [256, 8, 32], [256, ",
-    "[[89, 256], []]",
-    "[[89, 4096], [4096, 256]]",
-    "[[89, 4096], [89, 4096], []]",
-    "[[89, 4096], [], []]",
-    "[[], [], [], [], [], []]"
+  "input_shapes": [],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "input_shapes_replaced_by": "docs/captured_kernel_api_shapes.json",
+  "standalone_workloads_json": "bench/workloads.json",
+  "shape_source": "fresh_sglang_kernel_api_capture",
+  "captured_kernel_api_workload_count": 4,
+  "captured_kernel_api_functions": [
+    "sglang.srt.layers.layernorm.fused_add_rmsnorm"
   ],
-  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+  "shape_capture_note": "Captured 2026-07-08 on Verda B300 light-face-hides-fin-03-1 from a real XiaomiMiMo/MiMo-V2.5 TP=4 SGLang production-path execution in temporary container sglang-mimo-v25 with FA4 attention and flashinfer_trtllm MoE; CUDA graph disabled only to keep the temporary shape-capture hook out of graph capture; request windows include long/short prompt and mid/high concurrency serving paths."
 }

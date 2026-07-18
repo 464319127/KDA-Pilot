@@ -1,9 +1,11 @@
 {
   "model": "mistralai/Mistral-Medium-3.5-128B",
   "model_slug": "mistral_medium35",
-  "cookbook_cmd": "sglang serve --model-path mistralai/Mistral-Medium-3.5-128B --tp 2 --reasoning-parser mistral --tool-call-parser mistral",
+  "cookbook_cmd": "omitted from standalone kernel task; use bench/workloads.json and docs/captured_kernel_api_shapes.json for RLCR",
   "tp": "2",
-  "python_interface": "<confirm via capture; profiler family=fused_add_rmsnorm>",
+  "python_interface": [
+    "sglang.srt.layers.layernorm.fused_add_rmsnorm"
+  ],
   "kernel_family": "fused_add_rmsnorm",
   "profiler_op_provenance": [
     "aten::add",
@@ -19,10 +21,14 @@
   },
   "max_pct_of_gpu": 6.47,
   "best_scenario": "random_mid",
-  "input_shapes": [
-    "[[39, 12288], [12288, 7168], [39, 1], [7168, 1], [], []]",
-    "[[39, 14336], []]",
-    "[[39], [], []]"
+  "input_shapes": [],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "input_shapes_replaced_by": "docs/captured_kernel_api_shapes.json",
+  "standalone_workloads_json": "bench/workloads.json",
+  "shape_source": "fresh_sglang_kernel_api_capture",
+  "captured_kernel_api_workload_count": 2,
+  "captured_kernel_api_functions": [
+    "sglang.srt.layers.layernorm.fused_add_rmsnorm"
   ],
-  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+  "shape_capture_note": "Captured 2026-07-08 on Verda B300 light-face-hides-fin-03-1 from a real mistralai/Mistral-Medium-3.5-128B TP=2 SGLang production-path execution in temporary container sglang-mistral-medium35 with TRTLLM MHA attention and FP8 GEMM; CUDA graph disabled only to keep the temporary shape-capture hook out of graph capture; request windows include long/short prompt and mid/high concurrency serving paths."
 }
