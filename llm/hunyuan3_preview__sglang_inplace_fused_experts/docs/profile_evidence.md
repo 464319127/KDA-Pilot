@@ -1,13 +1,11 @@
-# Profile evidence — hunyuan3_preview__sglang_inplace_fused_experts
+# Profile evidence - hunyuan3_preview__sglang_inplace_fused_experts
 
 **Standalone kernel target: 34.7% of total serving GPU time** (max across scenarios) on
-`tencent/Hy3-preview`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Clean Python interface (profiler provenance).
-
-> Triton MoE expert-GEMM (sglang's own fused_experts/fused_moe kernel) — single-GPU optimizable; NOT the comm-fused trtllm MoE path (excluded).
+`tencent/Hy3-preview`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Kernel API shapes below are frozen from a one-time real `tencent/Hy3-preview` production-path capture and replace the old noisy profiler shape strings.
 
 - Model: `tencent/Hy3-preview` (slug `hunyuan3_preview`, tp=8)
-- Python interface: `sglang.inplace_fused_experts`
-- Kernel family: `fused_moe_triton`  ·  Category: `moe`
+- Python interface(s): `sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe._fused_moe_kernel_sequence`, `sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe.fused_experts_impl`, `sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe.inplace_fused_experts`, `sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe_triton_kernels.invoke_fused_moe_kernel`
+- Kernel family: `fused_moe_triton`  .  Category: `moe`
 - GPU kernel(s): `fused_moe_kernel`
 
 ## % of GPU time by scenario
@@ -21,22 +19,27 @@
 | sharegpt | conc 32 | 21.16% |
 | sharegpt | conc 100 | 18.92% |
 
-**Peak: 34.7% in `random_mid` (random, concurrency 32).**
+**Peak: 34.7% in `random_mid`.**
 
-## Input shapes (profiler)
-- `[[1210, 4096], [192, 384, 4096], [192, 4096, 192], [1210, 8], [1210, 8], [], [],`
-- `[[1220, 4096], [192, 384, 4096], [192, 4096, 192], [1220, 8], [1220, 8], [], [],`
-- `[[1220, 4096], [384, 4096], []]`
-- `[[15, 4096], [192, 384, 4096], [192, 4096, 192], [15, 8], [15, 8], [], [], [], [`
-- `[[33056, 64, 1, 128], [], [], []]`
-- `[[38, 4096], [192, 384, 4096], [192, 4096, 192], [38, 8], [38, 8], [], [], [], [`
-- `[[5067, 4096], [192, 384, 4096], [192, 4096, 192], [5067, 8], [5067, 8], [], [],`
-- `[[5067, 4096], [384, 4096], []]`
+## Fresh captured kernel API shapes
 
-## Original serving capture command (provenance only)
-```bash
-sglang serve --model-path tencent/Hy3-preview --tp 8 --speculative-algorithm EAGLE --speculative-num-steps 3 --speculative-eagle-topk 1
-```
-Do not rerun this serving command, `run_capture`, or a multi-GPU e2e A/B as part
-of the normal kernel task. Validate with the task-local standalone benchmark on
-one idle target GPU using the captured shape set.
+- Shape source: `docs/captured_kernel_api_shapes.json`
+- Standalone workloads: `bench/workloads.json`
+- Workload count: 73
+- Capture note: Captured 2026-07-08 on Verda B300 light-face-hides-fin-03-1 from a real tencent/Hy3-preview TP=8 SGLang production-path execution in temporary container sglang-hunyuan3-preview on eight B300 GPUs. Used a model-local HF cache after snapshot download, cookbook-aligned EAGLE speculative settings (--speculative-algorithm EAGLE --speculative-num-steps 3 --speculative-eagle-topk 1), disabled FlashInfer autotune, disabled CUDA graph prefill/decode, cleared startup health records before capture, and marked four request windows covering long prefill, short decode, mid concurrency, and high concurrency.
+
+Functions covered:
+- `sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe._fused_moe_kernel_sequence`
+- `sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe.fused_experts_impl`
+- `sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe.inplace_fused_experts`
+- `sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe_triton_kernels.invoke_fused_moe_kernel`
+
+The old profiler `input_shapes` strings were noisy and are no longer an acceptance source.
+Use the task-local workload file above for standalone single-GPU correctness and benchmark work.
+
+## Validation Policy
+
+Normal RLCR kernel work is a standalone single-GPU optimization task. Use the
+captured workload set above for correctness and benchmark acceptance on one idle
+target GPU, and do not add external runtime-readiness or fleet-level A/B gates to
+the task loop.
