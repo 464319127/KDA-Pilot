@@ -1,9 +1,11 @@
 {
   "model": "google/gemma-4-26B-A4B-it",
   "model_slug": "gemma4",
-  "cookbook_cmd": "sglang serve --model-path google/gemma-4-26B-A4B-it --reasoning-parser gemma4 --tool-call-parser gemma4",
+  "cookbook_cmd": "omitted from standalone kernel task; use bench/workloads.json and docs/captured_kernel_api_shapes.json for RLCR",
   "tp": "1",
-  "python_interface": "<confirm via capture; profiler family=linear_gemm>",
+  "python_interface": [
+    "torch.nn.functional.linear"
+  ],
   "kernel_family": "linear_gemm",
   "profiler_op_provenance": [
     "aten::_foreach_copy_",
@@ -34,19 +36,14 @@
   },
   "max_pct_of_gpu": 29.0,
   "best_scenario": "sharegpt_low",
-  "input_shapes": [
-    "[[1, 1], [1, 1], []]",
-    "[[1, 262144], [], []]",
-    "[[1, 2816], [2816, 262144]]",
-    "[[100], [100], []]",
-    "[[100], [], []]",
-    "[[11254, 2816], [2816, 10240]]",
-    "[[11254, 2816], [2816, 4224]]",
-    "[[11254, 2816], [2816, 8192]]",
-    "[[1], [1], []]",
-    "[[1], [], [], [], [], [], []]",
-    "[[1], [], []]",
-    "[[2049, 262148], []]"
+  "input_shapes": [],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "input_shapes_replaced_by": "docs/captured_kernel_api_shapes.json",
+  "standalone_workloads_json": "bench/workloads.json",
+  "shape_source": "fresh_sglang_kernel_api_capture",
+  "captured_kernel_api_workload_count": 20,
+  "captured_kernel_api_functions": [
+    "torch.nn.functional.linear"
   ],
-  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+  "shape_capture_note": "Captured 2026-07-08 on Verda B300 light-face-hides-fin-03-1 from a real google/gemma-4-26B-A4B-it TP=1 SGLang production-path execution in temporary container sglang-gemma4 on one B300 GPU. Used a model-local HF cache after snapshot download, cookbook-aligned reasoning_parser=gemma4 and tool_call_parser=gemma4, disabled CUDA graph prefill/decode, delayed torch-op wrapping until after imports, preserved server startup/warmup records, and marked four request windows covering long prefill, short decode, mid concurrency, and high concurrency."
 }

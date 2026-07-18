@@ -1,9 +1,11 @@
 {
   "model": "nvidia/Qwen3.5-397B-A17B-NVFP4",
   "model_slug": "qwen35",
-  "cookbook_cmd": "sglang serve --model-path nvidia/Qwen3.5-397B-A17B-NVFP4 --tp 4 --reasoning-parser qwen3 --tool-call-parser qwen3_coder",
+  "cookbook_cmd": "omitted from standalone kernel task; use bench/workloads.json and docs/captured_kernel_api_shapes.json for RLCR",
   "tp": "4",
-  "python_interface": "<confirm via capture; profiler family=linear_gemm>",
+  "python_interface": [
+    "torch.nn.functional.linear"
+  ],
   "kernel_family": "linear_gemm",
   "profiler_op_provenance": [
     "aten::arange",
@@ -37,19 +39,14 @@
   },
   "max_pct_of_gpu": 40.69,
   "best_scenario": "sharegpt_low",
-  "input_shapes": [
-    "[[1, 20968, 16, 128], []]",
-    "[[10501, 4096], [4096, 5120]]",
-    "[[17, 4096], [4096, 4608]]",
-    "[[17, 4096], [4096, 5120]]",
-    "[[17, 4096], [4096, 512]]",
-    "[[17, 4096], [], [], [], [], []]",
-    "[[17070, 4096], [1, 4096], []]",
-    "[[17070, 4096], [4096, 512]]",
-    "[[1], [1], []]",
-    "[[1]]",
-    "[[20968, 8, 256], [], [], [], [], []]",
-    "[[267, 4096], [4096, 512]]"
+  "input_shapes": [],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "input_shapes_replaced_by": "docs/captured_kernel_api_shapes.json",
+  "standalone_workloads_json": "bench/workloads.json",
+  "shape_source": "fresh_sglang_kernel_api_capture",
+  "captured_kernel_api_workload_count": 12,
+  "captured_kernel_api_functions": [
+    "torch.nn.functional.linear"
   ],
-  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+  "shape_capture_note": "Captured 2026-07-08 on Verda B300 light-face-hides-fin-03-1 from a real nvidia/Qwen3.5-397B-A17B-NVFP4 TP=4 SGLang production-path execution in temporary container sglang-qwen35 on four B300 GPUs. Used a model-local HF cache after snapshot download, reasoning_parser=qwen3, tool_call_parser=qwen3_coder, disabled FlashInfer autotune, disabled CUDA graph prefill/decode, cleared startup health records before capture, and marked four request windows covering long prefill, short decode, mid concurrency, and high concurrency. The legacy qwen35__fp8_bmm task has no standalone torch.bmm/FP8 BMM Python API in this capture; it is routed to the real Triton attention backend APIs emitted by the production path rather than synthetic BMM shapes."
 }
