@@ -7,9 +7,12 @@ kernel_family = "linear_gemm"
 model = "XiaomiMiMo/MiMo-V2.5"
 model_slug = "mimo_v25"
 entry_points = [
-  "<confirm via capture; profiler family=linear_gemm>",
+  "sglang.srt.layers.quantization.fp8_utils.deepgemm_w8a8_block_fp8_linear_with_fallback",
+  "torch.nn.functional.linear",
 ]
 evidence_json = "docs/profile_evidence.json"
+shape_source_json = "docs/captured_kernel_api_shapes.json"
+workloads_json = "bench/workloads.json"
 
 [selection]
 method = "serving-profile GPU-time headroom (extract_kernel_shapes >2%, family-grouped; provenance only)"
