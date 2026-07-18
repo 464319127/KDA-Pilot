@@ -1,9 +1,12 @@
 {
   "model": "openai/gpt-oss-120b",
   "model_slug": "gpt_oss_120b",
-  "cookbook_cmd": "sglang serve --model-path openai/gpt-oss-120b --tp 8",
+  "cookbook_cmd": "omitted from standalone kernel task; use bench/workloads.json and docs/captured_kernel_api_shapes.json for RLCR",
   "tp": "8",
-  "python_interface": "<confirm via capture; profiler family=fp8_bmm>",
+  "python_interface": [
+    "flashinfer.decode.trtllm_batch_decode_with_kv_cache",
+    "flashinfer.prefill.trtllm_batch_context_with_kv_cache"
+  ],
   "kernel_family": "fp8_bmm",
   "profiler_op_provenance": [
     "Torch-Compiled Region: 1/1",
@@ -38,19 +41,15 @@
   },
   "max_pct_of_gpu": 15.81,
   "best_scenario": "random_mid",
-  "input_shapes": [
-    "[[1, 201088], [], [], []]",
-    "[[1, 201088], [], []]",
-    "[[159], [], [], []]",
-    "[[160, 512], [], [], [], []]",
-    "[[18]]",
-    "[[1], [1], []]",
-    "[[1]]",
-    "[[256], [256], []]",
-    "[[261], [], [], []]",
-    "[[32]]",
-    "[[384], [384], []]",
-    "[[4097], [], [13], []]"
+  "input_shapes": [],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "input_shapes_replaced_by": "docs/captured_kernel_api_shapes.json",
+  "standalone_workloads_json": "bench/workloads.json",
+  "shape_source": "fresh_sglang_kernel_api_capture",
+  "captured_kernel_api_workload_count": 18,
+  "captured_kernel_api_functions": [
+    "flashinfer.decode.trtllm_batch_decode_with_kv_cache",
+    "flashinfer.prefill.trtllm_batch_context_with_kv_cache"
   ],
-  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+  "shape_capture_note": "Captured 2026-07-08 on Verda B300 light-face-hides-fin-03-1 from a real openai/gpt-oss-120b TP=8 SGLang production-path execution in temporary container sglang-gpt-oss-120b on eight B300 GPUs. Used a model-local HF cache after snapshot download, disabled FlashInfer autotune, disabled CUDA graph prefill/decode, cleared startup health records before capture, and marked four request windows covering long prefill, short decode, mid concurrency, and high concurrency. The legacy gpt_oss_120b__fp8_bmm task is routed to the real low-level FlashInfer TRTLLM batch context/decode APIs observed in the production path, while the attention task uses the higher-level TRTLLM backend forward APIs."
 }

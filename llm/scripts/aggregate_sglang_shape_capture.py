@@ -18,6 +18,11 @@ TASK_SUFFIX_RULES = {
     ),
     "__fp8_bmm": (
         ".bmm_fp8",
+        ".bmm_mxfp8",
+        ".bmm_bf16",
+        ".mm_fp4",
+        ".mm_fp8",
+        ".mm_mxfp8",
         "._bmm_fp8_op",
         ".flashinfer_bmm_fp8",
         "torch.bmm",
@@ -36,11 +41,35 @@ TASK_SUFFIX_RULES = {
         "DeepseekSparseAttnBackend._forward_flashmla_kv",
         "DeepseekSparseAttnBackend._forward_standard_mha",
         "DeepseekSparseAttnBackend._forward_trtllm",
+        "TRTLLMHAAttnBackend.forward_decode",
+        "TRTLLMHAAttnBackend.forward_extend",
+        "TritonAttnBackend.forward_decode",
+        "TritonAttnBackend.forward_extend",
         "flash_mla_with_kvcache",
         "flash_mla_sparse_fwd",
         "trtllm_ragged_attention_deepseek",
+        "trtllm_batch_context_with_kv_cache",
+        "trtllm_batch_decode_with_kv_cache",
         "trtllm_batch_decode_with_kv_cache_mla",
+        "torch.ops.sglang.unified_attention_with_output",
         "_forward_prefill_sparse",
+    ),
+    "__attention": (
+        "unified_attention_with_output",
+        "FlashAttentionBackend.forward_decode",
+        "FlashAttentionBackend.forward_extend",
+        "DeepseekSparseAttnBackend.forward_extend",
+        "DeepseekSparseAttnBackend.forward_decode",
+        "DeepseekSparseAttnBackend._forward_standard_mha",
+        "DeepseekSparseAttnBackend._forward_trtllm",
+        "flash_attn_varlen_func",
+        "flash_attn_with_kvcache",
+        "TRTLLMHAAttnBackend.forward_decode",
+        "TRTLLMHAAttnBackend.forward_extend",
+        "trtllm_batch_context_with_kv_cache",
+        "trtllm_batch_decode_with_kv_cache",
+        "trtllm_ragged_attention_deepseek",
+        "trtllm_batch_decode_with_kv_cache_mla",
     ),
     "__per_token_group_quant": (
         "sglang_per_token_group_quant_fp8",
@@ -48,6 +77,224 @@ TASK_SUFFIX_RULES = {
         "per_token_group_quant_fp8",
         "sglang_per_token_group_quant_8bit",
         "per_token_group_quant_8bit",
+    ),
+    "__fused_add_rmsnorm": (
+        ".fused_add_rmsnorm",
+        ".gemma_fused_add_rmsnorm",
+        "._jit_fused_add_rmsnorm",
+    ),
+    "__rmsnorm": (
+        ".rmsnorm",
+        ".gemma_rmsnorm",
+        "._jit_rmsnorm_hf",
+    ),
+    "__fused_moe_triton": (
+        "triton_utils.fused_moe.fused_experts",
+        "triton_utils.fused_moe.inplace_fused_experts",
+        "triton_utils.fused_moe.outplace_fused_experts",
+        "triton_utils.fused_moe.fused_experts_impl",
+        "triton_utils.fused_moe._fused_moe_kernel_sequence",
+        "triton_utils.fused_moe_triton_kernels.invoke_fused_moe_kernel",
+    ),
+    "__sglang_inplace_fused_experts": (
+        "triton_utils.fused_moe.inplace_fused_experts",
+        "triton_utils.fused_moe.fused_experts_impl",
+        "triton_utils.fused_moe._fused_moe_kernel_sequence",
+        "triton_utils.fused_moe_triton_kernels.invoke_fused_moe_kernel",
+        "torch.ops.sglang.inplace_fused_experts",
+    ),
+    "__sglang_run_activation_inplace": (
+        "jit_kernel.activation._run_activation_inplace",
+        "jit_kernel.activation._run_activation_filtered_inplace",
+        "jit_kernel.activation.run_activation",
+        "jit_kernel.activation.silu_and_mul",
+        "jit_kernel.activation.gelu_and_mul",
+        "jit_kernel.activation.gelu_tanh_and_mul",
+    ),
+    "__sglang_flashinfer_fp4_quantize": (
+        "quantization.fp4_utils.fp4_quantize",
+        "torch.ops.sglang.flashinfer_fp4_quantize",
+        "nvfp4_quantize",
+        "nvfp4_block_scale_interleave",
+        "scaled_fp4_quant",
+    ),
+    "__void_anonymous_namespace_fast_ha": (
+        "DeepseekSparseAttnBackend.forward_extend",
+        "DeepseekSparseAttnBackend.forward_decode",
+        "DeepseekSparseAttnBackend._forward_standard_mha",
+        "DeepseekSparseAttnBackend._forward_trtllm",
+        "fused_q_indexer_rope_hadamard_fp4_quant",
+        "fused_q_indexer_rope_hadamard_quant",
+        "dsv4_fused_q_indexer_rope_hadamard_quant",
+        "jit_kernel.hadamard.hadamard_transform",
+        "torch.ops.sglang.hadamard_transform",
+    ),
+    "__linear_gemm": (
+        ".apply_fp8_linear",
+        ".apply_fp8_linear_bmm_flashinfer",
+        ".flashinfer_gemm_w8a8_block_fp8_linear_with_fallback",
+        ".cutlass_w8a8_block_fp8_linear_with_fallback",
+        ".deepgemm_w8a8_block_fp8_linear_with_fallback",
+        ".triton_w8a8_block_fp8_linear",
+        ".triton_scaled_mm",
+        ".fp8_scaled_mm",
+        ".fp8_blockwise_scaled_mm",
+        ".cutlass_scaled_fp4_mm",
+        ".cutlass_fp4_group_mm",
+        ".mm_fp4",
+        ".mm_fp8",
+        ".mm_mxfp8",
+        ".group_gemm_nvfp4_nt_groupwise",
+        ".group_gemm_mxfp4_nt_groupwise",
+        ".grouped_gemm_nt_masked",
+        "._apply_fallback_scaled_mm",
+        "torch._scaled_mm",
+        "torch.nn.functional.linear",
+    ),
+    "__quant_fp8": (
+        "scaled_fp8_quant",
+        "static_quant_fp8",
+        "sglang_per_token_quant_fp8",
+        "sgl_per_token_quant_fp8",
+        "sglang_per_token_group_quant_fp8",
+        "sglang_per_token_group_quant_fp8_row_padded",
+        "sgl_per_token_group_quant_fp8",
+        "torch.ops.sgl_kernel.sglang_per_token_quant_fp8.default",
+        "torch.ops.sgl_kernel.sgl_per_token_quant_fp8.default",
+        "torch.ops.sgl_kernel.sglang_per_token_group_quant_fp8.default",
+        "torch.ops.sgl_kernel.sgl_per_token_group_quant_fp8.default",
+        "torch.ops.sgl_kernel.sglang_per_token_group_quant_fp8_row_padded.default",
+        "per_token_group_quant_fp8",
+        "scaled_fp4_quant",
+        "scaled_fp4_experts_quant",
+        "silu_and_mul_scaled_fp4_experts_quant",
+        "scaled_fp4_grouped_quant",
+        "nvfp4_quantize",
+        "nvfp4_block_scale_interleave",
+    ),
+    "__moe_align_block_size": (
+        "moe_align_block_size",
+    ),
+    "__sgl_kernel_moe_align_block_size": (
+        "sgl_kernel.moe_align_block_size",
+        "jit_kernel.moe_align.moe_align_block_size",
+        "triton_utils.moe_align_block_size.moe_align_block_size",
+    ),
+    "__sgl_kernel_fp8_scaled_mm": (
+        "sgl_kernel.fp8_scaled_mm",
+        "sgl_kernel.fp8_blockwise_scaled_mm",
+        "torch.ops.sgl_kernel.fp8_scaled_mm",
+        "torch.ops.sgl_kernel.fp8_scaled_mm.default",
+        "torch.ops.sgl_kernel.fp8_blockwise_scaled_mm",
+        "torch.ops.sgl_kernel.fp8_blockwise_scaled_mm.default",
+        "quantization.fp8.Fp8LinearMethod.apply",
+        "quantization.fp8_utils.apply_fp8_linear",
+        "quantization.fp8_utils.flashinfer_gemm_w8a8_block_fp8_linear_with_fallback",
+        "quantization.fp8_utils.flashinfer_deepgemm_w8a8_block_fp8_linear_with_fallback",
+        "quantization.fp8_utils.cutlass_w8a8_block_fp8_linear_with_fallback",
+        "quantization.fp8_utils.deepgemm_w8a8_block_fp8_linear_with_fallback",
+        "quantization.fp8_utils.triton_w8a8_block_fp8_linear",
+        "quantization.fp8_kernel.w8a8_block_fp8_matmul_deepgemm",
+        "quantization.fp8_kernel.w8a8_block_fp8_matmul_triton",
+        "multimodal_gen.runtime.layers.quantization.weight_only_fp8._apply_srt_w8a8_fp8_linear",
+        "multimodal_gen.runtime.layers.quantization.weight_only_fp8._apply_weight_only_fp8_linear",
+    ),
+    "__void_at_native_sbtopk_gather_top": (
+        ".select_experts",
+        ".fused_topk",
+        ".fused_topk_torch_native",
+        ".fused_topk_softmax_torch_raw_logits",
+        ".grouped_topk",
+        ".biased_grouped_topk",
+    ),
+    "__void_moe_sum_reduce_warp_per_tok": (
+        "moe_sum_reduce",
+    ),
+    "__void_moe_sum_reduce_kernel_warp": (
+        "moe_sum_reduce",
+    ),
+}
+
+TASK_EXACT_RULES = {
+    "qwen36__fp8_bmm": (
+        "TRTLLMHAAttnBackend.forward_decode",
+        "TRTLLMHAAttnBackend.forward_extend",
+        "trtllm_batch_context_with_kv_cache",
+        "trtllm_batch_decode_with_kv_cache",
+    ),
+    "qwen3_coder_next__fp8_bmm": (
+        "TritonAttnBackend.forward_decode",
+        "TritonAttnBackend.forward_extend",
+    ),
+    "qwen3_coder__fp8_bmm": (
+        "flashinfer.decode.trtllm_batch_decode_with_kv_cache",
+        "flashinfer.prefill.trtllm_batch_context_with_kv_cache",
+    ),
+    "qwen3_next__fp8_bmm": (
+        "TritonAttnBackend.forward_decode",
+        "TritonAttnBackend.forward_extend",
+    ),
+    "qwen35__fp8_bmm": (
+        "TritonAttnBackend.forward_decode",
+        "TritonAttnBackend.forward_extend",
+    ),
+    "qwen3__fp8_bmm": (
+        "flashinfer.decode.trtllm_batch_decode_with_kv_cache",
+        "flashinfer.prefill.trtllm_batch_context_with_kv_cache",
+    ),
+    "gpt_oss_120b__fp8_bmm": (
+        "flashinfer.decode.trtllm_batch_decode_with_kv_cache",
+        "flashinfer.prefill.trtllm_batch_context_with_kv_cache",
+    ),
+    "intern_s2_preview__fp8_bmm": (
+        "TritonAttnBackend.forward_decode",
+        "TritonAttnBackend.forward_extend",
+    ),
+    "mimo_v25__fp8_bmm": (
+        "FlashAttentionBackend.forward_decode",
+        "FlashAttentionBackend.forward_extend",
+        "flash_attn_with_kvcache",
+    ),
+    "nemotron3_nano__sglang_flashinfer_bmm_fp8": (
+        "flashinfer_bmm_fp8",
+        "flashinfer.gemm.bmm_fp8",
+    ),
+    "nemotron3_nano__sglang_nemotron_mamba2_with_output": (
+        "NemotronHMambaDecoderLayer._forward_mamba",
+        "nemotron_mamba2_with_output",
+        "breakable_nemotron_mamba2_with_output",
+        "mamba_chunk_scan_combined",
+        "_mamba_chunk_scan_combined_fwd",
+        "_chunk_scan_fwd",
+        "_chunk_state_fwd",
+        "chunk_state_varlen",
+        "_state_passing_fwd",
+        "causal_conv1d_fn",
+        "causal_conv1d_update",
+    ),
+    "nemotron3_nano__sglang_unified_attention_with_output": (
+        "NemotronHAttention.forward",
+        "unified_attention_with_output",
+    ),
+    "nemotron3_nano__static_quant_fp8": (
+        "static_quant_fp8",
+    ),
+    "step35_flash__sgl_kernel_gemma_rmsnorm": (
+        "gemma_rmsnorm",
+    ),
+    "step35_flash__void_moe_top_k_256_float_const_b": (
+        ".select_experts",
+        ".fused_topk",
+        ".fused_topk_torch_native",
+        ".fused_topk_softmax_torch_raw_logits",
+        ".grouped_topk",
+        ".biased_grouped_topk",
+    ),
+}
+
+TASK_DUPLICATE_RULES = {
+    "qwen3__void_cublas_lt_split_kreduce_ker": (
+        "torch.nn.functional.linear",
     ),
 }
 
@@ -132,7 +379,7 @@ def scalarize(value: Any) -> Any:
             return {key: scalarize(item) for key, item in value.get("items", {}).items()}
         if "repr" in value:
             return {"kind": value.get("kind")}
-        return value
+        return {key: scalarize(item) for key, item in value.items()}
     if isinstance(value, list):
         return [scalarize(item) for item in value]
     return value
@@ -152,10 +399,27 @@ def build_task_rules(task_prefix: str, repo_root: Path) -> dict[str, tuple[str, 
         f"{task_prefix}{suffix}": needles
         for suffix, needles in TASK_SUFFIX_RULES.items()
     }
+    rules.update(
+        {
+            task: needles
+            for task, needles in TASK_EXACT_RULES.items()
+            if task.startswith(f"{task_prefix}__")
+        }
+    )
     return {
         task: needles
         for task, needles in rules.items()
         if (repo_root / "llm" / task).exists()
+    }
+
+
+def build_duplicate_task_rules(
+    task_prefix: str, repo_root: Path
+) -> dict[str, tuple[str, ...]]:
+    return {
+        task: needles
+        for task, needles in TASK_DUPLICATE_RULES.items()
+        if task.startswith(f"{task_prefix}__") and (repo_root / "llm" / task).exists()
     }
 
 
@@ -164,6 +428,16 @@ def task_for_function(function: str, task_rules: dict[str, tuple[str, ...]]) -> 
         if any(needle in function for needle in needles):
             return task
     return None
+
+
+def duplicate_tasks_for_function(
+    function: str, task_rules: dict[str, tuple[str, ...]]
+) -> list[str]:
+    return [
+        task
+        for task, needles in task_rules.items()
+        if any(needle in function for needle in needles)
+    ]
 
 
 def compact_workload(row: dict[str, Any], scenario: str | None, ordinal: int) -> dict[str, Any]:
@@ -205,10 +479,13 @@ def main() -> None:
     rows = load_jsonl(args.records)
     markers = load_markers(args.markers)
     task_rules = build_task_rules(args.task_prefix, args.repo_root)
-    if not task_rules:
+    duplicate_task_rules = build_duplicate_task_rules(args.task_prefix, args.repo_root)
+    if not task_rules and not duplicate_task_rules:
         raise SystemExit(f"no task dirs found for task prefix: {args.task_prefix}")
+    task_names = list(task_rules)
+    task_names.extend(task for task in duplicate_task_rules if task not in task_rules)
     by_task: dict[str, OrderedDict[str, dict[str, Any]]] = {
-        task: OrderedDict() for task in task_rules
+        task: OrderedDict() for task in task_names
     }
     unmatched = 0
 
@@ -218,13 +495,22 @@ def main() -> None:
             unmatched += 1
             continue
         task = task_for_function(function, task_rules)
-        if task is None:
+        tasks = []
+        if task is not None:
+            tasks.append(task)
+        for duplicate_task in duplicate_tasks_for_function(function, duplicate_task_rules):
+            if duplicate_task not in tasks:
+                tasks.append(duplicate_task)
+        if not tasks:
             unmatched += 1
             continue
         scenario = scenario_for_time(markers, row.get("time"))
         signature = record_signature(row)
-        if signature not in by_task[task]:
-            by_task[task][signature] = compact_workload(row, scenario, len(by_task[task]) + 1)
+        for target_task in tasks:
+            if signature not in by_task[target_task]:
+                by_task[target_task][signature] = compact_workload(
+                    row, scenario, len(by_task[target_task]) + 1
+                )
 
     summary: dict[str, Any] = {
         "model": args.model,

@@ -92,6 +92,10 @@ def refresh_profile_evidence(task_dir: Path, capture_note: str) -> dict[str, Any
     evidence["input_shapes_replaced_by"] = "docs/captured_kernel_api_shapes.json"
     evidence["standalone_workloads_json"] = "bench/workloads.json"
     evidence["shape_source"] = "fresh_sglang_kernel_api_capture"
+    evidence["cookbook_cmd"] = (
+        "omitted from standalone kernel task; use bench/workloads.json and "
+        "docs/captured_kernel_api_shapes.json for RLCR"
+    )
     evidence["captured_kernel_api_workload_count"] = captured["workload_count"]
     evidence["captured_kernel_api_functions"] = functions
     evidence["shape_capture_note"] = capture_note
@@ -108,7 +112,7 @@ def write_profile_md(task_dir: Path, evidence: dict[str, Any]) -> None:
     md = f"""# Profile evidence - {task}
 
 **Standalone kernel target: {evidence.get("max_pct_of_gpu", 0):.1f}% of total serving GPU time** (max across scenarios) on
-`{evidence.get("model")}`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Kernel API shapes below were recaptured from a real `{evidence.get("model")}` server run and replace the old noisy profiler shape strings.
+`{evidence.get("model")}`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Kernel API shapes below are frozen from a one-time real `{evidence.get("model")}` production-path capture and replace the old noisy profiler shape strings.
 
 - Model: `{evidence.get("model")}` (slug `{evidence.get("model_slug")}`, tp={evidence.get("tp")})
 - Python interface(s): {", ".join(f"`{function}`" for function in functions)}
@@ -136,15 +140,12 @@ Functions covered:
 The old profiler `input_shapes` strings were noisy and are no longer an acceptance source.
 Use the task-local workload file above for standalone single-GPU correctness and benchmark work.
 
-## Original serving profile command (provenance only)
-```bash
-{evidence.get("cookbook_cmd")}
-```
-This command is retained only to explain target selection. Normal RLCR kernel
-work must not depend on a live SGLang server, `run_capture`, 8-GPU availability,
-or a multi-GPU e2e gate. Validate with the task-local standalone benchmark on
-one idle target GPU using the captured shape set. Re-run serving capture only
-when intentionally refreshing these evidence files.
+## Validation Policy
+
+Normal RLCR kernel work is a standalone single-GPU optimization task. Use the
+captured workload set above for correctness and benchmark acceptance on one idle
+target GPU, and do not add external runtime-readiness or fleet-level A/B gates to
+the task loop.
 """
     (task_dir / "docs" / "profile_evidence.md").write_text(md, encoding="utf-8")
 
@@ -165,10 +166,10 @@ profile, peak `{evidence.get("best_scenario")}`) - a serving-profile headroom si
 standalone kernel task. Family `{evidence.get("kernel_family")}`, category `{evidence.get("category")}`.
 
 Use `bench/workloads.json` as the task-local standalone shape source. It was generated from
-`docs/captured_kernel_api_shapes.json`, a fresh real `{evidence.get("model")}` TP={evidence.get("tp")} SGLang capture. Normal
-RLCR kernel work must not depend on starting SGLang serve, `run_capture`, 8-GPU availability,
-or a multi-GPU e2e A/B; optimize and validate via the task-local standalone benchmark on
-one idle target GPU. Follow
+`docs/captured_kernel_api_shapes.json`, a fresh real `{evidence.get("model")}` TP={evidence.get("tp")} production-path capture. Normal
+RLCR kernel work is a standalone single-GPU task: optimize and validate via the
+task-local benchmark on one idle target GPU, without adding external
+runtime-readiness or fleet-level A/B gates. Follow
 `llm/docs/llm_kernel_optimization_rules.md` (CUDA, no DSL) + `llm/docs/llm_correctness_contract.md`.
 """
     (task_dir / "prompt.md").write_text(prompt, encoding="utf-8")

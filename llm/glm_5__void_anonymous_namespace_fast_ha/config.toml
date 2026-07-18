@@ -7,9 +7,14 @@ kernel_family = "void_anonymous_namespace_fast_ha"
 model = "nvidia/GLM-5-NVFP4"
 model_slug = "glm_5"
 entry_points = [
-  "<confirm via capture; profiler family=void_anonymous_namespace_fast_ha>",
+  "sglang.srt.layers.attention.dsa_backend.DeepseekSparseAttnBackend._forward_standard_mha",
+  "sglang.srt.layers.attention.dsa_backend.DeepseekSparseAttnBackend._forward_trtllm",
+  "sglang.srt.layers.attention.dsa_backend.DeepseekSparseAttnBackend.forward_decode",
+  "sglang.srt.layers.attention.dsa_backend.DeepseekSparseAttnBackend.forward_extend",
 ]
 evidence_json = "docs/profile_evidence.json"
+shape_source_json = "docs/captured_kernel_api_shapes.json"
+workloads_json = "bench/workloads.json"
 
 [selection]
 method = "serving-profile GPU-time headroom (extract_kernel_shapes >2%, family-grouped; provenance only)"
