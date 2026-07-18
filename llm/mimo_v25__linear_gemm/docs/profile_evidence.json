@@ -1,9 +1,12 @@
 {
   "model": "XiaomiMiMo/MiMo-V2.5",
   "model_slug": "mimo_v25",
-  "cookbook_cmd": "python -m sglang.launch_server --model-path XiaomiMiMo/MiMo-V2.5 --tp 4 --trust-remote-code --attention-backend fa4 --mm-attention-backend fa4 --moe-runner-backend flashinfer_trtllm --mem-fraction-static 0.65 --chunked-prefill-size 16384",
+  "cookbook_cmd": "omitted from standalone kernel task; use bench/workloads.json and docs/captured_kernel_api_shapes.json for RLCR",
   "tp": "4",
-  "python_interface": "<confirm via capture; profiler family=linear_gemm>",
+  "python_interface": [
+    "sglang.srt.layers.quantization.fp8_utils.deepgemm_w8a8_block_fp8_linear_with_fallback",
+    "torch.nn.functional.linear"
+  ],
   "kernel_family": "linear_gemm",
   "profiler_op_provenance": [
     "aten::_index_put_impl_",
@@ -29,18 +32,15 @@
   },
   "max_pct_of_gpu": 9.17,
   "best_scenario": "sharegpt_mid",
-  "input_shapes": [
-    "[[10096], []]",
-    "[[103], []]",
-    "[[10724, 4096], [4096, 256]]",
-    "[[170, 4096], [4096, 256]]",
-    "[[196, 4096], [4096, 256]]",
-    "[[1], [], []]",
-    "[[2049, 1048580], [], [], [], []]",
-    "[[32], []]",
-    "[[5674, 4096], [4096, 256]]",
-    "[[89, 4096], [4096, 256]]",
-    "[[]]"
+  "input_shapes": [],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "input_shapes_replaced_by": "docs/captured_kernel_api_shapes.json",
+  "standalone_workloads_json": "bench/workloads.json",
+  "shape_source": "fresh_sglang_kernel_api_capture",
+  "captured_kernel_api_workload_count": 32,
+  "captured_kernel_api_functions": [
+    "sglang.srt.layers.quantization.fp8_utils.deepgemm_w8a8_block_fp8_linear_with_fallback",
+    "torch.nn.functional.linear"
   ],
-  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+  "shape_capture_note": "Captured 2026-07-08 on Verda B300 light-face-hides-fin-03-1 from a real XiaomiMiMo/MiMo-V2.5 TP=4 SGLang production-path execution in temporary container sglang-mimo-v25 with FA4 attention and flashinfer_trtllm MoE; CUDA graph disabled only to keep the temporary shape-capture hook out of graph capture; request windows include long/short prompt and mid/high concurrency serving paths."
 }
