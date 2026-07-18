@@ -1,0 +1,1201 @@
+{
+  "model": "Qwen/Qwen3-Next-80B-A3B-Instruct",
+  "task": "qwen3_next__fp8_bmm",
+  "source": "fresh_sglang_kernel_api_capture",
+  "capture_note": "Captured 2026-07-08 on Verda B300 light-face-hides-fin-03-1 from a real Qwen/Qwen3-Next-80B-A3B-Instruct TP=8 SGLang production-path execution in temporary container sglang-qwen3-next on eight B300 GPUs. Used a model-local HF cache after snapshot download, disabled FlashInfer autotune, disabled CUDA graph prefill/decode, cleared startup health records before capture, and marked four request windows covering long prefill, short decode, mid concurrency, and high concurrency. The legacy qwen3_next__fp8_bmm task has no standalone torch.bmm/FP8 BMM Python API in this capture; it is routed to the real Triton attention backend APIs emitted by the production path rather than synthetic BMM shapes.",
+  "markers": [
+    {
+      "end_time": 1783474900.9535377,
+      "payload": {
+        "max_new_tokens": 8,
+        "text_chars": 19800
+      },
+      "scenario": "sharegpt_low_long_prompt",
+      "start_time": 1783474894.0669758
+    },
+    {
+      "end_time": 1783474902.4259279,
+      "payload": {
+        "max_new_tokens": 16,
+        "text_chars": 624
+      },
+      "scenario": "random_low_short_prompt",
+      "start_time": 1783474900.9538808
+    },
+    {
+      "end_time": 1783474904.8435893,
+      "payload": {
+        "concurrency": 16,
+        "max_new_tokens": 4,
+        "text_chars": 19800
+      },
+      "scenario": "sharegpt_mid_concurrency_long_prompt",
+      "start_time": 1783474902.4261847
+    },
+    {
+      "end_time": 1783474905.9258494,
+      "payload": {
+        "concurrency": 64,
+        "max_new_tokens": 2,
+        "text_chars": 624
+      },
+      "scenario": "random_high_concurrency_short_prompt",
+      "start_time": 1783474904.8438873
+    }
+  ],
+  "workload_count": 9,
+  "workloads": [
+    {
+      "id": "forward_extend__sharegpt_low_long_prompt__0001__3901x512_3901x1x256_3901x1x256",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": "sharegpt_low_long_prompt",
+      "function": "sglang.srt.layers.attention.triton_backend.TritonAttnBackend.forward_extend",
+      "tensors": {
+        "arg.1": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            3901,
+            512
+          ],
+          "storage_offset": 0,
+          "stride": [
+            512,
+            1
+          ]
+        },
+        "arg.2": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            3901,
+            1,
+            256
+          ],
+          "storage_offset": 0,
+          "stride": [
+            256,
+            256,
+            1
+          ]
+        },
+        "arg.3": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": false,
+          "kind": "tensor",
+          "shape": [
+            3901,
+            1,
+            256
+          ],
+          "storage_offset": 1280,
+          "stride": [
+            1536,
+            256,
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "kind": "TritonAttnBackend"
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            3901,
+            512
+          ],
+          "storage_offset": 0,
+          "stride": [
+            512,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            3901,
+            1,
+            256
+          ],
+          "storage_offset": 0,
+          "stride": [
+            256,
+            256,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": false,
+          "kind": "tensor",
+          "shape": [
+            3901,
+            1,
+            256
+          ],
+          "storage_offset": 1280,
+          "stride": [
+            1536,
+            256,
+            1
+          ]
+        },
+        {
+          "kind": "RadixAttention"
+        },
+        {
+          "kind": "ForwardBatch"
+        },
+        true
+      ],
+      "kwargs": {},
+      "result": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": true,
+        "kind": "tensor",
+        "shape": [
+          3901,
+          512
+        ],
+        "storage_offset": 0,
+        "stride": [
+          512,
+          1
+        ]
+      }
+    },
+    {
+      "id": "forward_decode__sharegpt_low_long_prompt__0002__1x512_1x1x256_1x1x256",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": "sharegpt_low_long_prompt",
+      "function": "sglang.srt.layers.attention.triton_backend.TritonAttnBackend.forward_decode",
+      "tensors": {
+        "arg.1": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            1,
+            512
+          ],
+          "storage_offset": 0,
+          "stride": [
+            512,
+            1
+          ]
+        },
+        "arg.2": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            1,
+            1,
+            256
+          ],
+          "storage_offset": 0,
+          "stride": [
+            256,
+            256,
+            1
+          ]
+        },
+        "arg.3": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            1,
+            1,
+            256
+          ],
+          "storage_offset": 1280,
+          "stride": [
+            256,
+            256,
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "kind": "TritonAttnBackend"
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            1,
+            512
+          ],
+          "storage_offset": 0,
+          "stride": [
+            512,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            1,
+            1,
+            256
+          ],
+          "storage_offset": 0,
+          "stride": [
+            256,
+            256,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            1,
+            1,
+            256
+          ],
+          "storage_offset": 1280,
+          "stride": [
+            256,
+            256,
+            1
+          ]
+        },
+        {
+          "kind": "RadixAttention"
+        },
+        {
+          "kind": "ForwardBatch"
+        },
+        true
+      ],
+      "kwargs": {},
+      "result": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": true,
+        "kind": "tensor",
+        "shape": [
+          1,
+          512
+        ],
+        "storage_offset": 0,
+        "stride": [
+          512,
+          1
+        ]
+      }
+    },
+    {
+      "id": "forward_extend__random_low_short_prompt__0003__161x512_161x1x256_161x1x256",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": "random_low_short_prompt",
+      "function": "sglang.srt.layers.attention.triton_backend.TritonAttnBackend.forward_extend",
+      "tensors": {
+        "arg.1": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            161,
+            512
+          ],
+          "storage_offset": 0,
+          "stride": [
+            512,
+            1
+          ]
+        },
+        "arg.2": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            161,
+            1,
+            256
+          ],
+          "storage_offset": 0,
+          "stride": [
+            256,
+            256,
+            1
+          ]
+        },
+        "arg.3": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": false,
+          "kind": "tensor",
+          "shape": [
+            161,
+            1,
+            256
+          ],
+          "storage_offset": 1280,
+          "stride": [
+            1536,
+            256,
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "kind": "TritonAttnBackend"
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            161,
+            512
+          ],
+          "storage_offset": 0,
+          "stride": [
+            512,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            161,
+            1,
+            256
+          ],
+          "storage_offset": 0,
+          "stride": [
+            256,
+            256,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": false,
+          "kind": "tensor",
+          "shape": [
+            161,
+            1,
+            256
+          ],
+          "storage_offset": 1280,
+          "stride": [
+            1536,
+            256,
+            1
+          ]
+        },
+        {
+          "kind": "RadixAttention"
+        },
+        {
+          "kind": "ForwardBatch"
+        },
+        true
+      ],
+      "kwargs": {},
+      "result": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": true,
+        "kind": "tensor",
+        "shape": [
+          161,
+          512
+        ],
+        "storage_offset": 0,
+        "stride": [
+          512,
+          1
+        ]
+      }
+    },
+    {
+      "id": "forward_extend__sharegpt_mid_concurrency_long_prompt__0004__67x512_67x1x256_67x1x256",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": "sharegpt_mid_concurrency_long_prompt",
+      "function": "sglang.srt.layers.attention.triton_backend.TritonAttnBackend.forward_extend",
+      "tensors": {
+        "arg.1": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            67,
+            512
+          ],
+          "storage_offset": 0,
+          "stride": [
+            512,
+            1
+          ]
+        },
+        "arg.2": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            67,
+            1,
+            256
+          ],
+          "storage_offset": 0,
+          "stride": [
+            256,
+            256,
+            1
+          ]
+        },
+        "arg.3": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": false,
+          "kind": "tensor",
+          "shape": [
+            67,
+            1,
+            256
+          ],
+          "storage_offset": 1280,
+          "stride": [
+            1536,
+            256,
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "kind": "TritonAttnBackend"
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            67,
+            512
+          ],
+          "storage_offset": 0,
+          "stride": [
+            512,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            67,
+            1,
+            256
+          ],
+          "storage_offset": 0,
+          "stride": [
+            256,
+            256,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": false,
+          "kind": "tensor",
+          "shape": [
+            67,
+            1,
+            256
+          ],
+          "storage_offset": 1280,
+          "stride": [
+            1536,
+            256,
+            1
+          ]
+        },
+        {
+          "kind": "RadixAttention"
+        },
+        {
+          "kind": "ForwardBatch"
+        },
+        true
+      ],
+      "kwargs": {},
+      "result": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": true,
+        "kind": "tensor",
+        "shape": [
+          67,
+          512
+        ],
+        "storage_offset": 0,
+        "stride": [
+          512,
+          1
+        ]
+      }
+    },
+    {
+      "id": "forward_extend__sharegpt_mid_concurrency_long_prompt__0005__1011x512_1011x1x256_1011x1x256",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": "sharegpt_mid_concurrency_long_prompt",
+      "function": "sglang.srt.layers.attention.triton_backend.TritonAttnBackend.forward_extend",
+      "tensors": {
+        "arg.1": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            1011,
+            512
+          ],
+          "storage_offset": 0,
+          "stride": [
+            512,
+            1
+          ]
+        },
+        "arg.2": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            1011,
+            1,
+            256
+          ],
+          "storage_offset": 0,
+          "stride": [
+            256,
+            256,
+            1
+          ]
+        },
+        "arg.3": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": false,
+          "kind": "tensor",
+          "shape": [
+            1011,
+            1,
+            256
+          ],
+          "storage_offset": 1280,
+          "stride": [
+            1536,
+            256,
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "kind": "TritonAttnBackend"
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            1011,
+            512
+          ],
+          "storage_offset": 0,
+          "stride": [
+            512,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            1011,
+            1,
+            256
+          ],
+          "storage_offset": 0,
+          "stride": [
+            256,
+            256,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": false,
+          "kind": "tensor",
+          "shape": [
+            1011,
+            1,
+            256
+          ],
+          "storage_offset": 1280,
+          "stride": [
+            1536,
+            256,
+            1
+          ]
+        },
+        {
+          "kind": "RadixAttention"
+        },
+        {
+          "kind": "ForwardBatch"
+        },
+        true
+      ],
+      "kwargs": {},
+      "result": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": true,
+        "kind": "tensor",
+        "shape": [
+          1011,
+          512
+        ],
+        "storage_offset": 0,
+        "stride": [
+          512,
+          1
+        ]
+      }
+    },
+    {
+      "id": "forward_decode__sharegpt_mid_concurrency_long_prompt__0006__16x512_16x1x256_16x1x256",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": "sharegpt_mid_concurrency_long_prompt",
+      "function": "sglang.srt.layers.attention.triton_backend.TritonAttnBackend.forward_decode",
+      "tensors": {
+        "arg.1": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            16,
+            512
+          ],
+          "storage_offset": 0,
+          "stride": [
+            512,
+            1
+          ]
+        },
+        "arg.2": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            16,
+            1,
+            256
+          ],
+          "storage_offset": 0,
+          "stride": [
+            256,
+            256,
+            1
+          ]
+        },
+        "arg.3": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": false,
+          "kind": "tensor",
+          "shape": [
+            16,
+            1,
+            256
+          ],
+          "storage_offset": 1280,
+          "stride": [
+            1536,
+            256,
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "kind": "TritonAttnBackend"
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            16,
+            512
+          ],
+          "storage_offset": 0,
+          "stride": [
+            512,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            16,
+            1,
+            256
+          ],
+          "storage_offset": 0,
+          "stride": [
+            256,
+            256,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": false,
+          "kind": "tensor",
+          "shape": [
+            16,
+            1,
+            256
+          ],
+          "storage_offset": 1280,
+          "stride": [
+            1536,
+            256,
+            1
+          ]
+        },
+        {
+          "kind": "RadixAttention"
+        },
+        {
+          "kind": "ForwardBatch"
+        },
+        true
+      ],
+      "kwargs": {},
+      "result": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": true,
+        "kind": "tensor",
+        "shape": [
+          16,
+          512
+        ],
+        "storage_offset": 0,
+        "stride": [
+          512,
+          1
+        ]
+      }
+    },
+    {
+      "id": "forward_extend__random_high_concurrency_short_prompt__0007__78x512_78x1x256_78x1x256",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": "random_high_concurrency_short_prompt",
+      "function": "sglang.srt.layers.attention.triton_backend.TritonAttnBackend.forward_extend",
+      "tensors": {
+        "arg.1": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            78,
+            512
+          ],
+          "storage_offset": 0,
+          "stride": [
+            512,
+            1
+          ]
+        },
+        "arg.2": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            78,
+            1,
+            256
+          ],
+          "storage_offset": 0,
+          "stride": [
+            256,
+            256,
+            1
+          ]
+        },
+        "arg.3": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": false,
+          "kind": "tensor",
+          "shape": [
+            78,
+            1,
+            256
+          ],
+          "storage_offset": 1280,
+          "stride": [
+            1536,
+            256,
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "kind": "TritonAttnBackend"
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            78,
+            512
+          ],
+          "storage_offset": 0,
+          "stride": [
+            512,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            78,
+            1,
+            256
+          ],
+          "storage_offset": 0,
+          "stride": [
+            256,
+            256,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": false,
+          "kind": "tensor",
+          "shape": [
+            78,
+            1,
+            256
+          ],
+          "storage_offset": 1280,
+          "stride": [
+            1536,
+            256,
+            1
+          ]
+        },
+        {
+          "kind": "RadixAttention"
+        },
+        {
+          "kind": "ForwardBatch"
+        },
+        true
+      ],
+      "kwargs": {},
+      "result": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": true,
+        "kind": "tensor",
+        "shape": [
+          78,
+          512
+        ],
+        "storage_offset": 0,
+        "stride": [
+          512,
+          1
+        ]
+      }
+    },
+    {
+      "id": "forward_extend__random_high_concurrency_short_prompt__0008__2472x512_2472x1x256_2472x1x256",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": "random_high_concurrency_short_prompt",
+      "function": "sglang.srt.layers.attention.triton_backend.TritonAttnBackend.forward_extend",
+      "tensors": {
+        "arg.1": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            2472,
+            512
+          ],
+          "storage_offset": 0,
+          "stride": [
+            512,
+            1
+          ]
+        },
+        "arg.2": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            2472,
+            1,
+            256
+          ],
+          "storage_offset": 0,
+          "stride": [
+            256,
+            256,
+            1
+          ]
+        },
+        "arg.3": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": false,
+          "kind": "tensor",
+          "shape": [
+            2472,
+            1,
+            256
+          ],
+          "storage_offset": 1280,
+          "stride": [
+            1536,
+            256,
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "kind": "TritonAttnBackend"
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            2472,
+            512
+          ],
+          "storage_offset": 0,
+          "stride": [
+            512,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            2472,
+            1,
+            256
+          ],
+          "storage_offset": 0,
+          "stride": [
+            256,
+            256,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": false,
+          "kind": "tensor",
+          "shape": [
+            2472,
+            1,
+            256
+          ],
+          "storage_offset": 1280,
+          "stride": [
+            1536,
+            256,
+            1
+          ]
+        },
+        {
+          "kind": "RadixAttention"
+        },
+        {
+          "kind": "ForwardBatch"
+        },
+        true
+      ],
+      "kwargs": {},
+      "result": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": true,
+        "kind": "tensor",
+        "shape": [
+          2472,
+          512
+        ],
+        "storage_offset": 0,
+        "stride": [
+          512,
+          1
+        ]
+      }
+    },
+    {
+      "id": "forward_decode__random_high_concurrency_short_prompt__0009__64x512_64x1x256_64x1x256",
+      "production": true,
+      "source": "fresh_sglang_kernel_api_capture",
+      "scenario": "random_high_concurrency_short_prompt",
+      "function": "sglang.srt.layers.attention.triton_backend.TritonAttnBackend.forward_decode",
+      "tensors": {
+        "arg.1": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            64,
+            512
+          ],
+          "storage_offset": 0,
+          "stride": [
+            512,
+            1
+          ]
+        },
+        "arg.2": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            64,
+            1,
+            256
+          ],
+          "storage_offset": 0,
+          "stride": [
+            256,
+            256,
+            1
+          ]
+        },
+        "arg.3": {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": false,
+          "kind": "tensor",
+          "shape": [
+            64,
+            1,
+            256
+          ],
+          "storage_offset": 1280,
+          "stride": [
+            1536,
+            256,
+            1
+          ]
+        }
+      },
+      "args": [
+        {
+          "kind": "TritonAttnBackend"
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            64,
+            512
+          ],
+          "storage_offset": 0,
+          "stride": [
+            512,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": true,
+          "kind": "tensor",
+          "shape": [
+            64,
+            1,
+            256
+          ],
+          "storage_offset": 0,
+          "stride": [
+            256,
+            256,
+            1
+          ]
+        },
+        {
+          "dtype": "torch.bfloat16",
+          "is_contiguous": false,
+          "kind": "tensor",
+          "shape": [
+            64,
+            1,
+            256
+          ],
+          "storage_offset": 1280,
+          "stride": [
+            1536,
+            256,
+            1
+          ]
+        },
+        {
+          "kind": "RadixAttention"
+        },
+        {
+          "kind": "ForwardBatch"
+        },
+        true
+      ],
+      "kwargs": {},
+      "result": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": true,
+        "kind": "tensor",
+        "shape": [
+          64,
+          512
+        ],
+        "storage_offset": 0,
+        "stride": [
+          512,
+          1
+        ]
+      }
+    }
+  ]
+}

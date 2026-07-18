@@ -1,9 +1,13 @@
 {
   "model": "mistralai/Mistral-Small-4-119B-2603",
   "model_slug": "mistral_small4",
-  "cookbook_cmd": "sglang serve --model-path mistralai/Mistral-Small-4-119B-2603 --tp 1 --reasoning-parser mistral --tool-call-parser mistral",
+  "cookbook_cmd": "omitted from standalone kernel task; use bench/workloads.json and docs/captured_kernel_api_shapes.json for RLCR",
   "tp": "1",
-  "python_interface": "sgl_kernel.fp8_scaled_mm",
+  "python_interface": [
+    "sglang.srt.layers.quantization.fp8.Fp8LinearMethod.apply",
+    "sglang.srt.layers.quantization.fp8_utils.apply_fp8_linear",
+    "torch.ops.sgl_kernel.fp8_scaled_mm.default"
+  ],
   "kernel_family": "linear_gemm",
   "profiler_op_provenance": [
     "aten::_local_scalar_dense",
@@ -29,19 +33,16 @@
   },
   "max_pct_of_gpu": 28.39,
   "best_scenario": "sharegpt_low",
-  "input_shapes": [
-    "[[1, 4096], [4096, 131072]]",
-    "[[100], [100], []]",
-    "[[100]]",
-    "[[104], [], [], []]",
-    "[[11179, 4096], [4096, 4096], [11179, 1], [4096, 1], [], []]",
-    "[[18, 4096], [4096, 4096], [18, 1], [4096, 1], [], []]",
-    "[[18], [], [], []]",
-    "[[19593, 256], [256, 6144], [19593, 1], [6144, 1], [], []]",
-    "[[1], [1], []]",
-    "[[1], [], [], []]",
-    "[[1], [], []]",
-    "[[1]]"
+  "input_shapes": [],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "input_shapes_replaced_by": "docs/captured_kernel_api_shapes.json",
+  "standalone_workloads_json": "bench/workloads.json",
+  "shape_source": "fresh_sglang_kernel_api_capture",
+  "captured_kernel_api_workload_count": 42,
+  "captured_kernel_api_functions": [
+    "sglang.srt.layers.quantization.fp8.Fp8LinearMethod.apply",
+    "sglang.srt.layers.quantization.fp8_utils.apply_fp8_linear",
+    "torch.ops.sgl_kernel.fp8_scaled_mm.default"
   ],
-  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+  "shape_capture_note": "Captured 2026-07-08 on Verda B300 light-face-hides-fin-03-1 from a real mistralai/Mistral-Small-4-119B-2603 TP=1 SGLang production-path execution in temporary container sglang-mistral-small4 with TRTLLM/MLA attention and FP8 GEMM; CUDA graph disabled only to keep the temporary shape-capture hook out of graph capture; request windows include long/short prompt and mid/high concurrency serving paths."
 }

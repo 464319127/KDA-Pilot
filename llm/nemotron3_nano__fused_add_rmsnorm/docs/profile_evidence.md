@@ -1,34 +1,38 @@
-# Profile evidence — nemotron3_nano__fused_add_rmsnorm
+# Profile evidence - nemotron3_nano__fused_add_rmsnorm
 
-**Why this is a standalone kernel target:** it is **4.4% of total serving GPU time** (max across scenarios) on `nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-FP8`, measured by profiling the exact
-cookbook deployment. This is target-selection provenance and headroom context, not the validation path. Profiler role name; confirm exact Python interface via SGLANG_KERNEL_API_LOGLEVEL capture.
+**Standalone kernel target: 4.4% of total serving GPU time** (max across scenarios) on
+`nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-FP8`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Kernel API shapes below are frozen from a one-time real `nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-FP8` production-path capture and replace the old noisy profiler shape strings.
 
 - Model: `nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-FP8` (slug `nemotron3_nano`, tp=1)
-- Python interface: `<confirm via capture; profiler role=fused_add_rmsnorm>`
-- Category: `gemm`
+- Python interface(s): `sglang.srt.layers.layernorm.fused_add_rmsnorm`
+- Kernel family: `None`  .  Category: `gemm`
 - GPU kernel(s): `kernel_cutlass_kernel_flashinfernormkernelsfused_add_rmsnormFusedAddRMSNormKernel_object_a`
-- Profiler op provenance: `aten::as_strided`, `aten::copy_`, `aten::view`
 
 ## % of GPU time by scenario
 
-| dataset | scenario (concurrency) | % of GPU time |
+| dataset | concurrency | % of GPU time |
 |---|---|---|
-| random_low | random (conc 1) | 4.41% |
-| sharegpt_low | sharegpt (conc 1) | 4.44% |
+| random | conc 1 | 4.41% |
+| sharegpt | conc 1 | 4.44% |
 
-**Peak: 4.4% in `sharegpt_low` (sharegpt, concurrency 1).**
+**Peak: 4.4% in `sharegpt_low`.**
 
-## Input shapes (profiler)
-- `[[1, 131072], [], [], []]`
-- `[[1, 1], [1, 1], []]`
-- `[[1], [1], []]`
-- `[[1], []]`
+## Fresh captured kernel API shapes
 
-## Original serving capture command (provenance only)
-```bash
-python3 -m sglang.launch_server --model-path nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-FP8 --trust-remote-code --max-running-requests 1024
-```
+- Shape source: `docs/captured_kernel_api_shapes.json`
+- Standalone workloads: `bench/workloads.json`
+- Workload count: 4
+- Capture note: Captured 2026-07-08 on Verda B300 light-face-hides-fin-03-1 from a real nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-FP8 TP=1 SGLang production-path execution in the prepared sglang_bbuf_b300 container; CUDA graph disabled only to keep the temporary shape-capture hook out of graph capture; capture used temporary import/decomposition compatibility shims for the local Torch/Transformers environment, with request windows covering long/short prompt and mid/high concurrency serving paths.
 
-Do not rerun this serving command, `run_capture`, or a multi-GPU e2e A/B as part
-of the normal kernel task. Validate with the task-local standalone benchmark on
-one idle target GPU using the captured shape set.
+Functions covered:
+- `sglang.srt.layers.layernorm.fused_add_rmsnorm`
+
+The old profiler `input_shapes` strings were noisy and are no longer an acceptance source.
+Use the task-local workload file above for standalone single-GPU correctness and benchmark work.
+
+## Validation Policy
+
+Normal RLCR kernel work is a standalone single-GPU optimization task. Use the
+captured workload set above for correctness and benchmark acceptance on one idle
+target GPU, and do not add external runtime-readiness or fleet-level A/B gates to
+the task loop.

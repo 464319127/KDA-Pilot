@@ -1,9 +1,11 @@
 {
   "model": "Qwen/Qwen3-235B-A22B-Instruct-2507",
   "model_slug": "qwen3",
-  "cookbook_cmd": "sglang serve --model-path Qwen/Qwen3-235B-A22B-Instruct-2507 --tp 8",
+  "cookbook_cmd": "omitted from standalone kernel task; use bench/workloads.json and docs/captured_kernel_api_shapes.json for RLCR",
   "tp": "8",
-  "python_interface": "<confirm via capture; profiler family=linear_gemm>",
+  "python_interface": [
+    "torch.nn.functional.linear"
+  ],
   "kernel_family": "linear_gemm",
   "profiler_op_provenance": [
     "aten::_index_put_impl_",
@@ -33,19 +35,14 @@
   },
   "max_pct_of_gpu": 28.85,
   "best_scenario": "sharegpt_low",
-  "input_shapes": [
-    "[[0], [0], []]",
-    "[[1, 151936], [], []]",
-    "[[1, 1], [1, 1], []]",
-    "[[100], [100], []]",
-    "[[10752, 1024], [10752, 1, 128], [10752, 1, 128], [10752, 1024], [], [], [], [],",
-    "[[17, 1024], [17, 1024], []]",
-    "[[1], [1], []]",
-    "[[1], [], []]",
-    "[[20, 1, 128], [], [], [], []]",
-    "[[20, 1024], [20, 1, 128], [20, 1, 128], [20, 1024], [], [], [], [], [], [], [],",
-    "[[20, 1024], [], [], [], []]",
-    "[[252], [], [], []]"
+  "input_shapes": [],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "input_shapes_replaced_by": "docs/captured_kernel_api_shapes.json",
+  "standalone_workloads_json": "bench/workloads.json",
+  "shape_source": "fresh_sglang_kernel_api_capture",
+  "captured_kernel_api_workload_count": 9,
+  "captured_kernel_api_functions": [
+    "torch.nn.functional.linear"
   ],
-  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+  "shape_capture_note": "Captured 2026-07-08 on Verda B300 light-face-hides-fin-03-1 from a real Qwen/Qwen3-235B-A22B-Instruct-2507 TP=8 SGLang production-path execution in temporary container sglang-qwen3 on eight B300 GPUs. Used a model-local HF cache after snapshot download, disabled FlashInfer autotune, disabled CUDA graph prefill/decode, cleared startup health records before capture, and marked four request windows covering long prefill, short decode, mid concurrency, and high concurrency. The legacy qwen3__fp8_bmm task is routed to the real low-level FlashInfer TRTLLM batch context/decode APIs observed in the production path, while the attention task uses the higher-level TRTLLM backend forward APIs. The qwen3__void_cublas_lt_split_kreduce_ker profiler family has no separate Python API in this capture; its workload is duplicated from the real torch.nn.functional.linear API that emits the cublasLt splitK reduce GPU kernel."
 }
