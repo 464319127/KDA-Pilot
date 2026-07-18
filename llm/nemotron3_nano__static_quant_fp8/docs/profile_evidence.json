@@ -1,9 +1,11 @@
 {
   "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-FP8",
   "model_slug": "nemotron3_nano",
-  "cookbook_cmd": "python3 -m sglang.launch_server --model-path nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-FP8 --trust-remote-code --max-running-requests 1024",
+  "cookbook_cmd": "omitted from standalone kernel task; use bench/workloads.json and docs/captured_kernel_api_shapes.json for RLCR",
   "tp": "1",
-  "python_interface": "<confirm via capture; profiler role=static_quant_fp8>",
+  "python_interface": [
+    "sglang.srt.layers.quantization.fp8_kernel.static_quant_fp8"
+  ],
   "profiler_op_provenance": [
     "aten::copy_",
     "aten::empty",
@@ -18,9 +20,14 @@
   },
   "max_pct_of_gpu": 4.13,
   "best_scenario": "sharegpt_low",
-  "input_shapes": [
-    "[[1], [1], []]",
-    "[[], [], [], [], [], []]"
+  "input_shapes": [],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "input_shapes_replaced_by": "docs/captured_kernel_api_shapes.json",
+  "standalone_workloads_json": "bench/workloads.json",
+  "shape_source": "fresh_sglang_kernel_api_capture",
+  "captured_kernel_api_workload_count": 9,
+  "captured_kernel_api_functions": [
+    "sglang.srt.layers.quantization.fp8_kernel.static_quant_fp8"
   ],
-  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+  "shape_capture_note": "Captured 2026-07-08 on Verda B300 light-face-hides-fin-03-1 from a real nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-FP8 TP=1 SGLang production-path execution in the prepared sglang_bbuf_b300 container; CUDA graph disabled only to keep the temporary shape-capture hook out of graph capture; capture used temporary import/decomposition compatibility shims for the local Torch/Transformers environment, with request windows covering long/short prompt and mid/high concurrency serving paths."
 }
