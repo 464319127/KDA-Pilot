@@ -1,0 +1,1163 @@
+[
+  {
+    "id": "forward_extend__sharegpt_low_long_prompt__0001__3901x1536_3901x1x128_3901x1x128",
+    "production": true,
+    "source": "fresh_sglang_kernel_api_capture",
+    "scenario": "sharegpt_low_long_prompt",
+    "function": "sglang.srt.layers.attention.trtllm_mha_backend.TRTLLMHAAttnBackend.forward_extend",
+    "tensors": {
+      "arg.1": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          3901,
+          1536
+        ],
+        "storage_offset": 0,
+        "stride": [
+          1792,
+          1
+        ]
+      },
+      "arg.2": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          3901,
+          1,
+          128
+        ],
+        "storage_offset": 1536,
+        "stride": [
+          1792,
+          128,
+          1
+        ]
+      },
+      "arg.3": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          3901,
+          1,
+          128
+        ],
+        "storage_offset": 1664,
+        "stride": [
+          1792,
+          128,
+          1
+        ]
+      }
+    },
+    "args": [
+      {
+        "kind": "TRTLLMHAAttnBackend"
+      },
+      {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          3901,
+          1536
+        ],
+        "storage_offset": 0,
+        "stride": [
+          1792,
+          1
+        ]
+      },
+      {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          3901,
+          1,
+          128
+        ],
+        "storage_offset": 1536,
+        "stride": [
+          1792,
+          128,
+          1
+        ]
+      },
+      {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          3901,
+          1,
+          128
+        ],
+        "storage_offset": 1664,
+        "stride": [
+          1792,
+          128,
+          1
+        ]
+      },
+      {
+        "kind": "RadixAttention"
+      },
+      {
+        "kind": "ForwardBatch"
+      }
+    ],
+    "kwargs": {
+      "save_kv_cache": false
+    },
+    "result": {
+      "dtype": "torch.bfloat16",
+      "is_contiguous": true,
+      "kind": "tensor",
+      "shape": [
+        3901,
+        1536
+      ],
+      "storage_offset": 0,
+      "stride": [
+        1536,
+        1
+      ]
+    }
+  },
+  {
+    "id": "forward_decode__sharegpt_low_long_prompt__0002__1x1536_1x1x128_1x1x128",
+    "production": true,
+    "source": "fresh_sglang_kernel_api_capture",
+    "scenario": "sharegpt_low_long_prompt",
+    "function": "sglang.srt.layers.attention.trtllm_mha_backend.TRTLLMHAAttnBackend.forward_decode",
+    "tensors": {
+      "arg.1": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": true,
+        "kind": "tensor",
+        "shape": [
+          1,
+          1536
+        ],
+        "storage_offset": 0,
+        "stride": [
+          1792,
+          1
+        ]
+      },
+      "arg.2": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": true,
+        "kind": "tensor",
+        "shape": [
+          1,
+          1,
+          128
+        ],
+        "storage_offset": 1536,
+        "stride": [
+          128,
+          128,
+          1
+        ]
+      },
+      "arg.3": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": true,
+        "kind": "tensor",
+        "shape": [
+          1,
+          1,
+          128
+        ],
+        "storage_offset": 1664,
+        "stride": [
+          128,
+          128,
+          1
+        ]
+      }
+    },
+    "args": [
+      {
+        "kind": "TRTLLMHAAttnBackend"
+      },
+      {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": true,
+        "kind": "tensor",
+        "shape": [
+          1,
+          1536
+        ],
+        "storage_offset": 0,
+        "stride": [
+          1792,
+          1
+        ]
+      },
+      {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": true,
+        "kind": "tensor",
+        "shape": [
+          1,
+          1,
+          128
+        ],
+        "storage_offset": 1536,
+        "stride": [
+          128,
+          128,
+          1
+        ]
+      },
+      {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": true,
+        "kind": "tensor",
+        "shape": [
+          1,
+          1,
+          128
+        ],
+        "storage_offset": 1664,
+        "stride": [
+          128,
+          128,
+          1
+        ]
+      },
+      {
+        "kind": "RadixAttention"
+      },
+      {
+        "kind": "ForwardBatch"
+      }
+    ],
+    "kwargs": {
+      "save_kv_cache": false
+    },
+    "result": {
+      "dtype": "torch.bfloat16",
+      "is_contiguous": true,
+      "kind": "tensor",
+      "shape": [
+        1,
+        1536
+      ],
+      "storage_offset": 0,
+      "stride": [
+        1536,
+        1
+      ]
+    }
+  },
+  {
+    "id": "forward_extend__random_low_short_prompt__0003__161x1536_161x1x128_161x1x128",
+    "production": true,
+    "source": "fresh_sglang_kernel_api_capture",
+    "scenario": "random_low_short_prompt",
+    "function": "sglang.srt.layers.attention.trtllm_mha_backend.TRTLLMHAAttnBackend.forward_extend",
+    "tensors": {
+      "arg.1": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          161,
+          1536
+        ],
+        "storage_offset": 0,
+        "stride": [
+          1792,
+          1
+        ]
+      },
+      "arg.2": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          161,
+          1,
+          128
+        ],
+        "storage_offset": 1536,
+        "stride": [
+          1792,
+          128,
+          1
+        ]
+      },
+      "arg.3": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          161,
+          1,
+          128
+        ],
+        "storage_offset": 1664,
+        "stride": [
+          1792,
+          128,
+          1
+        ]
+      }
+    },
+    "args": [
+      {
+        "kind": "TRTLLMHAAttnBackend"
+      },
+      {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          161,
+          1536
+        ],
+        "storage_offset": 0,
+        "stride": [
+          1792,
+          1
+        ]
+      },
+      {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          161,
+          1,
+          128
+        ],
+        "storage_offset": 1536,
+        "stride": [
+          1792,
+          128,
+          1
+        ]
+      },
+      {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          161,
+          1,
+          128
+        ],
+        "storage_offset": 1664,
+        "stride": [
+          1792,
+          128,
+          1
+        ]
+      },
+      {
+        "kind": "RadixAttention"
+      },
+      {
+        "kind": "ForwardBatch"
+      }
+    ],
+    "kwargs": {
+      "save_kv_cache": false
+    },
+    "result": {
+      "dtype": "torch.bfloat16",
+      "is_contiguous": true,
+      "kind": "tensor",
+      "shape": [
+        161,
+        1536
+      ],
+      "storage_offset": 0,
+      "stride": [
+        1536,
+        1
+      ]
+    }
+  },
+  {
+    "id": "forward_extend__sharegpt_mid_concurrency_long_prompt__0004__67x1536_67x1x128_67x1x128",
+    "production": true,
+    "source": "fresh_sglang_kernel_api_capture",
+    "scenario": "sharegpt_mid_concurrency_long_prompt",
+    "function": "sglang.srt.layers.attention.trtllm_mha_backend.TRTLLMHAAttnBackend.forward_extend",
+    "tensors": {
+      "arg.1": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          67,
+          1536
+        ],
+        "storage_offset": 0,
+        "stride": [
+          1792,
+          1
+        ]
+      },
+      "arg.2": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          67,
+          1,
+          128
+        ],
+        "storage_offset": 1536,
+        "stride": [
+          1792,
+          128,
+          1
+        ]
+      },
+      "arg.3": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          67,
+          1,
+          128
+        ],
+        "storage_offset": 1664,
+        "stride": [
+          1792,
+          128,
+          1
+        ]
+      }
+    },
+    "args": [
+      {
+        "kind": "TRTLLMHAAttnBackend"
+      },
+      {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          67,
+          1536
+        ],
+        "storage_offset": 0,
+        "stride": [
+          1792,
+          1
+        ]
+      },
+      {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          67,
+          1,
+          128
+        ],
+        "storage_offset": 1536,
+        "stride": [
+          1792,
+          128,
+          1
+        ]
+      },
+      {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          67,
+          1,
+          128
+        ],
+        "storage_offset": 1664,
+        "stride": [
+          1792,
+          128,
+          1
+        ]
+      },
+      {
+        "kind": "RadixAttention"
+      },
+      {
+        "kind": "ForwardBatch"
+      }
+    ],
+    "kwargs": {
+      "save_kv_cache": false
+    },
+    "result": {
+      "dtype": "torch.bfloat16",
+      "is_contiguous": true,
+      "kind": "tensor",
+      "shape": [
+        67,
+        1536
+      ],
+      "storage_offset": 0,
+      "stride": [
+        1536,
+        1
+      ]
+    }
+  },
+  {
+    "id": "forward_extend__sharegpt_mid_concurrency_long_prompt__0005__1011x1536_1011x1x128_1011x1x128",
+    "production": true,
+    "source": "fresh_sglang_kernel_api_capture",
+    "scenario": "sharegpt_mid_concurrency_long_prompt",
+    "function": "sglang.srt.layers.attention.trtllm_mha_backend.TRTLLMHAAttnBackend.forward_extend",
+    "tensors": {
+      "arg.1": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          1011,
+          1536
+        ],
+        "storage_offset": 0,
+        "stride": [
+          1792,
+          1
+        ]
+      },
+      "arg.2": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          1011,
+          1,
+          128
+        ],
+        "storage_offset": 1536,
+        "stride": [
+          1792,
+          128,
+          1
+        ]
+      },
+      "arg.3": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          1011,
+          1,
+          128
+        ],
+        "storage_offset": 1664,
+        "stride": [
+          1792,
+          128,
+          1
+        ]
+      }
+    },
+    "args": [
+      {
+        "kind": "TRTLLMHAAttnBackend"
+      },
+      {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          1011,
+          1536
+        ],
+        "storage_offset": 0,
+        "stride": [
+          1792,
+          1
+        ]
+      },
+      {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          1011,
+          1,
+          128
+        ],
+        "storage_offset": 1536,
+        "stride": [
+          1792,
+          128,
+          1
+        ]
+      },
+      {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          1011,
+          1,
+          128
+        ],
+        "storage_offset": 1664,
+        "stride": [
+          1792,
+          128,
+          1
+        ]
+      },
+      {
+        "kind": "RadixAttention"
+      },
+      {
+        "kind": "ForwardBatch"
+      }
+    ],
+    "kwargs": {
+      "save_kv_cache": false
+    },
+    "result": {
+      "dtype": "torch.bfloat16",
+      "is_contiguous": true,
+      "kind": "tensor",
+      "shape": [
+        1011,
+        1536
+      ],
+      "storage_offset": 0,
+      "stride": [
+        1536,
+        1
+      ]
+    }
+  },
+  {
+    "id": "forward_decode__sharegpt_mid_concurrency_long_prompt__0006__16x1536_16x1x128_16x1x128",
+    "production": true,
+    "source": "fresh_sglang_kernel_api_capture",
+    "scenario": "sharegpt_mid_concurrency_long_prompt",
+    "function": "sglang.srt.layers.attention.trtllm_mha_backend.TRTLLMHAAttnBackend.forward_decode",
+    "tensors": {
+      "arg.1": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          16,
+          1536
+        ],
+        "storage_offset": 0,
+        "stride": [
+          1792,
+          1
+        ]
+      },
+      "arg.2": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          16,
+          1,
+          128
+        ],
+        "storage_offset": 1536,
+        "stride": [
+          1792,
+          128,
+          1
+        ]
+      },
+      "arg.3": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          16,
+          1,
+          128
+        ],
+        "storage_offset": 1664,
+        "stride": [
+          1792,
+          128,
+          1
+        ]
+      }
+    },
+    "args": [
+      {
+        "kind": "TRTLLMHAAttnBackend"
+      },
+      {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          16,
+          1536
+        ],
+        "storage_offset": 0,
+        "stride": [
+          1792,
+          1
+        ]
+      },
+      {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          16,
+          1,
+          128
+        ],
+        "storage_offset": 1536,
+        "stride": [
+          1792,
+          128,
+          1
+        ]
+      },
+      {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          16,
+          1,
+          128
+        ],
+        "storage_offset": 1664,
+        "stride": [
+          1792,
+          128,
+          1
+        ]
+      },
+      {
+        "kind": "RadixAttention"
+      },
+      {
+        "kind": "ForwardBatch"
+      }
+    ],
+    "kwargs": {
+      "save_kv_cache": false
+    },
+    "result": {
+      "dtype": "torch.bfloat16",
+      "is_contiguous": true,
+      "kind": "tensor",
+      "shape": [
+        16,
+        1536
+      ],
+      "storage_offset": 0,
+      "stride": [
+        1536,
+        1
+      ]
+    }
+  },
+  {
+    "id": "forward_extend__random_high_concurrency_short_prompt__0007__39x1536_39x1x128_39x1x128",
+    "production": true,
+    "source": "fresh_sglang_kernel_api_capture",
+    "scenario": "random_high_concurrency_short_prompt",
+    "function": "sglang.srt.layers.attention.trtllm_mha_backend.TRTLLMHAAttnBackend.forward_extend",
+    "tensors": {
+      "arg.1": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          39,
+          1536
+        ],
+        "storage_offset": 0,
+        "stride": [
+          1792,
+          1
+        ]
+      },
+      "arg.2": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          39,
+          1,
+          128
+        ],
+        "storage_offset": 1536,
+        "stride": [
+          1792,
+          128,
+          1
+        ]
+      },
+      "arg.3": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          39,
+          1,
+          128
+        ],
+        "storage_offset": 1664,
+        "stride": [
+          1792,
+          128,
+          1
+        ]
+      }
+    },
+    "args": [
+      {
+        "kind": "TRTLLMHAAttnBackend"
+      },
+      {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          39,
+          1536
+        ],
+        "storage_offset": 0,
+        "stride": [
+          1792,
+          1
+        ]
+      },
+      {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          39,
+          1,
+          128
+        ],
+        "storage_offset": 1536,
+        "stride": [
+          1792,
+          128,
+          1
+        ]
+      },
+      {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          39,
+          1,
+          128
+        ],
+        "storage_offset": 1664,
+        "stride": [
+          1792,
+          128,
+          1
+        ]
+      },
+      {
+        "kind": "RadixAttention"
+      },
+      {
+        "kind": "ForwardBatch"
+      }
+    ],
+    "kwargs": {
+      "save_kv_cache": false
+    },
+    "result": {
+      "dtype": "torch.bfloat16",
+      "is_contiguous": true,
+      "kind": "tensor",
+      "shape": [
+        39,
+        1536
+      ],
+      "storage_offset": 0,
+      "stride": [
+        1536,
+        1
+      ]
+    }
+  },
+  {
+    "id": "forward_extend__random_high_concurrency_short_prompt__0008__2511x1536_2511x1x128_2511x1x128",
+    "production": true,
+    "source": "fresh_sglang_kernel_api_capture",
+    "scenario": "random_high_concurrency_short_prompt",
+    "function": "sglang.srt.layers.attention.trtllm_mha_backend.TRTLLMHAAttnBackend.forward_extend",
+    "tensors": {
+      "arg.1": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          2511,
+          1536
+        ],
+        "storage_offset": 0,
+        "stride": [
+          1792,
+          1
+        ]
+      },
+      "arg.2": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          2511,
+          1,
+          128
+        ],
+        "storage_offset": 1536,
+        "stride": [
+          1792,
+          128,
+          1
+        ]
+      },
+      "arg.3": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          2511,
+          1,
+          128
+        ],
+        "storage_offset": 1664,
+        "stride": [
+          1792,
+          128,
+          1
+        ]
+      }
+    },
+    "args": [
+      {
+        "kind": "TRTLLMHAAttnBackend"
+      },
+      {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          2511,
+          1536
+        ],
+        "storage_offset": 0,
+        "stride": [
+          1792,
+          1
+        ]
+      },
+      {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          2511,
+          1,
+          128
+        ],
+        "storage_offset": 1536,
+        "stride": [
+          1792,
+          128,
+          1
+        ]
+      },
+      {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          2511,
+          1,
+          128
+        ],
+        "storage_offset": 1664,
+        "stride": [
+          1792,
+          128,
+          1
+        ]
+      },
+      {
+        "kind": "RadixAttention"
+      },
+      {
+        "kind": "ForwardBatch"
+      }
+    ],
+    "kwargs": {
+      "save_kv_cache": false
+    },
+    "result": {
+      "dtype": "torch.bfloat16",
+      "is_contiguous": true,
+      "kind": "tensor",
+      "shape": [
+        2511,
+        1536
+      ],
+      "storage_offset": 0,
+      "stride": [
+        1536,
+        1
+      ]
+    }
+  },
+  {
+    "id": "forward_decode__random_high_concurrency_short_prompt__0009__64x1536_64x1x128_64x1x128",
+    "production": true,
+    "source": "fresh_sglang_kernel_api_capture",
+    "scenario": "random_high_concurrency_short_prompt",
+    "function": "sglang.srt.layers.attention.trtllm_mha_backend.TRTLLMHAAttnBackend.forward_decode",
+    "tensors": {
+      "arg.1": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          64,
+          1536
+        ],
+        "storage_offset": 0,
+        "stride": [
+          1792,
+          1
+        ]
+      },
+      "arg.2": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          64,
+          1,
+          128
+        ],
+        "storage_offset": 1536,
+        "stride": [
+          1792,
+          128,
+          1
+        ]
+      },
+      "arg.3": {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          64,
+          1,
+          128
+        ],
+        "storage_offset": 1664,
+        "stride": [
+          1792,
+          128,
+          1
+        ]
+      }
+    },
+    "args": [
+      {
+        "kind": "TRTLLMHAAttnBackend"
+      },
+      {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          64,
+          1536
+        ],
+        "storage_offset": 0,
+        "stride": [
+          1792,
+          1
+        ]
+      },
+      {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          64,
+          1,
+          128
+        ],
+        "storage_offset": 1536,
+        "stride": [
+          1792,
+          128,
+          1
+        ]
+      },
+      {
+        "dtype": "torch.bfloat16",
+        "is_contiguous": false,
+        "kind": "tensor",
+        "shape": [
+          64,
+          1,
+          128
+        ],
+        "storage_offset": 1664,
+        "stride": [
+          1792,
+          128,
+          1
+        ]
+      },
+      {
+        "kind": "RadixAttention"
+      },
+      {
+        "kind": "ForwardBatch"
+      }
+    ],
+    "kwargs": {
+      "save_kv_cache": false
+    },
+    "result": {
+      "dtype": "torch.bfloat16",
+      "is_contiguous": true,
+      "kind": "tensor",
+      "shape": [
+        64,
+        1536
+      ],
+      "storage_offset": 0,
+      "stride": [
+        1536,
+        1
+      ]
+    }
+  }
+]

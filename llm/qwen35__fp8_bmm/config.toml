@@ -7,9 +7,12 @@ kernel_family = "fp8_bmm"
 model = "nvidia/Qwen3.5-397B-A17B-NVFP4"
 model_slug = "qwen35"
 entry_points = [
-  "<confirm via capture; profiler family=fp8_bmm>",
+  "sglang.srt.layers.attention.triton_backend.TritonAttnBackend.forward_decode",
+  "sglang.srt.layers.attention.triton_backend.TritonAttnBackend.forward_extend",
 ]
 evidence_json = "docs/profile_evidence.json"
+shape_source_json = "docs/captured_kernel_api_shapes.json"
+workloads_json = "bench/workloads.json"
 
 [selection]
 method = "serving-profile GPU-time headroom (extract_kernel_shapes >2%, family-grouped; provenance only)"
