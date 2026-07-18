@@ -1,9 +1,12 @@
 {
   "model": "nvidia/GLM-5-NVFP4",
   "model_slug": "glm_5",
-  "cookbook_cmd": "sglang serve --model-path nvidia/GLM-5-NVFP4 --tp 4 --quantization modelopt_fp4 --kv-cache-dtype fp8_e4m3",
+  "cookbook_cmd": "omitted from standalone kernel task; use bench/workloads.json and docs/captured_kernel_api_shapes.json for RLCR",
   "tp": "4",
-  "python_interface": "<confirm via capture; profiler family=fp8_bmm>",
+  "python_interface": [
+    "flashinfer.gemm.mm_fp4",
+    "torch.bmm"
+  ],
   "kernel_family": "fp8_bmm",
   "profiler_op_provenance": [
     "Torch-Compiled Region: 4/2",
@@ -32,19 +35,15 @@
   },
   "max_pct_of_gpu": 19.5,
   "best_scenario": "random_mid",
-  "input_shapes": [
-    "[[1, 1], [1, 1], []]",
-    "[[1], [1], []]",
-    "[[1], [], []]",
-    "[[201]]",
-    "[[20784, 6144], [6144, 128]]",
-    "[[20784, 6144], [6144, 32], [], [20784, 32]]",
-    "[[2128, 202756], [], [32], [], []]",
-    "[[30796, 1, 64], [30796, 1, 64], []]",
-    "[[30796, 16, 256], [], []]",
-    "[[30796, 16, 64], [30796, 1, 64], [203008, 64], [30796], [], []]",
-    "[[31], [31], []]",
-    "[[31], [], []]"
+  "input_shapes": [],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "input_shapes_replaced_by": "docs/captured_kernel_api_shapes.json",
+  "standalone_workloads_json": "bench/workloads.json",
+  "shape_source": "fresh_sglang_kernel_api_capture",
+  "captured_kernel_api_workload_count": 49,
+  "captured_kernel_api_functions": [
+    "flashinfer.gemm.mm_fp4",
+    "torch.bmm"
   ],
-  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+  "shape_capture_note": "Captured 2026-07-07 on Verda B300 light-face-hides-fin-03-1 from a real nvidia/GLM-5-NVFP4 TP=4 SGLang production-path execution in temporary container sglang-glm5. Used a model-local HF cache after snapshot download, quantization=modelopt_fp4, kv_cache_dtype=fp8_e4m3, attention_backend=dsa with TRTLLM DSA prefill/decode as selected by SGLang, moe_runner_backend=flashinfer_trtllm, disabled FlashInfer autotune, disabled CUDA graph prefill/decode, and marked five request windows covering long prefill, short decode, mid concurrency, high concurrency, and an extra-long DSA/indexer prompt. The legacy fast_hadamard task maps to the captured DSA backend forward APIs because the current cookbook path did not emit a standalone hadamard_transform Python API; the old fast_hadamard GPU work is fused inside the DSA path."
 }
