@@ -7,9 +7,12 @@ kernel_family = "quant_fp8"
 model = "mistralai/Mistral-Small-4-119B-2603"
 model_slug = "mistral_small4"
 entry_points = [
-  "<confirm via capture; profiler family=quant_fp8>",
+  "sglang.srt.layers.quantization.fp8_kernel.scaled_fp8_quant",
+  "sglang.srt.layers.quantization.fp8_kernel.static_quant_fp8",
 ]
 evidence_json = "docs/profile_evidence.json"
+shape_source_json = "docs/captured_kernel_api_shapes.json"
+workloads_json = "bench/workloads.json"
 
 [selection]
 method = "serving-profile GPU-time headroom (extract_kernel_shapes >2%, family-grouped; provenance only)"
