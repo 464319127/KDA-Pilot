@@ -1,11 +1,11 @@
-# Profile evidence — qwen3_coder__sglang_unified_attention_with_output
+# Profile evidence - qwen3_coder__sglang_unified_attention_with_output
 
 **Standalone kernel target: 6.8% of total serving GPU time** (max across scenarios) on
-`Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Clean Python interface (profiler provenance).
+`Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8`, from the exact cookbook-aligned profile. This is target-selection provenance and headroom context, not the validation path. Kernel API shapes below are frozen from a one-time real `Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8` production-path capture and replace the old noisy profiler shape strings.
 
 - Model: `Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8` (slug `qwen3_coder`, tp=8)
-- Python interface: `sglang.unified_attention_with_output`
-- Kernel family: `attention`  ·  Category: `attention`
+- Python interface(s): `sglang.srt.layers.attention.trtllm_mha_backend.TRTLLMHAAttnBackend.forward_decode`, `sglang.srt.layers.attention.trtllm_mha_backend.TRTLLMHAAttnBackend.forward_extend`
+- Kernel family: `attention`  .  Category: `attention`
 - GPU kernel(s): `fmhaSm100fKernel_QkvBfloat16OBfloat16H128PagedKvCausalP32MultiCtasKvCgaVarSeqQ16Kv128Stati`, `fmhaSm100fKernel_QkvBfloat16OBfloat16H128PagedKvCausalP32VarSeqQ128Kv128PersistentContext`, `fmhaSm100fKernel_QkvBfloat16OBfloat16H128PagedKvCausalP32VarSeqQ16Kv128PersistentSwapsAbFo`
 
 ## % of GPU time by scenario
@@ -18,24 +18,25 @@
 | sharegpt | conc 32 | 2.67% |
 | sharegpt | conc 100 | 6.80% |
 
-**Peak: 6.8% in `sharegpt_high` (sharegpt, concurrency 100).**
+**Peak: 6.8% in `sharegpt_high`.**
 
-## Input shapes (profiler)
-- `[[1536, 1536], [1536, 1, 128], [1536, 1, 128], [1536, 1536], [], [], [], [], [],`
-- `[[1], [1], []]`
-- `[[1], [], [], [], [], []]`
-- `[[1]]`
-- `[[2560, 1536], [2560, 1, 128], [2560, 1, 128], [2560, 1536], [], [], [], [], [],`
-- `[[66939], [], [], []]`
-- `[[768, 1536], [], [], []]`
-- `[[8], [], [], []]`
-- `[[[1]], [], [], [], [], []]`
-- `[[]]`
+## Fresh captured kernel API shapes
 
-## Original serving capture command (provenance only)
-```bash
-sglang serve --model-path Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8 --tp 8 --ep 8 --tool-call-parser qwen3_coder
-```
-Do not rerun this serving command, `run_capture`, or a multi-GPU e2e A/B as part
-of the normal kernel task. Validate with the task-local standalone benchmark on
-one idle target GPU using the captured shape set.
+- Shape source: `docs/captured_kernel_api_shapes.json`
+- Standalone workloads: `bench/workloads.json`
+- Workload count: 9
+- Capture note: Captured 2026-07-08 on Verda B300 light-face-hides-fin-03-1 from a real Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8 TP=8 EP=8 SGLang production-path execution in temporary container sglang-qwen3-coder on eight B300 GPUs. Used a model-local HF cache after snapshot download, tool_call_parser=qwen3_coder, disabled FlashInfer autotune, disabled CUDA graph prefill/decode, cleared startup health records before capture, and marked four request windows covering long prefill, short decode, mid concurrency, and high concurrency. The legacy qwen3_coder__fp8_bmm task is routed to the real low-level FlashInfer TRTLLM batch context/decode APIs observed in the production path, while the attention task uses the higher-level TRTLLM backend forward APIs.
+
+Functions covered:
+- `sglang.srt.layers.attention.trtllm_mha_backend.TRTLLMHAAttnBackend.forward_decode`
+- `sglang.srt.layers.attention.trtllm_mha_backend.TRTLLMHAAttnBackend.forward_extend`
+
+The old profiler `input_shapes` strings were noisy and are no longer an acceptance source.
+Use the task-local workload file above for standalone single-GPU correctness and benchmark work.
+
+## Validation Policy
+
+Normal RLCR kernel work is a standalone single-GPU optimization task. Use the
+captured workload set above for correctness and benchmark acceptance on one idle
+target GPU, and do not add external runtime-readiness or fleet-level A/B gates to
+the task loop.

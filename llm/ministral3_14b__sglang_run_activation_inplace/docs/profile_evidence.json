@@ -1,9 +1,13 @@
 {
   "model": "mistralai/Ministral-3-14B-Instruct-2512",
   "model_slug": "ministral3_14b",
-  "cookbook_cmd": "sglang serve --model-path mistralai/Ministral-3-14B-Instruct-2512 --tp 1 --trust-remote-code",
+  "cookbook_cmd": "omitted from standalone kernel task; use bench/workloads.json and docs/captured_kernel_api_shapes.json for RLCR",
   "tp": "1",
-  "python_interface": "sglang._run_activation_inplace",
+  "python_interface": [
+    "sglang.jit_kernel.activation._run_activation_inplace",
+    "sglang.jit_kernel.activation.run_activation",
+    "sglang.jit_kernel.activation.silu_and_mul"
+  ],
   "kernel_family": "activation",
   "profiler_op_provenance": [
     "aten::copy_",
@@ -23,15 +27,17 @@
   },
   "max_pct_of_gpu": 5.33,
   "best_scenario": "random_mid",
-  "input_shapes": [
-    "[[1], [1], []]",
-    "[[], [1228, 32768], [1228, 16384]]",
-    "[[], [1316, 32768], [1316, 16384]]",
-    "[[], [39, 32768], [39, 16384]]",
-    "[[], [6642, 32768], [6642, 16384]]",
-    "[[], [8384, 32768], [8384, 16384]]",
-    "[[], [], [], [], [], []]"
-  ],
+  "input_shapes": [],
   "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
-  "note": "Activation (SiLU/GELU+mul). Prior guidance: limited headroom \u2014 deprioritize."
+  "note": "Activation (SiLU/GELU+mul). Prior guidance: limited headroom \u2014 deprioritize.",
+  "input_shapes_replaced_by": "docs/captured_kernel_api_shapes.json",
+  "standalone_workloads_json": "bench/workloads.json",
+  "shape_source": "fresh_sglang_kernel_api_capture",
+  "captured_kernel_api_workload_count": 12,
+  "captured_kernel_api_functions": [
+    "sglang.jit_kernel.activation._run_activation_inplace",
+    "sglang.jit_kernel.activation.run_activation",
+    "sglang.jit_kernel.activation.silu_and_mul"
+  ],
+  "shape_capture_note": "Captured 2026-07-08 on Verda B300 light-face-hides-fin-03-1 from a real mistralai/Ministral-3-14B-Instruct-2512 TP=1 SGLang production-path execution in temporary container sglang-ministral3-14b on one B300 GPU. Used a model-local HF cache after snapshot download, cookbook-aligned --trust-remote-code, disabled CUDA graph prefill/decode, enabled SGLANG_DIFFUSION_ENABLE_W8A8_FP8_GEMM=1 to expose the FP8 W8A8 GEMM path selected by the original evidence, delayed torch-op wrapping until after imports, preserved server startup/warmup records for static_quant_fp8 and sgl_kernel fp8_scaled_mm shapes, and marked four request windows covering long prefill, short decode, mid concurrency, and high concurrency."
 }

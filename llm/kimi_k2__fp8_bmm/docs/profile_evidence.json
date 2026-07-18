@@ -1,7 +1,7 @@
 {
   "model": "moonshotai/Kimi-K2-Instruct",
   "model_slug": "kimi_k2",
-  "cookbook_cmd": "sglang serve --model-path moonshotai/Kimi-K2-Instruct --tp 8 --tool-call-parser kimi_k2",
+  "cookbook_cmd": "omitted from standalone kernel task; use bench/workloads.json and docs/captured_kernel_api_shapes.json for RLCR",
   "tp": "8",
   "python_interface": [
     "torch.bmm"

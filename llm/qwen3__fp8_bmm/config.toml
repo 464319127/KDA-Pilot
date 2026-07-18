@@ -7,9 +7,12 @@ kernel_family = "fp8_bmm"
 model = "Qwen/Qwen3-235B-A22B-Instruct-2507"
 model_slug = "qwen3"
 entry_points = [
-  "<confirm via capture; profiler family=fp8_bmm>",
+  "flashinfer.decode.trtllm_batch_decode_with_kv_cache",
+  "flashinfer.prefill.trtllm_batch_context_with_kv_cache",
 ]
 evidence_json = "docs/profile_evidence.json"
+shape_source_json = "docs/captured_kernel_api_shapes.json"
+workloads_json = "bench/workloads.json"
 
 [selection]
 method = "serving-profile GPU-time headroom (extract_kernel_shapes >2%, family-grouped; provenance only)"
