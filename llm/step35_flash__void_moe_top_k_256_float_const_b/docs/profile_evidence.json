@@ -1,9 +1,12 @@
 {
   "model": "stepfun-ai/Step-3.5-Flash",
   "model_slug": "step35_flash",
-  "cookbook_cmd": "sglang serve --model-path stepfun-ai/Step-3.5-Flash --tp 4 --trust-remote-code --reasoning-parser step3p5",
+  "cookbook_cmd": "omitted from standalone kernel task; use bench/workloads.json and docs/captured_kernel_api_shapes.json for RLCR",
   "tp": "4",
-  "python_interface": "<confirm via capture; profiler family=void_moe_top_k_256_float_const_b>",
+  "python_interface": [
+    "sglang.srt.layers.moe.topk.fused_topk",
+    "sglang.srt.layers.moe.topk.select_experts"
+  ],
   "kernel_family": "void_moe_top_k_256_float_const_b",
   "profiler_op_provenance": [
     "aten::_index_put_impl_",
@@ -27,15 +30,15 @@
   },
   "max_pct_of_gpu": 3.28,
   "best_scenario": "sharegpt_high",
-  "input_shapes": [
-    "[[1603073], []]",
-    "[[1], [1], []]",
-    "[[1], [], []]",
-    "[[1], []]",
-    "[[1]]",
-    "[[[0], [38]], []]",
-    "[[[1]], [], [], [], [], []]",
-    "[[], [], [], [], [], []]"
+  "input_shapes": [],
+  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
+  "input_shapes_replaced_by": "docs/captured_kernel_api_shapes.json",
+  "standalone_workloads_json": "bench/workloads.json",
+  "shape_source": "fresh_sglang_kernel_api_capture",
+  "captured_kernel_api_workload_count": 129,
+  "captured_kernel_api_functions": [
+    "sglang.srt.layers.moe.topk.fused_topk",
+    "sglang.srt.layers.moe.topk.select_experts"
   ],
-  "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000"
+  "shape_capture_note": "Captured 2026-07-08 on Verda B300 light-face-hides-fin-03-1 from a real stepfun-ai/Step-3.5-Flash TP=4 SGLang production-path execution in temporary container sglang-step35-flash with FA4 attention; CUDA graph disabled only to keep the temporary shape-capture hook out of graph capture; request windows include long/short prompt and mid/high concurrency serving paths."
 }
