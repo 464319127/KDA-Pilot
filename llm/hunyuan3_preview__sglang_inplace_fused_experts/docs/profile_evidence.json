@@ -1,9 +1,14 @@
 {
   "model": "tencent/Hy3-preview",
   "model_slug": "hunyuan3_preview",
-  "cookbook_cmd": "sglang serve --model-path tencent/Hy3-preview --tp 8 --speculative-algorithm EAGLE --speculative-num-steps 3 --speculative-eagle-topk 1",
+  "cookbook_cmd": "omitted from standalone kernel task; use bench/workloads.json and docs/captured_kernel_api_shapes.json for RLCR",
   "tp": "8",
-  "python_interface": "sglang.inplace_fused_experts",
+  "python_interface": [
+    "sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe._fused_moe_kernel_sequence",
+    "sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe.fused_experts_impl",
+    "sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe.inplace_fused_experts",
+    "sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe_triton_kernels.invoke_fused_moe_kernel"
+  ],
   "kernel_family": "fused_moe_triton",
   "profiler_op_provenance": [
     "aten::as_strided",
@@ -25,16 +30,18 @@
   },
   "max_pct_of_gpu": 34.73,
   "best_scenario": "random_mid",
-  "input_shapes": [
-    "[[1210, 4096], [192, 384, 4096], [192, 4096, 192], [1210, 8], [1210, 8], [], [],",
-    "[[1220, 4096], [192, 384, 4096], [192, 4096, 192], [1220, 8], [1220, 8], [], [],",
-    "[[1220, 4096], [384, 4096], []]",
-    "[[15, 4096], [192, 384, 4096], [192, 4096, 192], [15, 8], [15, 8], [], [], [], [",
-    "[[33056, 64, 1, 128], [], [], []]",
-    "[[38, 4096], [192, 384, 4096], [192, 4096, 192], [38, 8], [38, 8], [], [], [], [",
-    "[[5067, 4096], [192, 384, 4096], [192, 4096, 192], [5067, 8], [5067, 8], [], [],",
-    "[[5067, 4096], [384, 4096], []]"
-  ],
+  "input_shapes": [],
   "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
-  "note": "Triton MoE expert-GEMM (sglang's own fused_experts/fused_moe kernel) \u2014 single-GPU optimizable; NOT the comm-fused trtllm MoE path (excluded)."
+  "note": "Triton MoE expert-GEMM (sglang's own fused_experts/fused_moe kernel) \u2014 single-GPU optimizable; NOT the comm-fused trtllm MoE path (excluded).",
+  "input_shapes_replaced_by": "docs/captured_kernel_api_shapes.json",
+  "standalone_workloads_json": "bench/workloads.json",
+  "shape_source": "fresh_sglang_kernel_api_capture",
+  "captured_kernel_api_workload_count": 73,
+  "captured_kernel_api_functions": [
+    "sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe._fused_moe_kernel_sequence",
+    "sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe.fused_experts_impl",
+    "sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe.inplace_fused_experts",
+    "sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe_triton_kernels.invoke_fused_moe_kernel"
+  ],
+  "shape_capture_note": "Captured 2026-07-08 on Verda B300 light-face-hides-fin-03-1 from a real tencent/Hy3-preview TP=8 SGLang production-path execution in temporary container sglang-hunyuan3-preview on eight B300 GPUs. Used a model-local HF cache after snapshot download, cookbook-aligned EAGLE speculative settings (--speculative-algorithm EAGLE --speculative-num-steps 3 --speculative-eagle-topk 1), disabled FlashInfer autotune, disabled CUDA graph prefill/decode, cleared startup health records before capture, and marked four request windows covering long prefill, short decode, mid concurrency, and high concurrency."
 }

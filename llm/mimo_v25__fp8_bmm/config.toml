@@ -7,9 +7,13 @@ kernel_family = "fp8_bmm"
 model = "XiaomiMiMo/MiMo-V2.5"
 model_slug = "mimo_v25"
 entry_points = [
-  "<confirm via capture; profiler family=fp8_bmm>",
+  "sglang.srt.layers.attention.flashattention_backend.FlashAttentionBackend.forward_decode",
+  "sglang.srt.layers.attention.flashattention_backend.FlashAttentionBackend.forward_extend",
+  "sglang.srt.layers.attention.flashattention_backend.flash_attn_with_kvcache",
 ]
 evidence_json = "docs/profile_evidence.json"
+shape_source_json = "docs/captured_kernel_api_shapes.json"
+workloads_json = "bench/workloads.json"
 
 [selection]
 method = "serving-profile GPU-time headroom (extract_kernel_shapes >2%, family-grouped; provenance only)"

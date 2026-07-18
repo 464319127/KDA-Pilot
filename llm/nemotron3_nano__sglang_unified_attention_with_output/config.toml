@@ -6,9 +6,11 @@ family = "quant_gemm"
 model = "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-FP8"
 model_slug = "nemotron3_nano"
 entry_points = [
-  "sglang.unified_attention_with_output",
+  "sglang.srt.models.nemotron_h.NemotronHAttention.forward",
 ]
 evidence_json = "docs/profile_evidence.json"
+shape_source_json = "docs/captured_kernel_api_shapes.json"
+workloads_json = "bench/workloads.json"
 
 [selection]
 method = "cookbook-aligned torch-profiler e2e share (extract_kernel_shapes >2%)"

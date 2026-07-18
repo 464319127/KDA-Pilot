@@ -164,7 +164,9 @@ num_trials = 7
 use_isolated_runner = true
 required_matched_ratio = 1.0
 """)
-        ev={"model":a.model,"model_slug":a.model_slug,"cookbook_cmd":a.cookbook_cmd,"tp":a.tp,
+        ev={"model":a.model,"model_slug":a.model_slug,
+            "cookbook_cmd":"omitted from standalone kernel task; use bench/workloads.json and docs/captured_kernel_api_shapes.json for RLCR",
+            "tp":a.tp,
             "python_interface":entry,"kernel_family":fam,"profiler_op_provenance":sorted(e["prov"])[:6],
             "category":cat,"gpu_kernels":sorted(e["kernels"]),"pct_of_gpu_by_scenario":per,
             "max_pct_of_gpu":round(maxpct,2),"best_scenario":best,"input_shapes":[],
@@ -199,16 +201,15 @@ provenance and headroom context, not the validation path. {'Clean Python interfa
 - Shape source: `docs/captured_kernel_api_shapes.json`
 - Standalone workloads: `bench/workloads.json`
 
-Populate these files from a real model run before starting RLCR. Do not use
-profiler shape strings as benchmark inputs.
+Populate these files from a real model execution before starting RLCR. Do not
+use profiler shape strings as benchmark inputs.
 
-## Original serving capture command (provenance only)
-```bash
-{a.cookbook_cmd}
-```
-Do not rerun this serving command, `run_capture`, or a multi-GPU e2e A/B as part
-of the normal kernel task. Validate with the task-local standalone benchmark on
-one idle target GPU using the captured shape set.
+## Validation Policy
+
+Normal RLCR kernel work is a standalone single-GPU optimization task. Use the
+captured workload set above for correctness and benchmark acceptance on one idle
+target GPU, and keep external runtime-readiness or fleet-level A/B gates out of
+the task loop.
 """)
         open(os.path.join(d,"prompt.md"),"w").write(f"""# KDA Prompt: {task}
 
@@ -222,17 +223,16 @@ standalone kernel task. Family `{fam}`, category `{cat}`.{(' '+note) if note els
 
 See `docs/profile_evidence.md` for the per-scenario %-of-GPU and GPU kernel
 selection provenance, then use `bench/workloads.json` as the standalone shape
-source. Do not start/re-run SGLang serve,
-`run_capture`, or a multi-GPU e2e A/B for the normal RLCR loop; optimize and
-validate via the task-local standalone benchmark on one idle target GPU. Follow
+source. For the normal RLCR loop, optimize and validate via the task-local
+standalone benchmark on one idle target GPU, without adding external
+runtime-readiness or fleet-level A/B gates. Follow
 `llm/docs/llm_kernel_optimization_rules.md` (CUDA, no DSL) + `llm/docs/llm_correctness_contract.md`.
 """)
         summary.append((task,cat,fam,maxpct,best,clean))
 
     with open(os.path.join(a.out_dir,f"_INDEX_{a.model_slug}.md"),"w") as f:
         f.write(f"# {a.model_slug} — standalone kernel task selection\n\n- Model: `{a.model}` (tp={a.tp})\n")
-        f.write(f"- Serving capture cmd (provenance only): `{a.cookbook_cmd}`\n")
-        f.write("- Task mode: standalone single-GPU kernel optimization; no live serve, run_capture, or multi-GPU e2e gate during RLCR.\n")
+        f.write("- Task mode: standalone single-GPU kernel optimization from captured workload files.\n")
         f.write(f"- Kept: max serving-profile GPU-time share `>= {a.threshold}%`, non-comm, non-trtllm-MoE\n\n")
         f.write("| task | category | family | max % GPU | peak scenario | clean op |\n|---|---|---|---:|---|---|\n")
         for t,cat,fam,mp,bl,cl in sorted(summary,key=lambda x:-x[3]):
