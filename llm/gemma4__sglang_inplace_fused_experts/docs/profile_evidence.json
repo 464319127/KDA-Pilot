@@ -1,9 +1,14 @@
 {
   "model": "google/gemma-4-26B-A4B-it",
   "model_slug": "gemma4",
-  "cookbook_cmd": "sglang serve --model-path google/gemma-4-26B-A4B-it --reasoning-parser gemma4 --tool-call-parser gemma4",
+  "cookbook_cmd": "omitted from standalone kernel task; use bench/workloads.json and docs/captured_kernel_api_shapes.json for RLCR",
   "tp": "1",
-  "python_interface": "sglang.inplace_fused_experts",
+  "python_interface": [
+    "sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe._fused_moe_kernel_sequence",
+    "sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe.fused_experts_impl",
+    "sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe.inplace_fused_experts",
+    "sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe_triton_kernels.invoke_fused_moe_kernel"
+  ],
   "kernel_family": "fused_moe_triton",
   "profiler_op_provenance": [
     "sglang::inplace_fused_experts"
@@ -22,14 +27,18 @@
   },
   "max_pct_of_gpu": 50.81,
   "best_scenario": "random_high",
-  "input_shapes": [
-    "[[11254, 2816], [128, 1408, 2816], [128, 2816, 704], [11254, 8], [11254, 8], [],",
-    "[[17, 2816], [128, 1408, 2816], [128, 2816, 704], [17, 8], [17, 8], [], [], [], ",
-    "[[1785, 2816], [128, 1408, 2816], [128, 2816, 704], [1785, 8], [1785, 8], [], []",
-    "[[1902, 2816], [128, 1408, 2816], [128, 2816, 704], [1902, 8], [1902, 8], [], []",
-    "[[38, 2816], [128, 1408, 2816], [128, 2816, 704], [38, 8], [38, 8], [], [], [], ",
-    "[[7081, 2816], [128, 1408, 2816], [128, 2816, 704], [7081, 8], [7081, 8], [], []"
-  ],
+  "input_shapes": [],
   "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
-  "note": "Triton MoE expert-GEMM (sglang's own fused_experts/fused_moe kernel) \u2014 single-GPU optimizable; NOT the comm-fused trtllm MoE path (excluded)."
+  "note": "Triton MoE expert-GEMM (sglang's own fused_experts/fused_moe kernel) \u2014 single-GPU optimizable; NOT the comm-fused trtllm MoE path (excluded).",
+  "input_shapes_replaced_by": "docs/captured_kernel_api_shapes.json",
+  "standalone_workloads_json": "bench/workloads.json",
+  "shape_source": "fresh_sglang_kernel_api_capture",
+  "captured_kernel_api_workload_count": 18,
+  "captured_kernel_api_functions": [
+    "sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe._fused_moe_kernel_sequence",
+    "sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe.fused_experts_impl",
+    "sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe.inplace_fused_experts",
+    "sglang.srt.layers.moe.moe_runner.triton_utils.fused_moe_triton_kernels.invoke_fused_moe_kernel"
+  ],
+  "shape_capture_note": "Captured 2026-07-08 on Verda B300 light-face-hides-fin-03-1 from a real google/gemma-4-26B-A4B-it TP=1 SGLang production-path execution in temporary container sglang-gemma4 on one B300 GPU. Used a model-local HF cache after snapshot download, cookbook-aligned reasoning_parser=gemma4 and tool_call_parser=gemma4, disabled CUDA graph prefill/decode, delayed torch-op wrapping until after imports, preserved server startup/warmup records, and marked four request windows covering long prefill, short decode, mid concurrency, and high concurrency."
 }
