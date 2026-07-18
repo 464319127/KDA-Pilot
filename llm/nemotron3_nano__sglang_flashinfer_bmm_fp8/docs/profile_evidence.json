@@ -1,9 +1,12 @@
 {
   "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-FP8",
   "model_slug": "nemotron3_nano",
-  "cookbook_cmd": "python3 -m sglang.launch_server --model-path nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-FP8 --trust-remote-code --max-running-requests 1024",
+  "cookbook_cmd": "omitted from standalone kernel task; use bench/workloads.json and docs/captured_kernel_api_shapes.json for RLCR",
   "tp": "1",
-  "python_interface": "sglang.flashinfer_bmm_fp8",
+  "python_interface": [
+    "flashinfer.gemm.bmm_fp8",
+    "sglang.srt.layers.quantization.fp8_utils.flashinfer_bmm_fp8"
+  ],
   "profiler_op_provenance": [
     "aten::_local_scalar_dense",
     "aten::split_with_sizes",
@@ -24,14 +27,16 @@
   },
   "max_pct_of_gpu": 20.68,
   "best_scenario": "random_mid",
-  "input_shapes": [
-    "[[13193, 2688], [2688, 10304], [], [], []]",
-    "[[1553, 2688], [2688, 10304], [], [], []]",
-    "[[2936, 2688], [2688, 10304], [], [], []]",
-    "[[8704, 2688], [2688, 10304], [], [], []]",
-    "[[], []]",
-    "[[]]"
-  ],
+  "input_shapes": [],
   "scenarios": "random/sharegpt x low(conc1)/mid(conc32)/high(conc100), ISL~1000 OSL~1000",
-  "note": "fp8 batched-GEMM op; profiler also attributes some bmm instances generically (peak ~20.7%); this is the dominant non-mamba fp8 bmm."
+  "note": "fp8 batched-GEMM op; profiler also attributes some bmm instances generically (peak ~20.7%); this is the dominant non-mamba fp8 bmm.",
+  "input_shapes_replaced_by": "docs/captured_kernel_api_shapes.json",
+  "standalone_workloads_json": "bench/workloads.json",
+  "shape_source": "fresh_sglang_kernel_api_capture",
+  "captured_kernel_api_workload_count": 24,
+  "captured_kernel_api_functions": [
+    "flashinfer.gemm.bmm_fp8",
+    "sglang.srt.layers.quantization.fp8_utils.flashinfer_bmm_fp8"
+  ],
+  "shape_capture_note": "Captured 2026-07-08 on Verda B300 light-face-hides-fin-03-1 from a real nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-FP8 TP=1 SGLang production-path execution in the prepared sglang_bbuf_b300 container; CUDA graph disabled only to keep the temporary shape-capture hook out of graph capture; capture used temporary import/decomposition compatibility shims for the local Torch/Transformers environment, with request windows covering long/short prompt and mid/high concurrency serving paths."
 }
